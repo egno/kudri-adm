@@ -1,10 +1,11 @@
 <template>
   <v-app>
-    <v-navigation-drawer app></v-navigation-drawer>
+    <v-navigation-drawer app>
+      <navigation/>
+    </v-navigation-drawer>
     <v-toolbar app>
       <v-toolbar-title>
-        <span class="headline text-uppercase">Проект</span>
-        <span class="font-weight-light">Личный кабинет</span>
+        <span class="font-weight-light">{{userID}}</span>
       </v-toolbar-title>
     </v-toolbar>
 
@@ -15,12 +16,21 @@
 </template>
 
 <script>
+import Navigation from "./components/Navigation.vue";
+import { mapGetters } from "vuex";
+
 export default {
   name: "App",
   data() {
     return {
       //
     };
+  },
+  components: {
+    Navigation
+  },
+  computed: {
+    ...mapGetters(["userID"])
   }
 };
 </script>
