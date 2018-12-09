@@ -50,7 +50,10 @@ export default {
     drawer: null,
     errorMessage: null,
     flogin: "manager1@test.com",
-    fpassword: "ManagerPassword"
+    fpassword: "ManagerPassword",
+    snack: false,
+    snackText: "",
+    snackColor: "error"
   }),
   props: {
     source: String

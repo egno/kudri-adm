@@ -29,7 +29,7 @@ export default {
     Navigation
   },
   computed: {
-    ...mapGetters(["userID"])
+    ...mapGetters(["userID", ""])
   }
 };
 </script>

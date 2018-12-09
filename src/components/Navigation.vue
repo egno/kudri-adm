@@ -31,8 +31,8 @@ export default {
     return {
       drawer: true,
       items: [
-        { title: "Салоны", icon: "business", route: "businessList" },
-        { title: "Моя учетная запись", icon: "account_box", route: "login" }
+        { title: "Мой профиль", icon: "account_box", route: "login" },
+        { title: "Мои компании", icon: "business", route: "businessList" }
       ]
     };
   },
