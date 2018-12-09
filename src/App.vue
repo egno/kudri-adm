@@ -1,8 +1,7 @@
 <template>
   <v-app>
-    <v-navigation-drawer app>
-      <navigation/>
-    </v-navigation-drawer>
+    <navigation/>
+
     <v-toolbar app>
       <v-toolbar-title>
         <span class="font-weight-light">{{userID}}</span>
@@ -16,7 +15,7 @@
 </template>
 
 <script>
-import Navigation from "./components/Navigation.vue";
+import Navigation from "@/components/Navigation.vue";
 import { mapGetters } from "vuex";
 
 export default {
