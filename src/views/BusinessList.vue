@@ -22,10 +22,14 @@
 <script>
 import Api from "@/api/backend";
 import router from "@/router";
+import { mapActions } from "vuex";
 
 export default {
   data() {
     return {
+      formActions: [
+        { label: "Добавить", action: "newBusiness", default: true }
+      ],
       headers: [
         { text: "Название", value: "name" },
         { text: "Тип", value: "" },
@@ -40,6 +44,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions(["actions"]),
     editItem(item) {
       router.push({ name: "businessCard", params: { id: item.id } });
     },
@@ -49,10 +54,15 @@ export default {
         .then(res => res.data)
         .then(res => {
           this.data = res;
-        });
+        })
+        .then(this.setActions(this.formActions));
+    },
+    setActions(newActions = []) {
+      this.actions(newActions || []);
     }
   },
   mounted() {
+    this.setActions();
     this.fetchData();
   }
 };

@@ -9,7 +9,7 @@ Vue.use(VueAxios, axios);
 
 export default new Vuex.Store({
   state: {
-    actions: {},
+    actions: [],
     alertMaxCount: 3,
     alerts: [],
     appTitle: "Kudri",
@@ -34,7 +34,7 @@ export default new Vuex.Store({
       }
     },
     SET_ACTIONS(state, payload) {
-      state.currentActions = payload;
+      state.actions = payload;
     },
     SET_TOKEN(state, payload) {
       state.token = payload;

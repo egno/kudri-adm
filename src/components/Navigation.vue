@@ -32,12 +32,17 @@ export default {
       drawer: true,
       items: [
         { title: "Мой профиль", icon: "account_box", route: "login" },
-        { title: "Мои компании", icon: "business", route: "businessList" }
+        {
+          title: "Мои компании",
+          icon: "business",
+          route: "businessList",
+          visible: "loggedIn"
+        }
       ]
     };
   },
   computed: {
-    ...mapGetters(["appTitle"])
+    ...mapGetters(["appTitle", "loggedIn"])
   }
 };
 </script>
