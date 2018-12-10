@@ -22,7 +22,7 @@
 <script>
 import Api from "@/api/backend";
 import router from "@/router";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   data() {
@@ -43,26 +43,28 @@ export default {
       data: []
     };
   },
+  computed: {
+    ...mapGetters["loggedIn"]
+  },
+  watch: {
+    show: "fetchData"
+  },
   methods: {
     ...mapActions(["actions"]),
     editItem(item) {
       router.push({ name: "businessCard", params: { id: item.id } });
     },
     fetchData() {
+      this.data = [];
       Api()
         .get("business")
         .then(res => res.data)
         .then(res => {
           this.data = res;
-        })
-        .then(this.setActions(this.formActions));
-    },
-    setActions(newActions = []) {
-      this.actions(newActions || []);
+        });
     }
   },
   mounted() {
-    this.setActions();
     this.fetchData();
   }
 };

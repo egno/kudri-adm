@@ -1,14 +1,14 @@
 <template>
   <v-app app>
-    <navigation/>
-
     <v-toolbar app>
+      <v-toolbar-side-icon v-if="!navBarVisible" @click="navBar()"></v-toolbar-side-icon>
+      <v-toolbar-title @click="goHome()" v-if="!navBarVisible">{{appTitle}}</v-toolbar-title>
       <v-spacer/>
-      <v-toolbar-title>
-        <span class="font-weight-light">{{userID}}</span>
-      </v-toolbar-title>
+      <v-toolbar-items>
+        <profile-menu/>
+      </v-toolbar-items>
     </v-toolbar>
-
+    <navigation/>
     <v-content app>
       <router-view/>
     </v-content>
@@ -17,7 +17,9 @@
 
 <script>
 import Navigation from "@/components/Navigation.vue";
-import { mapGetters } from "vuex";
+import ProfileMenu from "@/components/ProfileMenu.vue";
+import router from "@/router";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "App",
@@ -27,15 +29,22 @@ export default {
     };
   },
   components: {
-    Navigation
+    Navigation,
+    ProfileMenu
   },
   computed: {
-    ...mapGetters(["actions", "userID"]),
+    ...mapGetters(["actions", "appTitle", "navBarVisible", "userID"]),
     defaultAction() {
       if (!this.actions) {
         return;
       }
       return this.actions.filter(x => x["default"])[0];
+    }
+  },
+  methods: {
+    ...mapActions(["navBar"]),
+    goHome() {
+      router.push({ name: "home" });
     }
   }
 };

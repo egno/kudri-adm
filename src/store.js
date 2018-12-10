@@ -13,6 +13,7 @@ export default new Vuex.Store({
     alertMaxCount: 3,
     alerts: [],
     appTitle: "Kudri",
+    navBarVisible: true,
     restURL: "http://localhost:3000/",
     token: "",
     userID: ""
@@ -24,6 +25,7 @@ export default new Vuex.Store({
     loggedIn: state => {
       return state.token > "";
     },
+    navBarVisible: state => state.navBarVisible,
     userID: state => state.userID
   },
   mutations: {
@@ -33,6 +35,10 @@ export default new Vuex.Store({
         state.alerts.shift();
       }
     },
+    NAVBAR(state, payload) {
+      var status = payload == undefined ? !state.navBarVisible : payload;
+      state.navBarVisible = status;
+    },
     SET_ACTIONS(state, payload) {
       state.actions = payload;
     },
@@ -41,6 +47,9 @@ export default new Vuex.Store({
     },
     SET_USERID(state, payload) {
       state.userID = payload;
+    },
+    SHOW_NAVBAR(state) {
+      state.navBarVisible = true;
     }
   },
   actions: {
@@ -66,6 +75,9 @@ export default new Vuex.Store({
     logout({ commit }) {
       commit("SET_TOKEN", "");
       commit("SET_USERID", "");
+    },
+    navBar({ commit }, payload) {
+      commit("NAVBAR", payload);
     }
   }
 });
