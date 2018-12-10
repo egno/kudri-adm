@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app dark :value="navBarVisible">
+  <v-navigation-drawer app dark :value="navBarVisible" @input="onInput($event)">
     <v-toolbar flat>
       <v-toolbar-title @click="goHome()">{{appTitle}}</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -37,6 +37,9 @@ export default {
     ...mapActions(["navBar"]),
     goHome() {
       router.push({ name: "home" });
+    },
+    onInput(event) {
+      this.navBar(event);
     }
   }
 };
