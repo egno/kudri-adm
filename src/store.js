@@ -9,6 +9,7 @@ Vue.use(VueAxios, axios);
 
 export default new Vuex.Store({
   state: {
+    actions: {},
     alertMaxCount: 3,
     alerts: [],
     appTitle: "Kudri",
@@ -17,6 +18,7 @@ export default new Vuex.Store({
     userID: ""
   },
   getters: {
+    actions: state => state.actions,
     alerts: state => state.messages,
     appTitle: state => state.appTitle,
     loggedIn: state => {
@@ -31,6 +33,9 @@ export default new Vuex.Store({
         state.alerts.shift();
       }
     },
+    SET_ACTIONS(state, payload) {
+      state.currentActions = payload;
+    },
     SET_TOKEN(state, payload) {
       state.token = payload;
     },
@@ -39,6 +44,12 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    actions({ commit }, payload) {
+      commit("SET_ACTIONS", payload);
+    },
+    alert({ commit }, payload) {
+      commit("ADD_ALERT", payload);
+    },
     login({ commit }, payload) {
       const loginPath = "rpc/login";
       Api()
@@ -55,9 +66,6 @@ export default new Vuex.Store({
     logout({ commit }) {
       commit("SET_TOKEN", "");
       commit("SET_USERID", "");
-    },
-    alert({ commit }, payload) {
-      commit("ADD_ALERT", payload);
     }
   }
 });

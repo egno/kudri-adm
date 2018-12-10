@@ -1,23 +1,27 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="data"
-    class="elevation-1"
-  >
-    <template slot="items" slot-scope="props">
+  <v-data-table :headers="headers" :items="data" class="elevation-1">
+    <template
+      slot="items"
+      slot-scope="props"
+      :to="{ name: 'businessCard', params: { id: props.item.id }}"
+    >
       <td>{{ props.item.name }}</td>
-      <td>-</td>
+      <td>{{ props.item.type }}</td>
       <td>{{ props.item.inn }}</td>
       <td>{{ props.item.address }}</td>
       <td>{{ props.item.email }}</td>
       <td>-</td>
       <td>-</td>
+      <td class="justify-center layout px-0">
+        <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
+      </td>
     </template>
   </v-data-table>
 </template>
 
 <script>
 import Api from "@/api/backend";
+import router from "@/router";
 
 export default {
   data() {
@@ -29,12 +33,16 @@ export default {
         { text: "Адрес", value: "address" },
         { text: "Email", value: "email" },
         { text: "Дата", value: "" },
-        { text: "Статус", value: "" }
+        { text: "Статус", value: "" },
+        { text: "Действия", value: "" }
       ],
       data: []
     };
   },
   methods: {
+    editItem(item) {
+      router.push({ name: "businessCard", params: { id: item.id } });
+    },
     fetchData() {
       Api()
         .get("business")

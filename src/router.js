@@ -26,6 +26,11 @@ export default new Router({
       path: "/businessList",
       name: "businessList",
       component: () => import("./views/BusinessList.vue")
+    },
+    {
+      path: "/businessCard/:id",
+      name: "businessCard",
+      component: () => import("./views/BusinessCard.vue")
     }
   ]
 });
