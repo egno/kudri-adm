@@ -5,6 +5,7 @@
       <v-text-field label="ИНН" v-model="data.inn" prepend-icon="assignment"></v-text-field>
       <v-text-field label="Адрес" v-model="data.address" prepend-icon="local_post_office"></v-text-field>
       <v-text-field label="Телефон" v-model="data.data.phone" prepend-icon="phone"></v-text-field>
+      <v-text-field label="E-mail" v-model="data.email" prepend-icon="email"></v-text-field>
     </v-form>
     <v-card-actions>
       <v-spacer></v-spacer>
