@@ -2,10 +2,11 @@ import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
 import VueAxios from "vue-axios";
+import VueCacheData from "vue-cache-data";
 import Api from "@/api/backend";
 
 Vue.use(Vuex);
-Vue.use(VueAxios, axios);
+Vue.use(VueAxios, axios, VueCacheData);
 
 export default new Vuex.Store({
   state: {
@@ -23,10 +24,12 @@ export default new Vuex.Store({
     alerts: state => state.messages,
     appTitle: state => state.appTitle,
     loggedIn: state => {
-      return state.token > "";
+      return (state.token || window.localStorage.accessToken) > "";
     },
     navBarVisible: state => state.navBarVisible,
-    userID: state => state.userID
+    userID: state => {
+      return state.userID || window.localStorage.userID;
+    }
   },
   mutations: {
     ADD_ALERT(state, payload) {
@@ -39,6 +42,9 @@ export default new Vuex.Store({
       var status = payload == undefined ? !state.navBarVisible : payload;
       state.navBarVisible = status;
     },
+    SAVE_TOKEN(state, payload) {
+      window.localStorage.accessToken = payload;
+    },
     SET_ACTIONS(state, payload) {
       state.actions = payload;
     },
@@ -47,6 +53,7 @@ export default new Vuex.Store({
     },
     SET_USERID(state, payload) {
       state.userID = payload;
+      window.localStorage.accessToken = payload;
     },
     SHOW_NAVBAR(state) {
       state.navBarVisible = true;
@@ -69,12 +76,14 @@ export default new Vuex.Store({
         .then(token => {
           commit("SET_TOKEN", token);
           commit("SET_USERID", payload["email"]);
+          commit("SAVE_TOKEN", token);
         })
         .catch(err => commit("ADD_ALERT", err.response.data));
     },
     logout({ commit }) {
       commit("SET_TOKEN", "");
       commit("SET_USERID", "");
+      window.localStorage.accessToken;
     },
     navBar({ commit }, payload) {
       commit("NAVBAR", payload);

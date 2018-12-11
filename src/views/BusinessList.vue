@@ -3,17 +3,17 @@
     <template
       slot="items"
       slot-scope="props"
-      :to="{ name: 'businessCard', params: { id: props.item.id }}"
     >
-      <td>{{ props.item.name }}</td>
+      <td>{{ props.item.data.name }}</td>
       <td>{{ props.item.type }}</td>
-      <td>{{ props.item.inn }}</td>
-      <td>{{ props.item.address }}</td>
-      <td>{{ props.item.email }}</td>
+      <td>{{ props.item.data.inn }}</td>
+      <td>{{ props.item.data.address }}</td>
+      <td>{{ props.item.data.email }}</td>
+      <td>{{ props.item.data.manager }}</td>
       <td>-</td>
       <td>-</td>
       <td class="justify-center layout px-0">
-        <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
+        <a :href="'businessCard/'+props.item.id" target="_blank"><v-icon small class="mr-2">edit</v-icon></a>
       </td>
     </template>
   </v-data-table>
@@ -33,9 +33,10 @@ export default {
       headers: [
         { text: "Название", value: "name" },
         { text: "Тип", value: "" },
-        { text: "ИНН", value: "inn" },
-        { text: "Адрес", value: "address" },
-        { text: "Email", value: "email" },
+        { text: "ИНН", value: "data.inn" },
+        { text: "Адрес", value: "data.address" },
+        { text: "Email", value: "data.email" },
+        { text: "Менеджер", value: "data.manager" },
         { text: "Дата", value: "" },
         { text: "Статус", value: "" },
         { text: "Действия", value: "" }
@@ -44,10 +45,13 @@ export default {
     };
   },
   computed: {
-    ...mapGetters["loggedIn"]
+    ...mapGetters["loggedIn"],
+    table() {
+      return this.$route.name == "businessList" ? "business" : "my_business";
+    }
   },
   watch: {
-    show: "fetchData"
+    table: "fetchData"
   },
   methods: {
     ...mapActions(["actions"]),
@@ -57,7 +61,7 @@ export default {
     fetchData() {
       this.data = [];
       Api()
-        .get("business")
+        .get(this.table)
         .then(res => res.data)
         .then(res => {
           this.data = res;

@@ -1,11 +1,11 @@
 <template>
   <v-container>
     <v-form>
-      <v-text-field label="Название" v-model="data.name" prepend-icon="account_box"></v-text-field>
-      <v-text-field label="ИНН" v-model="data.inn" prepend-icon="assignment"></v-text-field>
-      <v-text-field label="Адрес" v-model="data.address" prepend-icon="local_post_office"></v-text-field>
+      <v-text-field label="Название" v-model="data.data.name" prepend-icon="account_box"></v-text-field>
+      <v-text-field label="ИНН" v-model="data.data.inn" prepend-icon="assignment"></v-text-field>
+      <v-text-field label="Адрес" v-model="data.data.address" prepend-icon="local_post_office"></v-text-field>
       <v-text-field label="Телефон" v-model="data.data.phone" prepend-icon="phone"></v-text-field>
-      <v-text-field label="E-mail" v-model="data.email" prepend-icon="email"></v-text-field>
+      <v-text-field label="E-mail" v-model="data.data.email" prepend-icon="email"></v-text-field>
     </v-form>
     <v-card-actions>
       <v-spacer></v-spacer>

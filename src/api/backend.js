@@ -1,12 +1,11 @@
 import axios from "axios";
-import store from "@/store";
 
 export default () => {
   return axios.create({
-    baseURL: "http://localhost:3000",
+    baseURL: "http://localhost:3001",
     withCredentials: false,
     headers: {
-      Authorization: `Bearer ${store.state.token}`,
+      Authorization: `Bearer ${window.localStorage.accessToken}`,
       Accept: "application/json",
       "Content-Type": "application/json"
     }
