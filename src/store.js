@@ -17,19 +17,30 @@ export default new Vuex.Store({
     navBarVisible: true,
     restURL: "http://localhost:3000/",
     token: "",
-    userID: ""
+    userInfo: {}
   },
   getters: {
     actions: state => state.actions,
     alerts: state => state.messages,
     appTitle: state => state.appTitle,
-    loggedIn: state => {
-      return (state.token || window.localStorage.accessToken) > "";
+    loggedIn: (state, getters) => {
+      return getters.userID;
     },
     navBarVisible: state => state.navBarVisible,
-    userID: state => {
-      return state.userID || window.localStorage.userID;
-    }
+    navMenu: state => state.navMenu,
+    token: state => state.token,
+    userID: (state, getters) => {
+      const info = getters.userInfo;
+      if (info["me"]) {
+        return info["me"]["email"];
+      }
+    },
+    // TODO вытащить storage в отдельный модуль
+    userInfo: state =>
+      Object.assign(
+        state.userInfo,
+        JSON.parse(window.localStorage.userInfo || "{}")
+      )
   },
   mutations: {
     ADD_ALERT(state, payload) {
@@ -43,6 +54,7 @@ export default new Vuex.Store({
       state.navBarVisible = status;
     },
     SAVE_TOKEN(state, payload) {
+      // TODO вытащить storage в отдельный модуль
       window.localStorage.accessToken = payload;
     },
     SET_ACTIONS(state, payload) {
@@ -51,9 +63,8 @@ export default new Vuex.Store({
     SET_TOKEN(state, payload) {
       state.token = payload;
     },
-    SET_USERID(state, payload) {
-      state.userID = payload;
-      window.localStorage.accessToken = payload;
+    SET_USERINFO(state, payload) {
+      state.userInfo = payload;
     },
     SHOW_NAVBAR(state) {
       state.navBarVisible = true;
@@ -66,6 +77,19 @@ export default new Vuex.Store({
     alert({ commit }, payload) {
       commit("ADD_ALERT", payload);
     },
+    loadUserInfo({ commit }) {
+      const infoPath = "rpc/me";
+      Api()
+        .post(infoPath)
+        .then(res => res.data)
+        .then(res => res[0])
+        .then(res => {
+          commit("SET_USERINFO", res);
+          // TODO вытащить storage в отдельный модуль
+          window.localStorage.userInfo = JSON.stringify(res);
+        })
+        .catch(err => commit("ADD_ALERT", err.response.data));
+    },
     login({ commit }, payload) {
       const loginPath = "rpc/login";
       Api()
@@ -75,15 +99,15 @@ export default new Vuex.Store({
         .then(res => res.token)
         .then(token => {
           commit("SET_TOKEN", token);
-          commit("SET_USERID", payload["email"]);
           commit("SAVE_TOKEN", token);
         })
         .catch(err => commit("ADD_ALERT", err.response.data));
     },
     logout({ commit }) {
       commit("SET_TOKEN", "");
-      commit("SET_USERID", "");
-      window.localStorage.accessToken;
+      commit("SET_USERINFO", {});
+      window.localStorage.removeItem("accessToken");
+      window.localStorage.removeItem("userInfo");
     },
     navBar({ commit }, payload) {
       commit("NAVBAR", payload);
