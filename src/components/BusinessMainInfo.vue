@@ -1,5 +1,6 @@
  <template>
   <v-card flat >
+        <v-card-title>Основная информация</v-card-title>
     <v-form>
       <v-text-field label="Название" v-model="data.data.name" prepend-icon="account_box"></v-text-field>
       <v-text-field label="ИНН" v-model="data.data.inn" prepend-icon="assignment"></v-text-field>

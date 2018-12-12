@@ -42,10 +42,13 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["navBar"]),
+    ...mapActions(["loadFromStorage", "navBar"]),
     goHome() {
       router.push({ name: "home" });
     }
+  },
+  mounted() {
+    this.loadFromStorage();
   }
 };
 </script>

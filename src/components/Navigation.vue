@@ -38,10 +38,11 @@ export default {
       return this.menu.filter(x => x.show);
     },
     isBusinessCard() {
-      return this.$route.name == "businessCard";
+      const businessCards = ["businessCard", "businessCardService"];
+      return businessCards.some(x => x === this.$route.name);
     },
     isManagerMenu() {
-      return this.$route.name != "businessCard";
+      return this.$route.name != this.isBusinessCard;
     },
     menu() {
       return [
@@ -72,7 +73,8 @@ export default {
         },
         {
           title: "Услуги",
-          show: this.loggedIn && this.isBusinessCard
+          show: this.loggedIn && this.isBusinessCard,
+          route: { name: "businessCardService", id: this.$route.params.id }
         },
         {
           title: "Сотрудники",

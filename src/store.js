@@ -8,6 +8,8 @@ import Api from "@/api/backend";
 Vue.use(Vuex);
 Vue.use(VueAxios, axios, VueCacheData);
 
+// TODO вытащить localStorage в отдельный модуль
+
 export default new Vuex.Store({
   state: {
     actions: [],
@@ -15,7 +17,6 @@ export default new Vuex.Store({
     alerts: [],
     appTitle: "Kudri",
     navBarVisible: true,
-    restURL: "http://localhost:3000/",
     token: "",
     userInfo: {}
   },
@@ -27,20 +28,20 @@ export default new Vuex.Store({
       return getters.userID;
     },
     navBarVisible: state => state.navBarVisible,
-    navMenu: state => state.navMenu,
-    token: state => state.token,
+    token: state => {
+      return state.token;
+      // window.localStorage.accessToken;
+    },
     userID: (state, getters) => {
       const info = getters.userInfo;
       if (info["me"]) {
         return info["me"]["email"];
       }
     },
-    // TODO вытащить storage в отдельный модуль
-    userInfo: state =>
-      Object.assign(
-        state.userInfo,
-        JSON.parse(window.localStorage.userInfo || "{}")
-      )
+    userInfo: state => {
+      return state.userInfo;
+      // return JSON.parse(window.localStorage.userInfo || "{}");
+    }
   },
   mutations: {
     ADD_ALERT(state, payload) {
@@ -53,18 +54,24 @@ export default new Vuex.Store({
       var status = payload == undefined ? !state.navBarVisible : payload;
       state.navBarVisible = status;
     },
-    SAVE_TOKEN(state, payload) {
-      // TODO вытащить storage в отдельный модуль
-      window.localStorage.accessToken = payload;
-    },
     SET_ACTIONS(state, payload) {
       state.actions = payload;
     },
     SET_TOKEN(state, payload) {
       state.token = payload;
+      if (payload) {
+        window.localStorage.accessToken = payload;
+      } else {
+        window.localStorage.removeItem("accessToken");
+      }
     },
     SET_USERINFO(state, payload) {
       state.userInfo = payload;
+      if (payload) {
+        window.localStorage.userInfo = JSON.stringify(payload);
+      } else {
+        window.localStorage.removeItem("accessToken");
+      }
     },
     SHOW_NAVBAR(state) {
       state.navBarVisible = true;
@@ -77,6 +84,10 @@ export default new Vuex.Store({
     alert({ commit }, payload) {
       commit("ADD_ALERT", payload);
     },
+    loadFromStorage({ commit, dispatch }) {
+      commit("SET_TOKEN", window.localStorage.accessToken);
+      dispatch("loadUserInfo");
+    },
     loadUserInfo({ commit }) {
       const infoPath = "rpc/me";
       Api()
@@ -85,8 +96,6 @@ export default new Vuex.Store({
         .then(res => res[0])
         .then(res => {
           commit("SET_USERINFO", res);
-          // TODO вытащить storage в отдельный модуль
-          window.localStorage.userInfo = JSON.stringify(res);
         })
         .catch(err => commit("ADD_ALERT", err.response.data));
     },
@@ -99,15 +108,12 @@ export default new Vuex.Store({
         .then(res => res.token)
         .then(token => {
           commit("SET_TOKEN", token);
-          commit("SAVE_TOKEN", token);
         })
         .catch(err => commit("ADD_ALERT", err.response.data));
     },
     logout({ commit }) {
       commit("SET_TOKEN", "");
       commit("SET_USERINFO", {});
-      window.localStorage.removeItem("accessToken");
-      window.localStorage.removeItem("userInfo");
     },
     navBar({ commit }, payload) {
       commit("NAVBAR", payload);
