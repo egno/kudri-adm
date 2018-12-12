@@ -42,7 +42,7 @@ export default {
       return businessCards.some(x => x === this.$route.name);
     },
     isManagerMenu() {
-      return this.$route.name != this.isBusinessCard;
+      return !this.isBusinessCard;
     },
     menu() {
       return [

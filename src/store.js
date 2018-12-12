@@ -17,6 +17,8 @@ export default new Vuex.Store({
     alerts: [],
     appTitle: "Kudri",
     navBarVisible: true,
+    serviceCategories: [],
+    serviceList: [],
     token: "",
     userInfo: {}
   },
@@ -28,6 +30,8 @@ export default new Vuex.Store({
       return getters.userID;
     },
     navBarVisible: state => state.navBarVisible,
+    serviceCategories: state => state.serviceCategories,
+    serviceList: state => state.serviceList,
     token: state => {
       return state.token;
       // window.localStorage.accessToken;
@@ -49,6 +53,12 @@ export default new Vuex.Store({
       if (state.alerts.length > state.alertMaxCount) {
         state.alerts.shift();
       }
+    },
+    LOAD_SERVICE_CATEGORIES(state, payload) {
+      state.serviceCategories = payload;
+    },
+    LOAD_SERVICE_LIST(state, payload) {
+      state.serviceList = payload;
     },
     NAVBAR(state, payload) {
       var status = payload == undefined ? !state.navBarVisible : payload;
@@ -87,6 +97,26 @@ export default new Vuex.Store({
     loadFromStorage({ commit, dispatch }) {
       commit("SET_TOKEN", window.localStorage.accessToken);
       dispatch("loadUserInfo");
+    },
+    loadServiceCategories({ commit }) {
+      const path = "service";
+      Api()
+        .get(path)
+        .then(res => res.data)
+        .then(res => {
+          commit("LOAD_SERVICE_CATEGORIES", res);
+        })
+        .catch(err => commit("ADD_ALERT", err.response.data));
+    },
+    loadServiceList({ commit }) {
+      const path = "subservice";
+      Api()
+        .get(path)
+        .then(res => res.data)
+        .then(res => {
+          commit("LOAD_SERVICE_LIST", res);
+        })
+        .catch(err => commit("ADD_ALERT", err.response.data));
     },
     loadUserInfo({ commit }) {
       const infoPath = "rpc/me";
