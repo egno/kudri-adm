@@ -46,6 +46,7 @@ export default {
       "loadFromStorage",
       "loadServiceCategories",
       "loadServiceList",
+      "loadUserInfo",
       "navBar"
     ]),
     goHome() {
@@ -54,6 +55,7 @@ export default {
   },
   mounted() {
     this.loadFromStorage();
+    this.loadUserInfo();
     this.loadServiceCategories();
     this.loadServiceList();
   }

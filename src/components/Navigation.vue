@@ -38,7 +38,11 @@ export default {
       return this.menu.filter(x => x.show);
     },
     isBusinessCard() {
-      const businessCards = ["businessCard", "businessCardService"];
+      const businessCards = [
+        "businessCard",
+        "businessCardEmployee",
+        "businessCardService"
+      ];
       return businessCards.some(x => x === this.$route.name);
     },
     isManagerMenu() {
@@ -78,7 +82,8 @@ export default {
         },
         {
           title: "Сотрудники",
-          show: this.loggedIn && this.isBusinessCard
+          show: this.loggedIn && this.isBusinessCard,
+          route: { name: "businessCardEmployee", id: this.$route.params.id }
         },
         {
           title: "Филиалы",

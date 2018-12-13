@@ -38,7 +38,7 @@ export default new Vuex.Store({
     },
     userID: (state, getters) => {
       const info = getters.userInfo;
-      if (info["me"]) {
+      if (info && info["me"]) {
         return info["me"]["email"];
       }
     },
@@ -131,6 +131,7 @@ export default new Vuex.Store({
     },
     login({ commit }, payload) {
       const loginPath = "rpc/login";
+      window.localStorage.removeItem("accessToken");
       Api()
         .post(loginPath, payload)
         .then(res => res.data)

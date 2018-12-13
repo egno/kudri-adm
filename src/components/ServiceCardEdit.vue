@@ -32,7 +32,7 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn @click="onDelete">Удалить</v-btn>
-      <v-btn color="primary" @click="onSave">Закрыть</v-btn>
+      <v-btn color="primary" @click="onSave">Сохранить</v-btn>
     </v-card-actions>
   </v-card>
 </template>
