@@ -1,10 +1,18 @@
 <template>
   <v-menu :close-on-content-click="false" v-model="menu">
     <v-btn flat slot="activator">
-      <v-avatar v-if="loggedIn" color="teal">
+              <v-layout
+          align-center
+          row
+          spacer
+        >
+      <v-flex>
+      <v-avatar v-if="loggedIn" class="ma-1" color="teal" :size="36">
         <span class="white--text">MT</span>
       </v-avatar>
+    </v-flex>
       <v-flex>{{userID || "Войти"}}</v-flex>
+      </v-layout>
     </v-btn>
     <v-list>
       <v-card v-if="loggedIn">

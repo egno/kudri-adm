@@ -38,8 +38,8 @@ export default new Vuex.Store({
     },
     userID: (state, getters) => {
       const info = getters.userInfo;
-      if (info && info["me"]) {
-        return info["me"]["email"];
+      if (info) {
+        return info["email"];
       }
     },
     userInfo: state => {
@@ -70,17 +70,17 @@ export default new Vuex.Store({
     SET_TOKEN(state, payload) {
       state.token = payload;
       if (payload) {
-        window.localStorage.accessToken = payload;
+        localStorage.setItem("accessToken", payload);
       } else {
-        window.localStorage.removeItem("accessToken");
+        localStorage.removeItem("accessToken");
       }
     },
     SET_USERINFO(state, payload) {
       state.userInfo = payload;
       if (payload) {
-        window.localStorage.userInfo = JSON.stringify(payload);
+        localStorage.setItem("userInfo", JSON.stringify(payload));
       } else {
-        window.localStorage.removeItem("accessToken");
+        localStorage.removeItem("userInfo");
       }
     },
     SHOW_NAVBAR(state) {
@@ -95,7 +95,7 @@ export default new Vuex.Store({
       commit("ADD_ALERT", payload);
     },
     loadFromStorage({ commit, dispatch }) {
-      commit("SET_TOKEN", window.localStorage.accessToken);
+      commit("SET_TOKEN", localStorage.getItem("accessToken"));
       dispatch("loadUserInfo");
     },
     loadServiceCategories({ commit }) {
@@ -123,15 +123,14 @@ export default new Vuex.Store({
       Api()
         .post(infoPath)
         .then(res => res.data)
-        .then(res => res[0])
         .then(res => {
           commit("SET_USERINFO", res);
         })
         .catch(err => commit("ADD_ALERT", err.response.data));
     },
-    login({ commit }, payload) {
+    login({ commit, dispatch }, payload) {
       const loginPath = "rpc/login";
-      window.localStorage.removeItem("accessToken");
+      localStorage.removeItem("accessToken");
       Api()
         .post(loginPath, payload)
         .then(res => res.data)
@@ -139,6 +138,7 @@ export default new Vuex.Store({
         .then(res => res.token)
         .then(token => {
           commit("SET_TOKEN", token);
+          dispatch("loadUserInfo");
         })
         .catch(err => commit("ADD_ALERT", err.response.data));
     },

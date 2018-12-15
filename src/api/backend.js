@@ -1,17 +1,18 @@
 import axios from "axios";
 
 export default () => {
-  return axios.create({
-    baseURL: "http://localhost:3001",
+  let options = {
+    baseURL: "/api/v1/",
     withCredentials: false,
     headers: {
-      Authorization: `Bearer ${
-        window.localStorage.accessToken !== undefined
-          ? window.localStorage.accessToken
-          : ""
-      }`,
       Accept: "application/json",
       "Content-Type": "application/json"
     }
-  });
+  };
+  if (localStorage.getItem("accessToken")) {
+    options.headers.Authorization = `Bearer ${localStorage.getItem(
+      "accessToken"
+    )}`;
+  }
+  return axios.create(options);
 };
