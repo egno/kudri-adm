@@ -1,14 +1,25 @@
 <template>
   <v-card>
     <v-toolbar>
-      <v-btn small fab bottom right absolute color="light-grey" @click="edit = true">
+            <v-avatar class="ma-1" :tile="(true)">
+              <img src="/images/01.png" alt="avatar">
+            </v-avatar>
+                  <v-btn small fab bottom right absolute color="light-grey" @click="edit = true">
         <v-icon>edit</v-icon>
       </v-btn>
       <v-toolbar-title primary-title>
-        <div>
-          <h4>{{item.name}}</h4>
-          <div class="caption grey--text text--darken-1">{{item.category}}</div>
-        </div>
+        <v-layout
+          align-left
+          row
+          spacer
+        >
+          <v-flex>
+            <div>
+              <h4>{{item.name}}</h4>
+              <div class="caption grey--text text--darken-1">{{item.category}}</div>
+            </div>
+          </v-flex>
+        </v-layout>
       </v-toolbar-title>
     </v-toolbar>
     <v-card-text>

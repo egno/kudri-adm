@@ -8,7 +8,8 @@
         >
       <v-flex>
       <v-avatar v-if="loggedIn" class="ma-1" color="teal" :size="36">
-        <span class="white--text">MT</span>
+        <!-- <span class="white--text">MT</span> -->
+        <img src="/images/01.png" alt="avatar">
       </v-avatar>
     </v-flex>
       <v-flex>{{userID || "Войти"}}</v-flex>
