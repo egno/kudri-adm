@@ -13,18 +13,14 @@
         spacer
       >
         <VFlex>
-          <VAvatar
+          <UserAvatar
             v-if="loggedIn"
             class="ma-1"
-            color="teal"
-            :size="36"
+            :email="userID"
+            :src="UserAvatar"
           >
             <!-- <span class="white--text">MT</span> -->
-            <img
-              src="/images/01.png"
-              alt="avatar"
-            >
-          </VAvatar>
+          </UserAvatar>
         </VFlex>
         <VFlex>{{ userID || "Войти" }}</VFlex>
       </VLayout>
@@ -89,35 +85,37 @@
 </template>
 
 <script>
-import router from "@/router";
-import { mapGetters, mapActions } from "vuex";
+import router from '@/router';
+import UserAvatar from '@/components/UserAvatar.vue';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
+  components: { UserAvatar },
   props: {
-    source: {type: String, default: () => ""}
+    source: { type: String, default: () => '' }
   },
   data: () => ({
     drawer: null,
     errorMessage: null,
-    flogin: "manager1@test.com",
-    fpassword: "ManagerPassword",
+    flogin: 'manager1@test.com',
+    fpassword: 'ManagerPassword',
     menu: false,
     snack: false,
-    snackText: "",
-    snackColor: "error"
+    snackText: '',
+    snackColor: 'error'
   }),
   computed: {
-    ...mapGetters(["loggedIn", "userID"])
+    ...mapGetters(['loggedIn', 'userID'])
   },
   methods: {
-    ...mapActions(["login", "logout"]),
-    sendLogin () {
+    ...mapActions(['login', 'logout']),
+    sendLogin() {
       this.login({ email: this.flogin, pass: this.fpassword });
       this.menu = false;
     },
-    sendLogout () {
+    sendLogout() {
       this.logout();
-      router.push({ name: "home" });
+      router.push({ name: 'home' });
       this.menu = false;
     }
   }

@@ -20,15 +20,6 @@ module.exports = {
   rules: {
     'import/no-unresolved': 0,
     'import/no-unassigned-import': 0,
-    semi: ['error', 'always'],
-    'no-console': 'off',
-    'space-before-function-paren': [
-      'error',
-      {
-        anonymous: 'always',
-        named: 'always',
-        asyncArrow: 'always'
-      }
-    ]
+    'no-console': 'off'
   }
 };

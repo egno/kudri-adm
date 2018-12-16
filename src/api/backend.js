@@ -14,6 +14,5 @@ export default () => {
       'accessToken'
     )}`;
   }
-  console.log('API:', options.baseURL);
   return axios.create(options);
 };

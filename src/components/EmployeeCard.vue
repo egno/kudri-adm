@@ -1,15 +1,10 @@
 <template>
   <VCard>
     <VToolbar>
-      <VAvatar
+      <UserAvatar
         class="ma-1"
-        :tile="(true)"
-      >
-        <img
-          src="/images/01.png"
-          alt="avatar"
-        >
-      </VAvatar>
+        :email="item.name || item.email"
+      />
       <VBtn
         small
         fab
@@ -67,26 +62,33 @@
 
 <script>
 // import ServiceCardEdit from "@/components/ServiceCardEdit.vue";
+import UserAvatar from '@/components/UserAvatar.vue';
 
 export default {
+  components: { UserAvatar },
   props: {
-    item: {type: Object, default: () => {return {};}}
+    item: {
+      type: Object,
+      default: () => {
+        return {};
+      }
+    }
   },
-  data () {
+  data() {
     return {
       edit: false
     };
   },
   // components: { ServiceCardEdit },
   methods: {
-    onDelete () {
+    onDelete() {
       this.edit = false;
-      this.$emit("onDelete", this.item);
+      this.$emit('onDelete', this.item);
     },
-    onSave () {
+    onSave() {
       this.edit = false;
       //   this.item = Object.assign(this.item, data);
-      this.$emit("onSave", this.item);
+      this.$emit('onSave', this.item);
     }
   }
 };
