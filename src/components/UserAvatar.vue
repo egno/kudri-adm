@@ -6,7 +6,7 @@
   >
     <img
       v-if="image_exists"
-      :src="src"
+      :src="imagePath"
       alt
     >
     <div v-else>
@@ -19,7 +19,7 @@
 export default {
   props: {
     size: { type: String, default: '3em' },
-    email: { type: String, default: '' },
+    name: { type: String, default: '' },
     src: { type: String, default: '' }
   },
   data() {
@@ -40,23 +40,29 @@ export default {
         }, 0);
       }
 
-      if (!this.email) {
+      if (!this.name) {
         return defColor;
       }
-      let h = ((hash(this.email) % colorCount) * maxHue) / colorCount;
+      let h = ((hash(this.name) % colorCount) * maxHue) / colorCount;
 
       return `hsl(${h}, 100%, 50%)`;
     },
     initials() {
       const splitChars = /[-_.@ ]/;
-      if (!this.email) {
+      if (!this.name) {
         return;
       }
-      return this.email
+      return this.name
         .split(splitChars)
         .slice(0, 2)
         .map(x => x[0].toUpperCase())
         .join('');
+    },
+    imagePath() {
+      if (this.src) {
+        return `${process.env.VUE_APP_IMAGES || ''}${this.src}`;
+      }
+      return '';
     }
   },
   watch: {
@@ -80,7 +86,7 @@ export default {
           this.loaded_src = this.src;
           this.image_exists = true;
         };
-        img.src = this.src;
+        img.src = this.imagePath;
       }, this.delay);
     }
   }

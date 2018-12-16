@@ -3,7 +3,7 @@
     <VToolbar>
       <UserAvatar
         class="ma-1"
-        :email="item.name || item.email"
+        :name="item.name || item.email"
       />
       <VBtn
         small

@@ -16,11 +16,9 @@
           <UserAvatar
             v-if="loggedIn"
             class="ma-1"
-            :email="userID"
-            :src="UserAvatar"
-          >
-            <!-- <span class="white--text">MT</span> -->
-          </UserAvatar>
+            :name="userID"
+            :src="userInfo.avatar"
+          />
         </VFlex>
         <VFlex>{{ userID || "Войти" }}</VFlex>
       </VLayout>
@@ -105,7 +103,7 @@ export default {
     snackColor: 'error'
   }),
   computed: {
-    ...mapGetters(['loggedIn', 'userID'])
+    ...mapGetters(['loggedIn', 'userID', 'userInfo'])
   },
   methods: {
     ...mapActions(['login', 'logout']),
