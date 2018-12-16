@@ -1,45 +1,59 @@
 <template>
-  <v-app app>
-    <v-toolbar app>
-      <v-toolbar-side-icon v-if="!navBarVisible" @click="navBar()"></v-toolbar-side-icon>
-      <v-toolbar-title @click="goHome()" v-if="!navBarVisible">{{appTitle}}</v-toolbar-title>
-      <v-spacer/>
-      <v-toolbar-items>
-        <profile-menu/>
-      </v-toolbar-items>
-    </v-toolbar>
-    <navigation/>
-    <v-content app>
-      <router-view/>
-    </v-content>
-  </v-app>
+  <VApp app>
+    <VToolbar app>
+      <VToolbarSideIcon
+        v-if="!navBarVisible"
+        @click="navBar()"
+      />
+      <VToolbarTitle
+        v-if="!navBarVisible"
+        @click="goHome()"
+      >
+        {{ appTitle }}
+      </VToolbarTitle>
+      <VSpacer />
+      <VToolbarItems>
+        <ProfileMenu />
+      </VToolbarItems>
+    </VToolbar>
+    <Navigation />
+    <VContent app>
+      <RouterView />
+    </VContent>
+  </VApp>
 </template>
 
 <script>
-import Navigation from "@/components/Navigation.vue";
-import ProfileMenu from "@/components/ProfileMenu.vue";
-import router from "@/router";
-import { mapActions, mapGetters } from "vuex";
+import Navigation from "@/components/Navigation.vue"
+import ProfileMenu from "@/components/ProfileMenu.vue"
+import router from "@/router"
+import { mapActions, mapGetters } from "vuex"
 
 export default {
   name: "App",
-  data() {
-    return {
-      //
-    };
-  },
   components: {
     Navigation,
     ProfileMenu
   },
+  data () {
+    return {
+      //
+    }
+  },
   computed: {
     ...mapGetters(["actions", "appTitle", "navBarVisible", "userID"]),
-    defaultAction() {
+    defaultAction () {
       if (!this.actions) {
-        return;
+        return
       }
-      return this.actions.filter(x => x["default"])[0];
+      return this.actions.filter(x => x["default"])[0]
     }
+  },
+  mounted () {
+    this.loadFromStorage()
+    this.loadUserInfo()
+    this.loadServiceCategories()
+    this.loadServiceList()
   },
   methods: {
     ...mapActions([
@@ -49,15 +63,9 @@ export default {
       "loadUserInfo",
       "navBar"
     ]),
-    goHome() {
-      router.push({ name: "home" });
+    goHome () {
+      router.push({ name: "home" })
     }
-  },
-  mounted() {
-    this.loadFromStorage();
-    this.loadUserInfo();
-    this.loadServiceCategories();
-    this.loadServiceList();
   }
-};
+}
 </script>

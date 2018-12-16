@@ -1,15 +1,18 @@
 <template>
-  <v-container fluid fill-height>
+  <VContainer
+    fluid
+    fill-height
+  >
     <Login />
-  </v-container>
+  </VContainer>
 </template>
 
 <script>
-import Login from "../components/Login";
+import Login from "../components/Login"
 
 export default {
   components: {
     Login
   }
-};
+}
 </script>

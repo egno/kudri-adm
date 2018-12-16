@@ -1,69 +1,94 @@
 <template>
-  <v-container fluid grid-list-lg>
-    <v-layout row wrap>
-      <v-flex v-for="(item, i) in data" :key="i">
-        <employee-card v-if="item.data" :item="item.data" @onSave="onSave(i)" @onDelete="onDelete(i)"></employee-card>
-        <v-btn fixed dark fab bottom right color="pink" @click="edit = true">
-          <v-icon>add</v-icon>
-        </v-btn>
-      </v-flex>
-      <v-dialog v-model="edit">
+  <VContainer
+    fluid
+    grid-list-lg
+  >
+    <VLayout
+      row
+      wrap
+    >
+      <VFlex
+        v-for="(item, i) in data"
+        :key="i"
+      >
+        <EmployeeCard
+          v-if="item.data"
+          :item="item.data"
+          @onSave="onSave(i)"
+          @onDelete="onDelete(i)"
+        />
+        <VBtn
+          fixed
+          dark
+          fab
+          bottom
+          right
+          color="pink"
+          @click="edit = true"
+        >
+          <VIcon>add</VIcon>
+        </VBtn>
+      </VFlex>
+      <VDialog v-model="edit">
         <!-- <employee-card-edit :item="newService" @onSave="onSave(-1)" @onDelete="onDelete(-1)"></employee-card-edit> -->
-      </v-dialog>
-    </v-layout>
-  </v-container>
+      </VDialog>
+    </VLayout>
+  </VContainer>
 </template>
 
 <script>
-import EmployeeCard from "@/components/EmployeeCard.vue";
+import EmployeeCard from "@/components/EmployeeCard.vue"
 // import EmployeeCardEdit from "@/components/ServiceCardEdit.vue";
-import Api from "@/api/backend";
+import Api from "@/api/backend"
 
 export default {
-  data() {
+  components: {
+    EmployeeCard
+    // EmployeeCardEdit
+  },
+  data () {
     return {
       data: { data: {} },
       edit: false,
       newEmployee: {},
       service: null
-    };
-  },
-  components: {
-    EmployeeCard
-    // EmployeeCardEdit
-  },
-  computed: {
-    id() {
-      return this.$route.params.id;
     }
   },
+  computed: {
+    id () {
+      return this.$route.params.id
+    }
+  },
+  mounted () {
+    this.fetchData()
+  },
   methods: {
-    fetchData() {
+    fetchData () {
       Api()
         .get(`employee?parent=eq.${this.id}`)
         .then(res => res.data)
         .then(res => {
-          this.data = res;
-        });
+          this.data = res
+        })
       Api()
         .get(`service`)
         .then(res => res.data)
         .then(res => {
-          this.service = res;
-        });
+          this.service = res
+        })
     },
-    onDelete(i) {
-      this.edit = false;
-      this.newService = {};
+    onDelete (i) {
+      this.edit = false
+      this.newService = {}
       if (i > -1) {
         this.data.data.service = this.data.data.service.filter(
           (x, n) => n !== i
-        );
+        )
       }
-      this.sendData();
+      this.sendData()
     },
-    onSave(i) {
-      this.edit = false;
+    onSave (i) {
+      this.edit = false
       if (i === -1) {
         //   this.data.data["service"].push(Object.assign({}, this.newService));
       }
@@ -72,12 +97,9 @@ export default {
       // );
       // this.sendData();
     },
-    sendData() {
+    sendData () {
       // Api().patch(`business?id=eq.${this.id}`, this.data);
     }
-  },
-  mounted() {
-    this.fetchData();
   }
-};
+}
 </script>

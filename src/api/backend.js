@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "axios"
 
 export default () => {
   let options = {
@@ -8,11 +8,11 @@ export default () => {
       Accept: "application/json",
       "Content-Type": "application/json"
     }
-  };
+  }
   if (localStorage.getItem("accessToken")) {
     options.headers.Authorization = `Bearer ${localStorage.getItem(
       "accessToken"
-    )}`;
+    )}`
   }
-  return axios.create(options);
-};
+  return axios.create(options)
+}

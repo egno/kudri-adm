@@ -1,5 +1,9 @@
 <template>
-  <v-data-table :headers="headers" :items="data" class="elevation-1">
+  <VDataTable
+    :headers="headers"
+    :items="data"
+    class="elevation-1"
+  >
     <template
       slot="items"
       slot-scope="props"
@@ -13,19 +17,29 @@
       <td>-</td>
       <td>-</td>
       <td class="justify-center layout px-0">
-        <a :href="'businessCard/'+props.item.id" target="_blank"><v-icon small class="mr-2">edit</v-icon></a>
+        <a
+          :href="'businessCard/'+props.item.id"
+          target="_blank"
+        >
+          <VIcon
+            small
+            class="mr-2"
+          >
+            edit
+          </VIcon>
+        </a>
       </td>
     </template>
-  </v-data-table>
+  </VDataTable>
 </template>
 
 <script>
-import Api from "@/api/backend";
-import router from "@/router";
-import { mapActions, mapGetters } from "vuex";
+import Api from "@/api/backend"
+import router from "@/router"
+import { mapActions, mapGetters } from "vuex"
 
 export default {
-  data() {
+  data () {
     return {
       formActions: [
         { label: "Добавить", action: "newBusiness", default: true }
@@ -42,34 +56,34 @@ export default {
         { text: "Действия", value: "" }
       ],
       data: []
-    };
+    }
   },
   computed: {
     ...mapGetters["loggedIn"],
-    table() {
-      return this.$route.name == "businessList" ? "business" : "my_business";
+    table () {
+      return this.$route.name == "businessList" ? "business" : "my_business"
     }
   },
   watch: {
     table: "fetchData"
   },
+  mounted () {
+    this.fetchData()
+  },
   methods: {
     ...mapActions(["actions"]),
-    editItem(item) {
-      router.push({ name: "businessCard", params: { id: item.id } });
+    editItem (item) {
+      router.push({ name: "businessCard", params: { id: item.id } })
     },
-    fetchData() {
-      this.data = [];
+    fetchData () {
+      this.data = []
       Api()
         .get(this.table)
         .then(res => res.data)
         .then(res => {
-          this.data = res;
-        });
+          this.data = res
+        })
     }
-  },
-  mounted() {
-    this.fetchData();
   }
-};
+}
 </script>

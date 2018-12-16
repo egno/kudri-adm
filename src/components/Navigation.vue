@@ -1,54 +1,62 @@
 <template>
-  <v-navigation-drawer app :dark="!isBusinessCard" :value="navBarVisible" @input="onInput($event)">
-    <v-toolbar flat>
-      <v-toolbar-title @click="goHome()">{{appTitle}}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-toolbar-side-icon @click="navBar()"></v-toolbar-side-icon>
-    </v-toolbar>
-    <v-list>
-      <v-list-tile v-for="item in items" :key="item.title" :to="item.route">
-        <v-list-tile-action>
-          <v-icon>{{ item.icon }}</v-icon>
-        </v-list-tile-action>
+  <VNavigationDrawer
+    app
+    :dark="!isBusinessCard"
+    :value="navBarVisible"
+    @input="onInput($event)"
+  >
+    <VToolbar flat>
+      <VToolbarTitle @click="goHome()">
+        {{ appTitle }}
+      </VToolbarTitle>
+      <VSpacer />
+      <VToolbarSideIcon @click="navBar()" />
+    </VToolbar>
+    <VList>
+      <VListTile
+        v-for="item in items"
+        :key="item.title"
+        :to="item.route"
+      >
+        <VListTileAction>
+          <VIcon>{{ item.icon }}</VIcon>
+        </VListTileAction>
 
-        <v-list-tile-content>
-          <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-    </v-list>
-  </v-navigation-drawer>
+        <VListTileContent>
+          <VListTileTitle>{{ item.title }}</VListTileTitle>
+        </VListTileContent>
+      </VListTile>
+    </VList>
+  </VNavigationDrawer>
 </template>
 
 <script>
-import router from "@/router";
-import { mapActions, mapGetters } from "vuex";
+import router from "@/router"
+import { mapActions, mapGetters } from "vuex"
 
 export default {
-  data() {
+  data () {
     return {
       //
-    };
-  },
-  watch: {
-    token: "loadUserInfo"
+    }
   },
   computed: {
     ...mapGetters(["appTitle", "loggedIn", "token", "navBarVisible"]),
-    items() {
-      return this.menu.filter(x => x.show);
+    items () {
+      return this.menu.filter(x => x.show)
     },
-    isBusinessCard() {
+    isBusinessCard () {
       const businessCards = [
         "businessCard",
         "businessCardEmployee",
         "businessCardService"
-      ];
-      return businessCards.some(x => x === this.$route.name);
+      ]
+      return businessCards.some(x => x === this.$route.name)
     },
-    isManagerMenu() {
-      return !this.isBusinessCard;
+    isManagerMenu () {
+      return !this.isBusinessCard
     },
-    menu() {
+    menu () {
       return [
         {
           title: "Мой профиль",
@@ -93,17 +101,20 @@ export default {
           title: "Галерея",
           show: this.loggedIn && this.isBusinessCard
         }
-      ];
+      ]
     }
+  },
+  watch: {
+    token: "loadUserInfo"
   },
   methods: {
     ...mapActions(["navBar", "loadUserInfo"]),
-    goHome() {
-      router.push({ name: "home" });
+    goHome () {
+      router.push({ name: "home" })
     },
-    onInput(event) {
-      this.navBar(event);
+    onInput (event) {
+      this.navBar(event)
     }
   }
-};
+}
 </script>

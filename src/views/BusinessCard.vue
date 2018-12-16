@@ -1,31 +1,45 @@
 <template>
-  <v-container fluid grid-list-lg>
-    <v-layout row wrap>
-      <v-flex xs12 sm12 md6>
-        <business-main-info></business-main-info>
-      </v-flex>
-      <v-flex xs12 sm12 md6>
-        <user-info></user-info>
-      </v-flex>
-    </v-layout>
-  </v-container>
+  <VContainer
+    fluid
+    grid-list-lg
+  >
+    <VLayout
+      row
+      wrap
+    >
+      <VFlex
+        xs12
+        sm12
+        md6
+      >
+        <BusinessMainInfo />
+      </VFlex>
+      <VFlex
+        xs12
+        sm12
+        md6
+      >
+        <UserInfo />
+      </VFlex>
+    </VLayout>
+  </VContainer>
 </template>
 
 <script>
-import BusinessMainInfo from "@/components/BusinessMainInfo.vue";
-import UserInfo from "@/components/UserInfo.vue";
+import BusinessMainInfo from "@/components/BusinessMainInfo.vue"
+import UserInfo from "@/components/UserInfo.vue"
 
 export default {
-  data() {
+  components: { BusinessMainInfo, UserInfo },
+  data () {
     return {
       data: { data: {} }
-    };
+    }
   },
-  components: { BusinessMainInfo, UserInfo },
   computed: {
-    id() {
-      return this.$route.params.id;
+    id () {
+      return this.$route.params.id
     }
   }
-};
+}
 </script>

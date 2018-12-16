@@ -9,7 +9,9 @@ module.exports = {
       "ecmaFeatures": {
         "jsx": true
       },
-      "sourceType": "module"
+      "sourceType": "module",
+     "parser": "babel-eslint",
+      "ecmaVersion": 2017
     },
     // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
     "extends":     ["eslint:recommended",
@@ -32,4 +34,4 @@ module.exports = {
         }
       ]
   }
-};
+}

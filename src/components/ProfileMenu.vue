@@ -1,70 +1,101 @@
 <template>
-  <v-menu :close-on-content-click="false" v-model="menu">
-    <v-btn flat slot="activator">
-              <v-layout
-          align-center
-          row
-          spacer
-        >
-      <v-flex>
-      <v-avatar v-if="loggedIn" class="ma-1" color="teal" :size="36">
-        <!-- <span class="white--text">MT</span> -->
-        <img src="/images/01.png" alt="avatar">
-      </v-avatar>
-    </v-flex>
-      <v-flex>{{userID || "Войти"}}</v-flex>
-      </v-layout>
-    </v-btn>
-    <v-list>
-      <v-card v-if="loggedIn">
-        <v-card-title primary-title>
+  <VMenu
+    v-model="menu"
+    :close-on-content-click="false"
+  >
+    <VBtn
+      slot="activator"
+      flat
+    >
+      <VLayout
+        align-center
+        row
+        spacer
+      >
+        <VFlex>
+          <VAvatar
+            v-if="loggedIn"
+            class="ma-1"
+            color="teal"
+            :size="36"
+          >
+            <!-- <span class="white--text">MT</span> -->
+            <img
+              src="/images/01.png"
+              alt="avatar"
+            >
+          </VAvatar>
+        </VFlex>
+        <VFlex>{{ userID || "Войти" }}</VFlex>
+      </VLayout>
+    </VBtn>
+    <VList>
+      <VCard v-if="loggedIn">
+        <VCardTitle primary-title>
           <div>
-            <h3 class="headline mb-0">Выйти из личного кабинета?</h3>
+            <h3 class="headline mb-0">
+              Выйти из личного кабинета?
+            </h3>
             <div>
               Сейчас вы авторизованы как
-              <span class="font-weight-medium">{{userID}}</span>
+              <span class="font-weight-medium">
+                {{ userID }}
+              </span>
             </div>
           </div>
-        </v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" @click="sendLogout">Выйти</v-btn>
-        </v-card-actions>
-      </v-card>
-      <v-card v-else>
-        <v-card-text>
-          <v-form>
-            <v-text-field
+        </VCardTitle>
+        <VCardActions>
+          <VSpacer />
+          <VBtn
+            color="primary"
+            @click="sendLogout"
+          >
+            Выйти
+          </VBtn>
+        </VCardActions>
+      </VCard>
+      <VCard v-else>
+        <VCardText>
+          <VForm>
+            <VTextField
               v-model="flogin"
               prepend-icon="person"
               name="email"
               label="e-mail"
               type="text"
-            ></v-text-field>
-            <v-text-field
-              v-model="fpassword"
+            />
+            <VTextField
               id="password"
+              v-model="fpassword"
               prepend-icon="lock"
               name="password"
               label="Пароль"
               type="password"
-            ></v-text-field>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" @click="sendLogin">Войти</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-list>
-  </v-menu>
+            />
+          </VForm>
+        </VCardText>
+        <VCardActions>
+          <VSpacer />
+          <VBtn
+            color="primary"
+            @click="sendLogin"
+          >
+            Войти
+          </VBtn>
+        </VCardActions>
+      </VCard>
+    </VList>
+  </VMenu>
 </template>
 
 <script>
-import router from "@/router";
-import { mapGetters, mapActions } from "vuex";
+import router from "@/router"
+import { mapGetters, mapActions } from "vuex"
 
 export default {
+  props: {
+    source: {type: String, default: () => ""}
+  },
   data: () => ({
     drawer: null,
     errorMessage: null,
@@ -75,23 +106,20 @@ export default {
     snackText: "",
     snackColor: "error"
   }),
-  props: {
-    source: String
-  },
   computed: {
     ...mapGetters(["loggedIn", "userID"])
   },
   methods: {
     ...mapActions(["login", "logout"]),
-    sendLogin() {
-      this.login({ email: this.flogin, pass: this.fpassword });
-      this.menu = false;
+    sendLogin () {
+      this.login({ email: this.flogin, pass: this.fpassword })
+      this.menu = false
     },
-    sendLogout() {
-      this.logout();
-      router.push({ name: "home" });
-      this.menu = false;
+    sendLogout () {
+      this.logout()
+      router.push({ name: "home" })
+      this.menu = false
     }
   }
-};
+}
 </script>
