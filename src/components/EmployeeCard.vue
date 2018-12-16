@@ -4,6 +4,7 @@
       <UserAvatar
         class="ma-1"
         :name="item.name || item.email"
+        :src="item.avatar"
       />
       <VBtn
         small
