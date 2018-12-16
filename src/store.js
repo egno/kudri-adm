@@ -1,12 +1,12 @@
-import Vue from "vue"
-import Vuex from "vuex"
-import axios from "axios"
-import VueAxios from "vue-axios"
-import VueCacheData from "vue-cache-data"
-import Api from "@/api/backend"
+import Vue from "vue";
+import Vuex from "vuex";
+import axios from "axios";
+import VueAxios from "vue-axios";
+import VueCacheData from "vue-cache-data";
+import Api from "@/api/backend";
 
-Vue.use(Vuex)
-Vue.use(VueAxios, axios, VueCacheData)
+Vue.use(Vuex);
+Vue.use(VueAxios, axios, VueCacheData);
 
 // TODO вытащить localStorage в отдельный модуль
 
@@ -27,127 +27,127 @@ export default new Vuex.Store({
     alerts: state => state.messages,
     appTitle: state => state.appTitle,
     loggedIn: (state, getters) => {
-      return getters.userID
+      return getters.userID;
     },
     navBarVisible: state => state.navBarVisible,
     serviceCategories: state => state.serviceCategories,
     serviceList: state => state.serviceList,
     token: state => {
-      return state.token
+      return state.token;
       // window.localStorage.accessToken;
     },
     userID: (state, getters) => {
-      const info = getters.userInfo
+      const info = getters.userInfo;
       if (info) {
-        return info["email"]
+        return info["email"];
       }
     },
     userInfo: state => {
-      return state.userInfo
+      return state.userInfo;
       // return JSON.parse(window.localStorage.userInfo || "{}");
     }
   },
   mutations: {
     ADD_ALERT (state, payload) {
-      state.alerts.push(payload)
+      state.alerts.push(payload);
       if (state.alerts.length > state.alertMaxCount) {
-        state.alerts.shift()
+        state.alerts.shift();
       }
     },
     LOAD_SERVICE_CATEGORIES (state, payload) {
-      state.serviceCategories = payload
+      state.serviceCategories = payload;
     },
     LOAD_SERVICE_LIST (state, payload) {
-      state.serviceList = payload
+      state.serviceList = payload;
     },
     NAVBAR (state, payload) {
-      var status = payload == undefined ? !state.navBarVisible : payload
-      state.navBarVisible = status
+      var status = payload == undefined ? !state.navBarVisible : payload;
+      state.navBarVisible = status;
     },
     SET_ACTIONS (state, payload) {
-      state.actions = payload
+      state.actions = payload;
     },
     SET_TOKEN (state, payload) {
-      state.token = payload
+      state.token = payload;
       if (payload) {
-        localStorage.setItem("accessToken", payload)
+        localStorage.setItem("accessToken", payload);
       } else {
-        localStorage.removeItem("accessToken")
+        localStorage.removeItem("accessToken");
       }
     },
     SET_USERINFO (state, payload) {
-      state.userInfo = payload
+      state.userInfo = payload;
       if (payload) {
-        localStorage.setItem("userInfo", JSON.stringify(payload))
+        localStorage.setItem("userInfo", JSON.stringify(payload));
       } else {
-        localStorage.removeItem("userInfo")
+        localStorage.removeItem("userInfo");
       }
     },
     SHOW_NAVBAR (state) {
-      state.navBarVisible = true
+      state.navBarVisible = true;
     }
   },
   actions: {
     actions ({ commit }, payload) {
-      commit("SET_ACTIONS", payload)
+      commit("SET_ACTIONS", payload);
     },
     alert ({ commit }, payload) {
-      commit("ADD_ALERT", payload)
+      commit("ADD_ALERT", payload);
     },
     loadFromStorage ({ commit, dispatch }) {
-      commit("SET_TOKEN", localStorage.getItem("accessToken"))
-      dispatch("loadUserInfo")
+      commit("SET_TOKEN", localStorage.getItem("accessToken"));
+      dispatch("loadUserInfo");
     },
     loadServiceCategories ({ commit }) {
-      const path = "service"
+      const path = "service";
       Api()
         .get(path)
         .then(res => res.data)
         .then(res => {
-          commit("LOAD_SERVICE_CATEGORIES", res)
+          commit("LOAD_SERVICE_CATEGORIES", res);
         })
-        .catch(err => commit("ADD_ALERT", err.response.data))
+        .catch(err => commit("ADD_ALERT", err.response.data));
     },
     loadServiceList ({ commit }) {
-      const path = "subservice"
+      const path = "subservice";
       Api()
         .get(path)
         .then(res => res.data)
         .then(res => {
-          commit("LOAD_SERVICE_LIST", res)
+          commit("LOAD_SERVICE_LIST", res);
         })
-        .catch(err => commit("ADD_ALERT", err.response.data))
+        .catch(err => commit("ADD_ALERT", err.response.data));
     },
     loadUserInfo ({ commit }) {
-      const infoPath = "rpc/me"
+      const infoPath = "rpc/me";
       Api()
         .post(infoPath)
         .then(res => res.data)
         .then(res => {
-          commit("SET_USERINFO", res)
+          commit("SET_USERINFO", res);
         })
-        .catch(err => commit("ADD_ALERT", err.response.data))
+        .catch(err => commit("ADD_ALERT", err.response.data));
     },
     login ({ commit, dispatch }, payload) {
-      const loginPath = "rpc/login"
-      localStorage.removeItem("accessToken")
+      const loginPath = "rpc/login";
+      localStorage.removeItem("accessToken");
       Api()
         .post(loginPath, payload)
         .then(res => res.data)
         .then(res => res[0])
         .then(res => res.token)
         .then(token => {
-          commit("SET_TOKEN", token)
-          dispatch("loadUserInfo")
+          commit("SET_TOKEN", token);
+          dispatch("loadUserInfo");
         })
-        .catch(err => commit("ADD_ALERT", err.response.data))
+        .catch(err => commit("ADD_ALERT", err.response.data));
     },
     logout ({ commit }) {
-      commit("SET_TOKEN", "")
-      commit("SET_USERINFO", {})
+      commit("SET_TOKEN", "");
+      commit("SET_USERINFO", {});
     },
     navBar ({ commit }, payload) {
-      commit("NAVBAR", payload)
+      commit("NAVBAR", payload);
     }
   }
-})
+});

@@ -37,9 +37,9 @@
 </template>
 
 <script>
-import EmployeeCard from "@/components/EmployeeCard.vue"
+import EmployeeCard from "@/components/EmployeeCard.vue";
 // import EmployeeCardEdit from "@/components/ServiceCardEdit.vue";
-import Api from "@/api/backend"
+import Api from "@/api/backend";
 
 export default {
   components: {
@@ -52,15 +52,15 @@ export default {
       edit: false,
       newEmployee: {},
       service: null
-    }
+    };
   },
   computed: {
     id () {
-      return this.$route.params.id
+      return this.$route.params.id;
     }
   },
   mounted () {
-    this.fetchData()
+    this.fetchData();
   },
   methods: {
     fetchData () {
@@ -68,27 +68,27 @@ export default {
         .get(`employee?parent=eq.${this.id}`)
         .then(res => res.data)
         .then(res => {
-          this.data = res
-        })
+          this.data = res;
+        });
       Api()
         .get(`service`)
         .then(res => res.data)
         .then(res => {
-          this.service = res
-        })
+          this.service = res;
+        });
     },
     onDelete (i) {
-      this.edit = false
-      this.newService = {}
+      this.edit = false;
+      this.newService = {};
       if (i > -1) {
         this.data.data.service = this.data.data.service.filter(
           (x, n) => n !== i
-        )
+        );
       }
-      this.sendData()
+      this.sendData();
     },
     onSave (i) {
-      this.edit = false
+      this.edit = false;
       if (i === -1) {
         //   this.data.data["service"].push(Object.assign({}, this.newService));
       }
@@ -101,5 +101,5 @@ export default {
       // Api().patch(`business?id=eq.${this.id}`, this.data);
     }
   }
-}
+};
 </script>

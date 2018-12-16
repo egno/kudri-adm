@@ -15,8 +15,8 @@
   data () {
     return {
       //
-    }
+    };
   },
-  }
+  };
 </script>
 

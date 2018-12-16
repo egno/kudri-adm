@@ -26,20 +26,20 @@
 </template>
 
 <script>
-import BusinessMainInfo from "@/components/BusinessMainInfo.vue"
-import UserInfo from "@/components/UserInfo.vue"
+import BusinessMainInfo from "@/components/BusinessMainInfo.vue";
+import UserInfo from "@/components/UserInfo.vue";
 
 export default {
   components: { BusinessMainInfo, UserInfo },
   data () {
     return {
       data: { data: {} }
-    }
+    };
   },
   computed: {
     id () {
-      return this.$route.params.id
+      return this.$route.params.id;
     }
   }
-}
+};
 </script>

@@ -31,30 +31,30 @@
 </template>
 
 <script>
-import router from "@/router"
-import { mapActions, mapGetters } from "vuex"
+import router from "@/router";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   data () {
     return {
       //
-    }
+    };
   },
   computed: {
     ...mapGetters(["appTitle", "loggedIn", "token", "navBarVisible"]),
     items () {
-      return this.menu.filter(x => x.show)
+      return this.menu.filter(x => x.show);
     },
     isBusinessCard () {
       const businessCards = [
         "businessCard",
         "businessCardEmployee",
         "businessCardService"
-      ]
-      return businessCards.some(x => x === this.$route.name)
+      ];
+      return businessCards.some(x => x === this.$route.name);
     },
     isManagerMenu () {
-      return !this.isBusinessCard
+      return !this.isBusinessCard;
     },
     menu () {
       return [
@@ -101,7 +101,7 @@ export default {
           title: "Галерея",
           show: this.loggedIn && this.isBusinessCard
         }
-      ]
+      ];
     }
   },
   watch: {
@@ -110,11 +110,11 @@ export default {
   methods: {
     ...mapActions(["navBar", "loadUserInfo"]),
     goHome () {
-      router.push({ name: "home" })
+      router.push({ name: "home" });
     },
     onInput (event) {
-      this.navBar(event)
+      this.navBar(event);
     }
   }
-}
+};
 </script>

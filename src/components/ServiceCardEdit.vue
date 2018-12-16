@@ -74,49 +74,49 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex"
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   props: {
     item: {
       type: Object,
-      default: ()=> {return {}}
+      default: ()=> {return {};}
     }
   },
   data () {
     return {
       data: {}
-    }
+    };
   },
   computed: {
     ...mapGetters(["serviceCategories", "serviceList"]),
     categories () {
-      return this.serviceCategories.map(x => x.code)
+      return this.serviceCategories.map(x => x.code);
     },
     services () {
-      return this.serviceList.map(x => x.name)
+      return this.serviceList.map(x => x.name);
     }
   },
   mounted () {
-    this.data = this.item
-    this.loadServiceList
+    this.data = this.item;
+    this.loadServiceList;
     // Object.assign({}, this.item);
   },
   methods: {
     ...mapActions(["loadServiceList"]),
     onDelete () {
-      this.$emit("onDelete", undefined)
+      this.$emit("onDelete", undefined);
     },
     onNameUpdate (event) {
-      console.log("upd", event)
-      const calcItem = this.serviceList.filter(x => x.name == event)[0]
+      console.log("upd", event);
+      const calcItem = this.serviceList.filter(x => x.name == event)[0];
       if (calcItem) {
-        this.item.category = calcItem.category
+        this.item.category = calcItem.category;
       }
     },
     onSave () {
-      this.$emit("onSave", this.item)
+      this.$emit("onSave", this.item);
     }
   }
-}
+};
 </script>

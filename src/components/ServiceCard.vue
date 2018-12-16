@@ -48,31 +48,31 @@
 </template>
 
 <script>
-import ServiceCardEdit from "@/components/ServiceCardEdit.vue"
+import ServiceCardEdit from "@/components/ServiceCardEdit.vue";
 
 export default {
   components: { ServiceCardEdit },
   props: {
     item: {
       type: Object,
-      default: ()=> {return {}}
+      default: ()=> {return {};}
     }
   },
   data () {
     return {
       edit: false
-    }
+    };
   },
   methods: {
     onDelete () {
-      this.edit = false
-      this.$emit("onDelete", this.item)
+      this.edit = false;
+      this.$emit("onDelete", this.item);
     },
     onSave () {
-      this.edit = false
+      this.edit = false;
       //   this.item = Object.assign(this.item, data);
-      this.$emit("onSave", this.item)
+      this.$emit("onSave", this.item);
     }
   }
-}
+};
 </script>

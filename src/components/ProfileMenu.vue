@@ -89,8 +89,8 @@
 </template>
 
 <script>
-import router from "@/router"
-import { mapGetters, mapActions } from "vuex"
+import router from "@/router";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   props: {
@@ -112,14 +112,14 @@ export default {
   methods: {
     ...mapActions(["login", "logout"]),
     sendLogin () {
-      this.login({ email: this.flogin, pass: this.fpassword })
-      this.menu = false
+      this.login({ email: this.flogin, pass: this.fpassword });
+      this.menu = false;
     },
     sendLogout () {
-      this.logout()
-      router.push({ name: "home" })
-      this.menu = false
+      this.logout();
+      router.push({ name: "home" });
+      this.menu = false;
     }
   }
-}
+};
 </script>

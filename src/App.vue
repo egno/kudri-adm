@@ -24,10 +24,10 @@
 </template>
 
 <script>
-import Navigation from "@/components/Navigation.vue"
-import ProfileMenu from "@/components/ProfileMenu.vue"
-import router from "@/router"
-import { mapActions, mapGetters } from "vuex"
+import Navigation from "@/components/Navigation.vue";
+import ProfileMenu from "@/components/ProfileMenu.vue";
+import router from "@/router";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "App",
@@ -38,22 +38,22 @@ export default {
   data () {
     return {
       //
-    }
+    };
   },
   computed: {
     ...mapGetters(["actions", "appTitle", "navBarVisible", "userID"]),
     defaultAction () {
       if (!this.actions) {
-        return
+        return;
       }
-      return this.actions.filter(x => x["default"])[0]
+      return this.actions.filter(x => x["default"])[0];
     }
   },
   mounted () {
-    this.loadFromStorage()
-    this.loadUserInfo()
-    this.loadServiceCategories()
-    this.loadServiceList()
+    this.loadFromStorage();
+    this.loadUserInfo();
+    this.loadServiceCategories();
+    this.loadServiceList();
   },
   methods: {
     ...mapActions([
@@ -64,8 +64,8 @@ export default {
       "navBar"
     ]),
     goHome () {
-      router.push({ name: "home" })
+      router.push({ name: "home" });
     }
   }
-}
+};
 </script>

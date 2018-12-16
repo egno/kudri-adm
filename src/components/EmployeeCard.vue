@@ -70,24 +70,24 @@
 
 export default {
   props: {
-    item: {type: Object, default: () => {return {}}}
+    item: {type: Object, default: () => {return {};}}
   },
   data () {
     return {
       edit: false
-    }
+    };
   },
   // components: { ServiceCardEdit },
   methods: {
     onDelete () {
-      this.edit = false
-      this.$emit("onDelete", this.item)
+      this.edit = false;
+      this.$emit("onDelete", this.item);
     },
     onSave () {
-      this.edit = false
+      this.edit = false;
       //   this.item = Object.assign(this.item, data);
-      this.$emit("onSave", this.item)
+      this.$emit("onSave", this.item);
     }
   }
-}
+};
 </script>

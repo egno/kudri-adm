@@ -21,21 +21,21 @@
 </template>
 
 <script>
-import Api from "@/api/backend"
+import Api from "@/api/backend";
 
 export default {
   data () {
     return {
       data: { data: {} }
-    }
+    };
   },
   computed: {
     id () {
-      return this.$route.params.id
+      return this.$route.params.id;
     }
   },
   mounted () {
-    this.fetchData()
+    this.fetchData();
   },
   methods: {
     fetchData () {
@@ -44,12 +44,12 @@ export default {
         .then(res => res.data)
         .then(res => res[0])
         .then(res => {
-          this.data = res
-        })
+          this.data = res;
+        });
     },
     sendData () {
-      Api().patch(`business?id=eq.${this.id}`, this.data)
+      Api().patch(`business?id=eq.${this.id}`, this.data);
     }
   }
-}
+};
 </script>

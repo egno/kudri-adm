@@ -34,9 +34,9 @@
 </template>
 
 <script>
-import Api from "@/api/backend"
-import router from "@/router"
-import { mapActions, mapGetters } from "vuex"
+import Api from "@/api/backend";
+import router from "@/router";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   data () {
@@ -56,34 +56,34 @@ export default {
         { text: "Действия", value: "" }
       ],
       data: []
-    }
+    };
   },
   computed: {
     ...mapGetters["loggedIn"],
     table () {
-      return this.$route.name == "businessList" ? "business" : "my_business"
+      return this.$route.name == "businessList" ? "business" : "my_business";
     }
   },
   watch: {
     table: "fetchData"
   },
   mounted () {
-    this.fetchData()
+    this.fetchData();
   },
   methods: {
     ...mapActions(["actions"]),
     editItem (item) {
-      router.push({ name: "businessCard", params: { id: item.id } })
+      router.push({ name: "businessCard", params: { id: item.id } });
     },
     fetchData () {
-      this.data = []
+      this.data = [];
       Api()
         .get(this.table)
         .then(res => res.data)
         .then(res => {
-          this.data = res
-        })
+          this.data = res;
+        });
     }
   }
-}
+};
 </script>
