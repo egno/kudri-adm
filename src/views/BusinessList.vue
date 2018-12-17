@@ -9,25 +9,31 @@
       slot-scope="props"
     >
       <td>
-        <VLayout row>
-          <VFlex>
-            <VBtn
-              fab
-              flat
-              right
-              small
-              :href="'businessCard/'+props.item.id"
-              target="_blank"
-            >
-              <UserAvatar
-                class="ma-1"
-                :name="props.item.data.name || props.item.data.email"
-                size="2.4em"
-                :src="props.item.data.avatar"
-              />
-            </VBtn>
-          </VFlex>
-          <VFlex align-self-center>
+        <VLayout
+          row
+          align-center
+          fill-height
+          justify-start
+        >
+          <VBtn
+            fab
+            flat
+            right
+            small
+            :href="'businessCard/'+props.item.id"
+            target="_blank"
+          >
+            <UserAvatar
+              class="ma-1"
+              :name="props.item.data.name || props.item.data.email"
+              size="2.4em"
+              :src="props.item.data.avatar"
+            />
+          </VBtn>
+          <VFlex
+            align-self-center
+            justify-start
+          >
             {{ props.item.data.name }}
           </VFlex>
         </VLayout>
