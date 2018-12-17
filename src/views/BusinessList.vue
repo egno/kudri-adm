@@ -2,8 +2,14 @@
   <VDataTable
     :headers="headers"
     :items="data"
+    :loading="progressQuery"
     class="elevation-1"
   >
+    <VProgressLinear
+      slot="progress"
+      color="blue"
+      indeterminate
+    />
     <template
       slot="items"
       slot-scope="props"
@@ -90,7 +96,8 @@ export default {
         { text: 'Статус', value: '' },
         { text: 'Действия', value: '' }
       ],
-      data: []
+      data: [],
+      progressQuery: false
     };
   },
   computed: {
@@ -126,12 +133,17 @@ export default {
       router.push({ name: 'businessCard', params: { id: item.id } });
     },
     fetchData() {
+      this.progressQuery = true;
       this.data = [];
       Api()
         .get(`${this.table}${this.querySearchString}`)
         .then(res => res.data)
         .then(res => {
           this.data = res;
+          this.progressQuery = false;
+        })
+        .catch(() => {
+          this.progressQuery = false;
         });
     }
   }

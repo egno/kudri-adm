@@ -3,7 +3,6 @@
     <VLayout
       row
       align-center
-      fill-height
       justify-start
     >
       <VFlex v-if="!navBarVisible">
@@ -29,9 +28,9 @@
       <VFlex>
         <VTextField
           v-model="searchString"
-          box
           clearable
           label="Поиск"
+          single-line
           type="text"
         />
       </VFlex>
