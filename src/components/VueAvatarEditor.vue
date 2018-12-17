@@ -1,0 +1,110 @@
+<template>
+  <div>
+    <VueAvatar
+      ref="vueavatar"
+      :width="width"
+      :height="height"
+      :rotation="rotation"
+      :border-radius="borderRadius"
+      :border="border"
+      :color="color"
+      :scale="+scale"
+      @vue-avatar-editor:image-ready="onImageReady"
+      @select-file="onSelectFile($event)"
+    />
+    <br>
+    <label v-if="hasScale">
+      Zoom : {{ scale }}x
+           <br>
+           <input
+             v-model="scale"
+             type="range"
+             min="1"
+             max="3"
+             step="0.02"
+           >
+    </label>
+    <br>
+    <label v-if="hasRotation">
+      Rotation : {{ rotation }}°
+               <br>
+               <input
+                 v-model="rotation"
+                 type="range"
+                 min="0"
+                 max="360"
+                 step="1"
+               >
+    </label>
+    <br>
+    <button @click="finished">
+      {{ finishText }}
+    </button>
+  </div>
+</template>
+
+<script>
+import VueAvatar from './VueAvatar.vue';
+
+export default {
+  components: {
+    VueAvatar
+  },
+  props: {
+    finishText: {
+      type: String,
+      default: 'Save'
+    },
+    hasRotation: {
+      type: Boolean,
+      default: false
+    },
+    hasScale: {
+      type: Boolean,
+      default: true
+    },
+    image: {
+      type: String,
+      default: ''
+    },
+    border: {
+      type: Number,
+      default: 25
+    },
+    borderRadius: {
+      type: Number,
+      default: 0
+    },
+    width: {
+      type: Number,
+      default: 200
+    },
+    height: {
+      type: Number,
+      default: 200
+    },
+    color: {
+      type: Array,
+      default: () => [0, 0, 0, 0.5]
+    }
+  },
+  data() {
+    return {
+      rotation: 0,
+      scale: 1
+    };
+  },
+  methods: {
+    onSelectFile(files) {
+      this.$emit('select-file', files);
+    },
+    onImageReady() {
+      this.scale = 1;
+      this.rotation = 0;
+    },
+    finished() {
+      return this.$emit('finished', this.$refs.vueavatar.getImageScaled());
+    }
+  }
+};
+</script>

@@ -1,6 +1,11 @@
 <template>
   <VCard flat>
     <VCardTitle>Учетная запись</VCardTitle>
+    <VueAvatarEditor
+      @finished="saveClicked"
+      @select-file="saveFile"
+    />
+    <img ref="image">
     <VForm>
       <VTextField
         v-model="data.data.email"
@@ -21,24 +26,29 @@
 </template>
 
 <script>
-import Api from "@/api/backend";
+import VueAvatarEditor from '@/components/VueAvatarEditor.vue';
+import Api from '@/api/backend';
+import axios from 'axios';
 
 export default {
-  data () {
+  components: {
+    VueAvatarEditor: VueAvatarEditor
+  },
+  data() {
     return {
       data: { data: {} }
     };
   },
   computed: {
-    id () {
+    id() {
       return this.$route.params.id;
     }
   },
-  mounted () {
+  mounted() {
     this.fetchData();
   },
   methods: {
-    fetchData () {
+    fetchData() {
       Api()
         .get(`business?id=eq.${this.id}`)
         .then(res => res.data)
@@ -47,7 +57,27 @@ export default {
           this.data = res;
         });
     },
-    sendData () {
+    saveClicked: function saveClicked(img) {
+      this.$refs.image.src = img.toDataURL();
+    },
+    saveFile(files) {
+      let formData = new FormData();
+      console.log(files);
+      formData.append('file', files[0]);
+      axios
+        .post('http://185.244.173.72/upfiles/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        .then(function() {
+          console.log('SUCCESS!!');
+        })
+        .catch(function() {
+          console.log('FAILURE!!');
+        });
+    },
+    sendData() {
       Api().patch(`business?id=eq.${this.id}`, this.data);
     }
   }
