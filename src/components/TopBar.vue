@@ -20,6 +20,7 @@
       <VFlex>
         <VBtn
           v-if="defaultAction"
+          key="mainButton"
           color="primary"
         >
           {{ defaultAction.label }}
@@ -27,7 +28,9 @@
       </VFlex>
       <VFlex>
         <VTextField
+          key="mainSearch"
           v-model="searchString"
+          autofocus
           clearable
           label="Поиск"
           single-line
