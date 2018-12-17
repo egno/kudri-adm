@@ -88,26 +88,41 @@ export default {
     };
   },
   computed: {
-    ...mapGetters['loggedIn'],
+    ...mapGetters(['loggedIn', 'searchString']),
     table() {
       return this.$route.name == 'businessList' ? 'business' : 'my_business';
+    },
+    querySearchString() {
+      if (!this.searchString) {
+        return '';
+      }
+      return `?or=(data->>email.ilike.*${
+        this.searchString
+      }*,data->>name.ilike.*${this.searchString}*,data->>inn.ilike.${
+        this.searchString
+      }*,data->>address.ilike.*${this.searchString}*)`;
     }
   },
   watch: {
-    table: 'fetchData'
+    table: 'fetchData',
+    searchString: 'fetchData'
   },
   mounted() {
     this.fetchData();
+    this.setActions(this.formActions);
+  },
+  destroyed() {
+    this.setActions([]);
   },
   methods: {
-    ...mapActions(['actions']),
+    ...mapActions(['setActions']),
     editItem(item) {
       router.push({ name: 'businessCard', params: { id: item.id } });
     },
     fetchData() {
       this.data = [];
       Api()
-        .get(this.table)
+        .get(`${this.table}${this.querySearchString}`)
         .then(res => res.data)
         .then(res => {
           this.data = res;

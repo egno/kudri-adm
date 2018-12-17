@@ -1,21 +1,6 @@
 <template>
   <VApp app>
-    <VToolbar app>
-      <VToolbarSideIcon
-        v-if="!navBarVisible"
-        @click="navBar()"
-      />
-      <VToolbarTitle
-        v-if="!navBarVisible"
-        @click="goHome()"
-      >
-        {{ appTitle }}
-      </VToolbarTitle>
-      <VSpacer />
-      <VToolbarItems>
-        <ProfileMenu />
-      </VToolbarItems>
-    </VToolbar>
+    <TopBar app />
     <Navigation />
     <VContent app>
       <RouterView />
@@ -24,32 +9,32 @@
 </template>
 
 <script>
-import Navigation from "@/components/Navigation.vue";
-import ProfileMenu from "@/components/ProfileMenu.vue";
-import router from "@/router";
-import { mapActions, mapGetters } from "vuex";
+import Navigation from '@/components/Navigation.vue';
+import TopBar from '@/components/TopBar.vue';
+import router from '@/router';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     Navigation,
-    ProfileMenu
+    TopBar
   },
-  data () {
+  data() {
     return {
       //
     };
   },
   computed: {
-    ...mapGetters(["actions", "appTitle", "navBarVisible", "userID"]),
-    defaultAction () {
+    ...mapGetters(['actions', 'appTitle', 'navBarVisible', 'userID']),
+    defaultAction() {
       if (!this.actions) {
         return;
       }
-      return this.actions.filter(x => x["default"])[0];
+      return this.actions.filter(x => x['default'])[0];
     }
   },
-  mounted () {
+  mounted() {
     this.loadFromStorage();
     this.loadUserInfo();
     this.loadServiceCategories();
@@ -57,14 +42,14 @@ export default {
   },
   methods: {
     ...mapActions([
-      "loadFromStorage",
-      "loadServiceCategories",
-      "loadServiceList",
-      "loadUserInfo",
-      "navBar"
+      'loadFromStorage',
+      'loadServiceCategories',
+      'loadServiceList',
+      'loadUserInfo',
+      'navBar'
     ]),
-    goHome () {
-      router.push({ name: "home" });
+    goHome() {
+      router.push({ name: 'home' });
     }
   }
 };
