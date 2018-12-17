@@ -8,7 +8,34 @@
       slot="items"
       slot-scope="props"
     >
-      <td>{{ props.item.data.name }}</td>
+      <td>
+        <VLayout row>
+          <VFlex>
+            <VBtn
+              fab
+              flat
+              right
+              small
+              :href="'businessCard/'+props.item.id"
+              target="_blank"
+            >
+              <UserAvatar
+                class="ma-1"
+                :name="props.item.data.name || props.item.data.email"
+                size="2.4em"
+                :src="props.item.data.avatar"
+              />
+            </VBtn>
+          </VFlex>
+          <VFlex align-self-center>
+            {{ props.item.data.name }}
+          </VFlex>
+        </VLayout>
+        <a
+          :href="'businessCard/'+props.item.id"
+          target="_blank"
+        />
+      </td>
       <td>{{ props.item.type }}</td>
       <td>{{ props.item.data.inn }}</td>
       <td>{{ props.item.data.address }}</td>
@@ -34,48 +61,50 @@
 </template>
 
 <script>
-import Api from "@/api/backend";
-import router from "@/router";
-import { mapActions, mapGetters } from "vuex";
+import Api from '@/api/backend';
+import router from '@/router';
+import UserAvatar from '@/components/UserAvatar.vue';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
-  data () {
+  components: { UserAvatar },
+  data() {
     return {
       formActions: [
-        { label: "Добавить", action: "newBusiness", default: true }
+        { label: 'Добавить', action: 'newBusiness', default: true }
       ],
       headers: [
-        { text: "Название", value: "name" },
-        { text: "Тип", value: "" },
-        { text: "ИНН", value: "data.inn" },
-        { text: "Адрес", value: "data.address" },
-        { text: "Email", value: "data.email" },
-        { text: "Менеджер", value: "data.manager" },
-        { text: "Дата", value: "" },
-        { text: "Статус", value: "" },
-        { text: "Действия", value: "" }
+        { text: 'Название', value: 'name' },
+        { text: 'Тип', value: '' },
+        { text: 'ИНН', value: 'data.inn' },
+        { text: 'Адрес', value: 'data.address' },
+        { text: 'Email', value: 'data.email' },
+        { text: 'Менеджер', value: 'data.manager' },
+        { text: 'Дата', value: '' },
+        { text: 'Статус', value: '' },
+        { text: 'Действия', value: '' }
       ],
       data: []
     };
   },
   computed: {
-    ...mapGetters["loggedIn"],
-    table () {
-      return this.$route.name == "businessList" ? "business" : "my_business";
+    ...mapGetters['loggedIn'],
+    table() {
+      return this.$route.name == 'businessList' ? 'business' : 'my_business';
     }
   },
   watch: {
-    table: "fetchData"
+    table: 'fetchData'
   },
-  mounted () {
+  mounted() {
     this.fetchData();
   },
   methods: {
-    ...mapActions(["actions"]),
-    editItem (item) {
-      router.push({ name: "businessCard", params: { id: item.id } });
+    ...mapActions(['actions']),
+    editItem(item) {
+      router.push({ name: 'businessCard', params: { id: item.id } });
     },
-    fetchData () {
+    fetchData() {
       this.data = [];
       Api()
         .get(this.table)
@@ -87,3 +116,6 @@ export default {
   }
 };
 </script>
+
+<style >
+</style>

@@ -80,7 +80,6 @@ export default {
       edit: false
     };
   },
-  // components: { ServiceCardEdit },
   methods: {
     onDelete() {
       this.edit = false;
