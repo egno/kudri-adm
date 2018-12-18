@@ -85,7 +85,7 @@ export default {
       return this.data.data.email;
     },
     filename() {
-      return this.data.data.email;
+      return this.uuidv4();
     }
   },
   mounted() {
@@ -102,6 +102,7 @@ export default {
         });
     },
     saveImage(img) {
+      this.avatarEdit = false;
       var blobBin = atob(img.toDataURL().split(',')[1]);
       var array = [];
       for (var i = 0; i < blobBin.length; i++) {
@@ -109,8 +110,8 @@ export default {
       }
       var file = new Blob([new Uint8Array(array)], { type: 'image/png' });
       let formData = new FormData();
-      console.log(file);
-      formData.append('file', file, `${this.id}.png`);
+      this.data.data.avatar = `${this.filename}.png`;
+      formData.append('file', file, this.data.data.avatar);
       axios
         .post(process.env.VUE_APP_UPLOAD, formData, {
           headers: {
@@ -125,8 +126,17 @@ export default {
         });
     },
     sendData() {
-      this.saveImage();
+      //this.saveImage();
       Api().patch(`business?id=eq.${this.id}`, this.data);
+    },
+    uuidv4() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(
+        c
+      ) {
+        var r = (Math.random() * 16) | 0,
+          v = c == 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      });
     }
   }
 };

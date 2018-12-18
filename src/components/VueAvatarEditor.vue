@@ -1,45 +1,64 @@
 <template>
   <VCard>
-    <VueAvatar
-      ref="vueavatar"
-      :width="width"
-      :height="height"
-      :rotation="rotation"
-      :border-radius="borderRadius"
-      :border="border"
-      :color="color"
-      :scale="+scale"
-      @vue-avatar-editor:image-ready="onImageReady"
-      @select-file="onSelectFile($event)"
-    />
-    <br>
-    <label v-if="hasScale">
-      Zoom : {{ scale }}x
-           <br>
-           <input
-             v-model="scale"
-             type="range"
-             min="1"
-             max="3"
-             step="0.02"
-           >
-    </label>
-    <br>
-    <label v-if="hasRotation">
-      Rotation : {{ rotation }}°
-               <br>
-               <input
-                 v-model="rotation"
-                 type="range"
-                 min="0"
-                 max="360"
-                 step="1"
-               >
-    </label>
-    <br>
-    <button @click="finished">
-      {{ finishText }}
-    </button>
+    <VContainer justify-center>
+      <VLayout
+        align-center
+        justify-space-around
+        row
+      >
+        <VFlex justify-center>
+          <VueAvatar
+            ref="vueavatar"
+            :width="width"
+            :height="height"
+            :rotation="rotation"
+            :border-radius="borderRadius"
+            :border="border"
+            :color="color"
+            :scale="+scale"
+            @vue-avatar-editor:image-ready="onImageReady"
+            @select-file="onSelectFile($event)"
+          />
+        </VFlex>
+        <VFlex>
+          <VLayout
+            column
+            fill-height
+          >
+            <VFlex>
+              <input
+                v-model="scale"
+                type="range"
+                min="1"
+                max="3"
+                step="0.02"
+              >
+              <br>
+              <label v-if="hasRotation">
+                Rotation : {{ rotation }}°
+                         <br>
+                         <input
+                           v-model="rotation"
+                           type="range"
+                           min="0"
+                           max="360"
+                           step="1"
+                         >
+              </label>
+            </VFlex>
+          </VLayout>
+        </VFlex>
+      </VLayout>
+    </VContainer>
+    <VCardActions>
+      <VSpacer />
+      <VBtn
+        color="primary"
+        @click="finished"
+      >
+        Сохранить
+      </VBtn>
+    </VCardActions>
   </VCard>
 </template>
 
