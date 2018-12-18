@@ -1,21 +1,53 @@
 <template>
   <VCard flat>
     <VCardTitle>Учетная запись</VCardTitle>
-    <UserAvatar
-      v-if="email"
-      class="ma-1"
-      :name="data.data.name || data.data.email"
-      :src="data.data.avatar || `${id}.png`"
-    />
-    <VueAvatarEditor @finished="saveImage" />
-    <img ref="image">
-    <VForm>
-      <VTextField
-        v-model="data.data.email"
-        label="E-mail"
-        prepend-icon="email"
-      />
-    </VForm>
+    <VLayout
+      align-center
+      justify-center
+      row
+      fill-height
+    >
+      <VFlex
+        xs6
+        md4
+        lg1
+        align-self-center
+      >
+        <VBtn
+          fab
+          left
+          large
+          @click="avatarEdit = !avatarEdit"
+        >
+          <UserAvatar
+            v-if="email"
+            size="4em"
+            :name="data.data.name || data.data.email"
+            :src="data.data.avatar || `${id}.png`"
+          />
+        </VBtn>
+      </VFlex>
+      <VFlex
+        xs12
+        md8
+        lg11
+      >
+        <VLayout column>
+          <VFlex>
+            <VTextField
+              v-model="data.data.email"
+              label="E-mail"
+              prepend-icon="email"
+            />
+          </VFlex>
+        </VLayout>
+      </VFlex>
+    </VLayout>
+
+    <VDialog v-model="avatarEdit">
+      <VueAvatarEditor @finished="saveImage" />
+    </VDialog>
+
     <VCardActions>
       <VSpacer />
       <VBtn
@@ -41,6 +73,7 @@ export default {
   },
   data() {
     return {
+      avatarEdit: false,
       data: { data: {} }
     };
   },
@@ -49,6 +82,9 @@ export default {
       return this.$route.params.id;
     },
     email() {
+      return this.data.data.email;
+    },
+    filename() {
       return this.data.data.email;
     }
   },
@@ -66,7 +102,6 @@ export default {
         });
     },
     saveImage(img) {
-      this.$refs.image.src = img.toDataURL();
       var blobBin = atob(img.toDataURL().split(',')[1]);
       var array = [];
       for (var i = 0; i < blobBin.length; i++) {

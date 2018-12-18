@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <VCard>
     <VueAvatar
       ref="vueavatar"
       :width="width"
@@ -40,7 +40,7 @@
     <button @click="finished">
       {{ finishText }}
     </button>
-  </div>
+  </VCard>
 </template>
 
 <script>
