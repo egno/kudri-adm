@@ -120,6 +120,7 @@ export default {
         })
         .then(function() {
           console.log('SUCCESS!!');
+          this.data.data.avatar = `${this.filename}.png`;
         })
         .catch(function() {
           console.log('FAILURE!!');
