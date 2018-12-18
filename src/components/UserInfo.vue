@@ -23,7 +23,7 @@
             v-if="email"
             size="4em"
             :name="data.data.name || data.data.email"
-            :src="data.data.avatar || `${id}.png`"
+            :src="avatar"
           />
         </VBtn>
       </VFlex>
@@ -78,6 +78,9 @@ export default {
     };
   },
   computed: {
+    avatar() {
+      return this.data.data.avatar;
+    },
     id() {
       return this.$route.params.id;
     },
@@ -109,6 +112,7 @@ export default {
       let formData = new FormData();
       let newFileName = `${this.uuidv4()}.png`;
       formData.append('file', file, newFileName);
+      let vm = this;
       axios
         .post(process.env.VUE_APP_UPLOAD, formData, {
           headers: {
@@ -116,8 +120,8 @@ export default {
           }
         })
         .then(function() {
+          vm.data.data.avatar = newFileName;
           console.log('SUCCESS!!');
-          this.data.data.avatar = newFileName;
         })
         .catch(function() {
           console.log('FAILURE!!');
