@@ -123,6 +123,7 @@ export default {
           vm.data.data.avatar = newFileName;
           console.log('SUCCESS!!');
         })
+        .then(() => vm.sendData())
         .catch(function() {
           console.log('FAILURE!!');
         });
