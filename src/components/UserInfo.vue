@@ -7,12 +7,7 @@
       row
       fill-height
     >
-      <VFlex
-        xs6
-        md4
-        lg1
-        align-self-center
-      >
+      <VFlex align-self-center>
         <VBtn
           fab
           left
@@ -27,11 +22,7 @@
           />
         </VBtn>
       </VFlex>
-      <VFlex
-        xs12
-        md8
-        lg11
-      >
+      <VFlex>
         <VLayout column>
           <VFlex>
             <VTextField
