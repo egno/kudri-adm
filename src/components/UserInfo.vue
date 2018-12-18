@@ -83,9 +83,6 @@ export default {
     },
     email() {
       return this.data.data.email;
-    },
-    filename() {
-      return this.uuidv4();
     }
   },
   mounted() {
@@ -110,8 +107,8 @@ export default {
       }
       var file = new Blob([new Uint8Array(array)], { type: 'image/png' });
       let formData = new FormData();
-      this.data.data.avatar = `${this.filename}.png`;
-      formData.append('file', file, this.data.data.avatar);
+      let newFileName = `${this.uuidv4()}.png`;
+      formData.append('file', file, newFileName);
       axios
         .post(process.env.VUE_APP_UPLOAD, formData, {
           headers: {
@@ -120,7 +117,7 @@ export default {
         })
         .then(function() {
           console.log('SUCCESS!!');
-          this.data.data.avatar = `${this.filename}.png`;
+          this.data.data.avatar = newFileName;
         })
         .catch(function() {
           console.log('FAILURE!!');
