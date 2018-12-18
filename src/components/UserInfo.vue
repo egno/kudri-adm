@@ -65,7 +65,7 @@ export default {
       console.log(files);
       formData.append('file', files[0]);
       axios
-        .post('http://185.244.173.72/upfiles/', formData, {
+        .post('http://185.244.173.72/uploads/', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
