@@ -1,10 +1,13 @@
 <template>
   <VCard flat>
     <VCardTitle>Учетная запись</VCardTitle>
-    <VueAvatarEditor
-      @finished="saveClicked"
-      @select-file="saveFile"
+    <UserAvatar
+      v-if="email"
+      class="ma-1"
+      :name="data.data.name || data.data.email"
+      :src="data.data.avatar || `${id}.png`"
     />
+    <VueAvatarEditor @finished="saveImage" />
     <img ref="image">
     <VForm>
       <VTextField
@@ -26,13 +29,15 @@
 </template>
 
 <script>
+import UserAvatar from '@/components/UserAvatar.vue';
 import VueAvatarEditor from '@/components/VueAvatarEditor.vue';
 import Api from '@/api/backend';
 import axios from 'axios';
 
 export default {
   components: {
-    VueAvatarEditor: VueAvatarEditor
+    VueAvatarEditor: VueAvatarEditor,
+    UserAvatar: UserAvatar
   },
   data() {
     return {
@@ -42,6 +47,9 @@ export default {
   computed: {
     id() {
       return this.$route.params.id;
+    },
+    email() {
+      return this.data.data.email;
     }
   },
   mounted() {
@@ -57,15 +65,19 @@ export default {
           this.data = res;
         });
     },
-    saveClicked: function saveClicked(img) {
+    saveImage(img) {
       this.$refs.image.src = img.toDataURL();
-    },
-    saveFile(files) {
+      var blobBin = atob(img.toDataURL().split(',')[1]);
+      var array = [];
+      for (var i = 0; i < blobBin.length; i++) {
+        array.push(blobBin.charCodeAt(i));
+      }
+      var file = new Blob([new Uint8Array(array)], { type: 'image/png' });
       let formData = new FormData();
-      console.log(files);
-      formData.append('file', files[0]);
+      console.log(file);
+      formData.append('file', file, `${this.id}.png`);
       axios
-        .post('http://185.244.173.72/uploads/', formData, {
+        .post(process.env.VUE_APP_UPLOAD, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -78,6 +90,7 @@ export default {
         });
     },
     sendData() {
+      this.saveImage();
       Api().patch(`business?id=eq.${this.id}`, this.data);
     }
   }
