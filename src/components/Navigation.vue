@@ -31,88 +31,90 @@
 </template>
 
 <script>
-import router from "@/router";
-import { mapActions, mapGetters } from "vuex";
+import router from '@/router';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
-  data () {
+  data() {
     return {
       //
     };
   },
   computed: {
-    ...mapGetters(["appTitle", "loggedIn", "token", "navBarVisible"]),
-    items () {
+    ...mapGetters(['appTitle', 'loggedIn', 'token', 'navBarVisible']),
+    items() {
       return this.menu.filter(x => x.show);
     },
-    isBusinessCard () {
+    isBusinessCard() {
       const businessCards = [
-        "businessCard",
-        "businessCardEmployee",
-        "businessCardService"
+        'businessCard',
+        'businessCardEmployee',
+        'businessCardGallery',
+        'businessCardService'
       ];
       return businessCards.some(x => x === this.$route.name);
     },
-    isManagerMenu () {
+    isManagerMenu() {
       return !this.isBusinessCard;
     },
-    menu () {
+    menu() {
       return [
         {
-          title: "Мой профиль",
+          title: 'Мой профиль',
           show: this.loggedIn && this.isManagerMenu
         },
         {
-          title: "Сообщения",
+          title: 'Сообщения',
           show: this.loggedIn && this.isManagerMenu
         },
         {
-          title: "Мои компании",
-          icon: "business",
-          route: { name: "myBusinessList" },
+          title: 'Мои компании',
+          icon: 'business',
+          route: { name: 'myBusinessList' },
           show: this.loggedIn && this.isManagerMenu
         },
         {
-          title: "Все компании",
-          icon: "business",
-          route: { name: "businessList" },
+          title: 'Все компании',
+          icon: 'business',
+          route: { name: 'businessList' },
           show: !this.loggedIn || this.isManagerMenu
         },
         {
-          title: "Информация",
+          title: 'Информация',
           show: this.loggedIn && this.isBusinessCard,
-          route: { name: "businessCard", id: this.$route.params.id }
+          route: { name: 'businessCard', id: this.$route.params.id }
         },
         {
-          title: "Услуги",
+          title: 'Услуги',
           show: this.loggedIn && this.isBusinessCard,
-          route: { name: "businessCardService", id: this.$route.params.id }
+          route: { name: 'businessCardService', id: this.$route.params.id }
         },
         {
-          title: "Сотрудники",
+          title: 'Сотрудники',
           show: this.loggedIn && this.isBusinessCard,
-          route: { name: "businessCardEmployee", id: this.$route.params.id }
+          route: { name: 'businessCardEmployee', id: this.$route.params.id }
         },
         {
-          title: "Филиалы",
+          title: 'Филиалы',
           show: this.loggedIn && this.isBusinessCard
         },
         {
-          title: "Галерея",
-          show: this.loggedIn && this.isBusinessCard
+          title: 'Галерея',
+          show: this.loggedIn && this.isBusinessCard,
+          route: { name: 'businessCardGallery', id: this.$route.params.id }
         }
       ];
     }
   },
   watch: {
-    token: "loadUserInfo"
+    token: 'loadUserInfo'
   },
   methods: {
-    ...mapActions(["navBar", "loadUserInfo"]),
-    goHome () {
-      router.push({ name: "home" });
+    ...mapActions(['navBar', 'loadUserInfo']),
+    goHome() {
+      router.push({ name: 'home' });
     },
-    onInput (event) {
+    onInput(event) {
       this.navBar(event);
     }
   }
