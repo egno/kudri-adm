@@ -5,7 +5,12 @@
         Адрес
       </span>
       &nbsp;
-      <span>{{ address }}</span>
+      <span
+        class="ymaps-geolink"
+        data-type="biz"
+      >
+        {{ address }}
+      </span>
       <VBtn
         small
         icon
@@ -15,11 +20,10 @@
       </VBtn>
     </div>
     <VSlideYTransition>
-      <AddressMap v-show="showDetails">
-        I'm a thing. But, like most politicians, he promised more than he could deliver.
-        You won't have time for sleeping, soldier, not with all the bed making you'll be doing.
-        Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
-      </AddressMap>
+      <AddressMap
+        v-show="showDetails"
+        :address="address"
+      />
     </VSlideYTransition>
   </div>
 </template>
@@ -41,6 +45,17 @@ export default {
     return {
       showDetails: false
     };
+  },
+  mounted() {
+    this.$http
+      .get('https://api-maps.yandex.ru/2.1/?lang=en_US&load=Geolink')
+      .then(res => {
+        if (res.status === 200) {
+          let scr = document.createElement('script');
+          scr.innerHTML = res.body;
+          document.body.appendChild(scr);
+        }
+      });
   }
 };
 </script>
