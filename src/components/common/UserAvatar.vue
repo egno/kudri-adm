@@ -11,7 +11,7 @@
     >
     <div
       v-else
-      :class="`font-weight-bold ${color.bg}--text text--${color.text}-4`"
+      :class="`avatar-letters font-weight-bold ${color.bg}--text text--${color.text}-4`"
     >
       {{ initials }}
     </div>
@@ -114,3 +114,5 @@ export default {
 };
 </script>
 
+<style>
+</style>

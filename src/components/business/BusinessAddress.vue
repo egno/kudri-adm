@@ -5,34 +5,16 @@
         Адрес
       </span>
       &nbsp;
-      <span
-        class="ymaps-geolink"
-        data-type="biz"
-      >
-        {{ address }}
-      </span>
-      <VBtn
-        small
-        icon
-        @click="showDetails = !showDetails"
-      >
-        <VIcon>{{ showDetails ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</VIcon>
-      </VBtn>
+      <AddressLink :address="address" />
     </div>
-    <VSlideYTransition>
-      <AddressMap
-        v-show="showDetails"
-        :address="address"
-      />
-    </VSlideYTransition>
+    <VSlideYTransition />
   </div>
 </template>
 
 <script>
-import AddressMap from '@/components/business/AddressMap.vue';
-
+import AddressLink from '@/components/yandex/AddressLink.vue';
 export default {
-  components: { AddressMap },
+  components: { AddressLink },
   props: {
     address: { type: String, default: null },
     captionClass: {
@@ -45,17 +27,6 @@ export default {
     return {
       showDetails: false
     };
-  },
-  mounted() {
-    this.$http
-      .get('https://api-maps.yandex.ru/2.1/?lang=en_US&load=Geolink')
-      .then(res => {
-        if (res.status === 200) {
-          let scr = document.createElement('script');
-          scr.innerHTML = res.body;
-          document.body.appendChild(scr);
-        }
-      });
   }
 };
 </script>

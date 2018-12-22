@@ -11,16 +11,13 @@
         md3
       >
         <VCardTitle>
-          <VImg
-            :src="avatarURL"
-            height="12em"
-            aspect-ratio="1"
-            max-width="12em"
+          <UserAvatar
+            size="12em"
+            :src="avatar"
           />
         </VCardTitle>
       </VFlex>
       <VFlex
-        10
         xs12
         sm8
         md9
@@ -29,8 +26,14 @@
           <VFlex>
             <VCardTitle primary-title>
               <div>
-                <div class="headline">
-                  {{ title }}
+                <div>
+                  <span class="headline">
+                    {{ title }}
+                  </span>
+                  <br>
+                  <span class="font-weight-medium grey--text">
+                    {{ category }}
+                  </span>
                 </div>
               </div>
             </VCardTitle>
@@ -50,12 +53,14 @@
 <script>
 import BusinessAddress from '@/components/business/BusinessAddress.vue';
 import BusinessPhones from '@/components/business/BusinessPhones.vue';
+import UserAvatar from '@/components/common/UserAvatar.vue';
 import Api from '@/api/backend';
 
 export default {
   components: {
     BusinessAddress,
-    BusinessPhones
+    BusinessPhones,
+    UserAvatar
   },
   props: {
     id: { type: String, default: null },
@@ -64,7 +69,8 @@ export default {
       default() {
         return {};
       }
-    }
+    },
+    edit: { type: Boolean, default: false }
   },
   data() {
     return {
@@ -84,11 +90,11 @@ export default {
       }
       return this.data.data.avatar;
     },
-    avatarURL() {
-      if (!this.avatar) {
+    category() {
+      if (!(this.data && this.data.data)) {
         return;
       }
-      return `${process.env.VUE_APP_IMAGES || ''}${this.avatar}`;
+      return this.data.data.category;
     },
     phone() {
       if (!(this.data && this.data.data)) {

@@ -3,7 +3,7 @@
     fluid
     grid-list-lg
   >
-    <Card :id="id" />
+    <BusinessCard :id="id" />
   </VContainer>
 </template>
 
@@ -11,7 +11,7 @@
 import BusinessCard from '@/components/business/BusinessCard.vue';
 
 export default {
-  components: { Card: BusinessCard },
+  components: { BusinessCard: BusinessCard },
   data() {
     return {
       data: { data: {} }

@@ -84,7 +84,7 @@
 
 <script>
 import router from '@/router';
-import UserAvatar from '@/components/UserAvatar.vue';
+import UserAvatar from '@/components/common/UserAvatar.vue';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
