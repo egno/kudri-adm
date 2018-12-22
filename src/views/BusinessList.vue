@@ -75,7 +75,7 @@
 <script>
 import Api from '@/api/backend';
 import router from '@/router';
-import UserAvatar from '@/components/common/UserAvatar.vue';
+import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {

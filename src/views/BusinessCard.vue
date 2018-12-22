@@ -3,18 +3,32 @@
     fluid
     grid-list-lg
   >
-    <BusinessCard :id="id" />
+    <BusinessCardEdit
+      v-if="edit"
+      :id="id"
+      @onEditClose="edit=false"
+    />
+    <BusinessCard
+      v-else
+      :id="id"
+      @onEditClick="edit=true"
+    />
   </VContainer>
 </template>
 
 <script>
 import BusinessCard from '@/components/business/BusinessCard.vue';
+import BusinessCardEdit from '@/components/business/BusinessCardEdit.vue';
 
 export default {
-  components: { BusinessCard: BusinessCard },
+  components: {
+    BusinessCard: BusinessCard,
+    BusinessCardEdit: BusinessCardEdit
+  },
   data() {
     return {
-      data: { data: {} }
+      data: { data: {} },
+      edit: false
     };
   },
   computed: {

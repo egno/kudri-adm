@@ -63,7 +63,7 @@
 
 <script>
 // import ServiceCardEdit from "@/components/ServiceCardEdit.vue";
-import UserAvatar from '@/components/common/UserAvatar.vue';
+import UserAvatar from '@/components/avatar/UserAvatar.vue';
 
 export default {
   components: { UserAvatar },

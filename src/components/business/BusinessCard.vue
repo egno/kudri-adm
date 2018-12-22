@@ -47,13 +47,22 @@
         </VLayout>
       </VFlex>
     </VLayout>
+    <VCardActions>
+      <VSpacer />
+      <VBtn
+        color="primary"
+        @click="onEditClick"
+      >
+        Редактировать
+      </VBtn>
+    </VCardActions>
   </VCard>
 </template>
 
 <script>
 import BusinessAddress from '@/components/business/BusinessAddress.vue';
 import BusinessPhones from '@/components/business/BusinessPhones.vue';
-import UserAvatar from '@/components/common/UserAvatar.vue';
+import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import Api from '@/api/backend';
 
 export default {
@@ -116,6 +125,9 @@ export default {
     this.fetchData();
   },
   methods: {
+    onEditClick() {
+      this.$emit('onEditClick');
+    },
     fetchData() {
       if (!this.id) {
         return;

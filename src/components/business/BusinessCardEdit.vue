@@ -1,44 +1,40 @@
 <template>
   <VCard flat>
-    <VCardTitle>Учетная запись</VCardTitle>
-    <VLayout
-      align-center
-      justify-center
-      row
-      fill-height
+    <VCardTitle>Основная информация</VCardTitle>
+    <VBtn
+      fab
+      left
+      large
+      @click="avatarEdit = !avatarEdit"
     >
-      <VFlex align-self-center>
-        <VBtn
-          fab
-          left
-          large
-          @click="avatarEdit = !avatarEdit"
-        >
-          <UserAvatar
-            v-if="email"
-            size="4em"
-            :name="data.data.name || data.data.email"
-            :src="avatar"
-          />
-        </VBtn>
-      </VFlex>
-      <VFlex>
-        <VLayout column>
-          <VFlex>
-            <VTextField
-              v-model="data.data.email"
-              label="E-mail"
-              prepend-icon="email"
-            />
-          </VFlex>
-        </VLayout>
-      </VFlex>
-    </VLayout>
-
-    <VDialog v-model="avatarEdit">
-      <VueAvatarEditor @finished="saveImage" />
-    </VDialog>
-
+      <UserAvatar
+        :name="name"
+        size="4.2em"
+        :src="avatar"
+      />
+    </VBtn>
+    <VForm>
+      <VTextField
+        v-model="data.data.name"
+        label="Название"
+        prepend-icon="account_box"
+      />
+      <VTextField
+        v-model="data.data.inn"
+        label="ИНН"
+        prepend-icon="assignment"
+      />
+      <VTextField
+        v-model="data.data.address"
+        label="Адрес"
+        prepend-icon="local_post_office"
+      />
+      <VTextField
+        v-model="data.data.phone"
+        label="Телефон"
+        prepend-icon="phone"
+      />
+    </VForm>
     <VCardActions>
       <VSpacer />
       <VBtn
@@ -48,6 +44,9 @@
         Сохранить
       </VBtn>
     </VCardActions>
+    <VDialog v-model="avatarEdit">
+      <VueAvatarEditor @finished="saveImage" />
+    </VDialog>
   </VCard>
 </template>
 
@@ -58,10 +57,7 @@ import Api from '@/api/backend';
 import axios from 'axios';
 
 export default {
-  components: {
-    VueAvatarEditor: VueAvatarEditor,
-    UserAvatar: UserAvatar
-  },
+  components: { UserAvatar, VueAvatarEditor },
   data() {
     return {
       avatarEdit: false,
@@ -70,13 +66,19 @@ export default {
   },
   computed: {
     avatar() {
-      return this.data.data.avatar;
+      if (this.data.data) {
+        return this.data.data.avatar;
+      }
+      return null;
     },
     id() {
       return this.$route.params.id;
     },
-    email() {
-      return this.data.data.email;
+    name() {
+      if (this.data.data) {
+        return this.data.data.name;
+      }
+      return null;
     }
   },
   mounted() {
@@ -120,8 +122,8 @@ export default {
         });
     },
     sendData() {
-      //this.saveImage();
       Api().patch(`business?id=eq.${this.id}`, this.data);
+      this.$emit('onEditClose');
     },
     uuidv4() {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(
