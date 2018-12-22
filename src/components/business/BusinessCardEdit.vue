@@ -114,7 +114,6 @@ export default {
         })
         .then(function() {
           vm.data.data.avatar = newFileName;
-          console.log('SUCCESS!!');
         })
         .then(() => vm.sendData())
         .catch(function() {
@@ -123,7 +122,7 @@ export default {
     },
     sendData() {
       Api().patch(`business?id=eq.${this.id}`, this.data);
-      this.$emit('onEditClose');
+      // this.$emit('onEditClose');
     },
     uuidv4() {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(
