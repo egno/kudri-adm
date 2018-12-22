@@ -39,7 +39,7 @@
       <VSpacer />
       <VBtn
         color="primary"
-        @click="sendData"
+        @click="close"
       >
         Сохранить
       </VBtn>
@@ -85,6 +85,10 @@ export default {
     this.fetchData();
   },
   methods: {
+    close() {
+      this.sendData();
+      this.$emit('onEditClose');
+    },
     fetchData() {
       Api()
         .get(`business?id=eq.${this.id}`)
@@ -122,7 +126,6 @@ export default {
     },
     sendData() {
       Api().patch(`business?id=eq.${this.id}`, this.data);
-      // this.$emit('onEditClose');
     },
     uuidv4() {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(
