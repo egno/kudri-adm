@@ -3,17 +3,26 @@
     <span :class="captionClass">
       Тел.
     </span>&nbsp;
-    <div
+    <span
       v-for="(item, i) in phones"
       :key="i"
     >
-      {{ item }}
-    </div>
+      <a :href="`tel:${phoneLink(item)}`">
+        {{ item | phone }}
+      </a>
+      <span>,{{ " " }}</span>
+    </span>
   </div>
 </template>
 
 <script>
 export default {
+  filters: {
+    phone(value) {
+      if (!value) return '';
+      return value.replace(/(\d{1,3})(\d{1,3})(\d{1,4})/g, '+7($1)$2-$3');
+    }
+  },
   props: {
     captionClass: {
       type: String,
@@ -25,6 +34,12 @@ export default {
       default() {
         return [];
       }
+    }
+  },
+  methods: {
+    phoneLink(value) {
+      if (!value) return '';
+      return `+7${value}`;
     }
   }
 };

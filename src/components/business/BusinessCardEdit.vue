@@ -27,7 +27,7 @@
           label="ИНН"
           mask="############"
           prepend-icon="assignment"
-          :rules="[rules.counter]"
+          :rules="[rules.INN_counter]"
         />
         <VTextField
           v-model="data.data.address"
@@ -71,10 +71,12 @@ export default {
       avatarEdit: false,
       data: { data: {} },
       rules: {
-        counter: value =>
-          value.length === 10 ||
-          value.length === 12 ||
-          'В ИНН должно быть 10 или 12 цифр'
+        INN_counter: value =>
+          (value &&
+            (value.length === 10 ||
+              value.length === 12 ||
+              'В ИНН должно быть 10 или 12 цифр')) ||
+          true
       }
     };
   },
