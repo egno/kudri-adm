@@ -7,6 +7,12 @@
         row
       >
         <VFlex justify-center>
+          <UserAvatar
+            size="10em"
+            :src="avatar"
+          />
+        </VFlex>
+        <VFlex justify-center>
           <VueAvatar
             ref="vueavatar"
             :width="width"
@@ -64,12 +70,18 @@
 
 <script>
 import VueAvatar from './VueAvatar.vue';
+import UserAvatar from '@/components/avatar/UserAvatar.vue';
 
 export default {
   components: {
+    UserAvatar,
     VueAvatar
   },
   props: {
+    avatar: {
+      type: String,
+      default: ''
+    },
     finishText: {
       type: String,
       default: 'Save'

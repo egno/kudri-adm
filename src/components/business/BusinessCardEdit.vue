@@ -58,7 +58,10 @@
       </VBtn>
     </VCardActions>
     <VDialog v-model="avatarEdit">
-      <VueAvatarEditor @finished="saveImage" />
+      <VueAvatarEditor
+        :avatar="avatar"
+        @finished="saveImage"
+      />
     </VDialog>
   </VCard>
 </template>
