@@ -60,6 +60,18 @@
               </div>
             </div>
           </VFlex>
+          <VFlex v-if="data.data && data.data.links && data.data.links.vk">
+            <div>
+              <div class="caption font-weight-bold text-no-wrap grey--text text--lighten-1">
+                VK
+              </div>
+              <div>
+                <a :href="`https://vk.com/users/${data.data.links.vk}`">
+                  {{ data.data.links.vk }}
+                </a>
+              </div>
+            </div>
+          </VFlex>
         </VLayout>
       </VFlex>
     </VLayout>
