@@ -6,54 +6,50 @@
         justify-space-around
         row
       >
-        <VFlex justify-center>
-          <UserAvatar
-            size="10em"
-            :src="avatar"
-          />
-        </VFlex>
-        <VFlex justify-center>
-          <VueAvatar
-            ref="vueavatar"
-            :width="width"
-            :height="height"
-            :rotation="rotation"
-            :border-radius="borderRadius"
-            :border="border"
-            :color="color"
-            :scale="+scale"
-            @vue-avatar-editor:image-ready="onImageReady"
-            @select-file="onSelectFile($event)"
-          />
-        </VFlex>
-        <VFlex>
-          <VLayout
-            column
-            fill-height
-          >
-            <VFlex>
-              <input
-                v-model="scale"
-                type="range"
-                min="1"
-                max="3"
-                step="0.02"
-              >
-              <br>
-              <label v-if="hasRotation">
-                Rotation : {{ rotation }}°
-                         <br>
-                         <input
-                           v-model="rotation"
-                           type="range"
-                           min="0"
-                           max="360"
-                           step="1"
-                         >
-              </label>
-            </VFlex>
-          </VLayout>
-        </VFlex>
+        <VLayout
+          align-center
+          justify-space-around
+          column
+        >
+          <VFlex justify-center>
+            <VueAvatar
+              ref="vueavatar"
+              :width="width"
+              :height="height"
+              :rotation="rotation"
+              :border-radius="borderRadius"
+              :border="border"
+              :color="color"
+              :scale="+scale"
+              @vue-avatar-editor:image-ready="onImageReady"
+              @select-file="onSelectFile($event)"
+            />
+          </VFlex>
+          <VFlex>
+            <VLayout
+              column
+              fill-height
+            >
+              <VFlex v-if="scale">
+                <input
+                  v-model="scale"
+                  type="range"
+                  min="1"
+                  max="3"
+                  step="0.02"
+                >
+                <br>
+                <input
+                  v-model="rotation"
+                  type="range"
+                  min="-180"
+                  max="180"
+                  step="1"
+                >
+              </VFlex>
+            </VLayout>
+          </VFlex>
+        </VLayout>
       </VLayout>
     </VContainer>
     <VCardActions>
@@ -70,11 +66,9 @@
 
 <script>
 import VueAvatar from './VueAvatar.vue';
-import UserAvatar from '@/components/avatar/UserAvatar.vue';
 
 export default {
   components: {
-    UserAvatar,
     VueAvatar
   },
   props: {
@@ -122,7 +116,7 @@ export default {
   data() {
     return {
       rotation: 0,
-      scale: 1
+      scale: 0
     };
   },
   methods: {

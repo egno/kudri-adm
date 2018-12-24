@@ -57,7 +57,10 @@
         Сохранить
       </VBtn>
     </VCardActions>
-    <VDialog v-model="avatarEdit">
+    <VDialog
+      v-model="avatarEdit"
+      max-width="350px"
+    >
       <VueAvatarEditor
         :avatar="avatar"
         @finished="saveImage"

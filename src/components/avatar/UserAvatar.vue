@@ -3,6 +3,7 @@
     class="ma-1"
     :size="size"
     :color="color.bg"
+    :tile="tile"
   >
     <img
       v-if="image_exists"
@@ -23,7 +24,8 @@ export default {
   props: {
     size: { type: String, default: '3em' },
     name: { type: String, default: '' },
-    src: { type: String, default: '' }
+    src: { type: String, default: '' },
+    tile: { type: Boolean, default: false }
   },
   data() {
     return {
