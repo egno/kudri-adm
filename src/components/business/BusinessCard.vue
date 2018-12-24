@@ -39,10 +39,31 @@
             </VCardTitle>
           </VFlex>
           <VFlex>
-            <BusinessAddress :address="address" />
+            <BusinessAddress
+              :caption-class="captionClass"
+              :address="address"
+            />
           </VFlex>
           <VFlex>
-            <BusinessPhones :phones="phones" />
+            <BusinessPhones
+              :caption-class="captionClass"
+              :phones="phones"
+            />
+          </VFlex>
+          <VFlex v-if="data.data && data.data.site">
+            <div>
+              <span :class="captionClass">
+                Сайт
+              </span>&nbsp;
+              <span>
+                <a
+                  :href="siteLink"
+                  target="_blank"
+                >
+                  {{ data.data.site }}
+                </a>
+              </span>
+            </div>
           </VFlex>
           <VFlex v-if="data.data && data.data.links">
             <SocialLinks :links="data.data.links" />
@@ -90,7 +111,9 @@ export default {
   },
   data() {
     return {
-      data: {}
+      data: {},
+      captionClass:
+        'caption font-weight-bold text-no-wrap grey--text text--lighten-1'
     };
   },
   computed: {
@@ -111,6 +134,12 @@ export default {
         return;
       }
       return this.data.data.category;
+    },
+    siteLink() {
+      if (!this.data.data.site) {
+        return;
+      }
+      return this.appendHttpToUrl(this.data.data.site);
     },
     title() {
       if (!(this.data && this.data.data)) {
@@ -141,3 +170,9 @@ export default {
   }
 };
 </script>
+
+<style>
+a {
+  text-decoration: none;
+}
+</style>

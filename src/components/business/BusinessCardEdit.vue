@@ -46,6 +46,10 @@
           v-model="data.data.links.vk"
           label="Имя профиля в VK"
         />
+        <VTextField
+          v-model="data.data.site"
+          label="Ссылка на собственный сайт"
+        />
       </VForm>
     </VCardText>
     <VCardActions>

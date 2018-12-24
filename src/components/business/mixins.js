@@ -14,6 +14,13 @@ export const businessMixins = {
     }
   },
   methods: {
+    appendHttpToUrl(url) {
+      if (url.indexOf('http://') == 0 || url.indexOf('https://') == 0) {
+        return url;
+      } else {
+        return 'http://' + url;
+      }
+    },
     uuidv4() {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(
         c

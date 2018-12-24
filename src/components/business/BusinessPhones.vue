@@ -26,8 +26,7 @@ export default {
   props: {
     captionClass: {
       type: String,
-      default:
-        'caption font-weight-bold text-no-wrap grey--text text--lighten-1'
+      default: ''
     },
     phones: {
       type: Array,

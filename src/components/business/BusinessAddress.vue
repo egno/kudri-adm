@@ -19,8 +19,7 @@ export default {
     address: { type: String, default: null },
     captionClass: {
       type: String,
-      default:
-        'caption font-weight-bold text-no-wrap grey--text text--lighten-1'
+      default: ''
     }
   },
   data() {
