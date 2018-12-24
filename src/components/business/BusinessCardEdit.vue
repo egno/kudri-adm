@@ -50,6 +50,10 @@
           v-model="data.data.site"
           label="Ссылка на собственный сайт"
         />
+        <BusinessScheduleEdit
+          :schedule="data.data.schedule"
+          @onEdit="scheduleEdit"
+        />
       </VForm>
     </VCardText>
     <VCardActions>
@@ -77,12 +81,18 @@
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue';
 import BusinessPhonesEdit from '@/components/business/BusinessPhonesEdit.vue';
+import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue';
 import Api from '@/api/backend';
 import axios from 'axios';
 import { businessMixins } from '@/components/business/mixins';
 
 export default {
-  components: { BusinessPhonesEdit, UserAvatar, VueAvatarEditor },
+  components: {
+    BusinessPhonesEdit,
+    BusinessScheduleEdit,
+    UserAvatar,
+    VueAvatarEditor
+  },
   mixins: [businessMixins],
   data() {
     return {
@@ -130,8 +140,8 @@ export default {
       if (!data.data) {
         data.data = {};
       }
-      if (!data.data.phones) {
-        data.data.phones = [];
+      if (!data.data.phone) {
+        data.data.phone = [];
       }
       if (!data.data.links) {
         data.data.links = {};
@@ -179,6 +189,9 @@ export default {
     sendData() {
       this.data.data.phone = this.data.data.phone.filter(x => x > '');
       Api().patch(`business?id=eq.${this.id}`, this.data);
+    },
+    scheduleEdit(payload) {
+      this.data.data.schedule = payload;
     }
   }
 };

@@ -68,6 +68,12 @@
           <VFlex v-if="data.data && data.data.links">
             <SocialLinks :links="data.data.links" />
           </VFlex>
+          <VFlex v-if="data.data && data.data.schedule">
+            <BusinessSchedule
+              :caption-class="captionClass"
+              :schedule="data.data.schedule"
+            />
+          </VFlex>
         </VLayout>
       </VFlex>
     </VLayout>
@@ -86,6 +92,7 @@
 <script>
 import BusinessAddress from '@/components/business/BusinessAddress.vue';
 import BusinessPhones from '@/components/business/BusinessPhones.vue';
+import BusinessSchedule from '@/components/business/BusinessSchedule.vue';
 import SocialLinks from '@/components/business/SocialLinks.vue';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import Api from '@/api/backend';
@@ -95,6 +102,7 @@ export default {
   components: {
     BusinessAddress,
     BusinessPhones,
+    BusinessSchedule,
     SocialLinks,
     UserAvatar
   },
