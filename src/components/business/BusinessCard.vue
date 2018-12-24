@@ -44,33 +44,8 @@
           <VFlex>
             <BusinessPhones :phones="phones" />
           </VFlex>
-          <VFlex v-if="data.data && data.data.links && data.data.links.instagram">
-            <div>
-              <div
-                class="caption font-weight-bold text-no-wrap grey--text text--lighten-1"
-              >
-                instagram
-              </div>
-              <div>
-                <a
-                  :href="`https://www.instagram.com/${data.data.links.instagram}`"
-                >
-                  {{ data.data.links.instagram }}
-                </a>
-              </div>
-            </div>
-          </VFlex>
-          <VFlex v-if="data.data && data.data.links && data.data.links.vk">
-            <div>
-              <div class="caption font-weight-bold text-no-wrap grey--text text--lighten-1">
-                VK
-              </div>
-              <div>
-                <a :href="`https://vk.com/users/${data.data.links.vk}`">
-                  {{ data.data.links.vk }}
-                </a>
-              </div>
-            </div>
+          <VFlex v-if="data.data && data.data.links">
+            <SocialLinks :links="data.data.links" />
           </VFlex>
         </VLayout>
       </VFlex>
@@ -90,6 +65,7 @@
 <script>
 import BusinessAddress from '@/components/business/BusinessAddress.vue';
 import BusinessPhones from '@/components/business/BusinessPhones.vue';
+import SocialLinks from '@/components/business/SocialLinks.vue';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import Api from '@/api/backend';
 import { businessMixins } from '@/components/business/mixins';
@@ -98,6 +74,7 @@ export default {
   components: {
     BusinessAddress,
     BusinessPhones,
+    SocialLinks,
     UserAvatar
   },
   mixins: [businessMixins],
