@@ -1,11 +1,14 @@
 <template>
   <VLayout column>
-    <VFlex>
+    <VFlex pb-0>
       <div :class="captionClass">
         Время работы
       </div>
     </VFlex>
-    <VContainer>
+    <VContainer
+      pt-0
+      pl-2
+    >
       <VLayout
         justify-space-around
         row
@@ -18,7 +21,9 @@
           <span :class="captionClass">
             {{ dow[i] }}:
           </span>
-          <span>{{ item[0] }} - {{ item[1] }}</span>
+          <span class="timeClass">
+            {{ item[0] }} - {{ item[1] }}
+          </span>
         </VFlex>
       </VLayout>
     </VContainer>
@@ -46,3 +51,10 @@ export default {
   }
 };
 </script>
+
+<style>
+.timeClass {
+  font-size: 80%;
+}
+</style>
+
