@@ -3,12 +3,12 @@
     <span :class="captionClass">
       Тел.
     </span>&nbsp;
-    <span
-      v-for="(phone, i) in phones"
+    <div
+      v-for="(item, i) in phones"
       :key="i"
     >
-      {{ phone }}
-    </span>
+      {{ item }}
+    </div>
   </div>
 </template>
 

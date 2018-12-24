@@ -13,28 +13,33 @@
         :src="avatar"
       />
     </VBtn>
-    <VForm>
-      <VTextField
-        v-model="data.data.name"
-        label="Название"
-        prepend-icon="account_box"
-      />
-      <VTextField
-        v-model="data.data.inn"
-        label="ИНН"
-        prepend-icon="assignment"
-      />
-      <VTextField
-        v-model="data.data.address"
-        label="Адрес"
-        prepend-icon="local_post_office"
-      />
-      <VTextField
-        v-model="data.data.phone"
-        label="Телефон"
-        prepend-icon="phone"
-      />
-    </VForm>
+    <VCardText>
+      <VForm>
+        <VTextField
+          v-model="data.data.name"
+          label="Название"
+          prepend-icon="account_box"
+          :rules="[() => !!data.data.name || 'Это поле обязательно для заполнения']"
+          required
+        />
+        <VTextField
+          v-model="data.data.inn"
+          label="ИНН"
+          mask="############"
+          prepend-icon="assignment"
+          :rules="[rules.counter]"
+        />
+        <VTextField
+          v-model="data.data.address"
+          label="Адрес"
+          prepend-icon="local_post_office"
+        />
+        <BusinessPhonesEdit
+          :phones="phones"
+          @onEdit="phonesEdit"
+        />
+      </VForm>
+    </VCardText>
     <VCardActions>
       <VSpacer />
       <VBtn
@@ -53,15 +58,24 @@
 <script>
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue';
+import BusinessPhonesEdit from '@/components/business/BusinessPhonesEdit.vue';
 import Api from '@/api/backend';
 import axios from 'axios';
+import { businessMixins } from '@/components/business/mixins';
 
 export default {
-  components: { UserAvatar, VueAvatarEditor },
+  components: { BusinessPhonesEdit, UserAvatar, VueAvatarEditor },
+  mixins: [businessMixins],
   data() {
     return {
       avatarEdit: false,
-      data: { data: {} }
+      data: { data: {} },
+      rules: {
+        counter: value =>
+          value.length === 10 ||
+          value.length === 12 ||
+          'В ИНН должно быть 10 или 12 цифр'
+      }
     };
   },
   computed: {
@@ -98,6 +112,9 @@ export default {
           this.data = res;
         });
     },
+    phonesEdit(payload) {
+      this.data.data.phone = payload;
+    },
     saveImage(img) {
       this.avatarEdit = false;
       var blobBin = atob(img.toDataURL().split(',')[1]);
@@ -125,16 +142,8 @@ export default {
         });
     },
     sendData() {
+      this.data.data.phone = this.data.data.phone.filter(x => x > '');
       Api().patch(`business?id=eq.${this.id}`, this.data);
-    },
-    uuidv4() {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(
-        c
-      ) {
-        var r = (Math.random() * 16) | 0,
-          v = c == 'x' ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-      });
     }
   }
 };

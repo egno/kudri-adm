@@ -42,7 +42,7 @@
             <BusinessAddress :address="address" />
           </VFlex>
           <VFlex>
-            <BusinessPhones :phones="phone" />
+            <BusinessPhones :phones="phones" />
           </VFlex>
         </VLayout>
       </VFlex>
@@ -64,6 +64,7 @@ import BusinessAddress from '@/components/business/BusinessAddress.vue';
 import BusinessPhones from '@/components/business/BusinessPhones.vue';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import Api from '@/api/backend';
+import { businessMixins } from '@/components/business/mixins';
 
 export default {
   components: {
@@ -71,6 +72,7 @@ export default {
     BusinessPhones,
     UserAvatar
   },
+  mixins: [businessMixins],
   props: {
     id: { type: String, default: null },
     business: {
@@ -104,15 +106,6 @@ export default {
         return;
       }
       return this.data.data.category;
-    },
-    phone() {
-      if (!(this.data && this.data.data)) {
-        return;
-      }
-      if (typeof this.data.data.phone === 'string') {
-        return [this.data.data.phone];
-      }
-      return this.data.data.phone;
     },
     title() {
       if (!(this.data && this.data.data)) {
