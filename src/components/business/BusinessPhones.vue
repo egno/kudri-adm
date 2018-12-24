@@ -7,7 +7,7 @@
       v-for="(item, i) in phones"
       :key="i"
     >
-      <a :href="`tel:${phoneLink(item)}`">
+      <a :href="phoneLink(item)">
         {{ item | phone }}
       </a>
       <span>,{{ " " }}</span>
@@ -39,7 +39,7 @@ export default {
   methods: {
     phoneLink(value) {
       if (!value) return '';
-      return `+7${value}`;
+      return `tel:+7${value}`;
     }
   }
 };

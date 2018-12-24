@@ -38,6 +38,14 @@
           :phones="phones"
           @onEdit="phonesEdit"
         />
+        <VTextField
+          v-model="data.data.links.instagram"
+          label="Имя профиля в Instagram"
+        />
+        <VTextField
+          v-model="data.data.links.vk"
+          label="Имя профиля в VK"
+        />
       </VForm>
     </VCardText>
     <VCardActions>
@@ -69,7 +77,7 @@ export default {
   data() {
     return {
       avatarEdit: false,
-      data: { data: {} },
+      data: { data: { phones: [], links: {} } },
       rules: {
         INN_counter: value =>
           (value &&
@@ -105,13 +113,28 @@ export default {
       this.sendData();
       this.$emit('onEditClose');
     },
+    dataPrefill(data) {
+      if (!data) {
+        data = {};
+      }
+      if (!data.data) {
+        data.data = {};
+      }
+      if (!data.data.phones) {
+        data.data.phones = [];
+      }
+      if (!data.data.links) {
+        data.data.links = {};
+      }
+      return data;
+    },
     fetchData() {
       Api()
         .get(`business?id=eq.${this.id}`)
         .then(res => res.data)
         .then(res => res[0])
         .then(res => {
-          this.data = res;
+          this.data = this.dataPrefill(res);
         });
     },
     phonesEdit(payload) {

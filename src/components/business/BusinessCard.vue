@@ -44,6 +44,22 @@
           <VFlex>
             <BusinessPhones :phones="phones" />
           </VFlex>
+          <VFlex v-if="data.data && data.data.links && data.data.links.instagram">
+            <div>
+              <div
+                class="caption font-weight-bold text-no-wrap grey--text text--lighten-1"
+              >
+                instagram
+              </div>
+              <div>
+                <a
+                  :href="`https://www.instagram.com/${data.data.links.instagram}`"
+                >
+                  {{ data.data.links.instagram }}
+                </a>
+              </div>
+            </div>
+          </VFlex>
         </VLayout>
       </VFlex>
     </VLayout>
