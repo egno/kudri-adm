@@ -22,6 +22,12 @@
           :rules="[() => !!data.data.name || 'Это поле обязательно для заполнения']"
           required
         />
+        <VCombobox
+          v-model="data.data.category"
+          :items="businessCategories"
+          label="Тип"
+          :rules="[rules.category]"
+        />
         <VTextField
           v-model="data.data.inn"
           label="ИНН"
@@ -97,8 +103,19 @@ export default {
   data() {
     return {
       avatarEdit: false,
+      businessCategories: [
+        'Салон красоты',
+        'Spa салон',
+        'Массажный салон',
+        'Фитнес клуб',
+        'Тату салон',
+        'Маникюрная студия',
+        'Косметологический кабинет',
+        'Частный мастер'
+      ],
       data: { data: { phones: [], links: {} } },
       rules: {
+        category: value => value.length > 2 || 'Выберите тип',
         INN_counter: value =>
           (value &&
             (value.length === 10 ||
