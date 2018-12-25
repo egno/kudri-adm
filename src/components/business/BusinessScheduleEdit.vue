@@ -1,7 +1,7 @@
 <template>
   <VLayout column>
     <VFlex>
-      <div>Время работы</div>
+      <div>Режим работы</div>
     </VFlex>
     <VLayout
       justify-space-around

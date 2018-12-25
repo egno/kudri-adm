@@ -2,7 +2,7 @@
   <VLayout column>
     <VFlex pb-0>
       <div :class="captionClass">
-        Время работы
+        Режим работы
       </div>
     </VFlex>
     <VContainer
