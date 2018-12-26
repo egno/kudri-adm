@@ -35,6 +35,19 @@ export default {
     id() {
       return this.$route.params.id;
     }
+  },
+  watch: {
+    id: 'checkId'
+  },
+  mounted() {
+    this.checkId();
+  },
+  methods: {
+    checkId() {
+      if (this.id === 'new') {
+        this.edit = true;
+      }
+    }
   }
 };
 </script>

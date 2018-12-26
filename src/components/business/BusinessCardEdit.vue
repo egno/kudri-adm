@@ -90,6 +90,7 @@ import BusinessPhonesEdit from '@/components/business/BusinessPhonesEdit.vue';
 import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue';
 import Api from '@/api/backend';
 import axios from 'axios';
+import router from '@/router';
 import { businessMixins } from '@/components/business/mixins';
 
 export default {
@@ -113,9 +114,9 @@ export default {
         'Косметологический кабинет',
         'Частный мастер'
       ],
-      data: { data: { phones: [], links: {} } },
+      data: { data: { phone: [], links: {} } },
       rules: {
-        category: value => value.length > 2 || 'Выберите тип',
+        category: value => !value || value.length > 2 || 'Выберите тип',
         INN_counter: value =>
           (value &&
             (value.length === 10 ||
@@ -166,6 +167,9 @@ export default {
       return data;
     },
     fetchData() {
+      if (this.id === 'new') {
+        return;
+      }
       Api()
         .get(`business?id=eq.${this.id}`)
         .then(res => res.data)
@@ -173,6 +177,12 @@ export default {
         .then(res => {
           this.data = this.dataPrefill(res);
         });
+    },
+    locationId(headers) {
+      if (!(headers && headers.location)) return;
+      const res = headers.location.match(/eq\.(.*)$/);
+      if (!res) return;
+      return res[1];
     },
     phonesEdit(payload) {
       this.data.data.phone = payload;
@@ -205,7 +215,18 @@ export default {
     },
     sendData() {
       this.data.data.phone = this.data.data.phone.filter(x => x > '');
-      Api().patch(`business?id=eq.${this.id}`, this.data);
+      if (this.id === 'new') {
+        Api()
+          .post(`business`, this.data)
+          .then(res => {
+            const newId = this.locationId(res.headers);
+            if (newId) {
+              router.push({ name: 'businessCard', params: { id: newId } });
+            }
+          });
+      } else {
+        Api().patch(`business?id=eq.${this.id}`, this.data);
+      }
     },
     scheduleEdit(payload) {
       this.data.data.schedule = payload;

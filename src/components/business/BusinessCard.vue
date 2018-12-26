@@ -156,6 +156,9 @@ export default {
       return this.data.data.name;
     }
   },
+  watch: {
+    id: 'fetchData'
+  },
   mounted() {
     this.fetchData();
   },
@@ -164,7 +167,7 @@ export default {
       this.$emit('onEditClick');
     },
     fetchData() {
-      if (!this.id) {
+      if (this.id === 'new') {
         return;
       }
       Api()

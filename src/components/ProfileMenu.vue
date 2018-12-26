@@ -16,11 +16,11 @@
           <UserAvatar
             v-if="loggedIn"
             class="ma-1"
-            :name="userID"
-            :src="userInfo.avatar"
+            :name="displayName"
+            :src="avatar"
           />
         </VFlex>
-        <VFlex>{{ userID || "Войти" }}</VFlex>
+        <VFlex>{{ displayName || "Войти" }}</VFlex>
       </VLayout>
     </VBtn>
     <VList>
@@ -103,7 +103,21 @@ export default {
     snackColor: 'error'
   }),
   computed: {
-    ...mapGetters(['loggedIn', 'userID', 'userInfo'])
+    ...mapGetters({
+      loggedIn: 'loggedIn',
+      avatar: 'userAvatar',
+      userID: 'userLogin',
+      userInfo: 'userInfo'
+    }),
+    displayName() {
+      if (!this.userInfo) return;
+      if (this.userInfo.data) {
+        if (this.userInfo.data.name) {
+          return this.userInfo.data.name;
+        }
+      }
+      return this.userID;
+    }
   },
   methods: {
     ...mapActions(['login', 'logout']),

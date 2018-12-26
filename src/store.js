@@ -38,15 +38,26 @@ export default new Vuex.Store({
       return state.token;
       // window.localStorage.accessToken;
     },
+    userAvatar: state => {
+      if (!state.userInfo) return;
+      if (state.userInfo.avatar) return state.userInfo.avatar;
+      if (!state.userInfo.data) return;
+      return state.userInfo.data.avatar;
+    },
     userID: (state, getters) => {
       const info = getters.userInfo;
       if (info) {
-        return info['email'];
+        return info['login'];
       }
     },
     userInfo: state => {
       return state.userInfo;
-      // return JSON.parse(window.localStorage.userInfo || "{}");
+    },
+    userLogin: (state, getters) => {
+      const info = getters.userInfo;
+      if (info) {
+        return info['login'];
+      }
     }
   },
   mutations: {

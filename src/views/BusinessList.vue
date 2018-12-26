@@ -3,6 +3,8 @@
     :headers="headers"
     :items="data"
     :loading="progressQuery"
+    :pagination.sync="pagination"
+    :total-items="totalItems"
     class="elevation-1"
   >
     <VProgressLinear
@@ -86,18 +88,20 @@ export default {
         { label: 'Добавить', action: 'newBusiness', default: true }
       ],
       headers: [
-        { text: 'Название', value: 'name' },
+        { text: 'Название', value: 'data->>name' },
         { text: 'Тип', value: '' },
-        { text: 'ИНН', value: 'data.inn' },
-        { text: 'Адрес', value: 'data.address' },
-        { text: 'Email', value: 'data.email' },
-        { text: 'Менеджер', value: 'data.manager' },
+        { text: 'ИНН', value: 'data->>inn' },
+        { text: 'Адрес', value: 'data->>address' },
+        { text: 'Email', value: 'data->>email' },
+        { text: 'Менеджер', value: 'data->>manager' },
         { text: 'Дата', value: '' },
         { text: 'Статус', value: '' },
         { text: 'Действия', value: '' }
       ],
       data: [],
-      progressQuery: false
+      pagination: { rowsPerPage: 10 },
+      progressQuery: false,
+      totalItems: 0
     };
   },
   computed: {
@@ -107,9 +111,9 @@ export default {
     },
     querySearchString() {
       if (!this.searchString) {
-        return '';
+        return null;
       }
-      return `?or=(data->>email.ilike.*${
+      return `or=(data->>email.ilike.*${
         this.searchString
       }*,data->>name.ilike.*${this.searchString}*,data->>inn.ilike.${
         this.searchString
@@ -117,6 +121,12 @@ export default {
     }
   },
   watch: {
+    pagination: {
+      handler() {
+        this.fetchData();
+      },
+      deep: true
+    },
     table: 'fetchData',
     searchString: 'fetchData'
   },
@@ -135,9 +145,30 @@ export default {
     fetchData() {
       this.progressQuery = true;
       this.data = [];
+      const { sortBy, descending, page, rowsPerPage } = this.pagination;
+      let params = [this.querySearchString];
+      if (sortBy) {
+        params.push(
+          `order=${sortBy}${descending ? '.desc.nullsfirst' : '.asc.nullslast'}`
+        );
+      }
+      if (rowsPerPage > -1) {
+        params.push(`limit=${rowsPerPage}`);
+      }
+      if (page > 1) {
+        params.push(`offset=${(page - 1) * rowsPerPage}`);
+      }
       Api()
-        .get(`${this.table}${this.querySearchString}`)
-        .then(res => res.data)
+        .get(`${this.table}?${params.filter(x => !!x).join('&')}`)
+        .then(res => {
+          if (res.headers && res.headers['content-range']) {
+            const r = res.headers['content-range'].match(/^\d*-\d*\/(\d*)$/);
+            if (r) {
+              this.totalItems = +r[1];
+            }
+          }
+          return res.data;
+        })
         .then(res => {
           this.data = res;
           this.progressQuery = false;
