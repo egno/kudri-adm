@@ -56,30 +56,30 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   props: {
-    source: {type: String, default: () => ""}
+    source: { type: String, default: () => '' }
   },
   data: () => ({
     drawer: null,
     errorMessage: null,
-    flogin: "manager1@test.com",
-    fpassword: "ManagerPassword",
+    flogin: 'manager1@test.com',
+    fpassword: 'ManagerPassword',
     snack: false,
-    snackText: "",
-    snackColor: "error"
+    snackText: '',
+    snackColor: 'error'
   }),
   computed: {
-    ...mapGetters(["loggedIn", "userID"])
+    ...mapGetters(['loggedIn', 'userID'])
   },
   methods: {
-    ...mapActions(["login", "logout"]),
-    sendLogin () {
-      this.login({ email: this.flogin, pass: this.fpassword });
+    ...mapActions(['login', 'logout']),
+    sendLogin() {
+      this.login({ login: this.flogin, pass: this.fpassword });
     },
-    sendLogout () {
+    sendLogout() {
       this.logout();
     }
   }

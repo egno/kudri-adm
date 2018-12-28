@@ -28,21 +28,23 @@
             flat
             right
             small
+            :outline="props.item.access"
+            color="green"
             :href="'businessCard/'+props.item.id"
             target="_blank"
           >
             <UserAvatar
               class="ma-1"
-              :name="props.item.data.name || props.item.data.email"
+              :name="props.item.j.name || props.item.j.email"
               size="2.4em"
-              :src="props.item.data.avatar"
+              :src="props.item.j.avatar"
             />
           </VBtn>
           <VFlex
             align-self-center
             justify-start
           >
-            {{ props.item.data.name }}
+            {{ props.item.j.name }}
           </VFlex>
         </VLayout>
         <a
@@ -50,15 +52,16 @@
           target="_blank"
         />
       </td>
-      <td>{{ props.item.type }}</td>
-      <td>{{ props.item.data.inn }}</td>
-      <td>{{ props.item.data.address }}</td>
-      <td>{{ props.item.data.email }}</td>
-      <td>{{ props.item.data.manager }}</td>
+      <td>{{ props.item.j.category }}</td>
+      <td>{{ props.item.j.inn }}</td>
+      <td>{{ props.item.j.address }}</td>
+      <td>{{ props.item.j.email }}</td>
+      <td>{{ props.item.j.manager.email }}</td>
       <td>-</td>
       <td>-</td>
       <td class="justify-center layout px-0">
         <a
+          v-if="props.item.access"
           :href="'businessCard/'+props.item.id"
           target="_blank"
         >
@@ -88,12 +91,12 @@ export default {
         { label: 'Добавить', action: 'newBusiness', default: true }
       ],
       headers: [
-        { text: 'Название', value: 'data->>name' },
-        { text: 'Тип', value: '' },
-        { text: 'ИНН', value: 'data->>inn' },
-        { text: 'Адрес', value: 'data->>address' },
-        { text: 'Email', value: 'data->>email' },
-        { text: 'Менеджер', value: 'data->>manager' },
+        { text: 'Название', value: 'j->>name' },
+        { text: 'Тип', value: 'j->>category' },
+        { text: 'ИНН', value: 'j->>inn' },
+        { text: 'Адрес', value: 'j->>address' },
+        { text: 'Email', value: 'j->>email' },
+        { text: 'Менеджер', value: 'j->manager->>email' },
         { text: 'Дата', value: '' },
         { text: 'Статус', value: '' },
         { text: 'Действия', value: '' }
@@ -113,11 +116,11 @@ export default {
       if (!this.searchString) {
         return null;
       }
-      return `or=(data->>email.ilike.*${
+      return `or=(j->>email.ilike.*${this.searchString}*,j->>name.ilike.*${
         this.searchString
-      }*,data->>name.ilike.*${this.searchString}*,data->>inn.ilike.${
+      }*,j->>inn.ilike.${this.searchString}*,j->>address.ilike.*${
         this.searchString
-      }*,data->>address.ilike.*${this.searchString}*)`;
+      }*)`;
     }
   },
   watch: {

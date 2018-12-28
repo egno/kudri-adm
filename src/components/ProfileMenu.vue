@@ -95,8 +95,8 @@ export default {
   data: () => ({
     drawer: null,
     errorMessage: null,
-    flogin: 'manager1@test.com',
-    fpassword: 'ManagerPassword',
+    flogin: 'manager000000050@test.com',
+    fpassword: '000000050',
     menu: false,
     snack: false,
     snackText: '',
@@ -122,7 +122,7 @@ export default {
   methods: {
     ...mapActions(['login', 'logout']),
     sendLogin() {
-      this.login({ email: this.flogin, pass: this.fpassword });
+      this.login({ login: this.flogin, pass: this.fpassword });
       this.menu = false;
     },
     sendLogout() {

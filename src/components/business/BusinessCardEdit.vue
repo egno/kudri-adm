@@ -9,34 +9,34 @@
     >
       <UserAvatar
         :name="name"
-        size="4.2em"
+        size="4em"
         :src="avatar"
       />
     </VBtn>
     <VCardText>
       <VForm>
         <VTextField
-          v-model="data.data.name"
+          v-model="data.j.name"
           label="Название"
           prepend-icon="account_box"
-          :rules="[() => !!data.data.name || 'Это поле обязательно для заполнения']"
+          :rules="[() => !!data.j.name || 'Это поле обязательно для заполнения']"
           required
         />
         <VCombobox
-          v-model="data.data.category"
+          v-model="data.j.category"
           :items="businessCategories"
           label="Тип"
           :rules="[rules.category]"
         />
         <VTextField
-          v-model="data.data.inn"
+          v-model="data.j.inn"
           label="ИНН"
           mask="############"
           prepend-icon="assignment"
           :rules="[rules.INN_counter]"
         />
         <VTextField
-          v-model="data.data.address"
+          v-model="data.j.address"
           label="Адрес"
           prepend-icon="local_post_office"
         />
@@ -45,19 +45,19 @@
           @onEdit="phonesEdit"
         />
         <VTextField
-          v-model="data.data.links.instagram"
+          v-model="data.j.links.instagram"
           label="Имя профиля в Instagram"
         />
         <VTextField
-          v-model="data.data.links.vk"
+          v-model="data.j.links.vk"
           label="Имя профиля в VK"
         />
         <VTextField
-          v-model="data.data.site"
+          v-model="data.j.site"
           label="Ссылка на собственный сайт"
         />
         <BusinessScheduleEdit
-          :schedule="data.data.schedule"
+          :schedule="data.j.schedule"
           @onEdit="scheduleEdit"
         />
       </VForm>
@@ -114,7 +114,7 @@ export default {
         'Косметологический кабинет',
         'Частный мастер'
       ],
-      data: { data: { phone: [], links: {} } },
+      data: { j: { phones: [], links: {} } },
       rules: {
         category: value => !value || value.length > 2 || 'Выберите тип',
         INN_counter: value =>
@@ -128,8 +128,8 @@ export default {
   },
   computed: {
     avatar() {
-      if (this.data.data) {
-        return this.data.data.avatar;
+      if (this.data.j) {
+        return this.data.j.avatar;
       }
       return null;
     },
@@ -137,8 +137,8 @@ export default {
       return this.$route.params.id;
     },
     name() {
-      if (this.data.data) {
-        return this.data.data.name;
+      if (this.data.j) {
+        return this.data.j.name;
       }
       return null;
     }
@@ -155,14 +155,14 @@ export default {
       if (!data) {
         data = {};
       }
-      if (!data.data) {
-        data.data = {};
+      if (!data.j) {
+        data.j = {};
       }
-      if (!data.data.phone) {
-        data.data.phone = [];
+      if (!data.j.phones) {
+        data.j.phones = [];
       }
-      if (!data.data.links) {
-        data.data.links = {};
+      if (!data.j.links) {
+        data.j.links = {};
       }
       return data;
     },
@@ -175,6 +175,9 @@ export default {
         .then(res => res.data)
         .then(res => res[0])
         .then(res => {
+          if (res && !res.access) {
+            this.$emit('onEditClose');
+          }
           this.data = this.dataPrefill(res);
         });
     },
@@ -185,7 +188,7 @@ export default {
       return res[1];
     },
     phonesEdit(payload) {
-      this.data.data.phone = payload;
+      this.data.j.phones = payload;
     },
     saveImage(img) {
       this.avatarEdit = false;
@@ -206,7 +209,7 @@ export default {
           }
         })
         .then(function() {
-          vm.data.data.avatar = newFileName;
+          vm.data.j.avatar = newFileName;
         })
         .then(() => vm.sendData())
         .catch(function() {
@@ -214,7 +217,7 @@ export default {
         });
     },
     sendData() {
-      this.data.data.phone = this.data.data.phone.filter(x => x > '');
+      this.data.j.phones = this.data.j.phones.filter(x => x > '');
       if (this.id === 'new') {
         Api()
           .post(`business`, this.data)
@@ -229,7 +232,7 @@ export default {
       }
     },
     scheduleEdit(payload) {
-      this.data.data.schedule = payload;
+      this.data.j.schedule = payload;
     }
   }
 };

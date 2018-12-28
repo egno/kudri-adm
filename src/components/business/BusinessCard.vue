@@ -38,19 +38,19 @@
               </div>
             </VCardTitle>
           </VFlex>
-          <VFlex>
+          <VFlex v-if="address">
             <BusinessAddress
               :caption-class="captionClass"
               :address="address"
             />
           </VFlex>
-          <VFlex>
+          <VFlex v-if="phones.length">
             <BusinessPhones
               :caption-class="captionClass"
               :phones="phones"
             />
           </VFlex>
-          <VFlex v-if="data.data && data.data.site">
+          <VFlex v-if="data.j && data.j.site">
             <div>
               <span :class="captionClass">
                 Сайт
@@ -60,18 +60,18 @@
                   :href="siteLink"
                   target="_blank"
                 >
-                  {{ data.data.site }}
+                  {{ data.j.site }}
                 </a>
               </span>
             </div>
           </VFlex>
-          <VFlex v-if="data.data && data.data.links">
-            <SocialLinks :links="data.data.links" />
+          <VFlex v-if="data.j && data.j.links">
+            <SocialLinks :links="data.j.links" />
           </VFlex>
-          <VFlex v-if="data.data && data.data.schedule">
+          <VFlex v-if="data.j && data.j.schedule">
             <BusinessSchedule
               :caption-class="captionClass"
-              :schedule="data.data.schedule"
+              :schedule="data.j.schedule"
             />
           </VFlex>
         </VLayout>
@@ -80,6 +80,7 @@
     <VCardActions>
       <VSpacer />
       <VBtn
+        v-if="data.access"
         color="primary"
         @click="onEditClick"
       >
@@ -126,34 +127,34 @@ export default {
   },
   computed: {
     address() {
-      if (!(this.data && this.data.data)) {
+      if (!(this.data && this.data.j)) {
         return;
       }
-      return this.data.data.address;
+      return this.data.j.address;
     },
     avatar() {
-      if (!(this.data && this.data.data)) {
+      if (!(this.data && this.data.j)) {
         return;
       }
-      return this.data.data.avatar;
+      return this.data.j.avatar;
     },
     category() {
-      if (!(this.data && this.data.data)) {
+      if (!(this.data && this.data.j)) {
         return;
       }
-      return this.data.data.category;
+      return this.data.j.category;
     },
     siteLink() {
-      if (!this.data.data.site) {
+      if (!this.data.j.site) {
         return;
       }
-      return this.appendHttpToUrl(this.data.data.site);
+      return this.appendHttpToUrl(this.data.j.site);
     },
     title() {
-      if (!(this.data && this.data.data)) {
+      if (!(this.data && this.data.j)) {
         return;
       }
-      return this.data.data.name;
+      return this.data.j.name;
     }
   },
   watch: {

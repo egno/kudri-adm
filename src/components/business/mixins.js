@@ -1,16 +1,16 @@
 export const businessMixins = {
   computed: {
     phones() {
-      if (!(this.data && this.data.data)) {
+      if (!(this.data && this.data.j)) {
         return [];
       }
-      if (!this.data.data.phone) {
+      if (!this.data.j.phones) {
         return [];
       }
-      if (Array.isArray(this.data.data.phone)) {
-        return this.data.data.phone;
+      if (Array.isArray(this.data.j.phones)) {
+        return this.data.j.phones;
       }
-      return [this.data.data.phone];
+      return [this.data.j.phones];
     }
   },
   methods: {
