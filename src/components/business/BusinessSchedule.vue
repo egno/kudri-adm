@@ -1,6 +1,6 @@
 <template>
   <VLayout column>
-    <VFlex pb-0>
+    <VFlex pb-2>
       <div :class="captionClass">
         Режим работы
       </div>
@@ -11,18 +11,29 @@
     >
       <VLayout
         justify-space-around
-        row
+        column
         wrap
       >
         <VFlex
-          v-for="(item,i) in schedule"
-          :key="dow[i]"
+          v-for="(item) in scheduleGroup"
+          :key="item.dow"
+          pt-0
+          pb-0
         >
           <span :class="captionClass">
-            {{ dow[i] }}:
+            {{ item.dow }}:&nbsp;
           </span>
-          <span class="timeClass">
-            {{ item[0] }} - {{ item[1] }}
+          <span
+            v-if="item.works"
+            class="timeClass"
+          >
+            {{ item.time }}
+          </span>
+          <span
+            v-else
+            class="timeClass"
+          >
+            выходной
           </span>
         </VFlex>
       </VLayout>
@@ -48,6 +59,30 @@ export default {
     return {
       dow: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
     };
+  },
+  computed: {
+    scheduleGroup() {
+      return this.schedule
+        .reduce((r, x, i) => {
+          let prev = r[r.length - 1] || [['', '']];
+          if (!(prev[0][0] === x[0] && prev[0][1] === x[1])) {
+            r.push([x, i, i]);
+          } else {
+            prev[2] = i;
+          }
+          return r;
+        }, [])
+        .map(x => {
+          return {
+            time: `${x[0][0]}-${x[0][1]}`,
+            dow:
+              x[1] === x[2]
+                ? this.dow[x[1]]
+                : `${this.dow[x[1]]}-${this.dow[x[2]]}`,
+            works: !!x[0][0]
+          };
+        });
+    }
   }
 };
 </script>
