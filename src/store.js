@@ -18,7 +18,6 @@ export default new Vuex.Store({
     appTitle: 'Kudri',
     navBarVisible: true,
     searchString: '',
-    serviceCategories: [],
     serviceList: [],
     token: '',
     userInfo: {}
@@ -32,7 +31,14 @@ export default new Vuex.Store({
     },
     navBarVisible: state => state.navBarVisible,
     searchString: state => state.searchString,
-    serviceCategories: state => state.serviceCategories,
+    serviceCategories: state =>
+      state.serviceList
+        .map(x => x.j.groups)
+        .reduce((acc, cur) => {
+          acc.push(...cur);
+          return acc;
+        }, [])
+        .filter((element, index, array) => array.indexOf(element) === index),
     serviceList: state => state.serviceList,
     token: state => {
       return state.token;
@@ -78,7 +84,7 @@ export default new Vuex.Store({
       state.navBarVisible = status;
     },
     SET_ACTIONS(state, payload) {
-      state.actions = payload;
+      state.actions = payload || [];
     },
     SET_SEARCH_STRING(state, payload) {
       state.searchString = payload;
@@ -117,18 +123,8 @@ export default new Vuex.Store({
       commit('SET_TOKEN', localStorage.getItem('accessToken'));
       dispatch('loadUserInfo');
     },
-    loadServiceCategories({ commit }) {
-      const path = 'service';
-      Api()
-        .get(path)
-        .then(res => res.data)
-        .then(res => {
-          commit('LOAD_SERVICE_CATEGORIES', res);
-        })
-        .catch(err => commit('ADD_ALERT', err.response.data));
-    },
     loadServiceList({ commit }) {
-      const path = 'subservice';
+      const path = 'service';
       Api()
         .get(path)
         .then(res => res.data)

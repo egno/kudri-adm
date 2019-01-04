@@ -151,21 +151,6 @@ export default {
       this.sendData();
       this.$emit('onEditClose');
     },
-    dataPrefill(data) {
-      if (!data) {
-        data = {};
-      }
-      if (!data.j) {
-        data.j = {};
-      }
-      if (!data.j.phones) {
-        data.j.phones = [];
-      }
-      if (!data.j.links) {
-        data.j.links = {};
-      }
-      return data;
-    },
     fetchData() {
       if (this.id === 'new') {
         return;

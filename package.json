@@ -66,5 +66,8 @@
       "vue-cli-service lint",
       "git add"
     ]
+  },
+  "configureWebpack": {
+    "devtool": "source-map"
   }
 }

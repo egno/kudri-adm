@@ -22,6 +22,7 @@
           v-if="defaultAction"
           key="mainButton"
           color="primary"
+          @click="onDefaultAction"
         >
           {{ defaultAction.label }}
         </VBtn>
@@ -63,22 +64,29 @@ export default {
   computed: {
     ...mapGetters(['actions', 'appTitle', 'navBarVisible', 'userID']),
     defaultAction() {
-      if (!this.actions) {
+      if (!(this.actions && Array.isArray(this.actions))) {
         return;
       }
       return this.actions.filter(x => x['default'])[0];
+    },
+    routePath() {
+      return this.$route.path;
     }
   },
   watch: {
-    searchString: 'setStoreSearchString'
+    searchString: 'setStoreSearchString',
+    routePath: 'setActions'
   },
   mounted() {
     this.setStoreSearchString();
   },
   methods: {
-    ...mapActions(['navBar', 'setSearchString']),
+    ...mapActions(['navBar', 'setActions', 'setSearchString']),
     goHome() {
       router.push({ name: 'home' });
+    },
+    onDefaultAction() {
+      this.$emit('onAction', this.defaultAction.action);
     },
     setStoreSearchString() {
       this.setSearchString(this.searchString);

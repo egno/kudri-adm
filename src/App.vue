@@ -1,6 +1,9 @@
 <template>
   <VApp app>
-    <TopBar app />
+    <TopBar
+      app
+      @onAction="onAction"
+    />
     <Navigation />
     <VContent app>
       <RouterView />
@@ -35,21 +38,24 @@ export default {
     }
   },
   mounted() {
+    this.setActions();
     this.loadFromStorage();
     this.loadUserInfo();
-    this.loadServiceCategories();
     this.loadServiceList();
   },
   methods: {
     ...mapActions([
       'loadFromStorage',
-      'loadServiceCategories',
       'loadServiceList',
       'loadUserInfo',
+      'setActions',
       'navBar'
     ]),
     goHome() {
       router.push({ name: 'home' });
+    },
+    onAction(payload) {
+      this.$root.$emit('onAction', payload);
     }
   }
 };

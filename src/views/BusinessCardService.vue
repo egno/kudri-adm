@@ -8,7 +8,7 @@
       wrap
     >
       <VFlex
-        v-for="(item, i) in data.data.service"
+        v-for="(item, i) in services"
         :key="item.name + i"
       >
         <ServiceCard
@@ -16,17 +16,6 @@
           @onSave="onSave(i)"
           @onDelete="onDelete(i)"
         />
-        <VBtn
-          fixed
-          dark
-          fab
-          bottom
-          right
-          color="pink"
-          @click="edit = true"
-        >
-          <VIcon>add</VIcon>
-        </VBtn>
       </VFlex>
       <VDialog v-model="edit">
         <ServiceCardEdit
@@ -40,42 +29,49 @@
 </template>
 
 <script>
-import ServiceCard from "@/components/ServiceCard.vue";
-import ServiceCardEdit from "@/components/ServiceCardEdit.vue";
-import Api from "@/api/backend";
+import ServiceCard from '@/components/ServiceCard.vue';
+import ServiceCardEdit from '@/components/ServiceCardEdit.vue';
+import Api from '@/api/backend';
+import { businessMixins } from '@/components/business/mixins';
+import { mapActions } from 'vuex';
 
 export default {
   components: {
     ServiceCard,
     ServiceCardEdit
   },
-  data () {
+  mixins: [businessMixins],
+  data() {
     return {
-      data: { data: {} },
+      formActions: [{ label: 'Добавить', action: 'newService', default: true }],
+      data: { j: { services: [] } },
       edit: false,
       newService: {},
       service: null
     };
   },
   computed: {
-    id () {
+    id() {
       return this.$route.params.id;
     },
-    services () {
-      return this.data.data["service"];
+    services() {
+      return this.data.j['services'];
     }
   },
-  mounted () {
+  mounted() {
     this.fetchData();
+    this.setActions(this.formActions);
+    this.$root.$on('onAction', this.onAction);
   },
   methods: {
-    fetchData () {
+    ...mapActions(['setActions']),
+    fetchData() {
       Api()
         .get(`business?id=eq.${this.id}`)
         .then(res => res.data)
         .then(res => res[0])
         .then(res => {
-          this.data = res;
+          this.data = this.dataPrefill(res);
         });
       Api()
         .get(`service`)
@@ -84,27 +80,30 @@ export default {
           this.service = res;
         });
     },
-    onDelete (i) {
+    onAction(payload) {
+      if (payload === this.formActions[0].action) {
+        this.edit = true;
+      }
+    },
+    onDelete(i) {
       this.edit = false;
       this.newService = {};
       if (i > -1) {
-        this.data.data.service = this.data.data.service.filter(
-          (x, n) => n !== i
-        );
+        this.data.j.services = this.data.j.services.filter((x, n) => n !== i);
       }
       this.sendData();
     },
-    onSave (i) {
+    onSave(i) {
       this.edit = false;
       if (i === -1) {
-        this.data.data["service"].push(Object.assign({}, this.newService));
+        this.data.j['services'].push(Object.assign({}, this.newService));
       }
-      this.data.data["service"] = this.services.filter(
+      this.data.j['services'] = this.services.filter(
         x => Object.keys(x).length > 0
       );
       this.sendData();
     },
-    sendData () {
+    sendData() {
       Api().patch(`business?id=eq.${this.id}`, this.data);
     }
   }

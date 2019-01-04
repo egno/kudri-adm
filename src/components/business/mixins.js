@@ -21,6 +21,24 @@ export const businessMixins = {
         return 'http://' + url;
       }
     },
+    dataPrefill(data) {
+      if (!data) {
+        data = {};
+      }
+      if (!data.j) {
+        data.j = {};
+      }
+      if (!data.j.phones) {
+        data.j.phones = [];
+      }
+      if (!data.j.links) {
+        data.j.links = {};
+      }
+      if (!data.j.services) {
+        data.j.services = [];
+      }
+      return data;
+    },
     uuidv4() {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(
         c
