@@ -1,5 +1,8 @@
 <template>
-  <VLayout column>
+  <VLayout
+    v-if="schedule"
+    column
+  >
     <VFlex pb-2>
       <div :class="captionClass">
         Режим работы
@@ -51,7 +54,7 @@ export default {
     schedule: {
       type: Array,
       default() {
-        return [[]];
+        return [];
       }
     }
   },

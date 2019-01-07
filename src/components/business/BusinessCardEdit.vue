@@ -89,8 +89,8 @@ import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue';
 import BusinessPhonesEdit from '@/components/business/BusinessPhonesEdit.vue';
 import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue';
 import Api from '@/api/backend';
-import axios from 'axios';
 import router from '@/router';
+import { backendMixins } from '@/api/mixins';
 import { businessMixins } from '@/components/business/mixins';
 
 export default {
@@ -100,7 +100,7 @@ export default {
     UserAvatar,
     VueAvatarEditor
   },
-  mixins: [businessMixins],
+  mixins: [backendMixins, businessMixins],
   data() {
     return {
       avatarEdit: false,
@@ -166,40 +166,8 @@ export default {
           this.data = this.dataPrefill(res);
         });
     },
-    locationId(headers) {
-      if (!(headers && headers.location)) return;
-      const res = headers.location.match(/eq\.(.*)$/);
-      if (!res) return;
-      return res[1];
-    },
     phonesEdit(payload) {
       this.data.j.phones = payload;
-    },
-    saveImage(img) {
-      this.avatarEdit = false;
-      var blobBin = atob(img.toDataURL().split(',')[1]);
-      var array = [];
-      for (var i = 0; i < blobBin.length; i++) {
-        array.push(blobBin.charCodeAt(i));
-      }
-      var file = new Blob([new Uint8Array(array)], { type: 'image/png' });
-      let formData = new FormData();
-      let newFileName = `${this.uuidv4()}.png`;
-      formData.append('file', file, newFileName);
-      let vm = this;
-      axios
-        .post(process.env.VUE_APP_UPLOAD, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        })
-        .then(function() {
-          vm.data.j.avatar = newFileName;
-        })
-        .then(() => vm.sendData())
-        .catch(function() {
-          console.log('FAILURE!!');
-        });
     },
     sendData() {
       this.data.j.phones = this.data.j.phones.filter(x => x > '');
@@ -208,6 +176,7 @@ export default {
           .post(`business`, this.data)
           .then(res => {
             const newId = this.locationId(res.headers);
+            console.log(newId);
             if (newId) {
               router.push({ name: 'businessCard', params: { id: newId } });
             }

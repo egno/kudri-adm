@@ -12,58 +12,58 @@
         :key="i"
       >
         <EmployeeCard
-          v-if="item.data"
-          :item="item.data"
+          :item="item"
           @onSave="onSave(i)"
           @onDelete="onDelete(i)"
         />
-        <VBtn
-          fixed
-          dark
-          fab
-          bottom
-          right
-          color="pink"
-          @click="edit = true"
-        >
-          <VIcon>add</VIcon>
-        </VBtn>
       </VFlex>
       <VDialog v-model="edit">
-        <!-- <employee-card-edit :item="newService" @onSave="onSave(-1)" @onDelete="onDelete(-1)"></employee-card-edit> -->
+        <!-- <EmployeeCardEdit :item="newService" @onSave="onSave(-1)" @onDelete="onDelete(-1)"/> -->
       </VDialog>
     </VLayout>
   </VContainer>
 </template>
 
 <script>
-import EmployeeCard from "@/components/EmployeeCard.vue";
-// import EmployeeCardEdit from "@/components/ServiceCardEdit.vue";
-import Api from "@/api/backend";
+import EmployeeCard from '@/components/EmployeeCard.vue';
+// import EmployeeCardEdit from '@/components/EmployeeCardEdit.vue';
+import Api from '@/api/backend';
+import { businessMixins } from '@/components/business/mixins';
+import { mapActions } from 'vuex';
 
 export default {
   components: {
     EmployeeCard
     // EmployeeCardEdit
   },
-  data () {
+  mixins: [businessMixins],
+  data() {
     return {
-      data: { data: {} },
+      formActions: [
+        { label: 'Добавить сотрудника', action: 'newEmployee', default: true }
+      ],
+      data: { j: {} },
       edit: false,
-      newEmployee: {},
+      newService: {},
       service: null
     };
   },
   computed: {
-    id () {
+    id() {
       return this.$route.params.id;
+    },
+    services() {
+      return this.data.j['services'];
     }
   },
-  mounted () {
+  mounted() {
     this.fetchData();
+    this.setActions(this.formActions);
+    this.$root.$on('onAction', this.onAction);
   },
   methods: {
-    fetchData () {
+    ...mapActions(['setActions']),
+    fetchData() {
       Api()
         .get(`employee?parent=eq.${this.id}`)
         .then(res => res.data)
@@ -77,28 +77,31 @@ export default {
           this.service = res;
         });
     },
-    onDelete (i) {
+    onAction(payload) {
+      if (payload === this.formActions[0].action) {
+        this.edit = true;
+      }
+    },
+    onDelete(i) {
       this.edit = false;
       this.newService = {};
       if (i > -1) {
-        this.data.data.service = this.data.data.service.filter(
-          (x, n) => n !== i
-        );
+        // this.data.j.services = this.data.j.services.filter((x, n) => n !== i);
       }
-      this.sendData();
-    },
-    onSave (i) {
-      this.edit = false;
-      if (i === -1) {
-        //   this.data.data["service"].push(Object.assign({}, this.newService));
-      }
-      // this.data.data["service"] = this.services.filter(
-      //   x => Object.keys(x).length > 0
-      // );
       // this.sendData();
     },
-    sendData () {
-      // Api().patch(`business?id=eq.${this.id}`, this.data);
+    onSave(i) {
+      this.edit = false;
+      if (i === -1) {
+        // this.data.j['services'].push(Object.assign({}, this.newService));
+      }
+      this.data.j['services'] = this.services.filter(
+        x => Object.keys(x).length > 0
+      );
+      // this.sendData();
+    },
+    sendData() {
+      // Api().patch(`employee?id=eq.${this.id}`, this.data);
     }
   }
 };

@@ -3,10 +3,11 @@
     <VToolbar>
       <UserAvatar
         class="ma-1"
-        :name="item.name || item.email"
-        :src="item.avatar"
+        :name="item.j.name || item.j.email"
+        :src="item.j.avatar"
       />
       <VBtn
+        v-if="item.access"
         small
         fab
         bottom
@@ -25,9 +26,9 @@
         >
           <VFlex>
             <div>
-              <h4>{{ item.name }}</h4>
+              <h4>{{ item.j.name }}</h4>
               <div class="caption grey--text text--darken-1">
-                {{ item.category }}
+                {{ item.j.category }}
               </div>
             </div>
           </VFlex>
@@ -40,33 +41,37 @@
           Услуги:
         </span>
         <div
-          v-for="(service, i) in item.services"
+          v-for="(service, i) in item.j.services"
           :key="i"
         >
           {{ service.name }}
         </div>
       </div>
-      <div>
-        <span class="font-weight-bold">
-          График работы:
-        </span>
-        {{ item.schedule }}
-      </div>
+      <BusinessSchedule
+        :caption-class="captionClass"
+        :schedule="item.j.schedule"
+      />
       <span />
-      {{ item.note }}
+      {{ item.j.note }}
     </VCardText>
     <VDialog v-model="edit">
-      <!-- <service-card-edit :item="item" @onSave="onSave" @onDelete="onDelete"></service-card-edit> -->
+      <EmployeeCardEdit
+        :id="item.id"
+        :item="item"
+        @onEditClose="onSave"
+        @onDelete="onDelete"
+      />
     </VDialog>
   </VCard>
 </template>
 
 <script>
-// import ServiceCardEdit from "@/components/ServiceCardEdit.vue";
+import BusinessSchedule from '@/components/business/BusinessSchedule.vue';
+import EmployeeCardEdit from '@/components/business/EmployeeCardEdit.vue';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 
 export default {
-  components: { UserAvatar },
+  components: { BusinessSchedule, EmployeeCardEdit, UserAvatar },
   props: {
     item: {
       type: Object,
@@ -77,6 +82,8 @@ export default {
   },
   data() {
     return {
+      captionClass:
+        'caption font-weight-bold text-no-wrap grey--text text--darken-1',
       edit: false
     };
   },
@@ -85,10 +92,9 @@ export default {
       this.edit = false;
       this.$emit('onDelete', this.item);
     },
-    onSave() {
+    onSave(payload) {
       this.edit = false;
-      //   this.item = Object.assign(this.item, data);
-      this.$emit('onSave', this.item);
+      this.$emit('onSave', payload);
     }
   }
 };

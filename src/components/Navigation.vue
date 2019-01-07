@@ -50,7 +50,8 @@ export default {
         'businessCard',
         'businessCardEmployee',
         'businessCardGallery',
-        'businessCardService'
+        'businessCardService',
+        'employeeCard'
       ];
       return businessCards.some(x => x === this.$route.name);
     },

@@ -20,7 +20,9 @@
             :src="avatar"
           />
         </VFlex>
-        <VFlex>{{ displayName || "Войти" }}</VFlex>
+        <VFlex class="hidden-sm-and-down">
+          {{ displayName || "Войти" }}
+        </VFlex>
       </VLayout>
     </VBtn>
     <VList>

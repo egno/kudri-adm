@@ -88,7 +88,12 @@ export default {
   data() {
     return {
       formActions: [
-        { label: 'Добавить', action: 'newBusiness', default: true }
+        {
+          label: 'Добавить',
+          href: '/businessCard/new',
+          target: '_blank',
+          default: true
+        }
       ],
       headers: [
         { text: 'Название', value: 'j->>name' },

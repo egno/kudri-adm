@@ -43,8 +43,10 @@ export default {
   mixins: [businessMixins],
   data() {
     return {
-      formActions: [{ label: 'Добавить', action: 'newService', default: true }],
-      data: { j: { services: [] } },
+      formActions: [
+        { label: 'Добавить услугу', action: 'newService', default: true }
+      ],
+      data: { j: {} },
       edit: false,
       newService: {},
       service: null

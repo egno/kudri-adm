@@ -22,6 +22,8 @@
           v-if="defaultAction"
           key="mainButton"
           color="primary"
+          :href="href"
+          :target="target"
           @click="onDefaultAction"
         >
           {{ defaultAction.label }}
@@ -69,8 +71,20 @@ export default {
       }
       return this.actions.filter(x => x['default'])[0];
     },
+    href() {
+      if (this.defaultAction) {
+        return this.defaultAction.href;
+      }
+      return null;
+    },
     routePath() {
       return this.$route.path;
+    },
+    target() {
+      if (this.defaultAction) {
+        return this.defaultAction.target;
+      }
+      return null;
     }
   },
   watch: {
