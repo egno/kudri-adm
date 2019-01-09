@@ -36,6 +36,22 @@
       </VToolbarTitle>
     </VToolbar>
     <VCardText>
+      <VFlex v-if="item.j.address">
+        <BusinessAddress
+          :caption-class="captionClass"
+          :address="item.j.address"
+        />
+      </VFlex>
+      <VFlex v-if="item.j.phones && item.j.phones.length">
+        <BusinessPhones
+          :caption-class="captionClass"
+          :phones="item.j.phones"
+        />
+      </VFlex>
+      <BusinessSchedule
+        :caption-class="captionClass"
+        :schedule="item.j.schedule"
+      />
       <div>
         <span class="font-weight-bold">
           Услуги:
@@ -47,15 +63,9 @@
           {{ service.name }}
         </div>
       </div>
-      <BusinessSchedule
-        :caption-class="captionClass"
-        :schedule="item.j.schedule"
-      />
-      <span />
-      {{ item.j.note }}
     </VCardText>
     <VDialog v-model="edit">
-      <EmployeeCardEdit
+      <FilialCardEdit
         :id="item.id"
         :item="item"
         @onEditClose="onSave"
@@ -66,12 +76,20 @@
 </template>
 
 <script>
+import BusinessAddress from '@/components/business/BusinessAddress.vue';
+import BusinessPhones from '@/components/business/BusinessPhones.vue';
 import BusinessSchedule from '@/components/business/BusinessSchedule.vue';
-import EmployeeCardEdit from '@/components/business/EmployeeCardEdit.vue';
+import FilialCardEdit from '@/components/business/FilialCardEdit.vue';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 
 export default {
-  components: { BusinessSchedule, EmployeeCardEdit, UserAvatar },
+  components: {
+    BusinessAddress,
+    BusinessPhones,
+    BusinessSchedule,
+    FilialCardEdit,
+    UserAvatar
+  },
   props: {
     item: {
       type: Object,

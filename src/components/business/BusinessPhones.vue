@@ -7,10 +7,12 @@
       v-for="(item, i) in phones"
       :key="i"
     >
+      <span v-if="i">
+        ,{{ " " }}
+      </span>
       <a :href="phoneLink(item)">
         {{ item | phone }}
       </a>
-      <span>,{{ " " }}</span>
     </span>
   </div>
 </template>

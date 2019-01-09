@@ -77,6 +77,7 @@ export default {
       }
       return this.name
         .split(splitChars)
+        .filter(x => x)
         .slice(0, 2)
         .map(x => x[0].toUpperCase())
         .join('');
