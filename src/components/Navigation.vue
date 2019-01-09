@@ -13,6 +13,7 @@
       <VToolbarSideIcon @click="navBar()" />
     </VToolbar>
     <VList>
+      <CalendarMini />
       <VListTile
         v-for="item in items"
         :key="item.title"
@@ -31,10 +32,12 @@
 </template>
 
 <script>
+import CalendarMini from '@/components/CalendarMini.vue';
 import router from '@/router';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
+  components: { CalendarMini },
   data() {
     return {
       //
