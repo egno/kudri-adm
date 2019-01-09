@@ -49,6 +49,7 @@ export default {
       const businessCards = [
         'businessCard',
         'businessCardEmployee',
+        'businessCardFilal',
         'businessCardGallery',
         'businessCardService',
         'employeeCard'
@@ -97,7 +98,8 @@ export default {
         },
         {
           title: 'Филиалы',
-          show: this.loggedIn && this.isBusinessCard
+          show: this.loggedIn && this.isBusinessCard,
+          route: { name: 'businessCardFilal', id: this.$route.params.id }
         },
         {
           title: 'Галерея',

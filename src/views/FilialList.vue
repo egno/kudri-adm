@@ -11,12 +11,12 @@
         v-for="(item, i) in data"
         :key="i"
       >
-        <EmployeeCard
+        <FilialCard
           :item="item"
           @onSave="onSave"
         >
           {{ i }} {{ item.id }}
-        </EmployeeCard>
+        </FilialCard>
       </VFlex>
     </VLayout>
   </VContainer>
@@ -24,7 +24,7 @@
 
 <script>
 import Api from '@/api/backend';
-import EmployeeCard from '@/components/business/EmployeeCard.vue';
+import FilialCard from '@/components/business/FilialCard.vue';
 import { mapActions } from 'vuex';
 
 export default {
@@ -32,13 +32,13 @@ export default {
     items: { type: Array, default: [] },
     search: { type: String, default: '' }
   },
-  components: { EmployeeCard },
+  components: { FilialCard },
   data() {
     return {
       formActions: [
         {
-          label: 'Добавить сотрудника',
-          action: 'newEmployee',
+          label: 'Добавить филиал',
+          action: 'newFilial',
           default: true
         }
       ],
@@ -60,7 +60,7 @@ export default {
     ...mapActions(['setActions']),
     fetchData() {
       Api()
-        .get(`employee?parent=eq.${this.id}`)
+        .get(`filial?parent=eq.${this.id}`)
         .then(res => res.data)
         .then(res => {
           this.data = res;
@@ -77,17 +77,16 @@ export default {
     sendData(data) {
       data.j.phones = data.j.phones.filter(x => x > '');
       data.parent = this.id;
-      data.type = 'E';
       if (!data.id) {
-        Api().post(`employee`, data);
+        Api().post(`filial`, data);
         // .then(res => {
         //   const newId = this.locationId(res.headers);
-        // if (newId) {
-        // router.push({ name: 'businessCard', params: { id: newId } });
-        // }
+        //   if (newId) {
+        //   router.push({ name: 'businessCard', params: { id: newId } });
+        //   }
         // });
       } else {
-        Api().patch(`employee?id=eq.${data.id}`, data);
+        Api().patch(`filial?id=eq.${data.id}`, data);
       }
     }
   }

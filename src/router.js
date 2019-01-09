@@ -28,9 +28,14 @@ export default new Router({
       component: () => import('./views/BusinessCard.vue')
     },
     {
-      path: '/businessCard/:id/employee',
+      path: '/businessCard/e/:id',
       name: 'businessCardEmployee',
       component: () => import('./views/EmployeeList.vue')
+    },
+    {
+      path: '/businessCard/f/:id',
+      name: 'businessCardFilal',
+      component: () => import('./views/FilialList.vue')
     },
     {
       path: '/businessCardGallery/:id',
