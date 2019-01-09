@@ -54,7 +54,19 @@
       </td>
       <td>{{ props.item.j.category }}</td>
       <td>{{ props.item.j.inn }}</td>
-      <td>{{ props.item.j.address }}</td>
+      <td>
+        {{ props.item.j.address }}
+        <div
+          v-if="props.item.filials"
+          class="caption text-no-wrap grey--text text--darken-1"
+        >
+          <RouterLink
+            :to="{name: 'businessCardFilal',params:{id: props.item.id}}"
+          >
+            Филиалов: {{ props.item.filials }}
+          </RouterLink>
+        </div>
+      </td>
       <td>{{ props.item.j.email }}</td>
       <td>{{ props.item.j.manager.email }}</td>
       <td>-</td>
