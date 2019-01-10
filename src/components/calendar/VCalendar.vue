@@ -76,7 +76,7 @@ export default {
     ...mapActions(['setActualDate']),
     fetchData() {
       Api()
-        .get('visit')
+        .get(`visit?salon_id=eq.${this.business}`)
         .then(res => res.data)
         .then(res => {
           this.visits = res;
