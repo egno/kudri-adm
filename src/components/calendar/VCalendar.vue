@@ -3,6 +3,7 @@
     <VFlex>
       <VContainer>
         <VLayout
+          v-if="period==='month'"
           align-space-between
           justify-space-between
           fill-height
@@ -38,6 +39,21 @@
             </VLayout>
           </VFlex>
         </VLayout>
+        <VLayout
+          v-if="period==='week'"
+          fill-height
+          row
+          pl-3
+        >
+          <CalendarDayColumn
+            v-for="(day,i) in dates[0]"
+            :key="i"
+            :show-time="!i"
+            :day="day"
+            :visits="day.visits"
+            @onClickDate="goDate($event)"
+          />
+        </VLayout>
       </VContainer>
     </VFlex>
   </VLayout>
@@ -46,13 +62,14 @@
 <script>
 import CalendarDayBtn from '@/components/calendar/CalendarDayBtn.vue';
 import CalendarDayCard from '@/components/calendar/CalendarDayCard.vue';
-import { formatDate, periodDates } from '@/components/calendar/utils';
+import CalendarDayColumn from '@/components/calendar/CalendarDayColumn.vue';
+import { formatDate, monthDates } from '@/components/calendar/utils';
 import { mapActions, mapGetters } from 'vuex';
 import Api from '@/api/backend';
 import router from '@/router';
 
 export default {
-  components: { CalendarDayBtn, CalendarDayCard },
+  components: { CalendarDayBtn, CalendarDayCard, CalendarDayColumn },
   props: {
     kind: { type: String, default: 'mini' },
     period: { type: String, default: 'month' }
@@ -104,7 +121,12 @@ export default {
       });
     },
     setDates() {
-      this.dates = periodDates(this.workYear, this.workMonth);
+      this.dates = monthDates(this.workYear, this.workMonth);
+      if (this.period === 'week') {
+        this.dates = this.dates.filter(w =>
+          w.some(d => d.dateKey === this.workDate)
+        );
+      }
     },
     setDateVisits() {
       this.setDates();
@@ -122,7 +144,13 @@ export default {
       }
       return this.visits
         .filter(v => v.ts_begin.slice(0, 10) === dt)
-        .sort((a, b) => (a.ts_begin < b.ts_begin ? -1 : 1));
+        .sort((a, b) => (a.ts_begin < b.ts_begin ? -1 : 1))
+        .map(x => {
+          let ts1 = new Date(x.ts_begin);
+          let ts2 = new Date(x.ts_end);
+          x.during = (ts2.getTime() - ts1.getTime()) / 60000;
+          return x;
+        });
     }
   }
 };

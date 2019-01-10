@@ -10,6 +10,13 @@ export function formatDate(date) {
   ].join('-');
 }
 
+export function formatTime(date) {
+  return [
+    ('0' + date.getHours()).slice(-2),
+    ('0' + date.getMinutes()).slice(-2)
+  ].join(':');
+}
+
 export function areSameDates(date1, date2) {
   return (
     date1.getDate() === date2.getDate() &&
@@ -33,7 +40,7 @@ export function getRESTTime(s) {
   return s.slice(11, 16);
 }
 
-export function periodDates(year, month) {
+export function monthDates(year, month) {
   const days = [];
   const date = new Date(year, month, 1);
   const today = new Date();
