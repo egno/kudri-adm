@@ -6,7 +6,10 @@
     @input="onInput($event)"
   >
     <VToolbar flat>
-      <VToolbarTitle @click="goHome()">
+      <VToolbarTitle
+        overflow-hidden
+        @click="goHome()"
+      >
         {{ appTitle }}
       </VToolbarTitle>
       <VSpacer />
@@ -34,6 +37,7 @@
 <script>
 import VCalendar from '@/components/calendar/VCalendar.vue';
 import router from '@/router';
+import Api from '@/api/backend';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
@@ -45,6 +49,9 @@ export default {
   },
   computed: {
     ...mapGetters(['appTitle', 'loggedIn', 'token', 'navBarVisible']),
+    businessId() {
+      return this.$route && this.$route.params && this.$route.params.id;
+    },
     items() {
       return this.menu.filter(x => x.show);
     },
@@ -114,10 +121,20 @@ export default {
     }
   },
   watch: {
-    token: 'loadUserInfo'
+    token: 'loadUserInfo',
+    businessId: 'changeAppTitle'
   },
   methods: {
-    ...mapActions(['navBar', 'loadUserInfo']),
+    ...mapActions(['navBar', 'loadUserInfo', 'setAppTitle']),
+    changeAppTitle() {
+      Api()
+        .get(`business?id=eq.${this.businessId}`)
+        .then(res => res.data)
+        .then(res => res[0])
+        .then(res => res.j.name)
+        .then(res => this.setAppTitle(res))
+        .catch(this.setAppTitle());
+    },
     goHome() {
       router.push({ name: 'home' });
     },

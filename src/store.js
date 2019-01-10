@@ -16,7 +16,8 @@ export default new Vuex.Store({
     actualDate: '',
     alertMaxCount: 3,
     alerts: [],
-    appTitle: 'Kudri',
+    appTitle: '',
+    defaultAppTitle: 'Kudri',
     navBarVisible: true,
     searchString: '',
     serviceList: [],
@@ -27,7 +28,7 @@ export default new Vuex.Store({
     actions: state => state.actions,
     actualDate: state => state.actualDate,
     alerts: state => state.messages,
-    appTitle: state => state.appTitle,
+    appTitle: state => state.appTitle || state.defaultAppTitle,
     loggedIn: (state, getters) => {
       return getters.userID;
     },
@@ -91,6 +92,9 @@ export default new Vuex.Store({
     SET_ACTUAL_DATE(state, payload) {
       state.actualDate = payload;
     },
+    SET_APP_TITLE(state, payload) {
+      state.appTitle = payload;
+    },
     SET_SEARCH_STRING(state, payload) {
       state.searchString = payload;
     },
@@ -120,6 +124,9 @@ export default new Vuex.Store({
     },
     setActualDate({ commit }, payload) {
       commit('SET_ACTUAL_DATE', payload);
+    },
+    setAppTitle({ commit }, payload) {
+      commit('SET_APP_TITLE', payload);
     },
     setSearchString({ commit }, payload) {
       commit('SET_SEARCH_STRING', payload);
