@@ -46,7 +46,7 @@
 <script>
 import CalendarDayBtn from '@/components/calendar/CalendarDayBtn.vue';
 import CalendarDayCard from '@/components/calendar/CalendarDayCard.vue';
-import { periodDates } from '@/components/calendar/utils';
+import { formatDate, periodDates } from '@/components/calendar/utils';
 import { mapActions, mapGetters } from 'vuex';
 import Api from '@/api/backend';
 import router from '@/router';
@@ -54,7 +54,8 @@ import router from '@/router';
 export default {
   components: { CalendarDayBtn, CalendarDayCard },
   props: {
-    kind: { type: String, default: 'mini' }
+    kind: { type: String, default: 'mini' },
+    period: { type: String, default: 'month' }
   },
   data() {
     return {
@@ -66,11 +67,23 @@ export default {
     ...mapGetters(['actualDate']),
     business() {
       return this.$route.params.id;
+    },
+    workDate() {
+      let now = new Date();
+      return this.$route.params.date || formatDate(now);
+    },
+    workMonth() {
+      return +this.workDate.slice(5, 7) - 1;
+    },
+    workYear() {
+      return +this.workDate.slice(0, 4);
     }
+  },
+  watch: {
+    workDate: 'fetchData'
   },
   mounted() {
     this.fetchData();
-    this.setDates();
   },
   methods: {
     ...mapActions(['setActualDate']),
@@ -91,9 +104,10 @@ export default {
       });
     },
     setDates() {
-      this.dates = periodDates(2019, 0);
+      this.dates = periodDates(this.workYear, this.workMonth);
     },
     setDateVisits() {
+      this.setDates();
       this.dates = this.dates.map(w => {
         w = w.map(x => {
           x.visits = this.dayVisits(x.dateKey);
@@ -104,7 +118,7 @@ export default {
     },
     dayVisits(dt) {
       if (!this.visits.length) {
-        return 0;
+        return [];
       }
       return this.visits
         .filter(v => v.ts_begin.slice(0, 10) === dt)

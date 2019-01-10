@@ -1,5 +1,8 @@
 <template>
-  <VCalendar kind="full" />
+  <VCalendar
+    kind="full"
+    period="week"
+  />
 </template>
 
 <script>

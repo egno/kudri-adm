@@ -44,7 +44,7 @@ export default {
   components: { VCalendar },
   data() {
     return {
-      //
+      business: {}
     };
   },
   computed: {
@@ -66,6 +66,9 @@ export default {
         'employeeCard'
       ];
       return businessCards.some(x => x === this.$route.name);
+    },
+    isCompany() {
+      return this.business && this.business.type !== 'P';
     },
     isManagerMenu() {
       return !this.isBusinessCard;
@@ -104,12 +107,12 @@ export default {
         },
         {
           title: 'Сотрудники',
-          show: this.loggedIn && this.isBusinessCard,
+          show: this.loggedIn && this.isBusinessCard && this.isCompany,
           route: { name: 'businessCardEmployee', id: this.$route.params.id }
         },
         {
           title: 'Филиалы',
-          show: this.loggedIn && this.isBusinessCard,
+          show: this.loggedIn && this.isBusinessCard && this.isCompany,
           route: { name: 'businessCardFilal', id: this.$route.params.id }
         },
         {
@@ -122,15 +125,19 @@ export default {
   },
   watch: {
     token: 'loadUserInfo',
-    businessId: 'changeAppTitle'
+    businessId: 'getBusiness'
   },
   methods: {
     ...mapActions(['navBar', 'loadUserInfo', 'setAppTitle']),
-    changeAppTitle() {
+    getBusiness() {
       Api()
         .get(`business?id=eq.${this.businessId}`)
         .then(res => res.data)
         .then(res => res[0])
+        .then(res => {
+          this.business = res;
+          return res;
+        })
         .then(res => res.j.name)
         .then(res => this.setAppTitle(res))
         .catch(this.setAppTitle());
