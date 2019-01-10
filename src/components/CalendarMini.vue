@@ -13,14 +13,14 @@
               row
             >
               <VFlex
-                v-for="(day, i) in week"
-                :key="i"
+                v-for="(day, di) in week"
+                :key="di"
               >
                 <VBadge overlap>
                   <span
-v-if="visitCount(day.dateKey)"
-                        slot="badge"
->
+                    v-if="visitCount(day.dateKey)"
+                    slot="badge"
+                  >
                     {{ visitCount(day.dateKey) }}
                   </span>
                   <VBtn
@@ -32,8 +32,8 @@ v-if="visitCount(day.dateKey)"
                     :color="day.outOfRange ? 'grey': ''"
                     :outline="day.today"
                   >
-{{ day.display }}
-</VBtn>
+                    {{ day.display }}
+                  </VBtn>
                 </VBadge>
               </VFlex>
             </VLayout>
