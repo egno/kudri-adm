@@ -29,7 +29,13 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['actions', 'appTitle', 'navBarVisible', 'userID']),
+    ...mapGetters([
+      'actions',
+      'actualDate',
+      'appTitle',
+      'navBarVisible',
+      'userID'
+    ]),
     defaultAction() {
       if (!this.actions) {
         return;
@@ -42,6 +48,7 @@ export default {
     this.loadFromStorage();
     this.loadUserInfo();
     this.loadServiceList();
+    this.checkDate();
   },
   methods: {
     ...mapActions([
@@ -49,8 +56,15 @@ export default {
       'loadServiceList',
       'loadUserInfo',
       'setActions',
+      'setActualDate',
       'navBar'
     ]),
+    checkDate() {
+      if (!this.actualDate) {
+        // let date = new Date();
+        // this.setActualDate(formatDate(date));
+      }
+    },
     goHome() {
       router.push({ name: 'home' });
     },

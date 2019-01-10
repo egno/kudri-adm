@@ -43,9 +43,14 @@ export default new Router({
       component: () => import('./views/BusinessCardGallery.vue')
     },
     {
-      path: '/businessCardService/:id',
+      path: '/businessCard/s/:id',
       name: 'businessCardService',
       component: () => import('./views/BusinessCardService.vue')
+    },
+    {
+      path: '/businessCard/v/:id/:date',
+      name: 'businessVisit',
+      component: () => import('./views/VisitCalendar.vue')
     }
   ]
 });

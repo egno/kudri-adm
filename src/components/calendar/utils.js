@@ -2,6 +2,14 @@ export function valueDate(value, format) {
   return value ? this.parseDateString(value, format) : undefined;
 }
 
+export function formatDate(date) {
+  return [
+    date.getFullYear(),
+    ('0' + (date.getMonth() + 1)).slice(-2),
+    ('0' + date.getDate()).slice(-2)
+  ].join('-');
+}
+
 export function areSameDates(date1, date2) {
   return (
     date1.getDate() === date2.getDate() &&
@@ -16,6 +24,13 @@ function chunkArray(inputArray, chunkSize) {
     results.push(inputArray.splice(0, chunkSize));
   }
   return results;
+}
+
+export function getRESTTime(s) {
+  if (!s) {
+    return;
+  }
+  return s.slice(11, 16);
 }
 
 export function periodDates(year, month) {
@@ -46,11 +61,7 @@ export function periodDates(year, month) {
   days.forEach(day => {
     day.today = areSameDates(day.date, today);
     day.display = day.date.getDate();
-    day.dateKey = [
-      day.date.getFullYear(),
-      ('0' + (day.date.getMonth() + 1)).slice(-2),
-      ('0' + day.date.getDate()).slice(-2)
-    ].join('-');
+    day.dateKey = formatDate(day.date);
   });
   return chunkArray(days, 7);
 }

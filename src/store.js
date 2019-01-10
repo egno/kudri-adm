@@ -13,6 +13,7 @@ Vue.use(VueAxios, axios, VueCacheData);
 export default new Vuex.Store({
   state: {
     actions: [],
+    actualDate: '',
     alertMaxCount: 3,
     alerts: [],
     appTitle: 'Kudri',
@@ -24,6 +25,7 @@ export default new Vuex.Store({
   },
   getters: {
     actions: state => state.actions,
+    actualDate: state => state.actualDate,
     alerts: state => state.messages,
     appTitle: state => state.appTitle,
     loggedIn: (state, getters) => {
@@ -86,6 +88,9 @@ export default new Vuex.Store({
     SET_ACTIONS(state, payload) {
       state.actions = payload || [];
     },
+    SET_ACTUAL_DATE(state, payload) {
+      state.actualDate = payload;
+    },
     SET_SEARCH_STRING(state, payload) {
       state.searchString = payload;
     },
@@ -112,6 +117,9 @@ export default new Vuex.Store({
   actions: {
     setActions({ commit }, payload) {
       commit('SET_ACTIONS', payload);
+    },
+    setActualDate({ commit }, payload) {
+      commit('SET_ACTUAL_DATE', payload);
     },
     setSearchString({ commit }, payload) {
       commit('SET_SEARCH_STRING', payload);

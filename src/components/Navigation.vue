@@ -13,7 +13,7 @@
       <VToolbarSideIcon @click="navBar()" />
     </VToolbar>
     <VList>
-      <CalendarMini />
+      <VCalendar v-if="loggedIn && isBusinessCard" />
       <VListTile
         v-for="item in items"
         :key="item.title"
@@ -32,12 +32,12 @@
 </template>
 
 <script>
-import CalendarMini from '@/components/CalendarMini.vue';
+import VCalendar from '@/components/calendar/VCalendar.vue';
 import router from '@/router';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
-  components: { CalendarMini },
+  components: { VCalendar },
   data() {
     return {
       //
@@ -55,6 +55,7 @@ export default {
         'businessCardFilal',
         'businessCardGallery',
         'businessCardService',
+        'businessVisit',
         'employeeCard'
       ];
       return businessCards.some(x => x === this.$route.name);
