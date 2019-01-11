@@ -74,20 +74,25 @@ import router from '@/router';
 export default {
   components: { CalendarDayBtn, CalendarDayCard, CalendarDayColumn },
   props: {
+    businessInfo: {
+      type: Object,
+      default() {
+        return {};
+      }
+    },
     kind: { type: String, default: 'mini' },
     period: { type: String, default: 'month' }
   },
   data() {
     return {
       visits: [],
-      dates: [[]],
-      businessInfo: {}
+      dates: [[]]
     };
   },
   computed: {
     ...mapGetters(['actualDate']),
     business() {
-      return this.$route.params.id;
+      return this.businessInfo.id || this.$route.params.id;
     },
     schedule() {
       if (!(this.businessInfo && this.businessInfo.j)) {
@@ -135,12 +140,6 @@ export default {
         .then(res => {
           this.visits = res;
           this.setDateVisits();
-        });
-      Api()
-        .get(`business?id=eq.${this.business}`)
-        .then(res => res.data)
-        .then(res => {
-          this.businessInfo = res[0];
         });
     },
     goDate(dt) {

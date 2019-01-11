@@ -72,3 +72,17 @@ export function monthDates(year, month) {
   });
   return chunkArray(days, 7);
 }
+
+export function visitInit(visit) {
+  console.log(visit);
+  return {
+    business_id: null,
+    client: {
+      name: '',
+      phone: '',
+      service: { name: '', category: '' }
+    },
+    ts_begin: null,
+    ts_end: null
+  };
+}

@@ -28,7 +28,7 @@
           light
           :phones="[phone]"
         />
-        <div>{{ service }}</div>
+        <div>{{ service.name }}</div>
       </div>
       <div>
         <div class="visit-time">
@@ -46,7 +46,7 @@
           light
           :phones="[phone]"
         />
-        <div>{{ service }}</div>
+        <div>{{ service.name }}</div>
       </div>
     </v-tooltip>
   </div>
