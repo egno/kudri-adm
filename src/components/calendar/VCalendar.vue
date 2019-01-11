@@ -51,6 +51,9 @@
             :show-time="!i"
             :day="day"
             :visits="day.visits"
+            :schedule="schedule[i]"
+            :display-from="workTime[0]"
+            :display-to="workTime[1]"
             @onClickDate="goDate($event)"
           />
         </VLayout>
@@ -77,13 +80,34 @@ export default {
   data() {
     return {
       visits: [],
-      dates: [[]]
+      dates: [[]],
+      businessInfo: {}
     };
   },
   computed: {
     ...mapGetters(['actualDate']),
     business() {
       return this.$route.params.id;
+    },
+    schedule() {
+      if (!(this.businessInfo && this.businessInfo.j)) {
+        return Array(7);
+      }
+      return this.businessInfo.j.schedule;
+    },
+    workTime() {
+      return this.schedule.reduce(
+        (res, cur) => {
+          if (cur[0] && (res[0] || cur[0]) >= cur[0]) {
+            res[0] = cur[0];
+          }
+          if (res[1] < cur[1]) {
+            res[1] = cur[1];
+          }
+          return res;
+        },
+        ['', '']
+      );
     },
     workDate() {
       let now = new Date();
@@ -111,6 +135,12 @@ export default {
         .then(res => {
           this.visits = res;
           this.setDateVisits();
+        });
+      Api()
+        .get(`business?id=eq.${this.business}`)
+        .then(res => res.data)
+        .then(res => {
+          this.businessInfo = res[0];
         });
     },
     goDate(dt) {

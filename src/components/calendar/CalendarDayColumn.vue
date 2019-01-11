@@ -7,9 +7,12 @@
       v-for="(time, i) in times"
       :key="i"
     >
-      <div class="item">
+      <div
+        v-if="displayTimeBlock(i)"
+        :class="['item', {working: isWorkingTime(i)}]"
+      >
         <div
-          v-if="displayTime(i)"
+          v-if="displayTimeStamp(i)"
           class="item-caption"
         >
           {{ time.display }}
@@ -49,6 +52,20 @@ export default {
         return {};
       }
     },
+    displayFrom: {
+      type: String,
+      default: ''
+    },
+    displayTo: {
+      type: String,
+      default: ''
+    },
+    schedule: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
     showTime: { type: Boolean, default: true },
     visits: {
       type: Array,
@@ -61,7 +78,7 @@ export default {
     return {
       hours: 24,
       minutes: 60,
-      during: 10,
+      during: 30,
       displayStep: 2
     };
   },
@@ -89,7 +106,16 @@ export default {
       let h = `${(visit.during / this.during) * 3}em`;
       return h;
     },
-    displayTime(i) {
+    displayTimeBlock(i) {
+      if (!(this.displayFrom || this.displayTo)) {
+        return true;
+      }
+      return (
+        this.displayFrom <= this.times[i].display &&
+        this.displayTo >= this.times[i].display
+      );
+    },
+    displayTimeStamp(i) {
       return this.showTime && !(i % this.displayStep);
     },
     displayVisit(visit, i) {
@@ -100,6 +126,15 @@ export default {
     },
     formatTime(ts) {
       return getRESTTime(ts);
+    },
+    isWorkingTime(i) {
+      if (!(this.schedule && this.schedule.length === 2)) {
+        return false;
+      }
+      return (
+        this.schedule[0] <= this.times[i].display &&
+        this.schedule[1] >= this.times[i].display
+      );
     },
     onClickDate(dt) {
       this.$emit('onClickDate', dt);
@@ -122,10 +157,10 @@ export default {
 }
 .item {
   height: 3em;
-  border: 1px solid #ddd;
+  border: 1px solid #eee;
   border-top: 0;
   border-left: 0;
-  background: #f5f5f5;
+  background: #f7f7f7;
 }
 .item:hover .item-caption {
   color: #555;
@@ -139,5 +174,8 @@ export default {
   position: relative;
   display: block;
   overflow: scroll;
+}
+.working {
+  background: #fefefe;
 }
 </style>
