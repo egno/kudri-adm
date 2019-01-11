@@ -17,22 +17,17 @@
         >
           {{ time.display }}
         </div>
-        <div
+        <CalendarVisit
           v-for="(visit, iv) in visitsInTime(i)"
           :key="`visit-${iv}`"
-          class="visit"
-          :style="`height: ${calcVisitHeight(visits[0])}`"
-        >
-          <CalendarVisit
-            color="blue"
-            :time-start="formatTime(visit.ts_begin)"
-            :time-end="formatTime(visit.ts_end)"
-            :during="visit.during"
-            :name="visit.client && visit.client.name"
-            :phone="visit.client && visit.client.phone"
-            :service="visit.client && visit.client.service"
-          />
-        </div>
+          :container-height="calcVisitHeight(visit)"
+          :time-start="formatTime(visit.ts_begin)"
+          :time-end="formatTime(visit.ts_end)"
+          :during="visit.during"
+          :name="visit.client && visit.client.name"
+          :phone="visit.client && visit.client.phone"
+          :service="visit.client && visit.client.service"
+        />
       </div>
     </div>
   </v-flex>
@@ -169,11 +164,6 @@ export default {
   border: 1px solid #ddd;
   border-top: 0;
   border-left: 0;
-}
-.visit {
-  position: relative;
-  display: block;
-  overflow: scroll;
 }
 .working {
   background: #fefefe;

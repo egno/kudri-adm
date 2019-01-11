@@ -1,11 +1,12 @@
 <template>
   <div>
     <span :class="captionClass">
-      Тел.
-    </span>&nbsp;
+      {{ title }} &nbsp;
+    </span>
     <span
       v-for="(item, i) in phones"
       :key="i"
+      :class="{light: light}"
     >
       <span v-if="i">
         ,{{ " " }}
@@ -35,7 +36,9 @@ export default {
       default() {
         return [];
       }
-    }
+    },
+    title: { type: String, default: 'Тел.' },
+    light: { type: Boolean, default: false }
   },
   methods: {
     phoneLink(value) {
@@ -45,3 +48,16 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+.light a {
+  color: #dd5;
+}
+</style>
+

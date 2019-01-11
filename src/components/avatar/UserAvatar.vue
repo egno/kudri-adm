@@ -20,6 +20,8 @@
 </template>  
 
 <script>
+import { hash } from '@/components/utils';
+
 export default {
   props: {
     size: { type: String, default: '3em' },
@@ -53,13 +55,6 @@ export default {
   },
   computed: {
     color() {
-      function hash(s) {
-        return s.split('').reduce(function(a, b) {
-          a = (a << 5) - a + b.charCodeAt(0);
-          return a & a;
-        }, 0);
-      }
-
       if (!this.name) {
         return this.grayScaleColors;
       }
