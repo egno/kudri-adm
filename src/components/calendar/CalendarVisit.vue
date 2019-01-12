@@ -1,7 +1,7 @@
 <template>
   <div
     :style="`height: ${actualContainerHight}; top:${containerOffset}`"
-    class="visit-container"
+    :class="['visit-container', {active: isSelected}]"
     @click="isSelected = !isSelected"
   >
     <div>
@@ -163,7 +163,7 @@ export default {
   display: block;
   overflow: scroll;
   transition: 0.5s;
-  z-index: 99;
+  z-index: 2;
 }
 .visit-container:hover {
   height: auto;
@@ -179,5 +179,8 @@ export default {
 }
 .visit-name {
   font-weight: bolder;
+}
+.active {
+  z-index: 10;
 }
 </style>
