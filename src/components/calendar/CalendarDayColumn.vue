@@ -197,6 +197,7 @@ export default {
 }
 .item {
   height: 3em;
+  position: relative;
 }
 .item:hover .item-caption {
   color: #555;
@@ -213,7 +214,7 @@ export default {
   border-top: 0;
   border-left: 0;
   background: #f7f7f7;
-  position: relative;
+  position: absolute;
 }
 .working {
   background: #fefefe;
