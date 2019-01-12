@@ -5,7 +5,7 @@
       fixed-tabs
     >
       <v-tab
-        key="0"
+        key="t-0"
         ripple
       >
         <v-layout column>
@@ -16,7 +16,7 @@
         </v-layout>
       </v-tab>
       <v-tab
-        key="1"
+        key="t-1"
         ripple
       >
         <v-layout column>
@@ -27,10 +27,15 @@
         </v-layout>
       </v-tab>
       <v-tab
-        key="2"
+        key="t-2"
         ripple
       >
-        Клиент
+        <v-layout column>
+          <v-flex>Клиент</v-flex>
+          <v-flex class="caption text-none grey--text">
+            {{ displayClient }}
+          </v-flex>
+        </v-layout>
       </v-tab>
       <v-tab-item key="ti-0">
         <VCard flat>
@@ -123,7 +128,7 @@
               required
             />
             <PhoneEdit
-              phone="item.client.phone"
+              :phone="item.client.phone"
               @onEdit="onPhoneEdit($event)"
             />
           </v-card-text>
@@ -144,11 +149,12 @@
 
 <script>
 import PhoneEdit from '@/components/business/PhoneEdit.vue';
-import { visitInit } from '@/components/calendar/utils';
+import { formatDate, formatTime, visitInit } from '@/components/calendar/utils';
 
 export default {
   components: { PhoneEdit },
   props: {
+    id: { type: String, default: '' },
     businessInfo: {
       type: Object,
       default() {
@@ -189,6 +195,9 @@ export default {
     categories() {
       return [...new Set(this.services.map(x => x.category))];
     },
+    displayClient() {
+      return this.item.client.name || this.item.client.phone;
+    },
     displaySelectedTime() {
       if (!this.selectedDate) {
         return null;
@@ -220,6 +229,12 @@ export default {
         : this.buttonCaptions.next;
     }
   },
+  watch: {
+    item: 'setSelectedValues'
+  },
+  mounted() {
+    this.setSelectedValues();
+  },
   methods: {
     nextTab() {
       const active = parseInt(this.active);
@@ -246,6 +261,17 @@ export default {
       this.item.ts_begin = ts1.toISOString();
       this.item.ts_end = ts2.toISOString();
       this.$emit('onSave', this.item);
+    },
+    setSelectedValues() {
+      if (this.item.ts_begin) {
+        let ts1 = new Date(this.item.ts_begin);
+        this.selectedDate = formatDate(ts1);
+        this.selectedTime = formatTime(ts1);
+      } else {
+        this.selectedDate = '';
+        this.selectedTime = '';
+      }
+      this.active = 0;
     }
   }
 };

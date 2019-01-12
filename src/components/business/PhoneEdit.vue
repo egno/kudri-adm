@@ -30,6 +30,7 @@ export default {
       }
     };
   },
+  watch: { phone: 'update' },
   mounted() {
     this.update();
   },

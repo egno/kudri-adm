@@ -1,54 +1,86 @@
 <template>
   <div
+    :style="`height: ${actualContainerHight}; top:${containerOffset}`"
     class="visit-container"
-    :style="`height: ${actualContainerHight}`"
-    @click="selected = !selected"
+    @click="isSelected = !isSelected"
   >
-    <v-tooltip
-      right
-      open-delay="500"
-      close-delay="1000"
-    >
-      <div
-        slot="activator"
-        :style="`background: ${bgColor}; color: #eee; height: auto; padding: 0.5em; font-size: 0.9em;`"
+    <div>
+      <v-tooltip
+        right
+        :disabled="isSelected"
       >
-        <div class="visit-time">
-          {{ timeStart }} - {{ timeEnd }}
+        <div
+          slot="activator"
+          :style="`background: ${bgColor}; color: #eee; height: auto; font-size: 0.9em;`"
+        >
+          <div
+            v-if="isSelected"
+            class="visit-bar"
+          >
+            <v-btn
+              small
+              flat
+              icon
+              dark
+              ripple
+              @click="onDelete"
+            >
+              <v-icon small>
+                delete
+              </v-icon>
+            </v-btn>
+            <v-btn
+              small
+              flat
+              icon
+              dark
+              ripple
+              @click="onEdit"
+            >
+              <v-icon small>
+                edit
+              </v-icon>
+            </v-btn>
+          </div>
+          <div class="visit-content">
+            <div class="visit-time">
+              {{ timeStart }} - {{ timeEnd }}
+            </div>
+            <div class="visit-duration">
+              {{ duration }} мин.
+            </div>
+            <div class="visit-name">
+              {{ name }}
+            </div>
+            <BusinessPhones
+              v-if="phone"
+              title
+              light
+              :phones="[phone]"
+            />
+            <div>{{ service.name }}</div>
+          </div>
         </div>
-        <div class="visit-during">
-          {{ during }} мин.
+        <div>
+          <div class="visit-time">
+            {{ timeStart }} - {{ timeEnd }}
+          </div>
+          <div class="visit-duration">
+            {{ duration }} мин.
+          </div>
+          <div class="visit-name">
+            {{ name }}
+          </div>
+          <BusinessPhones
+            v-if="phone"
+            title
+            light
+            :phones="[phone]"
+          />
+          <div>{{ service.name }}</div>
         </div>
-        <div class="visit-name">
-          {{ name }}
-        </div>
-        <BusinessPhones
-          v-if="phone"
-          title
-          light
-          :phones="[phone]"
-        />
-        <div>{{ service.name }}</div>
-      </div>
-      <div>
-        <div class="visit-time">
-          {{ timeStart }} - {{ timeEnd }}
-        </div>
-        <div class="visit-during">
-          {{ during }} мин.
-        </div>
-        <div class="visit-name">
-          {{ name }}
-        </div>
-        <BusinessPhones
-          v-if="phone"
-          title
-          light
-          :phones="[phone]"
-        />
-        <div>{{ service.name }}</div>
-      </div>
-    </v-tooltip>
+      </v-tooltip>
+    </div>
   </div>
 </template>
 
@@ -60,13 +92,20 @@ export default {
   components: { BusinessPhones },
   props: {
     color: { type: String, default: '' },
-    during: { type: Number, default: 0 },
+    duration: { type: Number, default: 0 },
     containerHeight: { type: String, default: '' },
+    containerOffset: { type: String, default: '' },
     timeStart: { type: String, default: '' },
     timeEnd: { type: String, default: '' },
     name: { type: String, default: '' },
     phone: { type: String, default: '' },
-    service: { type: String, default: '' },
+    selected: { type: Boolean, default: false },
+    service: {
+      type: Object,
+      default() {
+        return {};
+      }
+    },
     visitor: {
       type: Object,
       default() {
@@ -76,37 +115,67 @@ export default {
   },
   data() {
     return {
-      selected: false
+      isSelected: false
     };
   },
   computed: {
     bgColor() {
       return (
         this.color ||
-        hashColor(`${this.name}${this.phone}${this.email}`, 30, 50)
+        hashColor(`${this.name}${this.phone}${this.email}`, 30, 40)
       );
     },
     actualContainerHight() {
-      return this.selected ? 'auto' : this.containerHeight;
+      return this.isSelected ? 'auto' : this.containerHeight;
+    }
+  },
+  methods: {
+    load() {
+      this.isSelected = this.selected;
+    },
+    onDelete() {
+      this.$emit('onDelete');
+    },
+    onEdit() {
+      this.$emit('onEdit');
+    },
+    onSelect() {
+      this.$emit('unselectOthers');
     }
   }
 };
 </script>
 
 <style scoped>
+.v-btn {
+  float: right;
+  margin: 0;
+  border-radius: 0;
+}
+.visit-bar {
+  display: inline-block;
+  opacity: 0.6;
+  background: #333;
+  width: 100%;
+}
 .visit-container {
   position: relative;
   display: block;
   overflow: scroll;
+  transition: 0.5s;
+  z-index: 99;
 }
 .visit-container:hover {
   height: auto;
 }
-.visit-time {
-  color: rgb(238, 238, 238);
+.visit-content {
+  padding: 0.5em;
 }
-.visit-during {
-  color: rgba(255, 226, 226, 0.555);
+.visit-time {
+  opacity: 1;
+}
+.visit-duration {
+  opacity: 0.7;
 }
 .visit-name {
   font-weight: bolder;

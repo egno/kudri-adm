@@ -52,13 +52,28 @@
             :day="day"
             :visits="day.visits"
             :schedule="schedule[i]"
-            :display-from="workTime[0]"
-            :display-to="workTime[1]"
+            :display-from="showTimes[0]"
+            :display-to="showTimes[1]"
             @onClickDate="goDate($event)"
+            @onTimeBlockClick="onTimeBlockClick($event)"
+            @onVisitEdit="onVisitEdit($event)"
+            @onVisitDelete="onVisitDelete($event)"
           />
         </VLayout>
       </VContainer>
     </VFlex>
+    <VDialog
+      v-model="edit"
+      max-width="50em"
+    >
+      <VisitEdit
+        :id="currentVisit.id"
+        :business-info="businessInfo"
+        :item="currentVisit"
+        @onSave="onNewVisitSave(-1, $event)"
+        @onDelete="onDelete(-1)"
+      />
+    </VDialog>
   </VLayout>
 </template>
 
@@ -66,13 +81,19 @@
 import CalendarDayBtn from '@/components/calendar/CalendarDayBtn.vue';
 import CalendarDayCard from '@/components/calendar/CalendarDayCard.vue';
 import CalendarDayColumn from '@/components/calendar/CalendarDayColumn.vue';
-import { formatDate, monthDates } from '@/components/calendar/utils';
+import VisitEdit from '@/components/calendar/VisitEdit.vue';
+import {
+  formatDate,
+  getRESTTime,
+  monthDates
+} from '@/components/calendar/utils';
+import { visitInit } from '@/components/calendar/utils';
 import { mapActions, mapGetters } from 'vuex';
 import Api from '@/api/backend';
 import router from '@/router';
 
 export default {
-  components: { CalendarDayBtn, CalendarDayCard, CalendarDayColumn },
+  components: { CalendarDayBtn, CalendarDayCard, CalendarDayColumn, VisitEdit },
   props: {
     businessInfo: {
       type: Object,
@@ -80,13 +101,16 @@ export default {
         return {};
       }
     },
+    newVisit: { type: Boolean, default: false },
     kind: { type: String, default: 'mini' },
     period: { type: String, default: 'month' }
   },
   data() {
     return {
-      visits: [],
-      dates: [[]]
+      currentVisit: visitInit(),
+      dates: [[]],
+      edit: false,
+      visits: []
     };
   },
   computed: {
@@ -100,8 +124,11 @@ export default {
       }
       return this.businessInfo.j.schedule;
     },
-    workTime() {
-      return this.schedule.reduce(
+    showTimes() {
+      if (!this.schedule) {
+        return ['', ''];
+      }
+      const workTimes = this.schedule.reduce(
         (res, cur) => {
           if (cur[0] && (res[0] || cur[0]) >= cur[0]) {
             res[0] = cur[0];
@@ -113,6 +140,29 @@ export default {
         },
         ['', '']
       );
+      if (!this.visits) {
+        return workTimes;
+      }
+      const visitTimes = this.visits
+        .map(x => {
+          return [getRESTTime(x.ts_begin), getRESTTime(x.ts_end)];
+        })
+        .reduce(
+          (res, cur) => {
+            if (cur[0] && (res[0] || cur[0]) >= cur[0]) {
+              res[0] = cur[0];
+            }
+            if (res[1] < cur[1]) {
+              res[1] = cur[1];
+            }
+            return res;
+          },
+          ['', '']
+        );
+      return [
+        workTimes[0] > visitTimes[0] ? visitTimes[0] : workTimes[0],
+        workTimes[1] < visitTimes[1] ? visitTimes[1] : workTimes[1]
+      ];
     },
     workDate() {
       let now = new Date();
@@ -126,7 +176,9 @@ export default {
     }
   },
   watch: {
-    workDate: 'fetchData'
+    workDate: 'fetchData',
+    newVisit: 'onNewVisit',
+    edit: 'onCloseEdit'
   },
   mounted() {
     this.fetchData();
@@ -142,12 +194,62 @@ export default {
           this.setDateVisits();
         });
     },
+    deleteVisit(id) {
+      Api()
+        .delete(`visit?id=eq.${id}`)
+        .then(() => {
+          this.fetchData();
+        });
+    },
     goDate(dt) {
       this.setActualDate(dt);
       router.push({
         name: 'businessVisit',
         params: { id: this.business, date: dt }
       });
+    },
+    onCloseEdit() {
+      if (!this.edit) {
+        this.$emit('closeEdit');
+        this.currentVisit = visitInit();
+      }
+    },
+    onDelete() {
+      this.edit = false;
+      this.sendData();
+    },
+    onNewVisit() {
+      if (this.newVisit) {
+        this.currentVisit = visitInit();
+        this.edit = true;
+      }
+    },
+    onNewVisitSave(i, payload) {
+      this.sendData(payload);
+      this.edit = false;
+    },
+    onTimeBlockClick(date) {
+      this.currentVisit = visitInit();
+      this.currentVisit.ts_begin = date.toISOString();
+      this.edit = true;
+    },
+    onVisitDelete(item) {
+      this.deleteVisit(item);
+    },
+    onVisitEdit(item) {
+      this.currentVisit = item;
+      this.edit = true;
+    },
+    sendData(data) {
+      if (data.id) {
+        Api()
+          .patch(`visit?id=eq.${data.id}`, data)
+          .then(() => this.fetchData());
+      } else {
+        Api()
+          .post('visit', data)
+          .then(() => this.fetchData());
+      }
     },
     setDates() {
       this.dates = monthDates(this.workYear, this.workMonth);
@@ -177,7 +279,7 @@ export default {
         .map(x => {
           let ts1 = new Date(x.ts_begin);
           let ts2 = new Date(x.ts_end);
-          x.during = (ts2.getTime() - ts1.getTime()) / 60000;
+          x.client.service.duration = (ts2.getTime() - ts1.getTime()) / 60000;
           return x;
         });
     }

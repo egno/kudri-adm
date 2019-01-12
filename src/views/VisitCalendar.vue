@@ -4,32 +4,23 @@
       kind="full"
       period="week"
       :business-info="businessInfo"
+      :new-visit="newVisit"
+      @closeEdit="newVisit=false"
     />
-    <VDialog
-      v-model="edit"
-      max-width="50em"
-    >
-      <VisitEdit
-        :business-info="businessInfo"
-        @onSave="onSave(-1, $event)"
-        @onDelete="onDelete(-1)"
-      />
-    </VDialog>
   </div>
 </template>
 
 <script>
 import VCalendar from '@/components/calendar/VCalendar.vue';
-import VisitEdit from '@/components/calendar/VisitEdit.vue';
 import { mapActions } from 'vuex';
 import Api from '@/api/backend';
 
 export default {
-  components: { VCalendar, VisitEdit },
+  components: { VCalendar },
   data() {
     return {
       businessInfo: {},
-      edit: false,
+      newVisit: false,
       formActions: [
         { label: 'Добавить запись', action: 'newVisit', default: true }
       ]
@@ -45,6 +36,7 @@ export default {
   },
   mounted() {
     this.setActions(this.formActions);
+    // TODO проверить, утекает ли память
     this.$root.$on('onAction', this.onAction);
     this.fetchData();
   },
@@ -60,22 +52,8 @@ export default {
     },
     onAction(payload) {
       if (payload === this.formActions[0].action) {
-        this.edit = true;
+        this.newVisit = true;
       }
-    },
-    onDelete(i) {
-      this.edit = false;
-      console.log(i);
-      this.sendData();
-    },
-    onSave(i, payload) {
-      this.edit = false;
-      console.log(i, payload);
-      this.sendData(payload);
-    },
-    sendData(data) {
-      console.log(data);
-      Api().post('visit', data);
     }
   }
 };
