@@ -1,19 +1,45 @@
+export function dateInTimeZone(date, tz) {
+  if (!tz) {
+    return date;
+  }
+  const d = new Date(date);
+  const utc = d.getTime() + d.getTimezoneOffset() * 60000;
+  return new Date(utc + 60000 * tz);
+}
+
+export function fixLocalTimeZone(date, tz) {
+  if (!tz) {
+    return date;
+  }
+  const d = new Date(date);
+  const utc = d.getTime() - d.getTimezoneOffset() * 60000;
+  return new Date(utc - 60000 * tz);
+}
+
+export function getISOTimeZoneOffset(s) {
+  let t = s.slice(-6);
+  return +(t.slice(0, 1) + '1') * (+t.slice(1, 3) * 60 + +t.slice(-2));
+}
+
 export function valueDate(value, format) {
   return value ? this.parseDateString(value, format) : undefined;
 }
 
-export function formatDate(date) {
+export function formatDate(date, tz) {
+  const d = dateInTimeZone(date, tz);
   return [
-    date.getFullYear(),
-    ('0' + (date.getMonth() + 1)).slice(-2),
-    ('0' + date.getDate()).slice(-2)
+    d.getFullYear(),
+    ('0' + (d.getMonth() + 1)).slice(-2),
+    ('0' + d.getDate()).slice(-2)
   ].join('-');
 }
 
-export function formatTime(date) {
+export function formatTime(date, tz) {
+  const d = dateInTimeZone(date, tz);
+  // console.log(date, d);
   return [
-    ('0' + date.getHours()).slice(-2),
-    ('0' + date.getMinutes()).slice(-2)
+    ('0' + d.getHours()).slice(-2),
+    ('0' + d.getMinutes()).slice(-2)
   ].join(':');
 }
 

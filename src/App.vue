@@ -44,6 +44,7 @@ export default {
     }
   },
   mounted() {
+    this.loadApiTime();
     this.setActions();
     this.loadFromStorage();
     this.loadUserInfo();
@@ -52,6 +53,7 @@ export default {
   },
   methods: {
     ...mapActions([
+      'loadApiTime',
       'loadFromStorage',
       'loadServiceList',
       'loadUserInfo',

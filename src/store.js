@@ -4,6 +4,7 @@ import axios from 'axios';
 import VueAxios from 'vue-axios';
 import VueCacheData from 'vue-cache-data';
 import Api from '@/api/backend';
+import { getISOTimeZoneOffset } from '@/components/calendar/utils';
 
 Vue.use(Vuex);
 Vue.use(VueAxios, axios, VueCacheData);
@@ -16,6 +17,7 @@ export default new Vuex.Store({
     actualDate: '',
     alertMaxCount: 3,
     alerts: [],
+    apiTime: '',
     appTitle: '',
     defaultAppTitle: 'Kudri',
     navBarVisible: true,
@@ -28,6 +30,13 @@ export default new Vuex.Store({
     actions: state => state.actions,
     actualDate: state => state.actualDate,
     alerts: state => state.messages,
+    apiTime: state => state.apiTime,
+    apiTimeZone: state => {
+      if (!state.apiTime) {
+        return;
+      }
+      return getISOTimeZoneOffset(state.apiTime);
+    },
     appTitle: state => state.appTitle || state.defaultAppTitle,
     loggedIn: (state, getters) => {
       return getters.userID;
@@ -92,6 +101,9 @@ export default new Vuex.Store({
     SET_ACTUAL_DATE(state, payload) {
       state.actualDate = payload;
     },
+    SET_API_TIME(state, payload) {
+      state.apiTime = payload;
+    },
     SET_APP_TITLE(state, payload) {
       state.appTitle = payload;
     },
@@ -133,6 +145,15 @@ export default new Vuex.Store({
     },
     alert({ commit }, payload) {
       commit('ADD_ALERT', payload);
+    },
+    loadApiTime({ commit }) {
+      Api()
+        .get('info')
+        .then(res => res.data[0])
+        .then(res => {
+          commit('SET_API_TIME', res.current_timestamp);
+        })
+        .catch(err => commit('ADD_ALERT', err.response.data));
     },
     loadFromStorage({ commit, dispatch }) {
       commit('SET_TOKEN', localStorage.getItem('accessToken'));

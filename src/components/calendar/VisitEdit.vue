@@ -149,7 +149,13 @@
 
 <script>
 import PhoneEdit from '@/components/business/PhoneEdit.vue';
-import { formatDate, formatTime, visitInit } from '@/components/calendar/utils';
+import {
+  fixLocalTimeZone,
+  formatDate,
+  formatTime,
+  visitInit
+} from '@/components/calendar/utils';
+import { mapGetters } from 'vuex';
 
 export default {
   components: { PhoneEdit },
@@ -189,6 +195,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(['apiTimeZone']),
     isLastTab() {
       return this.active === this.tabsLength - 1;
     },
@@ -227,10 +234,14 @@ export default {
       return this.isLastTab
         ? this.buttonCaptions.save
         : this.buttonCaptions.next;
+    },
+    tz() {
+      return this.apiTimeZone;
     }
   },
   watch: {
-    item: 'setSelectedValues'
+    item: 'setSelectedValues',
+    tz: 'setSelectedValues'
   },
   mounted() {
     this.setSelectedValues();
@@ -252,10 +263,13 @@ export default {
     },
     onSave() {
       const duration = parseInt(this.item.client.service.duration) || 60;
-      const ts1 = new Date(`${this.selectedDate} ${this.selectedTime}`);
+      const ts1 = fixLocalTimeZone(
+        new Date(`${this.selectedDate} ${this.selectedTime}`),
+        this.tz
+      );
       let ts2 = new Date();
       ts2.setTime(ts1.getTime() + 60000 * duration);
-      console.log(ts1, ts2, duration);
+      // console.log(ts1, ts2, duration);
       this.item.business_id = this.businessInfo.id;
       this.item.client.service.duration = duration;
       this.item.ts_begin = ts1.toISOString();
@@ -263,10 +277,11 @@ export default {
       this.$emit('onSave', this.item);
     },
     setSelectedValues() {
+      console.log(this.tz);
       if (this.item.ts_begin) {
         let ts1 = new Date(this.item.ts_begin);
-        this.selectedDate = formatDate(ts1);
-        this.selectedTime = formatTime(ts1);
+        this.selectedDate = formatDate(ts1, this.tz);
+        this.selectedTime = formatTime(ts1, this.tz);
       } else {
         this.selectedDate = '';
         this.selectedTime = '';
