@@ -12,7 +12,7 @@
       block
       depressed
       flat
-      :color="day.outOfRange ? 'grey': ''"
+      :color="color"
       :outline="day.today"
       @click="onClickDate(day.dateKey)"
     >
@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   props: {
     counter: { type: Number, default: 0 },
@@ -35,7 +37,18 @@ export default {
   data() {
     return {};
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['actualDate', 'calendar']),
+    isDayOff() {
+      return (
+        this.calendar[this.day.dateKey] &&
+        this.calendar[this.day.dateKey].holiday
+      );
+    },
+    color() {
+      return this.day.outOfRange ? 'grey' : this.isDayOff ? 'red' : '';
+    }
+  },
   methods: {
     onClickDate(dt) {
       this.$emit('onClickDate', dt);

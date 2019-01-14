@@ -19,6 +19,7 @@ export default new Vuex.Store({
     alerts: [],
     apiTime: '',
     appTitle: '',
+    calendar: {},
     defaultAppTitle: 'Kudri',
     navBarVisible: true,
     searchString: '',
@@ -38,6 +39,7 @@ export default new Vuex.Store({
       return getISOTimeZoneOffset(state.apiTime);
     },
     appTitle: state => state.appTitle || state.defaultAppTitle,
+    calendar: state => state.calendar,
     loggedIn: (state, getters) => {
       return getters.userID;
     },
@@ -83,6 +85,11 @@ export default new Vuex.Store({
       state.alerts.push(payload);
       if (state.alerts.length > state.alertMaxCount) {
         state.alerts.shift();
+      }
+    },
+    LOAD_CALENDAR(state, payload) {
+      for (let day of payload) {
+        state.calendar[day.dt] = day.j;
       }
     },
     LOAD_SERVICE_CATEGORIES(state, payload) {
@@ -152,6 +159,18 @@ export default new Vuex.Store({
         .then(res => res.data[0])
         .then(res => {
           commit('SET_API_TIME', res.current_timestamp);
+        })
+        .catch(err => commit('ADD_ALERT', err.response.data));
+    },
+    loadCalendar({ commit }, payload) {
+      const path = `main_calendar?select=dt,j&and=(dt.gte.${payload[0]},dt.lt.${
+        payload[1]
+      })`;
+      Api()
+        .get(path)
+        .then(res => res.data)
+        .then(res => {
+          commit('LOAD_CALENDAR', res);
         })
         .catch(err => commit('ADD_ALERT', err.response.data));
     },

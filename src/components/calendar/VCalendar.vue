@@ -63,6 +63,7 @@
       </VContainer>
     </VFlex>
     <VDialog
+      v-if="kind !== 'mini'"
       v-model="edit"
       max-width="50em"
     >
@@ -109,12 +110,13 @@ export default {
     return {
       currentVisit: visitInit(),
       dates: [[]],
+      days: [],
       edit: false,
       visits: []
     };
   },
   computed: {
-    ...mapGetters(['actualDate']),
+    ...mapGetters(['actualDate', 'calendar']),
     business() {
       return this.businessInfo.id || this.$route.params.id;
     },
@@ -184,8 +186,11 @@ export default {
     this.fetchData();
   },
   methods: {
-    ...mapActions(['setActualDate']),
+    ...mapActions(['loadCalendar', 'setActualDate']),
     fetchData() {
+      if (!this.calendar.length) {
+        this.loadCalendar(['2019-01-01', '2019-02-01']);
+      }
       Api()
         .get(`visit?salon_id=eq.${this.business}`)
         .then(res => res.data)

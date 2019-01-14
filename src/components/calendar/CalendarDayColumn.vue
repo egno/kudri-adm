@@ -1,5 +1,8 @@
 <template>
-  <v-flex xs3>
+  <v-flex
+    xs3
+    :class="[{'day-off': isDayOff}]"
+  >
     <div class="header">
       {{ day.display }}
     </div>
@@ -89,7 +92,13 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['apiTimeZone']),
+    ...mapGetters(['apiTimeZone', 'calendar']),
+    isDayOff() {
+      return (
+        this.calendar[this.day.dateKey] &&
+        this.calendar[this.day.dateKey].holiday
+      );
+    },
     times() {
       let times = [...Array((this.hours * this.minutes) / this.duration)].map(
         (x, i) => {
@@ -220,5 +229,14 @@ export default {
 }
 .working {
   background: #fefefe;
+}
+.day-off .time-block {
+  background: #fdf7f7;
+}
+.day-off .working {
+  background: #fffefe;
+}
+.day-off .header {
+  color: rgb(192, 0, 0);
 }
 </style>
