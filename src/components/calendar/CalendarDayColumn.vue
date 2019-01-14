@@ -45,6 +45,7 @@
 <script>
 import CalendarVisit from '@/components/calendar/CalendarVisit.vue';
 import { formatTime, getRESTTime } from '@/components/calendar/utils';
+import { mapGetters } from 'vuex';
 
 export default {
   components: { CalendarVisit },
@@ -88,6 +89,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(['apiTimeZone']),
     times() {
       let times = [...Array((this.hours * this.minutes) / this.duration)].map(
         (x, i) => {

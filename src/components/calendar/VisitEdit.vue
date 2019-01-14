@@ -272,12 +272,12 @@ export default {
       // console.log(ts1, ts2, duration);
       this.item.business_id = this.businessInfo.id;
       this.item.client.service.duration = duration;
-      this.item.ts_begin = ts1.toISOString();
-      this.item.ts_end = ts2.toISOString();
+      this.item.ts_begin = ts1.toJSON();
+      this.item.ts_end = ts2.toJSON();
       this.$emit('onSave', this.item);
     },
     setSelectedValues() {
-      console.log(this.tz);
+      // console.log(this.tz);
       if (this.item.ts_begin) {
         let ts1 = new Date(this.item.ts_begin);
         this.selectedDate = formatDate(ts1, this.tz);
