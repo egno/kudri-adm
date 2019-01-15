@@ -174,7 +174,7 @@ export default {
   display: block;
   overflow: scroll;
   transition: all 0.5s ease 0s;
-  z-index: 2;
+  z-index: 1;
   height: auto;
   max-height: 30em;
 }
@@ -195,6 +195,6 @@ export default {
   font-weight: bolder;
 }
 .active {
-  z-index: 10;
+  z-index: 2;
 }
 </style>

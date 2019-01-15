@@ -3,6 +3,7 @@
     <VCalendar
       kind="full"
       period="week"
+      :show-header="false"
       :business-info="businessInfo"
       :new-visit="newVisit"
       @closeEdit="newVisit=false"

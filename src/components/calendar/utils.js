@@ -125,3 +125,7 @@ export function dowDisplay(dt, format = 0) {
   ];
   return dow[dt.getDay()][format];
 }
+
+export function monthDisplay(dt) {
+  return dt.toLocaleString('ru-RU', { month: 'long' }) + ' ' + dt.getFullYear();
+}

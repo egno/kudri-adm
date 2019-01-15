@@ -1,7 +1,55 @@
 <template>
-  <VLayout>
+  <VLayout column>
+    <VFlex
+      v-if="showHeader"
+      px-2
+    >
+      <VLayout
+        align-space-around
+        justify-space-between
+        row
+        fill-height
+      >
+        <VFlex
+          grow
+          headline
+          align-self-end
+        >
+          {{ dateMonthHeader }}
+        </VFlex>
+        <v-spacer />
+        <VFlex>
+          <VLayout row>
+            <VFlex>
+              <v-btn
+                fab
+                depressed
+                small
+                @click="addMonth(-1)"
+              >
+                <v-icon dark>
+                  navigate_before
+                </v-icon>
+              </v-btn>
+            </VFlex>
+            <VFlex>
+              <v-btn
+                fab
+                depressed
+                small
+                @click="addMonth(1)"
+              >
+                <v-icon dark>
+                  navigate_next
+                </v-icon>
+              </v-btn>
+            </VFlex>
+          </VLayout>
+        </VFlex>
+      </VLayout>
+    </VFlex>
     <VFlex>
-      <VContainer>
+      <VContainer py-1>
         <VLayout
           v-if="period==='month'"
           align-space-between
@@ -86,7 +134,8 @@ import VisitEdit from '@/components/calendar/VisitEdit.vue';
 import {
   formatDate,
   getRESTTime,
-  monthDates
+  monthDates,
+  monthDisplay
 } from '@/components/calendar/utils';
 import { visitInit } from '@/components/calendar/utils';
 import { mapActions, mapGetters } from 'vuex';
@@ -104,7 +153,8 @@ export default {
     },
     newVisit: { type: Boolean, default: false },
     kind: { type: String, default: 'mini' },
-    period: { type: String, default: 'month' }
+    period: { type: String, default: 'month' },
+    showHeader: { type: Boolean, default: true }
   },
   data() {
     return {
@@ -119,6 +169,10 @@ export default {
     ...mapGetters(['actualDate', 'calendar']),
     business() {
       return this.businessInfo.id || this.$route.params.id;
+    },
+    dateMonthHeader() {
+      const d = new Date(this.workDate);
+      return monthDisplay(d);
     },
     schedule() {
       if (!(this.businessInfo && this.businessInfo.j)) {
@@ -167,8 +221,7 @@ export default {
       ];
     },
     workDate() {
-      let now = new Date();
-      return this.$route.params.date || formatDate(now);
+      return this.$route.params.date || this.actualDate;
     },
     workMonth() {
       return +this.workDate.slice(5, 7) - 1;
@@ -187,9 +240,14 @@ export default {
   },
   methods: {
     ...mapActions(['loadCalendar', 'setActualDate']),
+    addMonth(i) {
+      let dt = new Date(this.actualDate);
+      dt.setMonth(dt.getMonth() + i);
+      this.goDate(formatDate(dt));
+    },
     fetchData() {
-      if (!this.calendar.length) {
-        this.loadCalendar(['2019-01-01', '2019-02-01']);
+      if (this.workDate) {
+        this.setActualDate(this.workDate);
       }
       Api()
         .get(`visit?salon_id=eq.${this.business}`)

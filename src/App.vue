@@ -62,10 +62,7 @@ export default {
       'navBar'
     ]),
     checkDate() {
-      if (!this.actualDate) {
-        // let date = new Date();
-        // this.setActualDate(formatDate(date));
-      }
+      this.setActualDate();
     },
     goHome() {
       router.push({ name: 'home' });
@@ -76,3 +73,12 @@ export default {
   }
 };
 </script>
+
+<style>
+.v-toolbar {
+  z-index: 10;
+}
+.v-navigation-draver {
+  z-index: 10;
+}
+</style>

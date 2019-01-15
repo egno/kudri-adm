@@ -4,7 +4,7 @@ import axios from 'axios';
 import VueAxios from 'vue-axios';
 import VueCacheData from 'vue-cache-data';
 import Api from '@/api/backend';
-import { getISOTimeZoneOffset } from '@/components/calendar/utils';
+import { formatDate, getISOTimeZoneOffset } from '@/components/calendar/utils';
 
 Vue.use(Vuex);
 Vue.use(VueAxios, axios, VueCacheData);
@@ -149,7 +149,22 @@ export default new Vuex.Store({
     setActions({ commit }, payload) {
       commit('SET_ACTIONS', payload);
     },
-    setActualDate({ commit }, payload) {
+    setActualDate({ commit, dispatch, state }, payload) {
+      if (payload instanceof Date) {
+        payload = formatDate(payload);
+      }
+      if (!payload) {
+        const dt = new Date();
+        payload = formatDate(dt);
+      }
+      if (state.actualDate.slice(0, 7) !== payload.slice(0, 7)) {
+        const from = `${payload.slice(0, 7)}-01`;
+        let d1 = new Date();
+        d1.setDate(1);
+        d1.setYear(payload.slice(0, 4));
+        d1.setMonth(payload.slice(5, 7));
+        dispatch('loadCalendar', [from, formatDate(d1)]);
+      }
       commit('SET_ACTUAL_DATE', payload);
     },
     setAppTitle({ commit }, payload) {

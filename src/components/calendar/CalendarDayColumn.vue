@@ -1,5 +1,6 @@
 <template>
   <v-flex
+    pt-1
     xs3
     :class="[{'day-off': isDayOff}]"
   >
