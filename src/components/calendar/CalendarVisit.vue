@@ -2,7 +2,7 @@
   <div
     :style="`height: ${actualContainerHight}; top:${containerOffset}`"
     :class="['visit-container', {active: isSelected}]"
-    @click="isSelected = !isSelected"
+    @click="selectVisit(isSelected ? null : id)"
   >
     <div>
       <v-tooltip
@@ -23,10 +23,10 @@
               icon
               dark
               ripple
-              @click="onDelete"
+              @click="onEdit"
             >
               <v-icon small>
-                delete
+                edit
               </v-icon>
             </v-btn>
             <v-btn
@@ -35,10 +35,10 @@
               icon
               dark
               ripple
-              @click="onEdit"
+              @click="onDelete"
             >
               <v-icon small>
-                edit
+                delete
               </v-icon>
             </v-btn>
           </div>
@@ -87,6 +87,7 @@
 <script>
 import BusinessPhones from '@/components/business/BusinessPhones.vue';
 import { hashColor } from '@/components/utils';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   components: { BusinessPhones },
@@ -97,6 +98,7 @@ export default {
     containerOffset: { type: String, default: '' },
     timeStart: { type: String, default: '' },
     timeEnd: { type: String, default: '' },
+    id: { type: String, default: undefined },
     name: { type: String, default: '' },
     phone: { type: String, default: '' },
     selected: { type: Boolean, default: false },
@@ -114,11 +116,10 @@ export default {
     }
   },
   data() {
-    return {
-      isSelected: false
-    };
+    return {};
   },
   computed: {
+    ...mapGetters(['selectedVisit']),
     bgColor() {
       return (
         this.color ||
@@ -127,9 +128,13 @@ export default {
     },
     actualContainerHight() {
       return this.isSelected ? 'auto' : this.containerHeight;
+    },
+    isSelected() {
+      return this.id && this.id === this.selectedVisit;
     }
   },
   methods: {
+    ...mapActions(['selectVisit']),
     load() {
       this.isSelected = this.selected;
     },
@@ -153,7 +158,7 @@ export default {
   border-radius: 0;
 }
 .visit-bar {
-  display: inline-block;
+  display: flex;
   opacity: 0.6;
   background: #333;
   width: 100%;
@@ -170,6 +175,7 @@ export default {
 }
 .visit-content {
   padding: 0.5em;
+  box-shadow: inset 0 0 3em 0 rgba(0, 0, 0, 0.5);
 }
 .visit-time {
   opacity: 1;

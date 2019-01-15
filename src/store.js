@@ -23,6 +23,7 @@ export default new Vuex.Store({
     defaultAppTitle: 'Kudri',
     navBarVisible: true,
     searchString: '',
+    selectedVisit: undefined,
     serviceList: [],
     token: '',
     userInfo: {}
@@ -45,6 +46,7 @@ export default new Vuex.Store({
     },
     navBarVisible: state => state.navBarVisible,
     searchString: state => state.searchString,
+    selectedVisit: state => state.selectedVisit,
     serviceCategories: state =>
       state.serviceList
         .map(x => x.j.groups)
@@ -102,6 +104,9 @@ export default new Vuex.Store({
       var status = payload == undefined ? !state.navBarVisible : payload;
       state.navBarVisible = status;
     },
+    SELECT_VISIT(state, payload) {
+      state.selectedVisit = payload;
+    },
     SET_ACTIONS(state, payload) {
       state.actions = payload || [];
     },
@@ -138,6 +143,9 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    selectVisit({ commit }, payload) {
+      commit('SELECT_VISIT', payload);
+    },
     setActions({ commit }, payload) {
       commit('SET_ACTIONS', payload);
     },

@@ -26,6 +26,7 @@
         />
         <CalendarVisit
           v-for="(visit, iv) in visitsInTime(i)"
+          :id="visit.id"
           :key="`visit-${iv}`"
           :container-height="calcVisitHeight(visit)"
           :container-offset="calcVisitOffset(visit)"
