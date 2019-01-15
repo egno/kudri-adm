@@ -4,7 +4,28 @@
     :class="[{'day-off': isDayOff}]"
   >
     <div class="header">
-      {{ day.display }}
+      <v-layout
+        align-start
+        column
+        pa-1
+      >
+        <v-flex>
+          <v-layout row>
+            <v-flex body-2>
+              {{ dow }}
+            </v-flex>
+            <v-flex
+              title
+              pl-1
+            >
+              {{ day.display }}
+            </v-flex>
+          </v-layout>
+        </v-flex>
+        <v-flex caption>
+          {{ displaySchedule }}
+        </v-flex>
+      </v-layout>
     </div>
     <div
       v-for="(time, i) in times"
@@ -48,7 +69,11 @@
 
 <script>
 import CalendarVisit from '@/components/calendar/CalendarVisit.vue';
-import { formatTime, getRESTTime } from '@/components/calendar/utils';
+import {
+  dowDisplay,
+  formatTime,
+  getRESTTime
+} from '@/components/calendar/utils';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -99,6 +124,23 @@ export default {
         this.calendar[this.day.dateKey] &&
         this.calendar[this.day.dateKey].holiday
       );
+    },
+    displaySchedule() {
+      if (!this.schedule[0]) {
+        return 'выходной';
+      }
+      if (this.schedule.length === 2) {
+        return `${this.schedule[0]}-${this.schedule[1]}`;
+      }
+      if (this.schedule.length === 4) {
+        return `${this.schedule[0]}-${this.schedule[3]} (пер. ${
+          this.schedule[1]
+        }-${this.schedule[2]})`;
+      }
+      return '-';
+    },
+    dow() {
+      return dowDisplay(this.day.date, 1);
     },
     times() {
       let times = [...Array((this.hours * this.minutes) / this.duration)].map(

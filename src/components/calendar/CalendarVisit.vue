@@ -1,12 +1,12 @@
 <template>
   <div
-    :style="`height: ${actualContainerHight}; top:${containerOffset}`"
+    :style="`max-height: ${actualContainerHight}; top:${containerOffset}`"
     :class="['visit-container', {active: isSelected}]"
     @click="selectVisit(isSelected ? null : id)"
   >
     <div>
       <v-tooltip
-        right
+        left
         :disabled="isSelected"
       >
         <div
@@ -14,7 +14,7 @@
           :style="`background: ${bgColor}; color: #eee; height: auto; font-size: 0.9em;`"
         >
           <div
-            v-if="isSelected"
+            :style="`max-height: ${isSelected ? '10em': '0em'}`"
             class="visit-bar"
           >
             <v-btn
@@ -127,7 +127,7 @@ export default {
       );
     },
     actualContainerHight() {
-      return this.isSelected ? 'auto' : this.containerHeight;
+      return this.isSelected ? '20em' : this.containerHeight || 'em';
     },
     isSelected() {
       return this.id && this.id === this.selectedVisit;
@@ -162,13 +162,21 @@ export default {
   opacity: 0.6;
   background: #333;
   width: 100%;
+  overflow: hidden;
+  height: auto;
+  transition: all 1s ease 0s;
+}
+.active .visit-bar {
+  transition: all 1s ease 0s;
 }
 .visit-container {
   position: relative;
   display: block;
   overflow: scroll;
-  transition: 0.5s;
+  transition: all 0.5s ease 0s;
   z-index: 2;
+  height: auto;
+  max-height: 30em;
 }
 .visit-container:hover {
   height: auto;

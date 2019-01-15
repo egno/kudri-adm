@@ -112,3 +112,16 @@ export function visitInit(visit) {
     ts_end: null
   };
 }
+
+export function dowDisplay(dt, format = 0) {
+  const dow = [
+    ['воскресенье', 'вс'],
+    ['понедельник', 'пн'],
+    ['вторник', 'вт'],
+    ['среда', 'ср'],
+    ['четверг', 'чт'],
+    ['пятница', 'пт'],
+    ['суббота', 'сб']
+  ];
+  return dow[dt.getDay()][format];
+}
