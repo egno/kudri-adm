@@ -18,33 +18,30 @@
           {{ dateMonthHeader }}
         </VFlex>
         <v-spacer />
+
         <VFlex>
-          <VLayout row>
-            <VFlex>
-              <v-btn
-                fab
-                depressed
-                small
-                @click="addMonth(-1)"
-              >
-                <v-icon dark>
-                  navigate_before
-                </v-icon>
-              </v-btn>
-            </VFlex>
-            <VFlex>
-              <v-btn
-                fab
-                depressed
-                small
-                @click="addMonth(1)"
-              >
-                <v-icon dark>
-                  navigate_next
-                </v-icon>
-              </v-btn>
-            </VFlex>
-          </VLayout>
+          <v-btn
+            fab
+            depressed
+            small
+            @click="addMonth(-1)"
+          >
+            <v-icon dark>
+              navigate_before
+            </v-icon>
+          </v-btn>
+        </VFlex>
+        <VFlex>
+          <v-btn
+            fab
+            depressed
+            small
+            @click="addMonth(1)"
+          >
+            <v-icon dark>
+              navigate_next
+            </v-icon>
+          </v-btn>
         </VFlex>
       </VLayout>
     </VFlex>

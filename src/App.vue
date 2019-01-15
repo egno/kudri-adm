@@ -79,6 +79,6 @@ export default {
   z-index: 10;
 }
 .v-navigation-draver {
-  z-index: 10;
+  z-index: 11;
 }
 </style>
