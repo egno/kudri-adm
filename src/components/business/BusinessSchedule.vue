@@ -65,7 +65,7 @@ export default {
   },
   computed: {
     scheduleGroup() {
-      return this.schedule
+      return this.schedule.data
         .reduce((r, x, i) => {
           let prev = r[r.length - 1] || [['', '']];
           if (!(prev[0][0] === x[0] && prev[0][1] === x[1])) {

@@ -9,7 +9,7 @@
       wrap
     >
       <PeriodEdit
-        v-for="(item, i) in schedule"
+        v-for="(item, i) in schedule.data"
         :key="dow[i]"
         :caption="dow[i]"
         :period="item"
@@ -27,15 +27,18 @@ export default {
     schedule: {
       type: Array,
       default() {
-        return [
-          ['', ''],
-          ['', ''],
-          ['', ''],
-          ['', ''],
-          ['', ''],
-          ['', ''],
-          ['', '']
-        ];
+        return {
+          type: 'week',
+          data: [
+            ['', ''],
+            ['', ''],
+            ['', ''],
+            ['', ''],
+            ['', ''],
+            ['', ''],
+            ['', '']
+          ]
+        };
       }
     }
   },

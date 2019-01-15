@@ -178,7 +178,7 @@ export default {
       if (!(this.businessInfo && this.businessInfo.j)) {
         return Array(7);
       }
-      return this.businessInfo.j.schedule;
+      return this.businessInfo.j.schedule.data;
     },
     showTimes() {
       if (!this.schedule) {
