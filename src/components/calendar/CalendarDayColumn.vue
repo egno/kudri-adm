@@ -4,7 +4,10 @@
     xs3
     :class="[{'day-off': isDayOff}]"
   >
-    <div class="header">
+    <div
+      class="header"
+      @click="onDayEdit"
+    >
       <v-layout
         align-start
         column
@@ -24,7 +27,9 @@
           </v-layout>
         </v-flex>
         <v-flex caption>
-          {{ displaySchedule }}
+          <v-layout column>
+            <v-flex>{{ displaySchedule }}</v-flex>
+          </v-layout>
         </v-flex>
       </v-layout>
     </div>
@@ -40,12 +45,15 @@
           v-if="displayTimeStamp(i)"
           class="item-caption"
         >
-          {{ time.begin.display }}
+          <div>{{ time.begin.display }}</div>
         </div>
         <div
           :class="['time-block', {working: isWorkingTime(i)}]"
           @click="onTimeBlockClick(time)"
-        />
+        >
+          <div>{{ dow }}, {{ day.display }}</div>
+          <div>{{ time.begin.display }}</div>
+        </div>
         <CalendarVisit
           v-for="(visit, iv) in visitsInTime(i)"
           :id="visit.id"
@@ -115,7 +123,8 @@ export default {
       duration: 30,
       displayStep: 2,
       rowHeightInEm: 3,
-      selectVisit: false
+      selectVisit: false,
+      timeEditBlock: false
     };
   },
   computed: {
@@ -127,7 +136,7 @@ export default {
       );
     },
     displaySchedule() {
-      if (!this.schedule[0]) {
+      if (!this.schedule || !this.schedule[0]) {
         return 'выходной';
       }
       if (this.schedule.length === 2) {
@@ -224,12 +233,16 @@ export default {
     onTimeBlockClick(time) {
       this.$emit('onTimeBlockClick', time.begin.date);
     },
+    onDayEdit() {
+      this.$emit('onDayEdit', this.day);
+    },
     onVisitDelete(id) {
       this.$emit('onVisitDelete', id);
     },
     onVisitEdit(item) {
       this.$emit('onVisitEdit', item);
     },
+    onWorkTimeEdit() {},
     timeDisplay(date) {
       return formatTime(date);
     },
@@ -263,6 +276,7 @@ export default {
   border-left: 0;
 }
 .time-block {
+  font-size: 0.75em;
   height: 100%;
   width: 100%;
   border: 1px solid #eee;
@@ -270,6 +284,18 @@ export default {
   border-left: 0;
   background: #f7f7f7;
   position: absolute;
+  padding: 0.5em;
+  color: rgba(100, 100, 100, 0);
+  transition: all 0.5s ease;
+}
+.time-block:hover {
+  box-shadow: inset 0 0 1em 0 rgba(0, 0, 0, 0.1);
+  color: rgba(100, 100, 100, 0.5);
+}
+.time-edit {
+  display: block;
+  position: absolute;
+  z-index: 2;
 }
 .working {
   background: #fefefe;

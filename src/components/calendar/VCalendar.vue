@@ -18,7 +18,6 @@
           {{ dateMonthHeader }}
         </VFlex>
         <v-spacer />
-
         <VFlex>
           <v-btn
             fab
@@ -96,7 +95,7 @@
             :show-time="!i"
             :day="day"
             :visits="day.visits"
-            :schedule="schedule[i]"
+            :schedule="getDateSchedule(day.dateKey)"
             :display-from="showTimes[0]"
             :display-to="showTimes[1]"
             @onClickDate="goDate($event)"
@@ -110,6 +109,20 @@
     <VDialog
       v-if="kind !== 'mini'"
       v-model="edit"
+      max-width="50em"
+    >
+      <VisitEdit
+        :id="currentVisit.id"
+        :business-info="businessInfo"
+        :item="currentVisit"
+        :page="editVisitPage"
+        @onSave="onVisitSave(-1, $event)"
+        @onDelete="onDelete(-1)"
+      />
+    </VDialog>
+    <VDialog
+      v-if="kind !== 'mini'"
+      v-model="timeEdit"
       max-width="50em"
     >
       <VisitEdit
@@ -161,6 +174,7 @@ export default {
       days: [],
       edit: false,
       editVisitPage: undefined,
+      timeEdit: false,
       visits: []
     };
   },
@@ -174,27 +188,29 @@ export default {
       return monthDisplay(d);
     },
     schedule() {
-      if (!(this.businessInfo && this.businessInfo.j)) {
+      if (!this.calendar) {
         return Array(7);
       }
-      return this.businessInfo.j.schedule.data;
+      return this.calendar;
     },
     showTimes() {
       if (!this.schedule) {
         return ['', ''];
       }
-      const workTimes = this.schedule.reduce(
-        (res, cur) => {
-          if (cur[0] && (res[0] || cur[0]) >= cur[0]) {
-            res[0] = cur[0];
-          }
-          if (res[1] < cur[1]) {
-            res[1] = cur[1];
-          }
-          return res;
-        },
-        ['', '']
-      );
+      const workTimes = Object.keys(this.schedule)
+        .map(key => this.schedule[key].schedule || ['', ''])
+        .reduce(
+          (res, cur) => {
+            if (cur[0] && (res[0] || cur[0]) >= cur[0]) {
+              res[0] = cur[0];
+            }
+            if (res[1] < cur[1]) {
+              res[1] = cur[1];
+            }
+            return res;
+          },
+          ['', '']
+        );
       if (!this.visits) {
         return workTimes;
       }
@@ -243,6 +259,9 @@ export default {
       let dt = new Date(this.actualDate);
       dt.setMonth(dt.getMonth() + i);
       this.goDate(formatDate(dt));
+    },
+    getDateSchedule(dt) {
+      return this.schedule && this.schedule[dt] && this.schedule[dt].schedule;
     },
     fetchData() {
       if (this.workDate) {

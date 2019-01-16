@@ -161,7 +161,10 @@ export default new Vuex.Store({
         const dt = new Date();
         payload = formatDate(dt);
       }
-      if (state.actualDate.slice(0, 7) !== payload.slice(0, 7)) {
+      if (
+        state.actualDate.slice(0, 7) !== payload.slice(0, 7) ||
+        Object.keys(state.calendar).length === 0
+      ) {
         const from = `${payload.slice(0, 7)}-01`;
         let d1 = new Date();
         d1.setDate(1);
@@ -196,12 +199,15 @@ export default new Vuex.Store({
         .catch(err => commit('ADD_ALERT', err.response.data));
     },
     loadCalendar({ commit }, payload) {
+      if (!payload.business) {
+        return;
+      }
       // const path = `main_calendar?select=dt,j&and=(dt.gte.${payload[0]},dt.lt.${
       //   payload[1]
       // })`;
-      const path = `business_calendar?select=dt,j&and=(business_id.eq.,${
+      const path = `business_calendar?select=dt,j&and=(business_id.eq.${
         payload.business
-      }dt.gte.${payload.dates[0]},dt.lt.${payload.dates[1]})`;
+      },dt.gte.${payload.dates[0]},dt.lt.${payload.dates[1]})`;
       Api()
         .get(path)
         .then(res => res.data)

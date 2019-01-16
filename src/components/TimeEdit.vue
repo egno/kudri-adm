@@ -42,3 +42,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.v-text-field {
+  max-width: 4em;
+}
+</style>
