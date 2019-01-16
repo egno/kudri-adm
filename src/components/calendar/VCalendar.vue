@@ -116,7 +116,8 @@
         :id="currentVisit.id"
         :business-info="businessInfo"
         :item="currentVisit"
-        @onSave="onNewVisitSave(-1, $event)"
+        :page="editVisitPage"
+        @onSave="onVisitSave(-1, $event)"
         @onDelete="onDelete(-1)"
       />
     </VDialog>
@@ -159,6 +160,7 @@ export default {
       dates: [[]],
       days: [],
       edit: false,
+      editVisitPage: undefined,
       visits: []
     };
   },
@@ -284,9 +286,21 @@ export default {
         this.edit = true;
       }
     },
-    onNewVisitSave(i, payload) {
-      this.sendData(payload);
-      this.edit = false;
+    onVisitSave(i, payload) {
+      this.editVisitPage = undefined;
+      this.sendData(payload)
+        .then(() => {
+          this.edit = false;
+        })
+        .catch(err => {
+          if (
+            err.response &&
+            err.response.data &&
+            err.response.data.code === '23P01'
+          ) {
+            this.editVisitPage = 1;
+          }
+        });
     },
     onTimeBlockClick(date) {
       this.currentVisit = visitInit();
@@ -302,11 +316,11 @@ export default {
     },
     sendData(data) {
       if (data.id) {
-        Api()
+        return Api()
           .patch(`visit?id=eq.${data.id}`, data)
           .then(() => this.fetchData());
       } else {
-        Api()
+        return Api()
           .post('visit', data)
           .then(() => this.fetchData());
       }

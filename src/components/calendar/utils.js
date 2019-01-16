@@ -7,6 +7,12 @@ export function dateInTimeZone(date, tz) {
   return new Date(utc + 60000 * tz);
 }
 
+export function dateInLocalTimeZone(date) {
+  const d = new Date(date);
+  const l = d.getTime() - d.getTimezoneOffset() * 60000;
+  return new Date(l);
+}
+
 export function fixLocalTimeZone(date, tz) {
   if (!tz) {
     return date;
@@ -25,8 +31,8 @@ export function valueDate(value, format) {
   return value ? this.parseDateString(value, format) : undefined;
 }
 
-export function formatDate(date, tz) {
-  const d = dateInTimeZone(date, tz);
+export function formatDate(date) {
+  let d = date;
   return [
     d.getFullYear(),
     ('0' + (d.getMonth() + 1)).slice(-2),
@@ -34,8 +40,8 @@ export function formatDate(date, tz) {
   ].join('-');
 }
 
-export function formatTime(date, tz) {
-  const d = dateInTimeZone(date, tz);
+export function formatTime(date) {
+  let d = date;
   // console.log(date, d);
   return [
     ('0' + d.getHours()).slice(-2),

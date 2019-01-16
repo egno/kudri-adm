@@ -115,6 +115,9 @@
               <v-flex />
             </v-layout>
           </v-card-text>
+          <v-card-text v-if="message">
+            {{ message }}
+          </v-card-text>
         </VCard>
       </v-tab-item>
       <v-tab-item key="ti-2">
@@ -150,7 +153,7 @@
 <script>
 import PhoneEdit from '@/components/business/PhoneEdit.vue';
 import {
-  fixLocalTimeZone,
+  dateInLocalTimeZone,
   formatDate,
   formatTime,
   visitInit
@@ -172,7 +175,8 @@ export default {
       default() {
         return visitInit();
       }
-    }
+    },
+    page: { type: Number, default: null }
   },
   data() {
     return {
@@ -183,6 +187,7 @@ export default {
       },
       categoryOthersName: 'Прочие',
       tabsLength: 3,
+      message: '',
       selectedCategory: '',
       selectedDate: null,
       selectedTime: null,
@@ -241,7 +246,7 @@ export default {
   },
   watch: {
     item: 'setSelectedValues',
-    tz: 'setSelectedValues'
+    page: 'setPage'
   },
   mounted() {
     this.setSelectedValues();
@@ -263,25 +268,30 @@ export default {
     },
     onSave() {
       const duration = parseInt(this.item.client.service.duration) || 60;
-      const ts1 = fixLocalTimeZone(
-        new Date(`${this.selectedDate} ${this.selectedTime}`),
-        this.tz
+      const ts1 = dateInLocalTimeZone(
+        new Date(`${this.selectedDate} ${this.selectedTime}`)
       );
       let ts2 = new Date();
       ts2.setTime(ts1.getTime() + 60000 * duration);
-      // console.log(ts1, ts2, duration);
+      console.log(ts1, this.selectedTime);
       this.item.business_id = this.businessInfo.id;
       this.item.client.service.duration = duration;
-      this.item.ts_begin = ts1.toJSON();
-      this.item.ts_end = ts2.toJSON();
+      this.item.ts_begin = ts1.toJSON().slice(0, -1);
+      this.item.ts_end = ts2.toJSON().slice(0, -1);
       this.$emit('onSave', this.item);
+    },
+    setPage() {
+      if (this.page !== undefined) {
+        this.active = this.page;
+        this.message = 'На это время записаться нельзя. Выберите другое время';
+      }
     },
     setSelectedValues() {
       // console.log(this.tz);
       if (this.item.ts_begin) {
         let ts1 = new Date(this.item.ts_begin);
-        this.selectedDate = formatDate(ts1, this.tz);
-        this.selectedTime = formatTime(ts1, this.tz);
+        this.selectedDate = formatDate(ts1);
+        this.selectedTime = formatTime(ts1);
       } else {
         this.selectedDate = '';
         this.selectedTime = '';

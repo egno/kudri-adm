@@ -42,8 +42,9 @@ export default {
     this.fetchData();
   },
   methods: {
-    ...mapActions(['setActions']),
+    ...mapActions(['setActions', 'setBusiness']),
     fetchData() {
+      this.setBusiness(this.business);
       Api()
         .get(`business?id=eq.${this.business}`)
         .then(res => res.data)

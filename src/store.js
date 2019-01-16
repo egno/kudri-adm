@@ -19,6 +19,7 @@ export default new Vuex.Store({
     alerts: [],
     apiTime: '',
     appTitle: '',
+    business: '',
     calendar: {},
     defaultAppTitle: 'Kudri',
     navBarVisible: true,
@@ -119,6 +120,9 @@ export default new Vuex.Store({
     SET_APP_TITLE(state, payload) {
       state.appTitle = payload;
     },
+    SET_BUSINESS(state, payload) {
+      state.business = payload;
+    },
     SET_SEARCH_STRING(state, payload) {
       state.searchString = payload;
     },
@@ -163,12 +167,18 @@ export default new Vuex.Store({
         d1.setDate(1);
         d1.setYear(payload.slice(0, 4));
         d1.setMonth(payload.slice(5, 7));
-        dispatch('loadCalendar', [from, formatDate(d1)]);
+        dispatch('loadCalendar', {
+          business: state.business,
+          dates: [from, formatDate(d1)]
+        });
       }
       commit('SET_ACTUAL_DATE', payload);
     },
     setAppTitle({ commit }, payload) {
       commit('SET_APP_TITLE', payload);
+    },
+    setBusiness({ commit }, payload) {
+      commit('SET_BUSINESS', payload);
     },
     setSearchString({ commit }, payload) {
       commit('SET_SEARCH_STRING', payload);
@@ -186,9 +196,12 @@ export default new Vuex.Store({
         .catch(err => commit('ADD_ALERT', err.response.data));
     },
     loadCalendar({ commit }, payload) {
-      const path = `main_calendar?select=dt,j&and=(dt.gte.${payload[0]},dt.lt.${
-        payload[1]
-      })`;
+      // const path = `main_calendar?select=dt,j&and=(dt.gte.${payload[0]},dt.lt.${
+      //   payload[1]
+      // })`;
+      const path = `business_calendar?select=dt,j&and=(business_id.eq.,${
+        payload.business
+      }dt.gte.${payload.dates[0]},dt.lt.${payload.dates[1]})`;
       Api()
         .get(path)
         .then(res => res.data)
