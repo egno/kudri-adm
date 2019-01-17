@@ -78,7 +78,7 @@ export default {
 .v-toolbar {
   z-index: 10;
 }
-.v-navigation-draver {
+.v-navigation-drawer {
   z-index: 11;
 }
 </style>
