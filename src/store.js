@@ -207,7 +207,7 @@ export default new Vuex.Store({
       // })`;
       const path = `business_calendar?select=dt,j&and=(business_id.eq.${
         payload.business
-      },dt.gte.${payload.dates[0]},dt.lt.${payload.dates[1]})`;
+      },dt.gte.${payload.dates[0]},dt.lte.${payload.dates[1]})`;
       Api()
         .get(path)
         .then(res => res.data)

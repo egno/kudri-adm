@@ -139,18 +139,27 @@ export default {
       if (!this.schedule || !this.schedule[0]) {
         return 'выходной';
       }
+      if (this.schedule[0] === '00:00' && this.schedule[1] === '00:00') {
+        return 'круглосуточно';
+      }
       if (this.schedule.length === 2) {
         return `${this.schedule[0]}-${this.schedule[1]}`;
       }
       if (this.schedule.length === 4) {
-        return `${this.schedule[0]}-${this.schedule[3]} (пер. ${
-          this.schedule[1]
-        }-${this.schedule[2]})`;
+        return `${this.schedule[0]}-${this.schedule[3]} (${this.schedule[1]}-${
+          this.schedule[2]
+        })`;
       }
       return '-';
     },
     dow() {
       return dowDisplay(this.day.date, 1);
+    },
+    lunchTime() {
+      if (this.schedule.length > 3) {
+        return [this.schedule[1], this.schedule[2]];
+      }
+      return [];
     },
     times() {
       let times = [...Array((this.hours * this.minutes) / this.duration)].map(
@@ -219,12 +228,20 @@ export default {
       return getRESTTime(ts);
     },
     isWorkingTime(i) {
-      if (!(this.schedule && this.schedule.length === 2)) {
+      if (!this.schedule) {
         return false;
       }
       return (
         this.schedule[0] <= this.times[i].begin.display &&
-        this.schedule[1] >= this.times[i].end.display
+        (this.schedule[this.schedule.length - 1] === '00:00'
+          ? '24:00'
+          : this.schedule[this.schedule.length - 1]) >=
+          this.times[i].end.display &&
+        !(
+          this.lunchTime.length &&
+          (this.lunchTime[0] <= this.times[i].begin.display &&
+            this.lunchTime[1] >= this.times[i].end.display)
+        )
       );
     },
     onClickDate(dt) {
@@ -261,7 +278,7 @@ export default {
   margin-top: -1.5em;
   width: 3em;
   position: absolute;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #ccc;
 }
 .item {
   height: 3em;
@@ -271,18 +288,19 @@ export default {
   color: #555;
 }
 .header {
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   border-top: 0;
   border-left: 0;
+  height: 4.5em;
 }
 .time-block {
   font-size: 0.75em;
   height: 100%;
   width: 100%;
-  border: 1px solid #eee;
+  border: 1px solid #ccc;
   border-top: 0;
   border-left: 0;
-  background: #f7f7f7;
+  background: #d6d6d6;
   position: absolute;
   padding: 0.5em;
   color: rgba(100, 100, 100, 0);
@@ -299,9 +317,6 @@ export default {
 }
 .working {
   background: #fefefe;
-}
-.day-off .time-block {
-  background: #fdf7f7;
 }
 .day-off .working {
   background: #fffefe;

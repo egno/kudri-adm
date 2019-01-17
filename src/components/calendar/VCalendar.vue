@@ -305,7 +305,30 @@ export default {
       this.currentDay = day;
       this.timeEdit = true;
     },
-    onDayScheduleEdit() {},
+    onDayScheduleEdit(payload) {
+      if (!this.currentDay) {
+        return;
+      }
+      if (!this.business) {
+        return;
+      }
+      let data = {
+        j: { schedule: payload }
+      };
+      Api()
+        .patch(
+          `business_calendar?and=(business_id.eq.${this.business},dt.eq.${
+            this.currentDay.dateKey
+          })`,
+          data
+        )
+        .then(() => {
+          this.loadCalendar({
+            business: this.business,
+            dates: [this.currentDay.dateKey, this.currentDay.dateKey]
+          });
+        });
+    },
     onDelete() {
       this.edit = false;
       this.sendData();
