@@ -312,20 +312,21 @@ export default {
       if (!this.business) {
         return;
       }
+      let dt = this.currentDay.dateKey;
       let data = {
         j: { schedule: payload }
       };
       Api()
         .patch(
-          `business_calendar?and=(business_id.eq.${this.business},dt.eq.${
-            this.currentDay.dateKey
-          })`,
+          `business_calendar?and=(business_id.eq.${this.business},dt.eq.${dt})`,
           data
         )
         .then(() => {
+          this.timeEdit = false;
+          this.currentDay = {};
           this.loadCalendar({
             business: this.business,
-            dates: [this.currentDay.dateKey, this.currentDay.dateKey]
+            dates: [dt, dt]
           });
         });
     },
