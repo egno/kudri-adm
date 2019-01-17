@@ -26,31 +26,19 @@
       </VLayout>
     </VBtn>
     <VList>
-      <VCard v-if="loggedIn">
-        <VCardTitle primary-title>
-          <div>
-            <h3 class="headline mb-0">
-              Выйти из личного кабинета?
-            </h3>
-            <div>
-              Сейчас вы авторизованы как
-              <span class="font-weight-medium">
-                {{ userID }}
-              </span>
-            </div>
-          </div>
-        </VCardTitle>
-        <VCardActions>
-          <VSpacer />
-          <VBtn
-            color="primary"
-            @click="sendLogout"
-          >
-            Выйти
-          </VBtn>
-        </VCardActions>
-      </VCard>
-      <VCard v-else>
+      <template v-if="loggedIn">
+        <VListTile
+          v-for="(item, index) in menuList"
+          :key="index"
+          :href="item.url"
+          @click="menuHandler(item.action)"
+        >
+          <VListTileTitle>
+            {{ item.title }}
+          </VListTileTitle>
+        </VListTile>
+      </template>
+      <template v-else>
         <VCardText>
           <VForm>
             <VTextField
@@ -79,7 +67,7 @@
             Войти
           </VBtn>
         </VCardActions>
-      </VCard>
+      </template>
     </VList>
   </VMenu>
 </template>
@@ -88,6 +76,7 @@
 import router from '@/router';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import { mapGetters, mapActions } from 'vuex';
+import _ from 'lodash'
 
 export default {
   components: { UserAvatar },
@@ -102,14 +91,31 @@ export default {
     menu: false,
     snack: false,
     snackText: '',
-    snackColor: 'error'
+    snackColor: 'error',
+    menuList: [
+      {
+        title: 'Мой профиль',
+        action: 'qwe',
+        url: ''
+      },
+      {
+        title: 'Сообщения',
+        action: '',
+        url: ''
+      },
+      {
+        title: 'Выйти',
+        action: 'logout',
+        url: ''
+      },
+    ]
   }),
   computed: {
     ...mapGetters({
-      loggedIn: 'loggedIn',
-      avatar: 'userAvatar',
-      userID: 'userLogin',
-      userInfo: 'userInfo'
+        loggedIn: 'loggedIn',
+        avatar: 'userAvatar',
+        userID: 'userLogin',
+        userInfo: 'userInfo'
     }),
     displayName() {
       if (!this.userInfo) return;
@@ -119,10 +125,32 @@ export default {
         }
       }
       return this.userID;
+    },
+  },
+  watch:{
+    '$route' (){
+      if (this.$route.name === 'businessCard' && _.findIndex(this.menuList, function(o) { return o.title === 'Личный кабинет'; }) === -1) {
+        let obj = {
+          title: 'Личный кабинет',
+          action: '',
+          url: '/'
+        };
+        this.menuList.splice(2, 0, obj);
+      } else if (_.findIndex(this.menuList, function(o) { return o.title === 'Личный кабинет'; }) !== -1) {
+        this.menuList.splice(_.findIndex(this.menuList, function(o) { return o.title === 'Личный кабинет'; }), 1);
+      }
     }
   },
   methods: {
     ...mapActions(['login', 'logout']),
+    menuHandler(action) {
+      switch (action) {
+        case 'logout':
+          this.sendLogout();
+          break;
+        default:
+      }
+    },
     sendLogin() {
       this.login({ login: this.flogin, pass: this.fpassword });
       this.menu = false;
@@ -132,6 +160,6 @@ export default {
       router.push({ name: 'home' });
       this.menu = false;
     }
-  }
+  },
 };
 </script>
