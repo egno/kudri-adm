@@ -1,7 +1,7 @@
 <template>
   <VFlex>
     <VTextField
-      v-model="time"
+      v-model="val"
       mask="time"
       placeholder="00:00"
       return-masked-value
@@ -22,12 +22,19 @@ export default {
   },
   data() {
     return {
+      val: null,
       rules: {
         time: value =>
           this.checkTime(value) ||
           'Время должно быть в промежутке от 00:00 до 23:59'
       }
     };
+  },
+  watch: {
+    time: 'loadVal'
+  },
+  mounted() {
+    this.loadVal();
   },
   methods: {
     checkTime(val) {
@@ -36,8 +43,11 @@ export default {
       }
       return val.match(/^([01]?[0-9]|2[0-3]):[0-5][0-9]/) !== null;
     },
-    onEdit(payload) {
-      this.$emit('onEdit', payload);
+    loadVal() {
+      this.val = this.time;
+    },
+    onEdit() {
+      this.$emit('onEdit', this.val);
     }
   }
 };

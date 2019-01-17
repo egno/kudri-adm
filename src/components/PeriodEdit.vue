@@ -1,32 +1,38 @@
 <template>
-  <VFlex
-    d-flex
-    xs12
-    sm6
-    md4
-    lg3
-    xl2
-  >
+  <VFlex d-flex>
     <VCard>
       <VContainer>
         <VLayout
           column
           align-center
+          justify-center
         >
           <VFlex>
-            <div>{{ caption }}</div>
+            <VLayout row>
+              <VFlex>
+                <v-switch
+                  v-if="showSwitch"
+                  v-model="switchValue"
+                />
+              </VFlex>
+              <VFlex>
+                <v-card-text>{{ caption }}</v-card-text>
+              </VFlex>
+            </VLayout>
           </VFlex>
           <VLayout row>
             <VFlex>
               <TimeEdit
-                :time="period[0]"
-                @onEdit="onEdit(0, $event)"
+                enabled="!showSwitch || switchValue"
+                :time="startVal"
+                @onEdit="onEditStart"
               />
             </VFlex>
             <VFlex>
               <TimeEdit
-                :time="period[1]"
-                @onEdit="onEdit(1, $event)"
+                enabled="!showSwitch || switchValue"
+                :time="endVal"
+                @onEdit="onEditEnd"
               />
             </VFlex>
           </VLayout>
@@ -42,17 +48,45 @@ export default {
   components: { TimeEdit },
   props: {
     caption: { type: String, default: '' },
-    period: {
-      type: Array,
-      default() {
-        return ['', ''];
-      }
-    }
+    periodStart: {
+      type: String,
+      default: undefined
+    },
+    periodEnd: {
+      type: String,
+      default: undefined
+    },
+    showSwitch: { type: Boolean, default: false },
+    switch: { type: Boolean, default: false }
+  },
+  data() {
+    return {
+      switchValue: undefined,
+      startVal: undefined,
+      endVal: undefined
+    };
+  },
+  watch: {
+    switchValue: 'loadValues',
+    periodStart: 'loadValues',
+    periodEnd: 'loadValues'
+  },
+  mounted() {
+    this.loadValues();
   },
   methods: {
-    onEdit(i, payload) {
-      this.period[i] = payload;
-      this.$emit('onEdit');
+    onEditStart(payload) {
+      this.startVal = payload;
+      this.$emit('onEdit', [this.startVal, this.endVal]);
+    },
+    onEditEnd(payload) {
+      this.endVal = payload;
+      this.$emit('onEdit', [this.startVal, this.endVal]);
+    },
+    loadValues() {
+      this.switchValue = this.switch;
+      this.startVal = this.periodStart;
+      this.endVal = this.periodEnd;
     }
   }
 };

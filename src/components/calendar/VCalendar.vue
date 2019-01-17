@@ -102,6 +102,7 @@
             @onTimeBlockClick="onTimeBlockClick($event)"
             @onVisitEdit="onVisitEdit($event)"
             @onVisitDelete="onVisitDelete($event)"
+            @onDayEdit="onDayEdit($event)"
           />
         </VLayout>
       </VContainer>
@@ -125,13 +126,10 @@
       v-model="timeEdit"
       max-width="50em"
     >
-      <VisitEdit
-        :id="currentVisit.id"
-        :business-info="businessInfo"
-        :item="currentVisit"
-        :page="editVisitPage"
-        @onSave="onVisitSave(-1, $event)"
-        @onDelete="onDelete(-1)"
+      <DayScheduleEdit
+        :day="currentDay.date"
+        :schedule="getDateSchedule(currentDay.dateKey)"
+        @onEdit="onDayScheduleEdit"
       />
     </VDialog>
   </VLayout>
@@ -142,6 +140,7 @@ import CalendarDayBtn from '@/components/calendar/CalendarDayBtn.vue';
 import CalendarDayCard from '@/components/calendar/CalendarDayCard.vue';
 import CalendarDayColumn from '@/components/calendar/CalendarDayColumn.vue';
 import VisitEdit from '@/components/calendar/VisitEdit.vue';
+import DayScheduleEdit from '@/components/calendar/DayScheduleEdit.vue';
 import {
   formatDate,
   getRESTTime,
@@ -154,7 +153,13 @@ import Api from '@/api/backend';
 import router from '@/router';
 
 export default {
-  components: { CalendarDayBtn, CalendarDayCard, CalendarDayColumn, VisitEdit },
+  components: {
+    CalendarDayBtn,
+    CalendarDayCard,
+    CalendarDayColumn,
+    DayScheduleEdit,
+    VisitEdit
+  },
   props: {
     businessInfo: {
       type: Object,
@@ -169,6 +174,7 @@ export default {
   },
   data() {
     return {
+      currentDay: {},
       currentVisit: visitInit(),
       dates: [[]],
       days: [],
@@ -295,6 +301,11 @@ export default {
         this.currentVisit = visitInit();
       }
     },
+    onDayEdit(day) {
+      this.currentDay = day;
+      this.timeEdit = true;
+    },
+    onDayScheduleEdit() {},
     onDelete() {
       this.edit = false;
       this.sendData();
