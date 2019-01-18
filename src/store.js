@@ -5,6 +5,7 @@ import VueAxios from 'vue-axios';
 import VueCacheData from 'vue-cache-data';
 import Api from '@/api/backend';
 import { formatDate, getISOTimeZoneOffset } from '@/components/calendar/utils';
+import { makeAlert } from '@/api/utils';
 
 Vue.use(Vuex);
 Vue.use(VueAxios, axios, VueCacheData);
@@ -15,7 +16,7 @@ export default new Vuex.Store({
   state: {
     actions: [],
     actualDate: '',
-    alertMaxCount: 3,
+    alertMaxCount: 10,
     alerts: [],
     apiTime: '',
     appTitle: '',
@@ -32,7 +33,7 @@ export default new Vuex.Store({
   getters: {
     actions: state => state.actions,
     actualDate: state => state.actualDate,
-    alerts: state => state.messages,
+    alerts: state => state.alerts,
     apiTime: state => state.apiTime,
     apiTimeZone: state => {
       if (!state.apiTime) {
@@ -85,9 +86,17 @@ export default new Vuex.Store({
   },
   mutations: {
     ADD_ALERT(state, payload) {
+      if (!payload) {
+        return;
+      }
       state.alerts.push(payload);
       if (state.alerts.length > state.alertMaxCount) {
         state.alerts.shift();
+      }
+    },
+    DEL_ALERT(state, payload) {
+      if (!payload) {
+        state.alerts = [];
       }
     },
     LOAD_CALENDAR(state, payload) {
@@ -147,6 +156,9 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    delAlert({ commit }, payload) {
+      commit('DEL_ALERT', payload);
+    },
     selectVisit({ commit }, payload) {
       commit('SELECT_VISIT', payload);
     },
@@ -196,7 +208,7 @@ export default new Vuex.Store({
         .then(res => {
           commit('SET_API_TIME', res.current_timestamp);
         })
-        .catch(err => commit('ADD_ALERT', err.response.data));
+        .catch(err => commit('ADD_ALERT', makeAlert(err)));
     },
     loadCalendar({ commit }, payload) {
       if (!payload.business) {
@@ -214,7 +226,7 @@ export default new Vuex.Store({
         .then(res => {
           commit('LOAD_CALENDAR', res);
         })
-        .catch(err => commit('ADD_ALERT', err.response.data));
+        .catch(err => commit('ADD_ALERT', makeAlert(err)));
     },
     loadFromStorage({ commit, dispatch }) {
       commit('SET_TOKEN', localStorage.getItem('accessToken'));
@@ -228,7 +240,7 @@ export default new Vuex.Store({
         .then(res => {
           commit('LOAD_SERVICE_LIST', res);
         })
-        .catch(err => commit('ADD_ALERT', err.response.data));
+        .catch(err => commit('ADD_ALERT', makeAlert(err)));
     },
     loadUserInfo({ commit }) {
       const infoPath = 'rpc/me';
@@ -238,7 +250,7 @@ export default new Vuex.Store({
         .then(res => {
           commit('SET_USERINFO', res);
         })
-        .catch(err => commit('ADD_ALERT', err.response.data));
+        .catch(err => commit('ADD_ALERT', makeAlert(err)));
     },
     login({ commit, dispatch }, payload) {
       const loginPath = 'rpc/login';
@@ -252,7 +264,10 @@ export default new Vuex.Store({
           commit('SET_TOKEN', token);
           dispatch('loadUserInfo');
         })
-        .catch(err => commit('ADD_ALERT', err.response.data));
+        .catch(err => {
+          console.log('err', err);
+          commit('ADD_ALERT', makeAlert(err));
+        });
     },
     logout({ commit }) {
       commit('SET_TOKEN', '');
