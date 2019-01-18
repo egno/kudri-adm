@@ -37,7 +37,7 @@ export default {
   },
   mounted() {
     this.setActions(this.formActions);
-    // TODO проверить, утекает ли память
+    // TODO проверить, не утекает ли память
     this.$root.$on('onAction', this.onAction);
     this.fetchData();
   },
@@ -57,6 +57,9 @@ export default {
         this.newVisit = true;
       }
     }
+  },
+  destroyed() {
+    this.$root.$off('onAction', this.onAction);
   }
 };
 </script>

@@ -16,7 +16,7 @@ export default new Vuex.Store({
   state: {
     actions: [],
     actualDate: '',
-    alertMaxCount: 10,
+    alertMaxCount: 1,
     alerts: [],
     apiTime: '',
     appTitle: '',
@@ -42,6 +42,14 @@ export default new Vuex.Store({
       return getISOTimeZoneOffset(state.apiTime);
     },
     appTitle: state => state.appTitle || state.defaultAppTitle,
+    businessEmployee: state =>
+      state.business &&
+      state.calendar &&
+      state.calendar[Object.keys(state.calendar)[0]] &&
+      state.calendar[Object.keys(state.calendar)[0]].employee &&
+      state.calendar[Object.keys(state.calendar)[0]].employee.map(
+        x => x.business_id
+      ),
     calendar: state => state.calendar,
     loggedIn: (state, getters) => {
       return getters.userID;
@@ -101,7 +109,9 @@ export default new Vuex.Store({
     },
     LOAD_CALENDAR(state, payload) {
       for (let day of payload) {
-        state.calendar[day.dt] = day.j;
+        let d = day.j;
+        d.employee = day.employee;
+        state.calendar[day.dt] = d;
       }
     },
     LOAD_SERVICE_CATEGORIES(state, payload) {
@@ -214,10 +224,7 @@ export default new Vuex.Store({
       if (!payload.business) {
         return;
       }
-      // const path = `main_calendar?select=dt,j&and=(dt.gte.${payload[0]},dt.lt.${
-      //   payload[1]
-      // })`;
-      const path = `business_calendar?select=dt,j&and=(business_id.eq.${
+      const path = `business_calendar?select=dt,j,employee&and=(business_id.eq.${
         payload.business
       },dt.gte.${payload.dates[0]},dt.lte.${payload.dates[1]})`;
       Api()
@@ -265,7 +272,6 @@ export default new Vuex.Store({
           dispatch('loadUserInfo');
         })
         .catch(err => {
-          console.log('err', err);
           commit('ADD_ALERT', makeAlert(err));
         });
     },
