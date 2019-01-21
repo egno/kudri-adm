@@ -185,7 +185,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['actualDate', 'calendar']),
+    ...mapGetters(['actualDate', 'calendar', 'schedule']),
     business() {
       return this.businessInfo.id || this.$route.params.id;
     },
@@ -193,18 +193,26 @@ export default {
       const d = new Date(this.workDate);
       return monthDisplay(d);
     },
-    schedule() {
-      if (!this.calendar) {
+    curSchedule() {
+      if (!this.schedule) {
         return Array(7);
       }
-      return this.calendar;
+      return this.schedule.filter(
+        d => d.dt >= this.minDate.dateKey && d.dt <= this.maxDate.dateKey
+      );
+    },
+    maxDate() {
+      return this.dates[this.dates.length - 1][6];
+    },
+    minDate() {
+      return this.dates[0][0];
     },
     showTimes() {
-      if (!this.schedule) {
+      if (!this.curSchedule) {
         return ['', ''];
       }
-      const workTimes = Object.keys(this.schedule)
-        .map(key => this.schedule[key].schedule || ['', ''])
+      const workTimes = this.curSchedule
+        .map(d => d.j.schedule || ['', ''])
         .reduce(
           (res, cur) => {
             if (cur[0] && (res[0] || cur[0]) >= cur[0]) {
@@ -267,7 +275,9 @@ export default {
       this.goDate(formatDate(dt));
     },
     getDateSchedule(dt) {
-      return this.schedule && this.schedule[dt] && this.schedule[dt].schedule;
+      if (!this.curSchedule) return;
+      const d = this.curSchedule.filter(d => d.dt === dt)[0];
+      return d && d.j && d.j.schedule;
     },
     fetchData() {
       if (this.workDate) {

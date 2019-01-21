@@ -21,7 +21,8 @@ export default new Vuex.Store({
     apiTime: '',
     appTitle: '',
     business: '',
-    calendar: {},
+    calendar: [],
+    schedule: [],
     defaultAppTitle: 'Kudri',
     navBarVisible: true,
     searchString: '',
@@ -55,6 +56,7 @@ export default new Vuex.Store({
       return getters.userID;
     },
     navBarVisible: state => state.navBarVisible,
+    schedule: state => state.schedule,
     searchString: state => state.searchString,
     selectedVisit: state => state.selectedVisit,
     serviceCategories: state =>
@@ -108,11 +110,15 @@ export default new Vuex.Store({
       }
     },
     LOAD_CALENDAR(state, payload) {
-      for (let day of payload) {
-        let d = day.j;
-        d.employee = day.employee;
-        state.calendar[day.dt] = d;
-      }
+      // for (let day of payload) {
+      //   let d = day.j;
+      //   d.employee = day.employee;
+      //   state.calendar[day.dt] = d;
+      // }
+      state.calendar = payload;
+    },
+    LOAD_SCHEDULE(state, payload) {
+      state.schedule = payload;
     },
     LOAD_SERVICE_CATEGORIES(state, payload) {
       state.serviceCategories = payload;
@@ -229,6 +235,16 @@ export default new Vuex.Store({
       },dt.gte.${payload.dates[0]},dt.lte.${payload.dates[1]})`;
       Api()
         .get(path)
+        .then(res => res.data)
+        .then(res => {
+          commit('LOAD_SCHEDULE', res);
+        })
+        .catch(err => commit('ADD_ALERT', makeAlert(err)));
+      const c_path = `calendar?and=(dt.gte.${payload.dates[0]},dt.lte.${
+        payload.dates[1]
+      })`;
+      Api()
+        .get(c_path)
         .then(res => res.data)
         .then(res => {
           commit('LOAD_CALENDAR', res);
