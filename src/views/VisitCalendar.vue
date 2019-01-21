@@ -3,6 +3,7 @@
     <VCalendar
       kind="full"
       period="week"
+      :employee="selectedEmployee"
       :show-header="false"
       :business-info="businessInfo"
       :new-visit="newVisit"
@@ -21,6 +22,7 @@ export default {
   data() {
     return {
       businessInfo: {},
+      selectedEmployee: [],
       newVisit: false,
       formActions: [
         { label: 'Добавить запись', action: 'newVisit', default: true }
@@ -36,14 +38,15 @@ export default {
     business: 'fetchData'
   },
   mounted() {
-    this.setActions(this.formActions);
     // TODO проверить, не утекает ли память
     this.$root.$on('onAction', this.onAction);
+    this.$root.$on('onSelectEmployee', this.onSelectEmployee);
     this.fetchData();
   },
   methods: {
     ...mapActions(['setActions', 'setBusiness']),
     fetchData() {
+      this.setActions(this.formActions);
       this.setBusiness(this.business);
       Api()
         .get(`business?id=eq.${this.business}`)
@@ -56,10 +59,14 @@ export default {
       if (payload === this.formActions[0].action) {
         this.newVisit = true;
       }
+    },
+    onSelectEmployee(payload) {
+      this.selectedEmployee = payload;
     }
   },
   destroyed() {
     this.$root.$off('onAction', this.onAction);
+    this.$root.$off('onSelectEmployee', this.onSelectEmployee);
   }
 };
 </script>

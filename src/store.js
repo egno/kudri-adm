@@ -22,9 +22,10 @@ export default new Vuex.Store({
     appTitle: '',
     business: '',
     calendar: [],
-    schedule: [],
     defaultAppTitle: 'Kudri',
+    employee: [],
     navBarVisible: true,
+    schedule: [],
     searchString: '',
     selectedVisit: undefined,
     serviceList: [],
@@ -43,15 +44,8 @@ export default new Vuex.Store({
       return getISOTimeZoneOffset(state.apiTime);
     },
     appTitle: state => state.appTitle || state.defaultAppTitle,
-    businessEmployee: state =>
-      state.business &&
-      state.calendar &&
-      state.calendar[Object.keys(state.calendar)[0]] &&
-      state.calendar[Object.keys(state.calendar)[0]].employee &&
-      state.calendar[Object.keys(state.calendar)[0]].employee.map(
-        x => x.business_id
-      ),
     calendar: state => state.calendar,
+    employee: state => state.employee,
     loggedIn: (state, getters) => {
       return getters.userID;
     },
@@ -110,12 +104,10 @@ export default new Vuex.Store({
       }
     },
     LOAD_CALENDAR(state, payload) {
-      // for (let day of payload) {
-      //   let d = day.j;
-      //   d.employee = day.employee;
-      //   state.calendar[day.dt] = d;
-      // }
       state.calendar = payload;
+    },
+    LOAD_EMPLOYEE(state, payload) {
+      state.employee = payload || [];
     },
     LOAD_SCHEDULE(state, payload) {
       state.schedule = payload;
@@ -208,8 +200,9 @@ export default new Vuex.Store({
     setAppTitle({ commit }, payload) {
       commit('SET_APP_TITLE', payload);
     },
-    setBusiness({ commit }, payload) {
+    setBusiness({ commit, dispatch }, payload) {
       commit('SET_BUSINESS', payload);
+      dispatch('loadEmployee', payload);
     },
     setSearchString({ commit }, payload) {
       commit('SET_SEARCH_STRING', payload);
@@ -248,6 +241,17 @@ export default new Vuex.Store({
         .then(res => res.data)
         .then(res => {
           commit('LOAD_CALENDAR', res);
+        })
+        .catch(err => commit('ADD_ALERT', makeAlert(err)));
+    },
+    loadEmployee({ commit }, payload) {
+      commit('LOAD_EMPLOYEE', null);
+      const path = `employee?parent=eq.${payload}`;
+      Api()
+        .get(path)
+        .then(res => res.data)
+        .then(res => {
+          commit('LOAD_EMPLOYEE', res);
         })
         .catch(err => commit('ADD_ALERT', makeAlert(err)));
     },

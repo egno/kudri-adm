@@ -27,6 +27,7 @@ import { mapGetters } from 'vuex';
 export default {
   props: {
     counter: { type: Number, default: 0 },
+    holiday: { type: Boolean },
     day: {
       type: Object,
       default() {
@@ -40,10 +41,7 @@ export default {
   computed: {
     ...mapGetters(['actualDate', 'calendar']),
     isDayOff() {
-      return (
-        this.calendar[this.day.dateKey] &&
-        this.calendar[this.day.dateKey].holiday
-      );
+      return this.holiday;
     },
     color() {
       return this.day.outOfRange ? 'grey' : this.isDayOff ? 'red' : '';

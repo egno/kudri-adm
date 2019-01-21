@@ -71,6 +71,7 @@
                   v-if="kind === 'mini'"
                   :counter="day.visits && day.visits.length"
                   :day="day"
+                  :holiday="isHoliday(day.dateKey)"
                   @onClickDate="goDate($event)"
                 />
                 <CalendarDayCard
@@ -94,7 +95,8 @@
             :key="i"
             :show-time="!i"
             :day="day"
-            :visits="day.visits"
+            :holiday="isHoliday(day.dateKey)"
+            :visits="dayVisits(day.dateKey, employee[0])"
             :schedule="getDateSchedule(day.dateKey)"
             :display-from="showTimes[0]"
             :display-to="showTimes[1]"
@@ -167,6 +169,12 @@ export default {
         return {};
       }
     },
+    employee: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
     newVisit: { type: Boolean, default: false },
     kind: { type: String, default: 'mini' },
     period: { type: String, default: 'month' },
@@ -194,7 +202,7 @@ export default {
       return monthDisplay(d);
     },
     curSchedule() {
-      if (!this.schedule) {
+      if (!(this.schedule && this.minDate && this.maxDate)) {
         return Array(7);
       }
       return this.schedule.filter(
@@ -202,9 +210,11 @@ export default {
       );
     },
     maxDate() {
+      if (!this.dates) return;
       return this.dates[this.dates.length - 1][6];
     },
     minDate() {
+      if (!this.dates) return;
       return this.dates[0][0];
     },
     showTimes() {
@@ -245,8 +255,12 @@ export default {
           ['', '']
         );
       return [
-        workTimes[0] > visitTimes[0] ? visitTimes[0] : workTimes[0],
-        workTimes[1] < visitTimes[1] ? visitTimes[1] : workTimes[1]
+        workTimes[0] > (visitTimes[0] || workTimes[0])
+          ? visitTimes[0]
+          : workTimes[0],
+        (workTimes[1] || visitTimes[1]) < visitTimes[1]
+          ? visitTimes[1]
+          : workTimes[1]
       ];
     },
     workDate() {
@@ -283,12 +297,33 @@ export default {
       if (this.workDate) {
         this.setActualDate(this.workDate);
       }
+      const path = `visit?salon_id=eq.${this.business}`;
       Api()
-        .get(`visit?salon_id=eq.${this.business}`)
+        .get(path)
         .then(res => res.data)
         .then(res => {
           this.visits = res;
           this.setDateVisits();
+        });
+    },
+    dayVisits(dt, employee) {
+      if (!this.visits.length) {
+        return [];
+      }
+      return this.visits
+        .filter(
+          v =>
+            v.ts_begin.slice(0, 10) === dt &&
+            (employee
+              ? v.business_id === employee
+              : v.business_id === this.business)
+        )
+        .sort((a, b) => (a.ts_begin < b.ts_begin ? -1 : 1))
+        .map(x => {
+          let ts1 = new Date(x.ts_begin);
+          let ts2 = new Date(x.ts_end);
+          x.client.service.duration = (ts2.getTime() - ts1.getTime()) / 60000;
+          return x;
         });
     },
     deleteVisit(id) {
@@ -304,6 +339,11 @@ export default {
         name: 'businessVisit',
         params: { id: this.business, date: dt }
       });
+    },
+    isHoliday(dt) {
+      if (!(this.calendar && this.calendar.filter(d => d.dt === dt).length))
+        return;
+      return this.calendar.filter(d => d.dt === dt)[0].j.holiday;
     },
     onCloseEdit() {
       if (!this.edit) {
@@ -401,25 +441,11 @@ export default {
       this.setDates();
       this.dates = this.dates.map(w => {
         w = w.map(x => {
-          x.visits = this.dayVisits(x.dateKey);
+          x.visits = this.dayVisits(x.dateKey, this.business);
           return x;
         });
         return w;
       });
-    },
-    dayVisits(dt) {
-      if (!this.visits.length) {
-        return [];
-      }
-      return this.visits
-        .filter(v => v.ts_begin.slice(0, 10) === dt)
-        .sort((a, b) => (a.ts_begin < b.ts_begin ? -1 : 1))
-        .map(x => {
-          let ts1 = new Date(x.ts_begin);
-          let ts2 = new Date(x.ts_end);
-          x.client.service.duration = (ts2.getTime() - ts1.getTime()) / 60000;
-          return x;
-        });
     }
   }
 };

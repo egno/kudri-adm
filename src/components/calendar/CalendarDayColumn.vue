@@ -102,6 +102,7 @@ export default {
       type: String,
       default: ''
     },
+    holiday: { type: Boolean },
     schedule: {
       type: Array,
       default() {
@@ -130,10 +131,7 @@ export default {
   computed: {
     ...mapGetters(['apiTimeZone', 'calendar']),
     isDayOff() {
-      return (
-        this.calendar[this.day.dateKey] &&
-        this.calendar[this.day.dateKey].holiday
-      );
+      return this.holiday;
     },
     displaySchedule() {
       if (!this.schedule || !this.schedule[0]) {

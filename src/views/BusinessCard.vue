@@ -19,6 +19,7 @@
 <script>
 import BusinessCard from '@/components/business/BusinessCard.vue';
 import BusinessCardEdit from '@/components/business/BusinessCardEdit.vue';
+import { mapActions } from 'vuex';
 
 export default {
   components: {
@@ -41,8 +42,10 @@ export default {
   },
   mounted() {
     this.checkId();
+    this.setActions(null);
   },
   methods: {
+    ...mapActions(['setActions']),
     checkId() {
       if (this.id === 'new') {
         this.edit = true;

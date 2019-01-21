@@ -16,7 +16,6 @@
           </VToolbarTitle>
         </VLayout>
       </VFlex>
-
       <VFlex>
         <VBtn
           v-if="defaultAction"
@@ -28,6 +27,15 @@
         >
           {{ defaultAction.label }}
         </VBtn>
+      </VFlex>
+      <VFlex v-if="showEmployee">
+        <v-select
+          v-model="selectedEmployee"
+          :items="employeeList"
+          item-value="id"
+          item-text="name"
+          @input="onSelectEmployee"
+        />
       </VFlex>
       <VFlex>
         <VTextField
@@ -60,16 +68,28 @@ export default {
   },
   data() {
     return {
-      searchString: ''
+      searchString: '',
+      selectedEmployee: null
     };
   },
   computed: {
-    ...mapGetters(['actions', 'appTitle', 'navBarVisible', 'userID']),
+    ...mapGetters([
+      'actions',
+      'appTitle',
+      'employee',
+      'navBarVisible',
+      'userID'
+    ]),
     defaultAction() {
       if (!(this.actions && Array.isArray(this.actions))) {
         return;
       }
       return this.actions.filter(x => x['default'])[0];
+    },
+    employeeList() {
+      return this.employee.map(x => {
+        return { id: x.id, name: x.j.name || '<имя не указано>' };
+      });
     },
     href() {
       if (this.defaultAction) {
@@ -80,6 +100,10 @@ export default {
     routePath() {
       return this.$route.path;
     },
+    showEmployee() {
+      const list = ['businessVisit'];
+      return list.some(x => x === this.$route.name) && this.employee.length;
+    },
     target() {
       if (this.defaultAction) {
         return this.defaultAction.target;
@@ -88,8 +112,7 @@ export default {
     }
   },
   watch: {
-    searchString: 'setStoreSearchString',
-    routePath: 'setActions'
+    searchString: 'setStoreSearchString'
   },
   mounted() {
     this.setStoreSearchString();
@@ -101,6 +124,9 @@ export default {
     },
     onDefaultAction() {
       this.$emit('onAction', this.defaultAction.action);
+    },
+    onSelectEmployee() {
+      this.$root.$emit('onSelectEmployee', [this.selectedEmployee]);
     },
     setStoreSearchString() {
       this.setSearchString(this.searchString);
