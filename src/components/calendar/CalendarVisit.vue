@@ -101,6 +101,7 @@ export default {
     id: { type: String, default: undefined },
     name: { type: String, default: '' },
     phone: { type: String, default: '' },
+    email: { type: String, default: '' },
     selected: { type: Boolean, default: false },
     service: {
       type: Object,
@@ -123,7 +124,9 @@ export default {
     bgColor() {
       return (
         this.color ||
-        hashColor(`${this.name}${this.phone}${this.email}`, 30, 40)
+        (this.name || this.phone || this.email
+          ? hashColor(`${this.name}${this.phone}${this.email}`, 30, 40)
+          : 'grey')
       );
     },
     actualContainerHight() {
