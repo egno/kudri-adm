@@ -31,9 +31,11 @@
       <VFlex v-if="showEmployee">
         <v-select
           v-model="selectedEmployee"
+          clearable
           :items="employeeList"
           item-value="id"
           item-text="name"
+          label="Мастер"
           @input="onSelectEmployee"
         />
       </VFlex>
