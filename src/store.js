@@ -301,6 +301,16 @@ export default new Vuex.Store({
     },
     navBar({ commit }, payload) {
       commit('NAVBAR', payload);
-    }
+    },
+    register({ commit }, payload) {
+        const registerPath = 'rpc/register';
+        Api()
+            .post(registerPath, payload)
+            .then(res => res.data)
+            .catch(err => {
+                console.log('err', err);
+                commit('ADD_ALERT', makeAlert(err));
+            });
+    },
   }
 });
