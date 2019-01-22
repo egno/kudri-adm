@@ -6,7 +6,7 @@
   >
     <VForm
       v-if="!sended"
-      ref="form"
+      ref="formLogin"
     >
       <VSelect
         v-model="ftype"
@@ -15,7 +15,6 @@
         item-value="value"
         label="Ваш бизнес"
         :rules="froleRules"
-        required
       />
       <VTextField
         id="flogin"
@@ -25,8 +24,6 @@
         phone
         type="flogin"
         :rules="[rules.email]"
-        required
-        lazy-validate
       />
       <VBtn
         color="success"
@@ -36,7 +33,7 @@
       </VBtn>
     </VForm>
     
-    <div v-if="loginIsEmail">
+    <div v-if="loginIsEmail === true">
       <div>
         Вам на почту <strong>{{ flogin }}</strong>
         отправлено письмо с сылкой
@@ -53,12 +50,12 @@
       <a href="#">
         Отправить еще раз
       </a> <br>
-      <a href="#">
-        Связаться с тех. поддержкой
-      </a>
     </div>
     
-    <div v-if="loginIsEmail === false && !showPasswordInputs">
+    <VForm
+      v-if="loginIsEmail === false && !showPasswordInputs"
+      ref="formCode"
+    >
       <div>
         На номер телефона <strong>{{ flogin }}</strong>
         отправлен код авторизации
@@ -69,11 +66,9 @@
         name="fcode"
         label="Введите код"
         type="code"
-        :rules="[rules.required]"
+        :rules="fcodeRules"
+        :error-messages="badCode"
       />
-      <div v-if="badCode">
-        Код не действителен.
-      </div>
       <VBtn
         color="success"
         @click="sendCode"
@@ -84,10 +79,7 @@
       <a href="#">
         Отправить еще раз
       </a><br>
-      <a href="#">
-        Связаться с тех. поддержкой
-      </a>
-    </div>
+    </VForm>
     
     <VForm
       v-if="showPasswordInputs"
@@ -119,14 +111,13 @@
       />
       <VBtn
         color="primary"
-        :disabled="!valid"
         @click="registerAndLogin"
       >
         Войти
       </VBtn>
     </VForm>
   
-    <ModalModer />
+    <ModalModer v-if="loginIsEmail || (loginIsEmail === false && !showPasswordInputs)" />
   </VFlex>
 </template>  
 
@@ -144,21 +135,20 @@ export default {
   data() {
     return {
       rules: {
-        required: value => !!value || 'Код не действителен.',
         email: value => {
-            if (value.includes('@')) {
-                const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                return pattern.test(value) || 'Введите действительный номер телефона или e-mail.'
-            } else {
-                const pattern = /^[+]*[0-9]{1,4}([0-9]){10}$/;
-                return pattern.test(value) || 'Введите действительный номер телефона или e-mail.'
-            }
+          if (value.includes('@')) {
+            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return pattern.test(value) || 'Введите действительный номер телефона или e-mail.'
+          } else {
+            const pattern = /^[+]*([0-9]){11}$/;
+            return pattern.test(value) || 'Введите действительный номер телефона или e-mail.'
+          }
         }
       },
       fpasswordRepeat: '',
       fpassword: '',
       sended: false,
-      badCode: false,
+      badCode: '',
       valid: false,
       snackbar: false,
       showPasswordInputs: false,
@@ -199,6 +189,9 @@ export default {
       ],
       flogin: '',
       fcode: null,
+      fcodeRules: [
+        v => !!v || 'Код не действителен.',
+      ],
       froleRules: [
         v => !!v || 'Выберите тип бизнеса',
       ],
@@ -222,6 +215,9 @@ export default {
       userID: 'userLogin',
       userInfo: 'userInfo'
     }),
+    url() {
+      return this.flogin.includes('@') ? 'rpc/check_email' : 'rpc/check_phone'
+    },
     loginIsEmail() {
       if (this.sended === true) {
         return this.flogin.includes('@') ? true : false;
@@ -236,22 +232,22 @@ export default {
   methods: {
     ...mapActions(['login', 'logout', 'register']),
     registerAndLogin() {
-      this.register({ role: this.frole,login: this.flogin, pass: this.fpassword }).then(console.log(res => res.data));
-    },
-    sendPhone () {
-      this.showPasswordInputs = true
+      if (this.$refs.passwords.validate()) {
+        this.register({ role: this.frole,login: this.flogin, pass: this.fpassword });
+      }
     },
     sendLogin() {
-      let url = this.flogin.includes('@') ? 'rpc/check_email' : 'rpc/check_phone';
-      if (this.$refs.form.validate()) {
-        Api().post(url,
+      if (this.$refs.formLogin.validate()) {
+        Api().post(this.url,
           {
             "login": this.flogin,
             "code": null
           })
-          .then(res => {
+          .then(() => {
             this.sended = true;
-            console.log(res);
+            this.$nextTick(function () {
+              this.$refs.formCode.resetValidation();
+            })
           })
           .catch(function() {
               console.log('FAILURE!!');
@@ -259,30 +255,21 @@ export default {
       }
     },
     sendCode() {
-      let url = this.flogin.includes('@') ? 'rpc/check_email' : 'rpc/check_phone';
-      this.badCode = false;
-      Api().post(url,
-        {
-          "login": this.flogin,
-          "code": this.fcode
-        })
-        .then(res => {
-          this.showPasswordInputs = true;
-          console.log(res);
-        })
-        .catch(() => {
-            console.log('FAILURE!!');
-            this.badCode = true;
-        });
-    },
-    validate () {
-      if (this.$refs.passwords.validate()) {
-        this.snackbar = true
-      }
-    },
-    send () {
-      if (this.$refs.form.validate()) {
-        this.sended = true;
+      if (this.$refs.formCode.validate()) {
+        Api().post(this.url,
+          {
+            "login": this.flogin,
+            "code": this.fcode
+          })
+          .then(() => {
+            this.showPasswordInputs = true;
+            this.$nextTick(function () {
+              this.$refs.passwords.resetValidation();
+            })
+          })
+          .catch(() => {
+            this.badCode = 'Код не действителен.';
+          });
       }
     },
   }
