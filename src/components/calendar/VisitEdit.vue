@@ -170,6 +170,7 @@ export default {
         return {};
       }
     },
+    employee: { type: String, default: '' },
     item: {
       type: Object,
       default() {
@@ -273,8 +274,7 @@ export default {
       );
       let ts2 = new Date();
       ts2.setTime(ts1.getTime() + 60000 * duration);
-      console.log(ts1, this.selectedTime);
-      this.item.business_id = this.businessInfo.id;
+      this.item.business_id = this.employee || this.businessInfo.id;
       this.item.client.service.duration = duration;
       this.item.ts_begin = ts1.toJSON().slice(0, -1);
       this.item.ts_end = ts2.toJSON().slice(0, -1);

@@ -21,5 +21,11 @@ export function makeAlert(err) {
   if (err.response.status === 403) {
     return alert('Неправильный логин или пароль', err.response);
   }
+  if (err.response.status === 400) {
+    if (err.response.data.code === '2F002') {
+      return alert('Недостаточно прав для изменения этой записи', err.response);
+    }
+    return alert(err.response.data.message, err.response);
+  }
   return alert(err.message, err.response);
 }

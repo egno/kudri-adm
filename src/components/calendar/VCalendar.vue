@@ -117,6 +117,7 @@
       <VisitEdit
         :id="currentVisit.id"
         :business-info="businessInfo"
+        :employee="currentEmployee"
         :item="currentVisit"
         :page="editVisitPage"
         @onSave="onVisitSave(-1, $event)"
@@ -153,6 +154,7 @@ import { visitInit } from '@/components/calendar/utils';
 import { mapActions, mapGetters } from 'vuex';
 import Api from '@/api/backend';
 import router from '@/router';
+import { makeAlert } from '@/api/utils';
 
 export default {
   components: {
@@ -200,6 +202,9 @@ export default {
     dateMonthHeader() {
       const d = new Date(this.workDate);
       return monthDisplay(d);
+    },
+    currentEmployee() {
+      return this.employee[0] || this.business;
     },
     curSchedule() {
       if (!(this.schedule && this.minDate && this.maxDate)) {
@@ -282,7 +287,7 @@ export default {
     this.fetchData();
   },
   methods: {
-    ...mapActions(['loadCalendar', 'setActualDate']),
+    ...mapActions(['alert', 'loadCalendar', 'setActualDate']),
     addMonth(i) {
       let dt = new Date(this.actualDate);
       dt.setMonth(dt.getMonth() + i);
@@ -322,6 +327,9 @@ export default {
         .map(x => {
           let ts1 = new Date(x.ts_begin);
           let ts2 = new Date(x.ts_end);
+          if (!x.client) {
+            x.client = { service: {} };
+          }
           x.client.service.duration = (ts2.getTime() - ts1.getTime()) / 60000;
           return x;
         });
@@ -397,6 +405,7 @@ export default {
           this.edit = false;
         })
         .catch(err => {
+          this.alert(makeAlert(err));
           if (
             err.response &&
             err.response.data &&
