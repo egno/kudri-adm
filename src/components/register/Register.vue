@@ -266,23 +266,23 @@ export default {
             login: this.flogin,
             code: this.fcode
           })
-          .then(() => {
-            this.showPasswordInputs = true;
-            this.$nextTick(function() {
-              this.$refs.passwords.resetValidation();
-            });
+          .then(res => {
+            console.log(res, res.data);
+            if (res.data.status == 'confirmed') {
+              this.showPasswordInputs = true;
+              this.$nextTick(function() {
+                this.$refs.passwords.resetValidation();
+              });
+            }
+            if (res.data.status == 'waiting') {
+              this.badCode = 'Код введен неверно';
+            }
+            if (res.data.status == 'fail') {
+              this.badCode = 'Код недействителен. Нужно послать новый код';
+            }
           })
           .catch(err => {
-            if (
-              err &&
-              err.response &&
-              err.response.data &&
-              err.response.data.code
-            ) {
-              if (err.response.data.code === '22U10') {
-                this.badCode = 'Код недействителен.';
-              }
-            }
+            console.log(err);
             this.alert(makeAlert(err));
           });
       }
