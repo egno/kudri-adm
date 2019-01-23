@@ -32,32 +32,31 @@
         Создать
       </VBtn>
     </VForm>
-    
+
     <div v-if="loginIsEmail === true">
       <div>
-        Вам на почту <strong>{{ flogin }}</strong>
+        Вам на почту
+        <strong>{{ flogin }}</strong>
         отправлено письмо с сылкой
         для авторизации
       </div>
-      <div>
-        Перейдите по ссылке в письме
-      </div>
-      
-      <div>
-        Не пришло письмо?
-      </div>
-  
+      <div>Перейдите по ссылке в письме</div>
+
+      <div>Не пришло письмо?</div>
+
       <a href="#">
         Отправить еще раз
-      </a> <br>
+      </a>
+      <br>
     </div>
-    
+
     <VForm
       v-if="loginIsEmail === false && !showPasswordInputs"
       ref="formCode"
     >
       <div>
-        На номер телефона <strong>{{ flogin }}</strong>
+        На номер телефона
+        <strong>{{ flogin }}</strong>
         отправлен код авторизации
       </div>
       <VTextField
@@ -78,17 +77,16 @@
       <div>Не пришёл код?</div>
       <a href="#">
         Отправить еще раз
-      </a><br>
+      </a>
+      <br>
     </VForm>
-    
+
     <VForm
       v-if="showPasswordInputs"
       ref="passwords"
       v-model="valid"
     >
-      <span>
-        Придумайте пароль для входа
-      </span>
+      <span>Придумайте пароль для входа</span>
       <VTextField
         id="fpassword"
         v-model="fpassword"
@@ -116,21 +114,21 @@
         Войти
       </VBtn>
     </VForm>
-  
+
     <ModalModer v-if="loginIsEmail || (loginIsEmail === false && !showPasswordInputs)" />
   </VFlex>
 </template>  
 
 <script>
 import Api from '@/api/backend';
+import { makeAlert } from '@/api/utils';
 import { mapGetters, mapActions } from 'vuex';
 import ModalModer from '@/components/register/ModalModer.vue';
 
-
 export default {
-    components: { ModalModer },
-    props: {
-    frole: { type: String, default: 'business' },
+  components: { ModalModer },
+  props: {
+    frole: { type: String, default: 'business' }
   },
   data() {
     return {
@@ -138,10 +136,16 @@ export default {
         email: value => {
           if (value.includes('@')) {
             const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return pattern.test(value) || 'Введите действительный номер телефона или e-mail.'
+            return (
+              pattern.test(value) ||
+              'Введите действительный номер телефона или e-mail.'
+            );
           } else {
             const pattern = /^[+]*([0-9]){11}$/;
-            return pattern.test(value) || 'Введите действительный номер телефона или e-mail.'
+            return (
+              pattern.test(value) ||
+              'Введите действительный номер телефона или e-mail.'
+            );
           }
         }
       },
@@ -185,27 +189,26 @@ export default {
         {
           name: 'Частный мастер',
           value: '8'
-        },
+        }
       ],
       flogin: '',
       fcode: null,
-      fcodeRules: [
-        v => !!v || 'Код не действителен.',
-      ],
-      froleRules: [
-        v => !!v || 'Выберите тип бизнеса',
-      ],
+      fcodeRules: [v => !!v || 'Код не действителен.'],
+      froleRules: [v => !!v || 'Выберите тип бизнеса'],
       loginRules: [
         v => !!v || 'Введите действительный номер телефона или e-mail',
-        v => (v && v.length >= 6) || 'Введите действительный номер телефона или e-mail'
+        v =>
+          (v && v.length >= 6) ||
+          'Введите действительный номер телефона или e-mail'
       ],
       passRules: [
         v => !!v || 'Пароль должен содержать не менее 6 символов',
-        v => (v && v.length >= 6) || 'Пароль должен содержать не менее 6 символов'
+        v =>
+          (v && v.length >= 6) || 'Пароль должен содержать не менее 6 символов'
       ],
       passRepeatRules: [
         v => (!!v && v === this.fpassword) || 'Пароли не совпадают'
-      ],
+      ]
     };
   },
   computed: {
@@ -216,62 +219,74 @@ export default {
       userInfo: 'userInfo'
     }),
     url() {
-      return this.flogin.includes('@') ? 'rpc/check_email' : 'rpc/check_phone'
+      return this.flogin.includes('@') ? 'rpc/check_email' : 'rpc/check_phone';
     },
     loginIsEmail() {
       if (this.sended === true) {
         return this.flogin.includes('@') ? true : false;
       } else {
-        return false
+        return false;
       }
     }
   },
-  watch: {
-
-  },
+  watch: {},
   methods: {
-    ...mapActions(['login', 'logout', 'register']),
+    ...mapActions(['alert', 'login', 'logout', 'register']),
     registerAndLogin() {
       if (this.$refs.passwords.validate()) {
-        this.register({ role: this.frole,login: this.flogin, pass: this.fpassword });
+        this.register({
+          role: this.frole,
+          login: this.flogin,
+          pass: this.fpassword
+        });
       }
     },
     sendLogin() {
       if (this.$refs.formLogin.validate()) {
-        Api().post(this.url,
-          {
-            "login": this.flogin,
-            "code": null
+        Api()
+          .post(this.url, {
+            login: this.flogin,
+            code: null
           })
           .then(() => {
             this.sended = true;
-            this.$nextTick(function () {
+            this.$nextTick(function() {
               this.$refs.formCode.resetValidation();
-            })
+            });
           })
           .catch(function() {
-              console.log('FAILURE!!');
+            console.log('FAILURE!!');
           });
       }
     },
     sendCode() {
       if (this.$refs.formCode.validate()) {
-        Api().post(this.url,
-          {
-            "login": this.flogin,
-            "code": this.fcode
+        Api()
+          .post(this.url, {
+            login: this.flogin,
+            code: this.fcode
           })
           .then(() => {
             this.showPasswordInputs = true;
-            this.$nextTick(function () {
+            this.$nextTick(function() {
               this.$refs.passwords.resetValidation();
-            })
+            });
           })
-          .catch(() => {
-            this.badCode = 'Код не действителен.';
+          .catch(err => {
+            if (
+              err &&
+              err.response &&
+              err.response.data &&
+              err.response.data.code
+            ) {
+              if (err.response.data.code === '22U10') {
+                this.badCode = 'Код недействителен.';
+              }
+            }
+            this.alert(makeAlert(err));
           });
       }
-    },
+    }
   }
 };
 </script>
