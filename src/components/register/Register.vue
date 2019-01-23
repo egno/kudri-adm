@@ -69,7 +69,7 @@
         :error-messages="badCode"
       />
       <VBtn
-        v-if="codeTries < 3"
+        v-if="codeTries"
         color="success"
         @click="sendCode"
       >
@@ -161,7 +161,6 @@ export default {
       snackbar: false,
       showPasswordInputs: false,
       ftype: '',
-      apiCode: '',
       roles: [
         {
           name: 'Салон красоты',
@@ -196,7 +195,7 @@ export default {
           value: '8'
         }
       ],
-      codeTries: 0,
+      codeTries: 1,
       flogin: '',
       fcode: null,
       fcodeRules: [v => !!v || 'Код не действителен.'],
@@ -248,22 +247,21 @@ export default {
       }
     },
     sendLogin() {
-      if ( this.loginIsEmail === false || this.$refs.formLogin.validate()) {
+      if (this.loginIsEmail === false || this.$refs.formLogin.validate()) {
         Api()
           .post(this.url, {
             login: this.flogin,
             code: null
           })
           .then(res => {
-            this.apiCode = res.data.code;
             this.sended = true;
             this.$nextTick(function() {
               this.$refs.formCode.resetValidation();
             });
             this.fcode = '';
             this.badCode = '';
-            this.codeTries = 0;
             this.$refs.formCode.resetValidation();
+            this.codeTries = res.data.attempts;
           })
           .catch(function() {
             console.log('FAILURE!!');
@@ -273,11 +271,6 @@ export default {
     sendCode() {
       if (this.$refs.formCode.validate()) {
         this.badCode = '';
-        if (this.apiCode !== this.fcode) {
-            this.codeTries += 1;
-            this.badCode = 'Код недействителен.';
-            return
-        }
         Api()
           .post(this.url, {
             login: this.flogin,
@@ -296,7 +289,7 @@ export default {
             if (res.data.status == 'fail') {
               this.badCode = 'Код недействителен. Нужно послать новый код';
             }
-            this.codeTries = 3 - res.data.attempts 
+            this.codeTries = res.data.attempts;
           })
           .catch(err => {
             console.log(err);
