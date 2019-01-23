@@ -267,7 +267,6 @@ export default {
             code: this.fcode
           })
           .then(res => {
-            console.log(res, res.data);
             if (res.data.status == 'confirmed') {
               this.showPasswordInputs = true;
               this.$nextTick(function() {
