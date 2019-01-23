@@ -262,6 +262,12 @@ export default {
             this.badCode = '';
             this.$refs.formCode.resetValidation();
             this.codeTries = res.data.attempts;
+            if (res.data.seconds) {
+              this.alert({
+                message:
+                  'Новый код можно будет отправить через ' + res.data.seconds
+              });
+            }
           })
           .catch(function() {
             console.log('FAILURE!!');
