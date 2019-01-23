@@ -43,6 +43,10 @@ export default {
     this.$root.$on('onSelectEmployee', this.onSelectEmployee);
     this.fetchData();
   },
+  destroyed() {
+    this.$root.$off('onAction', this.onAction);
+    this.$root.$off('onSelectEmployee', this.onSelectEmployee);
+  },
   methods: {
     ...mapActions(['setActions', 'setBusiness']),
     fetchData() {
@@ -64,9 +68,5 @@ export default {
       this.selectedEmployee = payload;
     }
   },
-  destroyed() {
-    this.$root.$off('onAction', this.onAction);
-    this.$root.$off('onSelectEmployee', this.onSelectEmployee);
-  }
 };
 </script>
