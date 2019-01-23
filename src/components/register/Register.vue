@@ -69,13 +69,17 @@
         :error-messages="badCode"
       />
       <VBtn
+        v-if="codeTries < 3"
         color="success"
         @click="sendCode"
       >
         Создать
       </VBtn>
       <div>Не пришёл код?</div>
-      <a href="#">
+      <a
+        href="#"
+        @click="sendLogin"
+      >
         Отправить еще раз
       </a>
       <br>
@@ -157,6 +161,7 @@ export default {
       snackbar: false,
       showPasswordInputs: false,
       ftype: '',
+      apiCode: '',
       roles: [
         {
           name: 'Салон красоты',
@@ -191,6 +196,7 @@ export default {
           value: '8'
         }
       ],
+      codeTries: 0,
       flogin: '',
       fcode: null,
       fcodeRules: [v => !!v || 'Код не действителен.'],
@@ -225,7 +231,7 @@ export default {
       if (this.sended === true) {
         return this.flogin.includes('@') ? true : false;
       } else {
-        return false;
+        return undefined;
       }
     }
   },
@@ -242,17 +248,22 @@ export default {
       }
     },
     sendLogin() {
-      if (this.$refs.formLogin.validate()) {
+      if ( this.loginIsEmail === false || this.$refs.formLogin.validate()) {
         Api()
           .post(this.url, {
             login: this.flogin,
             code: null
           })
-          .then(() => {
+          .then(res => {
+            this.apiCode = res.data.code;
             this.sended = true;
             this.$nextTick(function() {
               this.$refs.formCode.resetValidation();
             });
+            this.fcode = '';
+            this.badCode = '';
+            this.codeTries = 0;
+            this.$refs.formCode.resetValidation();
           })
           .catch(function() {
             console.log('FAILURE!!');
@@ -261,6 +272,12 @@ export default {
     },
     sendCode() {
       if (this.$refs.formCode.validate()) {
+        this.badCode = '';
+        if (this.apiCode !== this.fcode) {
+            this.codeTries += 1;
+            this.badCode = 'Код недействителен.';
+            return
+        }
         Api()
           .post(this.url, {
             login: this.flogin,
@@ -279,6 +296,7 @@ export default {
             if (res.data.status == 'fail') {
               this.badCode = 'Код недействителен. Нужно послать новый код';
             }
+            this.codeTries = 3 - res.data.attempts 
           })
           .catch(err => {
             console.log(err);
