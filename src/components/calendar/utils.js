@@ -27,11 +27,12 @@ export function getISOTimeZoneOffset(s) {
   return +(t.slice(0, 1) + '1') * (+t.slice(1, 3) * 60 + +t.slice(-2));
 }
 
-export function valueDate(value, format) {
-  return value ? this.parseDateString(value, format) : undefined;
+export function valueDate(value) {
+  return value ? Date.parse(value) : undefined;
 }
 
 export function formatDate(date) {
+  if (!date) return;
   let d = date;
   return [
     d.getFullYear(),
@@ -41,6 +42,7 @@ export function formatDate(date) {
 }
 
 export function formatTime(date) {
+  if (!date) return;
   let d = date;
   // console.log(date, d);
   return [

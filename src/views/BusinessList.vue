@@ -4,6 +4,8 @@
     :items="data"
     :loading="progressQuery"
     :pagination.sync="pagination"
+    :rows-per-page-items="[5, 10,25]"
+    rows-per-page-text="Записей на страницу:"
     :total-items="totalItems"
     class="elevation-1"
   >
@@ -85,6 +87,12 @@
           </VIcon>
         </a>
       </td>
+    </template>
+    <template
+      slot="pageText"
+      slot-scope="props"
+    >
+      {{ props.pageStart }}-{{ props.pageStop }} из {{ props.itemsLength }}
     </template>
   </VDataTable>
 </template>

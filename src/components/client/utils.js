@@ -1,9 +1,13 @@
+function newClientName() {
+  return { forename: undefined, surname: undefined };
+}
+
 export function newClient() {
   return {
     id: undefined,
     business_id: undefined,
     user_id: undefined,
-    name: { forename: undefined, surname: undefined },
+    name: newClientName(),
     phone: undefined,
     email: undefined,
     birth_date: undefined,
@@ -18,28 +22,27 @@ export function clientPrefill(client) {
     client = newClient();
   }
   if (!client.name) {
-    client.name = {};
+    client.name = newClientName();
   }
   return client;
 }
 
 export function clientToAPI(client) {
-  let o = clientPrefill(client);
-  o['id'] = undefined;
-  o['business_id'] = undefined;
-  o['user_id'] = undefined;
+  const { id, business_id, user_id, ...c } = clientPrefill(client);
   return {
-    id: client.id,
-    business_id: client.business_id,
-    user_id: client.user_id,
-    j: o
+    id,
+    business_id,
+    user_id,
+    j: c
   };
 }
 
 export function clientFromAPI(data) {
   let o = clientPrefill(data.j);
-  o['id'] = data.id;
-  o['business_id'] = data.business_id;
-  o['user_id'] = data.user_id;
-  return o;
+  return {
+    id: data.id,
+    business_id: data.business_id,
+    user_id: data.user_id,
+    ...o
+  };
 }

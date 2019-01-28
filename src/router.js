@@ -18,6 +18,11 @@ export default new Router({
       component: () => import('./views/Register.vue')
     },
     {
+      path: '/messages',
+      name: 'messages',
+      component: () => import('./views/Messages.vue')
+    },
+    {
       path: '/businessList',
       name: 'businessList',
       component: () => import('./views/BusinessList.vue')

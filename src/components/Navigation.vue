@@ -82,6 +82,8 @@ export default {
         },
         {
           title: 'Сообщения',
+          icon: 'email',
+          route: { name: 'messages' },
           show: this.loggedIn && this.isManagerMenu
         },
         {
