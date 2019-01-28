@@ -23,7 +23,7 @@
           required
         />
         <BusinessScheduleEdit
-          :schedule="data.j.schedule"
+          :schedule="data.j.schedule.data"
           @onEdit="scheduleEdit"
         />
       </VForm>

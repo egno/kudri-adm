@@ -52,9 +52,9 @@ export default {
       default: ''
     },
     schedule: {
-      type: Array,
+      type: Object,
       default() {
-        return [];
+        return { data: [] };
       }
     }
   },

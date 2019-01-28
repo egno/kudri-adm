@@ -29,7 +29,7 @@ export default {
   data() {
     return {
       data: { data: {} },
-      edit: false
+      edit: true
     };
   },
   computed: {

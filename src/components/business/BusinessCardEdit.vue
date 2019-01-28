@@ -35,7 +35,7 @@
           prepend-icon="assignment"
           :rules="[rules.INN_counter]"
         />
-        <VTextField
+        <AddressAutocomplete
           v-model="data.j.address"
           label="Адрес"
           prepend-icon="local_post_office"
@@ -88,6 +88,7 @@ import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue';
 import BusinessPhonesEdit from '@/components/business/BusinessPhonesEdit.vue';
 import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue';
+import AddressAutocomplete from '@/components/yandex/AddressAutocomplete.vue';
 import Api from '@/api/backend';
 import router from '@/router';
 import { backendMixins } from '@/api/mixins';
@@ -95,6 +96,7 @@ import { businessMixins } from '@/components/business/mixins';
 
 export default {
   components: {
+    AddressAutocomplete,
     BusinessPhonesEdit,
     BusinessScheduleEdit,
     UserAvatar,

@@ -68,7 +68,7 @@
           <VFlex v-if="data.j && data.j.links">
             <SocialLinks :links="data.j.links" />
           </VFlex>
-          <VFlex v-if="data.j && data.j.schedule">
+          <VFlex v-if="data.j && data.j.schedule && data.j.schedule.data">
             <BusinessSchedule
               :caption-class="captionClass"
               :schedule="data.j.schedule"

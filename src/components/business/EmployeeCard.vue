@@ -49,7 +49,7 @@
       </div>
       <BusinessSchedule
         :caption-class="captionClass"
-        :schedule="item.j.schedule"
+        :schedule="item.j.schedule.data"
       />
       <span />
       {{ item.j.note }}

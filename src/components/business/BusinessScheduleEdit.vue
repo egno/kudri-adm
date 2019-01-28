@@ -25,7 +25,7 @@ export default {
   components: { PeriodEdit },
   props: {
     schedule: {
-      type: Array,
+      type: Object,
       default() {
         return {
           type: 'week',
