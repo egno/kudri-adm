@@ -35,11 +35,22 @@
           prepend-icon="assignment"
           :rules="[rules.INN_counter]"
         />
-        <AddressAutocomplete
-          v-model="data.j.address"
-          label="Адрес"
-          prepend-icon="local_post_office"
-        />
+        <v-layout row>
+          <v-flex>
+            <AddressAutocomplete
+              v-model="data.j.address"
+              label="Адрес"
+              prepend-icon="local_post_office"
+            />
+          </v-flex>
+          <v-flex>
+            <VTextField
+              v-model="data.j.office"
+              label="Офис"
+            />
+          </v-flex>
+        </v-layout>
+
         <BusinessPhonesEdit
           :phones="phones"
           @onEdit="phonesEdit"
