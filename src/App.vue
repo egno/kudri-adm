@@ -1,6 +1,6 @@
 <template>
   <VApp app>
-    <Navigation />
+    <Navigation @onAction="onAction" />
     <VContent app>
       <RouterView />
     </VContent>
@@ -18,7 +18,7 @@ export default {
   name: 'App',
   components: {
     Alerts,
-    Navigation,
+    Navigation
   },
   data() {
     return {

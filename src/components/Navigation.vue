@@ -34,8 +34,9 @@
         </VListTileContent>
         <VListTileAction>{{ item.count }}</VListTileAction>
         <div
-          v-show="$route.name === (item.route && item.route.name)"
+          v-show="$route.name === (item.route && item.route.name) && (item.action)"
           class="add-btn"
+          @click="onAction(item.action)"
         >
           <v-icon>add</v-icon>
         </div>
@@ -121,25 +122,45 @@ export default {
           title: 'Сотрудники',
           count: this.employeesCount,
           route: { name: 'businessCardEmployee', id: this.$route.params.id },
-          show: this.loggedIn && !this.isManagerMenu
+          show: this.loggedIn && !this.isManagerMenu,
+          action: {
+            label: 'Добавить сотрудника',
+            action: 'newEmployee',
+            default: true
+          }
         },
         {
           title: 'Услуги',
           count: this.servicesCount,
           route: { name: 'businessCardService', id: this.$route.params.id },
-          show: this.loggedIn && !this.isManagerMenu
+          show: this.loggedIn && !this.isManagerMenu,
+          action: {
+            label: 'Добавить услугу',
+            action: 'newService',
+            default: true
+          }
         },
         {
           title: 'Клиенты',
           count: this.clientsCount,
           route: { name: 'businessCardClients', id: this.$route.params.id },
-          show: this.loggedIn && !this.isManagerMenu
+          show: this.loggedIn && !this.isManagerMenu,
+          action: {
+            label: 'Добавить клиента',
+            action: 'newClient',
+            default: true
+          }
         },
         {
           title: 'Филиалы',
           count: this.filialsCount,
           route: { name: 'businessCardFilal', id: this.$route.params.id },
-          show: this.loggedIn && !this.isManagerMenu
+          show: this.loggedIn && !this.isManagerMenu,
+          action: {
+            label: 'Добавить филиал',
+            action: 'newFilial',
+            default: true
+          }
         },
         {
           title: 'Информация',
@@ -183,6 +204,10 @@ export default {
     },
     goHome() {
       router.push({ name: 'home' });
+    },
+    onAction(action) {
+      console.log(action);
+      this.$emit('onAction', action.action);
     },
     onInput(event) {
       this.navBar(event);
