@@ -14,7 +14,7 @@ export const businessMixins = {
     }
   },
   methods: {
-    appendHttpToUrl(url) {
+    prependHttpToUrl(url) {
       if (url.indexOf('http://') == 0 || url.indexOf('https://') == 0) {
         return url;
       } else {
@@ -39,6 +39,9 @@ export const businessMixins = {
       }
       if (!data.j.schedule) {
         data.j.schedule = {};
+      }
+      if (Array.isArray(data.j.schedule)) {
+        data.j.schedule = { data: data.j.schedule };
       }
       if (!data.j.schedule.data) {
         data.j.schedule.data = [

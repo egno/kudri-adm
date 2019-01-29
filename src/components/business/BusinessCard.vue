@@ -148,7 +148,7 @@ export default {
       if (!this.data.j.site) {
         return;
       }
-      return this.appendHttpToUrl(this.data.j.site);
+      return this.prependHttpToUrl(this.data.j.site);
     },
     title() {
       if (!(this.data && this.data.j)) {
