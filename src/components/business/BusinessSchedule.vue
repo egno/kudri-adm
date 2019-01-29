@@ -54,7 +54,7 @@ export default {
     schedule: {
       type: Object,
       default() {
-        return { data: [] };
+        return { type: 'week', data: [] };
       }
     }
   },

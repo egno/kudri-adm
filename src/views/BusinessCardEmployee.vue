@@ -18,7 +18,11 @@
         />
       </VFlex>
       <VDialog v-model="edit">
-        <!-- <EmployeeCardEdit :item="newService" @onSave="onSave(-1)" @onDelete="onDelete(-1)"/> -->
+        <EmployeeCardEdit
+          :item="newService"
+          @onSave="onSave(-1)"
+          @onDelete="onDelete(-1)"
+        />
       </VDialog>
     </VLayout>
   </VContainer>
@@ -26,15 +30,15 @@
 
 <script>
 import EmployeeCard from '@/components/EmployeeCard.vue';
-// import EmployeeCardEdit from '@/components/EmployeeCardEdit.vue';
+import EmployeeCardEdit from '@/components/EmployeeCardEdit.vue';
 import Api from '@/api/backend';
 import { businessMixins } from '@/components/business/mixins';
 import { mapActions } from 'vuex';
 
 export default {
   components: {
-    EmployeeCard
-    // EmployeeCardEdit
+    EmployeeCard,
+    EmployeeCardEdit
   },
   mixins: [businessMixins],
   data() {

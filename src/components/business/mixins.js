@@ -37,6 +37,20 @@ export const businessMixins = {
       if (!data.j.services) {
         data.j.services = [];
       }
+      if (!data.j.schedule) {
+        data.j.schedule = {};
+      }
+      if (!data.j.schedule.data) {
+        data.j.schedule.data = [
+          ['', ''],
+          ['', ''],
+          ['', ''],
+          ['', ''],
+          ['', ''],
+          ['', ''],
+          ['', '']
+        ];
+      }
       return data;
     },
     uuidv4() {

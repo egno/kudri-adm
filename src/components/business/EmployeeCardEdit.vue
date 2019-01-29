@@ -23,7 +23,7 @@
           required
         />
         <BusinessScheduleEdit
-          :schedule="data.j.schedule.data"
+          :schedule="data.j.schedule"
           @onEdit="scheduleEdit"
         />
       </VForm>
@@ -75,7 +75,7 @@ export default {
   data() {
     return {
       avatarEdit: false,
-      data: { j: {} }
+      data: this.dataPrefill()
     };
   },
   computed: {

@@ -48,8 +48,9 @@
         </div>
       </div>
       <BusinessSchedule
+        v-if="item.j.schedule"
         :caption-class="captionClass"
-        :schedule="item.j.schedule.data"
+        :schedule="item.j.schedule"
       />
       <span />
       {{ item.j.note }}
