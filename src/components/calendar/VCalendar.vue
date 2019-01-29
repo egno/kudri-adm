@@ -5,43 +5,43 @@
       px-2
     >
       <VLayout
-        align-space-around
-        justify-space-between
+        align-center
+        justify-center
         row
         fill-height
       >
-        <VFlex
-          grow
-          headline
-          align-self-end
+        <div
+          class="cal-head"
         >
           {{ dateMonthHeader }}
-        </VFlex>
-        <v-spacer />
-        <VFlex>
+        </div>
+        <div>
           <v-btn
-            fab
+            class="cal-next-prev"
             depressed
+            flat
             small
             @click="addMonth(-1)"
           >
-            <v-icon dark>
+            <v-icon>
               navigate_before
             </v-icon>
           </v-btn>
-        </VFlex>
-        <VFlex>
+        </div>
+        <div>
           <v-btn
-            fab
+            class="cal-next-prev"
+            
             depressed
+            flat
             small
             @click="addMonth(1)"
           >
-            <v-icon dark>
+            <v-icon>
               navigate_next
             </v-icon>
           </v-btn>
-        </VFlex>
+        </div>
       </VLayout>
     </VFlex>
     <VFlex>
@@ -184,9 +184,37 @@ export default {
   },
   data() {
     return {
-      currentDay: {},
+      currentDay: {"dt":"2019-02-01","j":{"holiday": false}},
       currentVisit: visitInit(),
-      dates: [[]],
+      dates: [{"dt":"2019-02-01","j":{"holiday": false}},
+          {"dt":"2019-02-02","j":{"holiday": true}},
+          {"dt":"2019-02-03","j":{"holiday": true}},
+          {"dt":"2019-02-04","j":{"holiday": false}},
+          {"dt":"2019-02-05","j":{"holiday": false}},
+          {"dt":"2019-02-06","j":{"holiday": false}},
+          {"dt":"2019-02-07","j":{"holiday": false}},
+          {"dt":"2019-02-08","j":{"holiday": false}},
+          {"dt":"2019-02-09","j":{"holiday": true}},
+          {"dt":"2019-02-10","j":{"holiday": true}},
+          {"dt":"2019-02-11","j":{"holiday": false}},
+          {"dt":"2019-02-12","j":{"holiday": false}},
+          {"dt":"2019-02-13","j":{"holiday": false}},
+          {"dt":"2019-02-14","j":{"holiday": false}},
+          {"dt":"2019-02-15","j":{"holiday": false}},
+          {"dt":"2019-02-16","j":{"holiday": true}},
+          {"dt":"2019-02-17","j":{"holiday": true}},
+          {"dt":"2019-02-18","j":{"holiday": false}},
+          {"dt":"2019-02-19","j":{"holiday": false}},
+          {"dt":"2019-02-20","j":{"holiday": false}},
+          {"dt":"2019-02-21","j":{"holiday": false}},
+          {"dt":"2019-02-22","j":{"holiday": false}},
+          {"dt":"2019-02-23","j":{"holiday": true}},
+          {"dt":"2019-02-24","j":{"holiday": true}},
+          {"dt":"2019-02-25","j":{"holiday": false}},
+          {"dt":"2019-02-26","j":{"holiday": false}},
+          {"dt":"2019-02-27","j":{"holiday": false}},
+          {"dt":"2019-02-28","j":{"holiday": false}},
+          {"dt":"2019-03-01","j":{"holiday": false}}],
       days: [],
       edit: false,
       editVisitPage: undefined,
@@ -285,6 +313,7 @@ export default {
   },
   mounted() {
     this.fetchData();
+    this.setDates(); //это для мока
   },
   methods: {
     ...mapActions(['alert', 'loadCalendar', 'setActualDate']),
@@ -459,5 +488,16 @@ export default {
   }
 };
 </script>
-
-
+<style lang="scss" scoped>
+  .cal-head {
+    margin-right: 10px;
+    font-size: 18px;
+    text-transform: capitalize;
+  }
+  .cal-next-prev {
+    margin: 0;
+    width: 16px;
+    max-width: 16px;
+    min-width: 16px;
+  }
+</style>

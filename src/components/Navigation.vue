@@ -1,8 +1,8 @@
 <template>
   <VNavigationDrawer
+    disable-resize-watcher
     app
-    :dark="!isBusinessCard"
-    :value="navBarVisible"
+    width="240"
     @input="onInput($event)"
   >
     <VToolbar flat>
@@ -10,25 +10,35 @@
         overflow-hidden
         @click="goHome()"
       >
-        {{ appTitle }}
+        <img
+          class="logo"
+          :src="logo"
+          :alt="logo"
+        >
+        <span>{{ appTitle }}</span>
       </VToolbarTitle>
-      <VSpacer />
-      <VToolbarSideIcon @click="navBar()" />
+      <!--<VSpacer />-->
+      <!--<VToolbarSideIcon @click="navBar()" />-->
     </VToolbar>
+
     <VList>
-      <VCalendar v-if="loggedIn && isBusinessCard" />
+      <VCalendar v-if="!isManagerMenu" />
       <VListTile
-        v-for="item in items"
+        v-for="item in menu"
+        v-show="item.show"
         :key="item.title"
         :to="item.route"
       >
-        <VListTileAction>
-          <VIcon>{{ item.icon }}</VIcon>
-        </VListTileAction>
-
         <VListTileContent>
           <VListTileTitle>{{ item.title }}</VListTileTitle>
         </VListTileContent>
+        <VListTileAction>{{ item.count }}</VListTileAction>
+        <div
+          v-show="$route.name === (item.route && item.route.name)"
+          class="add-btn"
+        >
+          <v-icon>add</v-icon>
+        </div>
       </VListTile>
     </VList>
   </VNavigationDrawer>
@@ -44,7 +54,10 @@ export default {
   components: { VCalendar },
   data() {
     return {
-      business: {}
+      business: {},
+      name: 'Business Name',
+      logo:
+        'https://lh3.googleusercontent.com/Ax2wQYxjDITuZEpc6K9EDYPG7C839tb4PApia4Tmf18u8XehB-twqhVgDVPgxxExkr4=s180'
     };
   },
   computed: {
@@ -52,21 +65,14 @@ export default {
     businessId() {
       return this.$route && this.$route.params && this.$route.params.id;
     },
-    items() {
-      return this.menu.filter(x => x.show);
+    clientsCount() {
+      return this.business && this.business.j && this.business.j.clients;
     },
-    isBusinessCard() {
-      const businessCards = [
-        'businessCard',
-        'businessCardClients',
-        'businessCardEmployee',
-        'businessCardFilal',
-        'businessCardGallery',
-        'businessCardService',
-        'businessVisit',
-        'employeeCard'
-      ];
-      return businessCards.some(x => x === this.$route.name);
+    employeesCount() {
+      return this.business && this.business.j && this.business.j.employees;
+    },
+    filialsCount() {
+      return this.business && this.business.j && this.business.j.filials;
     },
     isCompany() {
       return this.business && this.business.type !== 'P';
@@ -99,36 +105,48 @@ export default {
           show: !this.loggedIn || this.isManagerMenu
         },
         {
-          title: 'Информация',
-          show: this.loggedIn && this.isBusinessCard,
-          route: { name: 'businessCard', id: this.$route.params.id }
+          title: 'Сотрудники',
+          count: this.employeesCount,
+          route: { name: 'businessCardEmployee', id: this.$route.params.id },
+          show: this.loggedIn || !this.isManagerMenu
         },
         {
           title: 'Услуги',
-          show: this.loggedIn && this.isBusinessCard,
-          route: { name: 'businessCardService', id: this.$route.params.id }
-        },
-        {
-          title: 'Сотрудники',
-          show: this.loggedIn && this.isBusinessCard && this.isCompany,
-          route: { name: 'businessCardEmployee', id: this.$route.params.id }
+          count: this.servicesCount,
+          route: { name: 'businessCardService', id: this.$route.params.id },
+          show: this.loggedIn || !this.isManagerMenu
         },
         {
           title: 'Клиенты',
-          show: this.loggedIn && this.isBusinessCard && this.isCompany,
-          route: { name: 'businessCardClients', id: this.$route.params.id }
+          count: this.clientsCount,
+          route: { name: 'businessCardClients', id: this.$route.params.id },
+          show: this.loggedIn || !this.isManagerMenu
         },
         {
           title: 'Филиалы',
-          show: this.loggedIn && this.isBusinessCard && this.isCompany,
-          route: { name: 'businessCardFilal', id: this.$route.params.id }
+          count: this.filialsCount,
+          route: { name: 'businessCardFilal', id: this.$route.params.id },
+          show: this.loggedIn || !this.isManagerMenu
+        },
+        {
+          title: 'Информация',
+          count: undefined,
+          route: { name: 'businessCard', id: this.$route.params.id },
+          show: this.loggedIn || !this.isManagerMenu
         },
         {
           title: 'Галерея',
-          show: this.loggedIn && this.isBusinessCard,
-          route: { name: 'businessCardGallery', id: this.$route.params.id }
+          count: '12',
+          route: { name: 'businessCardGallery', id: this.$route.params.id },
+          show: this.loggedIn || !this.isManagerMenu
         }
       ];
+    },
+    services() {
+      return this.business && this.business.j && this.business.j.services;
+    },
+    servicesCount() {
+      return this.services && this.services.length;
     }
   },
   watch: {
@@ -159,3 +177,31 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.v-navigation-drawer > .v-list:not(.v-list--dense) .v-list__tile {
+  padding-right: 0;
+}
+.v-list__tile {
+  padding-right: 0 !important;
+}
+.add-btn {
+  width: 40px;
+  height: 100%;
+  background: #ef4d37;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
+}
+.v-toolbar__title {
+  display: flex;
+  padding-left: 16px;
+  align-items: center;
+}
+.logo {
+  margin-right: 10px;
+  max-width: 31px;
+  max-height: 31px;
+}
+</style>

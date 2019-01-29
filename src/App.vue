@@ -1,9 +1,5 @@
 <template>
   <VApp app>
-    <TopBar
-      app
-      @onAction="onAction"
-    />
     <Navigation />
     <VContent app>
       <RouterView />
@@ -14,7 +10,6 @@
 
 <script>
 import Navigation from '@/components/Navigation.vue';
-import TopBar from '@/components/TopBar.vue';
 import Alerts from '@/components/Alerts.vue';
 import router from '@/router';
 import { mapActions, mapGetters } from 'vuex';
@@ -24,7 +19,6 @@ export default {
   components: {
     Alerts,
     Navigation,
-    TopBar
   },
   data() {
     return {
