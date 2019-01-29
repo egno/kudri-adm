@@ -9,6 +9,8 @@
         hide-details
         hint-text="Вводите только адрес дома"
         :items="items"
+        item-value="name"
+        item-text="name"
         :label="label"
         :loading="loading"
         no-filter
@@ -18,6 +20,26 @@
         :error="!success"
       />
     </v-flex>
+    <v-img
+      v-if="success && point"
+      :src="`https://static-maps.yandex.ru/1.x/?lang=ru_RU&l=map&z=16&ll=${point}&pt=${point},org`"
+      :lazy-src="``"
+      aspect-ratio="1"
+      class="grey lighten-2"
+    >
+      <v-layout
+        slot="placeholder"
+        fill-height
+        align-center
+        justify-center
+        ma-0
+      >
+        <v-progress-circular
+          indeterminate
+          color="grey lighten-5"
+        />
+      </v-layout>
+    </v-img>
   </v-layout>
 </template>
 
@@ -28,19 +50,26 @@ import axios from 'axios';
 
 export default {
   props: {
-    value: { type: String, default: undefined },
+    value: { default: undefined },
     label: { type: String, default: undefined },
     prependIcon: { type: String, default: undefined }
   },
   data() {
     return {
-      address: '',
+      address: undefined,
       edited: false,
       items: undefined,
       loading: false,
       search: '',
       success: false
     };
+  },
+  computed: {
+    point() {
+      if (!(this.success && this.items && this.items[0] && this.items[0].point))
+        return;
+      return this.items[0].point.replace(' ', ',');
+    }
   },
   watch: {
     address(val) {
@@ -59,8 +88,12 @@ export default {
   },
   methods: {
     fetchValue() {
-      this.address = this.value;
-      this.search = this.address;
+      if (!this.value || typeof this.value !== 'object') {
+        this.address = { name: this.value };
+      } else {
+        this.address = this.value;
+      }
+      this.search = this.address.name;
     },
     geocode(val) {
       this.loading = true;
@@ -79,10 +112,11 @@ export default {
               x =>
                 x.GeoObject.metaDataProperty.GeocoderMetaData.kind === 'house'
             )
-            .map(
-              x =>
-                x.GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted
-            );
+            .map(x => ({
+              name:
+                x.GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted,
+              point: x.GeoObject && x.GeoObject.Point && x.GeoObject.Point.pos
+            }));
           this.loading = false;
         })
         .catch(() => {
