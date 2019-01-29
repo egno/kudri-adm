@@ -74,6 +74,19 @@ export default {
     filialsCount() {
       return this.business && this.business.j && this.business.j.filials;
     },
+    isBusinessCard() {
+      const businessCards = [
+        'businessCard',
+        'businessCardClients',
+        'businessCardEmployee',
+        'businessCardFilal',
+        'businessCardGallery',
+        'businessCardService',
+        'businessVisit',
+        'employeeCard'
+      ];
+      return businessCards.some(x => x === this.$route.name);
+    },
     isCompany() {
       return this.business && this.business.type !== 'P';
     },
@@ -108,37 +121,37 @@ export default {
           title: 'Сотрудники',
           count: this.employeesCount,
           route: { name: 'businessCardEmployee', id: this.$route.params.id },
-          show: this.loggedIn || !this.isManagerMenu
+          show: this.loggedIn && !this.isManagerMenu
         },
         {
           title: 'Услуги',
           count: this.servicesCount,
           route: { name: 'businessCardService', id: this.$route.params.id },
-          show: this.loggedIn || !this.isManagerMenu
+          show: this.loggedIn && !this.isManagerMenu
         },
         {
           title: 'Клиенты',
           count: this.clientsCount,
           route: { name: 'businessCardClients', id: this.$route.params.id },
-          show: this.loggedIn || !this.isManagerMenu
+          show: this.loggedIn && !this.isManagerMenu
         },
         {
           title: 'Филиалы',
           count: this.filialsCount,
           route: { name: 'businessCardFilal', id: this.$route.params.id },
-          show: this.loggedIn || !this.isManagerMenu
+          show: this.loggedIn && !this.isManagerMenu
         },
         {
           title: 'Информация',
           count: undefined,
           route: { name: 'businessCard', id: this.$route.params.id },
-          show: this.loggedIn || !this.isManagerMenu
+          show: this.loggedIn && !this.isManagerMenu
         },
         {
           title: 'Галерея',
           count: '12',
           route: { name: 'businessCardGallery', id: this.$route.params.id },
-          show: this.loggedIn || !this.isManagerMenu
+          show: this.loggedIn && !this.isManagerMenu
         }
       ];
     },
