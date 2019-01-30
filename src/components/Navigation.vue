@@ -42,6 +42,14 @@
         </div>
       </VListTile>
     </VList>
+    <v-spacer />
+    <VList>
+      <VListTile @click="openMessageWindow">
+        <VListTileContent>
+          <VListTileTitle>Техподдержка</VListTileTitle>
+        </VListTileContent>
+      </VListTile>
+    </VList>
   </VNavigationDrawer>
 </template>
 
@@ -188,7 +196,12 @@ export default {
     businessId: 'getBusiness'
   },
   methods: {
-    ...mapActions(['navBar', 'loadUserInfo', 'setAppTitle']),
+    ...mapActions([
+      'navBar',
+      'loadUserInfo',
+      'openMessageWindow',
+      'setAppTitle'
+    ]),
     getBusiness() {
       Api()
         .get(`business?id=eq.${this.businessId}`)

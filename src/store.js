@@ -88,6 +88,10 @@ export default new Vuex.Store({
       if (info) {
         return info['login'];
       }
+    },
+    userPhone: (state, getters) => {
+      const info = getters.userInfo;
+      return info && info.data && info.data.phone;
     }
   },
   mutations: {
@@ -169,15 +173,30 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    closeMessageWindow({ commit }, payload) {
+    closeMessageWindow({ commit, dispatch }, payload) {
+      if (payload) {
+        dispatch('sendMessage', payload);
+      }
       commit('MESSAGE_WINDOW', false);
-      console.log(payload);
     },
     delAlert({ commit }, payload) {
       commit('DEL_ALERT', payload);
     },
     selectVisit({ commit }, payload) {
       commit('SELECT_VISIT', payload);
+    },
+    sendMessage({ commit }, payload) {
+      if (!payload) return;
+      const path = 'rpc/send_message';
+      Api()
+        .post(path, payload)
+        .then(res => res.data)
+        .then(res => {
+          if (res.status !== 'sended') {
+            commit('ADD_ALERT', res);
+          }
+        })
+        .catch(err => commit('ADD_ALERT', makeAlert(err)));
     },
     setActions({ commit }, payload) {
       commit('SET_ACTIONS', payload);
