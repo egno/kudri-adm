@@ -10,11 +10,6 @@
         overflow-hidden
         @click="goHome()"
       >
-        <img
-          class="logo"
-          :src="logo"
-          :alt="logo"
-        >
         <span>{{ appTitle }}</span>
       </VToolbarTitle>
       <!--<VSpacer />-->
@@ -65,8 +60,6 @@ export default {
     return {
       business: {},
       name: 'Business Name',
-      logo:
-        'https://lh3.googleusercontent.com/Ax2wQYxjDITuZEpc6K9EDYPG7C839tb4PApia4Tmf18u8XehB-twqhVgDVPgxxExkr4=s180'
     };
   },
   computed: {
@@ -97,7 +90,7 @@ export default {
       return businessCards.some(x => x === this.$route.name);
     },
     isCompany() {
-      return this.business && this.business.type !== 'P';
+      return this.$store.state.userInfo.role === 'business';
     },
     isManagerMenu() {
       return !this.isBusinessCard;
@@ -105,26 +98,16 @@ export default {
     menu() {
       return [
         {
-          title: 'Мой профиль',
-          show: this.loggedIn && this.isManagerMenu
-        },
-        {
-          title: 'Сообщения',
-          icon: 'email',
-          route: { name: 'messages' },
-          show: this.loggedIn && this.isManagerMenu
-        },
-        {
           title: 'Мои компании',
           icon: 'business',
           route: { name: 'myBusinessList' },
-          show: this.loggedIn && this.isManagerMenu
+          show: this.loggedIn && !this.isCompany
         },
         {
           title: 'Все компании',
           icon: 'business',
           route: { name: 'businessList' },
-          show: !this.loggedIn || this.isManagerMenu
+          show: !this.loggedIn || !this.isCompany
         },
         {
           title: 'Сотрудники',
@@ -174,13 +157,13 @@ export default {
           title: 'Информация',
           count: undefined,
           route: { name: 'businessCard', id: this.$route.params.id },
-          show: this.loggedIn && !this.isManagerMenu
+          show: this.loggedIn && this.isCompany
         },
         {
           title: 'Галерея',
           count: '12',
           route: { name: 'businessCardGallery', id: this.$route.params.id },
-          show: this.loggedIn && !this.isManagerMenu
+          show: this.loggedIn && this.isCompany
         }
       ];
     },
@@ -245,14 +228,5 @@ export default {
   align-items: center;
   margin-left: 10px;
 }
-.v-toolbar__title {
-  display: flex;
-  padding-left: 16px;
-  align-items: center;
-}
-.logo {
-  margin-right: 10px;
-  max-width: 31px;
-  max-height: 31px;
-}
+
 </style>

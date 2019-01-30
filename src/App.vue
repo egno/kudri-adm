@@ -79,10 +79,15 @@ export default {
 </script>
 
 <style>
-.v-toolbar {
-  z-index: 10;
-}
-.v-navigation-drawer {
-  z-index: 11;
-}
+  #app, #app .headline {
+    font-family: 'Roboto-Slab', sans-serif!important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .v-toolbar {
+    z-index: 10;
+  }
+  .v-navigation-drawer {
+    z-index: 11;
+  }
 </style>

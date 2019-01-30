@@ -5,17 +5,28 @@
       align-center
       justify-start
     >
-      <VFlex v-if="!navBarVisible">
-        <VLayout
-          row
-          align-center
-        >
-          <VToolbarSideIcon @click="navBar()" />
-          <VToolbarTitle @click="goHome()">
-            {{ appTitle }}
-          </VToolbarTitle>
-        </VLayout>
+      <VFlex
+        flex
+        row
+        align-center
+        justify-start
+        headline
+        class="title"
+      >
+        {{ name }},
+        {{ type }}
       </VFlex>
+      <!--<VFlex v-if="!navBarVisible">-->
+      <!--<VLayout-->
+      <!--row-->
+      <!--align-center-->
+      <!--&gt;-->
+      <!--<VToolbarSideIcon @click="navBar()" />-->
+      <!--<VToolbarTitle @click="goHome()">-->
+      <!--{{ appTitle }}-->
+      <!--</VToolbarTitle>-->
+      <!--</VLayout>-->
+      <!--</VFlex>-->
       <VFlex>
         <VBtn
           v-if="defaultAction"
@@ -28,6 +39,7 @@
           {{ defaultAction.label }}
         </VBtn>
       </VFlex>
+      
       <VFlex v-if="showEmployee">
         <v-select
           v-model="selectedEmployee"
@@ -39,16 +51,20 @@
           @input="onSelectEmployee"
         />
       </VFlex>
+      
+      
+      
       <VFlex>
-        <VTextField
-          key="mainSearch"
-          v-model="searchString"
-          autofocus
-          clearable
-          label="Поиск"
-          single-line
-          type="text"
-        />
+        {{ appTitle }}
+        <!--<VTextField-->
+        <!--key="mainSearch"-->
+        <!--v-model="searchString"-->
+        <!--autofocus-->
+        <!--clearable-->
+        <!--label="Поиск"-->
+        <!--single-line-->
+        <!--type="text"-->
+        <!--/>-->
       </VFlex>
     </VLayout>
 
@@ -71,7 +87,11 @@ export default {
   data() {
     return {
       searchString: '',
-      selectedEmployee: null
+      selectedEmployee: null,
+      name: "Salon name",
+      type: "salon",
+      logo:
+          'http://files.softicons.com/download/internet-icons/adorable-twitter-icons-by-naldz-graphics/png/128/cute_twitter1.png'
     };
   },
   computed: {
@@ -136,3 +156,10 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+  .title {
+    display: flex;
+    padding-left: 16px;
+    align-items: center;
+  }
+</style>
