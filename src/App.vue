@@ -6,6 +6,7 @@
       <RouterView />
     </VContent>
     <Alerts />
+    <SendMessage :edit="messageWindow" />
   </VApp>
 </template>
 
@@ -13,6 +14,7 @@
 import Navigation from '@/components/Navigation.vue';
 import TopBar from '@/components/TopBar.vue';
 import Alerts from '@/components/Alerts.vue';
+import SendMessage from '@/components/SendMessage.vue';
 import router from '@/router';
 import { mapActions, mapGetters } from 'vuex';
 
@@ -21,6 +23,7 @@ export default {
   components: {
     Alerts,
     Navigation,
+    SendMessage,
     TopBar
   },
   data() {
@@ -34,6 +37,7 @@ export default {
       'actualDate',
       'appTitle',
       'navBarVisible',
+      'messageWindow',
       'userID'
     ]),
     defaultAction() {

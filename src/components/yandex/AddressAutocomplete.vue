@@ -26,6 +26,7 @@
       :lazy-src="``"
       aspect-ratio="1"
       class="grey lighten-2"
+      @click="openMessageWindow"
     >
       <v-layout
         slot="placeholder"
@@ -47,6 +48,7 @@
 
 <script>
 import axios from 'axios';
+import { mapActions } from 'vuex';
 
 export default {
   props: {
@@ -73,7 +75,10 @@ export default {
     rules() {
       return {
         success: () => {
-          return this.success || 'Адрес не найден';
+          return (
+            this.success ||
+            `Адрес не найден. Проверьте правильность введенных данных`
+          );
         }
       };
     }
@@ -94,6 +99,7 @@ export default {
     this.fetchValue();
   },
   methods: {
+    ...mapActions(['openMessageWindow']),
     fetchValue() {
       if (!this.value || typeof this.value !== 'object') {
         this.address = { name: this.value };
@@ -133,3 +139,10 @@ export default {
   }
 };
 </script>
+
+<style>
+.href {
+  text-decoration: underline;
+  color: rgb(158, 0, 0);
+}
+</style>

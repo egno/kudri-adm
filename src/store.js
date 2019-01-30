@@ -22,8 +22,9 @@ export default new Vuex.Store({
     appTitle: '',
     business: '',
     calendar: [],
-    defaultAppTitle: 'Kudri',
+    defaultAppTitle: 'UNO',
     employee: [],
+    messageWindow: false,
     navBarVisible: true,
     schedule: [],
     searchString: '',
@@ -49,6 +50,7 @@ export default new Vuex.Store({
     loggedIn: (state, getters) => {
       return getters.userID;
     },
+    messageWindow: state => state.messageWindow,
     navBarVisible: state => state.navBarVisible,
     schedule: state => state.schedule,
     searchString: state => state.searchString,
@@ -118,6 +120,9 @@ export default new Vuex.Store({
     LOAD_SERVICE_LIST(state, payload) {
       state.serviceList = payload;
     },
+    MESSAGE_WINDOW(state, payload) {
+      state.messageWindow = !!payload;
+    },
     NAVBAR(state, payload) {
       var status = payload == undefined ? !state.navBarVisible : payload;
       state.navBarVisible = status;
@@ -164,6 +169,10 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    closeMessageWindow({ commit }, payload) {
+      commit('MESSAGE_WINDOW', false);
+      console.log(payload);
+    },
     delAlert({ commit }, payload) {
       commit('DEL_ALERT', payload);
     },
@@ -302,21 +311,24 @@ export default new Vuex.Store({
     navBar({ commit }, payload) {
       commit('NAVBAR', payload);
     },
-    register({ commit, dispatch }, payload) {
-        const registerPath = 'rpc/register';
-        Api()
-            .post(registerPath, payload)
-            .then(res => res.data)
-            .then(res => res[0])
-            .then(res => res.token)
-            .then(token => {
-                commit('SET_TOKEN', token);
-                dispatch('loadUserInfo');
-            })
-            .catch(err => {
-                console.log('err', err);
-                commit('ADD_ALERT', makeAlert(err));
-            });
+    openMessageWindow({ commit }) {
+      commit('MESSAGE_WINDOW', true);
     },
+    register({ commit, dispatch }, payload) {
+      const registerPath = 'rpc/register';
+      Api()
+        .post(registerPath, payload)
+        .then(res => res.data)
+        .then(res => res[0])
+        .then(res => res.token)
+        .then(token => {
+          commit('SET_TOKEN', token);
+          dispatch('loadUserInfo');
+        })
+        .catch(err => {
+          console.log('err', err);
+          commit('ADD_ALERT', makeAlert(err));
+        });
+    }
   }
 });
