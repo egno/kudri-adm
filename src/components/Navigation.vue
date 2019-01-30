@@ -10,7 +10,7 @@
         overflow-hidden
         @click="goHome()"
       >
-        <span>{{ appTitle }}</span>
+        <span>{{ defaultAppTitle }}</span>
       </VToolbarTitle>
       <!--<VSpacer />-->
       <!--<VToolbarSideIcon @click="navBar()" />-->
@@ -59,11 +59,11 @@ export default {
   data() {
     return {
       business: {},
-      name: 'Business Name',
+      name: 'Business Name'
     };
   },
   computed: {
-    ...mapGetters(['appTitle', 'loggedIn', 'token', 'navBarVisible']),
+    ...mapGetters(['defaultAppTitle', 'loggedIn', 'token', 'navBarVisible']),
     businessId() {
       return this.$route && this.$route.params && this.$route.params.id;
     },
@@ -101,13 +101,13 @@ export default {
           title: 'Мои компании',
           icon: 'business',
           route: { name: 'myBusinessList' },
-          show: this.loggedIn && !this.isCompany
+          show: this.loggedIn && this.isManagerMenu
         },
         {
           title: 'Все компании',
           icon: 'business',
           route: { name: 'businessList' },
-          show: !this.loggedIn || !this.isCompany
+          show: !this.loggedIn || this.isManagerMenu
         },
         {
           title: 'Сотрудники',
@@ -157,13 +157,13 @@ export default {
           title: 'Информация',
           count: undefined,
           route: { name: 'businessCard', id: this.$route.params.id },
-          show: this.loggedIn && this.isCompany
+          show: this.loggedIn && !this.isManagerMenu
         },
         {
           title: 'Галерея',
           count: '12',
           route: { name: 'businessCardGallery', id: this.$route.params.id },
-          show: this.loggedIn && this.isCompany
+          show: this.loggedIn && !this.isManagerMenu
         }
       ];
     },
@@ -183,7 +183,7 @@ export default {
       'navBar',
       'loadUserInfo',
       'openMessageWindow',
-      'setAppTitle'
+      'setBusinessInfo'
     ]),
     getBusiness() {
       Api()
@@ -192,10 +192,8 @@ export default {
         .then(res => res[0])
         .then(res => {
           this.business = res;
-          return res;
+          this.setBusinessInfo({ category: res.j.category, name: res.j.name });
         })
-        .then(res => res.j.name)
-        .then(res => this.setAppTitle(res))
         .catch(this.setAppTitle());
     },
     goHome() {
@@ -228,5 +226,4 @@ export default {
   align-items: center;
   margin-left: 10px;
 }
-
 </style>

@@ -39,12 +39,10 @@
         <VListTile
           v-for="(item, index) in menuList"
           :key="index"
-          :href="item.url"
+          :to="item.route"
           @click="menuHandler(item.action)"
         >
-          <VListTileTitle>
-            {{ item.title }}
-          </VListTileTitle>
+          <VListTileTitle>{{ item.title }}</VListTileTitle>
         </VListTile>
       </template>
       <template v-else>
@@ -85,7 +83,7 @@
 import router from '@/router';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import { mapGetters, mapActions } from 'vuex';
-import _ from 'lodash'
+import _ from 'lodash';
 
 export default {
   components: { UserAvatar },
@@ -110,21 +108,21 @@ export default {
       {
         title: 'Сообщения',
         action: '',
-        url: ''
+        route: { name: 'messages' }
       },
       {
         title: 'Выйти',
         action: 'logout',
         url: ''
-      },
+      }
     ]
   }),
   computed: {
     ...mapGetters({
-        loggedIn: 'loggedIn',
-        avatar: 'userAvatar',
-        userID: 'userLogin',
-        userInfo: 'userInfo'
+      loggedIn: 'loggedIn',
+      avatar: 'userAvatar',
+      userID: 'userLogin',
+      userInfo: 'userInfo'
     }),
     displayName() {
       if (!this.userInfo) return;
@@ -134,19 +132,33 @@ export default {
         }
       }
       return this.userID;
-    },
+    }
   },
-  watch:{
-    '$route' (){
-      if (this.$route.name === 'businessCard' && _.findIndex(this.menuList, function(o) { return o.title === 'Личный кабинет'; }) === -1) {
+  watch: {
+    $route() {
+      if (
+        this.$route.name === 'businessCard' &&
+        _.findIndex(this.menuList, function(o) {
+          return o.title === 'Личный кабинет';
+        }) === -1
+      ) {
         let obj = {
           title: 'Личный кабинет',
           action: '',
           url: '/'
         };
         this.menuList.splice(2, 0, obj);
-      } else if (_.findIndex(this.menuList, function(o) { return o.title === 'Личный кабинет'; }) !== -1) {
-        this.menuList.splice(_.findIndex(this.menuList, function(o) { return o.title === 'Личный кабинет'; }), 1);
+      } else if (
+        _.findIndex(this.menuList, function(o) {
+          return o.title === 'Личный кабинет';
+        }) !== -1
+      ) {
+        this.menuList.splice(
+          _.findIndex(this.menuList, function(o) {
+            return o.title === 'Личный кабинет';
+          }),
+          1
+        );
       }
     }
   },
@@ -169,6 +181,6 @@ export default {
       router.push({ name: 'home' });
       this.menu = false;
     }
-  },
+  }
 };
 </script>

@@ -13,20 +13,8 @@
         headline
         class="title"
       >
-        {{ name }},
-        {{ type }}
+        {{ businessInfo.name }}, {{ businessInfo.category }}
       </VFlex>
-      <!--<VFlex v-if="!navBarVisible">-->
-      <!--<VLayout-->
-      <!--row-->
-      <!--align-center-->
-      <!--&gt;-->
-      <!--<VToolbarSideIcon @click="navBar()" />-->
-      <!--<VToolbarTitle @click="goHome()">-->
-      <!--{{ appTitle }}-->
-      <!--</VToolbarTitle>-->
-      <!--</VLayout>-->
-      <!--</VFlex>-->
       <VFlex>
         <VBtn
           v-if="defaultAction"
@@ -39,7 +27,7 @@
           {{ defaultAction.label }}
         </VBtn>
       </VFlex>
-      
+
       <VFlex v-if="showEmployee">
         <v-select
           v-model="selectedEmployee"
@@ -50,21 +38,6 @@
           label="Мастер"
           @input="onSelectEmployee"
         />
-      </VFlex>
-      
-      
-      
-      <VFlex>
-        {{ appTitle }}
-        <!--<VTextField-->
-        <!--key="mainSearch"-->
-        <!--v-model="searchString"-->
-        <!--autofocus-->
-        <!--clearable-->
-        <!--label="Поиск"-->
-        <!--single-line-->
-        <!--type="text"-->
-        <!--/>-->
       </VFlex>
     </VLayout>
 
@@ -88,16 +61,16 @@ export default {
     return {
       searchString: '',
       selectedEmployee: null,
-      name: "Salon name",
-      type: "salon",
+      name: 'Salon name',
+      type: 'salon',
       logo:
-          'http://files.softicons.com/download/internet-icons/adorable-twitter-icons-by-naldz-graphics/png/128/cute_twitter1.png'
+        'http://files.softicons.com/download/internet-icons/adorable-twitter-icons-by-naldz-graphics/png/128/cute_twitter1.png'
     };
   },
   computed: {
     ...mapGetters([
       'actions',
-      'appTitle',
+      'businessInfo',
       'employee',
       'navBarVisible',
       'userID'
@@ -157,9 +130,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-  .title {
-    display: flex;
-    padding-left: 16px;
-    align-items: center;
-  }
+.title {
+  display: flex;
+  padding-left: 16px;
+  align-items: center;
+}
 </style>

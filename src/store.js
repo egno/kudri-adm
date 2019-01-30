@@ -21,6 +21,7 @@ export default new Vuex.Store({
     apiTime: '',
     appTitle: '',
     business: '',
+    businessInfo: {},
     calendar: [],
     defaultAppTitle: 'UNO',
     employee: [],
@@ -45,7 +46,9 @@ export default new Vuex.Store({
       return getISOTimeZoneOffset(state.apiTime);
     },
     appTitle: state => state.appTitle || state.defaultAppTitle,
+    businessInfo: state => state.businessInfo,
     calendar: state => state.calendar,
+    defaultAppTitle: state => state.defaultAppTitle,
     employee: state => state.employee,
     loggedIn: (state, getters) => {
       return getters.userID;
@@ -149,6 +152,9 @@ export default new Vuex.Store({
     SET_BUSINESS(state, payload) {
       state.business = payload;
     },
+    SET_BUSINESS_INFO(state, payload) {
+      state.businessInfo = payload;
+    },
     SET_SEARCH_STRING(state, payload) {
       state.searchString = payload;
     },
@@ -236,6 +242,9 @@ export default new Vuex.Store({
     setBusiness({ commit, dispatch }, payload) {
       commit('SET_BUSINESS', payload);
       dispatch('loadEmployee', payload);
+    },
+    setBusinessInfo({ commit }, payload) {
+      commit('SET_BUSINESS_INFO', payload);
     },
     setSearchString({ commit }, payload) {
       commit('SET_SEARCH_STRING', payload);
