@@ -20,9 +20,18 @@
             :src="avatar"
           />
         </VFlex>
-        <VFlex class="hidden-sm-and-down">
-          {{ displayName || "Войти" }}
+        <VFlex
+          v-if="!loggedIn"
+          class="hidden-sm-and-down"
+        >
+          {{ "Войти" }}
         </VFlex>
+        <div
+          v-else
+          style="width: 24px; height: 24px"
+        >
+          <v-icon>expand_more</v-icon>
+        </div>
       </VLayout>
     </VBtn>
     <VList>

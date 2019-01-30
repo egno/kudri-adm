@@ -5,6 +5,7 @@ import router from './router';
 import store from './store';
 import './registerServiceWorker';
 import 'roboto-fontface/css/roboto/roboto-fontface.css';
+import 'roboto-fontface/css/roboto-slab/roboto-slab-fontface.css';
 import '@mdi/font/css/materialdesignicons.css';
 import 'vuetify/dist/vuetify.min.css';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
