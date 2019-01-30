@@ -65,8 +65,8 @@ export default {
   data: () => ({
     drawer: null,
     errorMessage: null,
-    flogin: 'manager1@test.com',
-    fpassword: 'ManagerPassword',
+    flogin: 'manager000000050@test.com',
+    fpassword: '000000050',
     snack: false,
     snackText: '',
     snackColor: 'error'
