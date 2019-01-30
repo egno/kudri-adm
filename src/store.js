@@ -20,7 +20,6 @@ export default new Vuex.Store({
     alerts: [],
     apiTime: '',
     appTitle: '',
-    business: '',
     businessInfo: {},
     calendar: [],
     defaultAppTitle: 'UNO',
@@ -46,6 +45,7 @@ export default new Vuex.Store({
       return getISOTimeZoneOffset(state.apiTime);
     },
     appTitle: state => state.appTitle || state.defaultAppTitle,
+    business: state => state.businessInfo && state.businessInfo.id,
     businessInfo: state => state.businessInfo,
     calendar: state => state.calendar,
     defaultAppTitle: state => state.defaultAppTitle,
@@ -149,9 +149,6 @@ export default new Vuex.Store({
     SET_APP_TITLE(state, payload) {
       state.appTitle = payload;
     },
-    SET_BUSINESS(state, payload) {
-      state.business = payload;
-    },
     SET_BUSINESS_INFO(state, payload) {
       state.businessInfo = payload;
     },
@@ -229,22 +226,27 @@ export default new Vuex.Store({
         d1.setDate(1);
         d1.setYear(payload.slice(0, 4));
         d1.setMonth(payload.slice(5, 7));
-        dispatch('loadCalendar', {
-          business: state.business,
-          dates: [from, formatDate(d1)]
-        });
+        if (state.business && state.business.id) {
+          dispatch('loadCalendar', {
+            business: state.business.id,
+            dates: [from, formatDate(d1)]
+          });
+        } else {
+          state.calendar = [];
+        }
       }
       commit('SET_ACTUAL_DATE', payload);
     },
     setAppTitle({ commit }, payload) {
       commit('SET_APP_TITLE', payload);
     },
-    setBusiness({ commit, dispatch }, payload) {
-      commit('SET_BUSINESS', payload);
-      dispatch('loadEmployee', payload);
-    },
-    setBusinessInfo({ commit }, payload) {
+    // setBusiness({ commit, dispatch }, payload) {
+    //   commit('SET_BUSINESS', payload);
+    //   dispatch('loadEmployee', payload);
+    // },
+    setBusinessInfo({ commit, dispatch }, payload) {
       commit('SET_BUSINESS_INFO', payload);
+      dispatch('loadEmployee', payload && payload.id);
     },
     setSearchString({ commit }, payload) {
       commit('SET_SEARCH_STRING', payload);
@@ -288,6 +290,9 @@ export default new Vuex.Store({
     },
     loadEmployee({ commit }, payload) {
       commit('LOAD_EMPLOYEE', null);
+      if (!payload) {
+        return;
+      }
       const path = `employee?parent=eq.${payload}`;
       Api()
         .get(path)

@@ -44,7 +44,7 @@ export default {
   data() {
     return {
       formActions: [
-        { label: 'Добавить сотрудника', action: 'newEmployee', default: true }
+        { label: 'Добавить сотрудника', action: 'newEmployee', default: false }
       ],
       data: { j: {} },
       edit: false,

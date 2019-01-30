@@ -40,7 +40,7 @@ export default {
   data() {
     return {
       formActions: [
-        { label: 'Добавить филиал', action: 'newFilial', default: true }
+        { label: 'Добавить филиал', action: 'newFilial', default: false }
       ],
       data: { j: {} },
       edit: false,

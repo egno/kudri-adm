@@ -192,7 +192,11 @@ export default {
         .then(res => res[0])
         .then(res => {
           this.business = res;
-          this.setBusinessInfo({ category: res.j.category, name: res.j.name });
+          this.setBusinessInfo({
+            id: res.id,
+            category: res.j.category,
+            name: res.j.name
+          });
         })
         .catch(this.setAppTitle());
     },

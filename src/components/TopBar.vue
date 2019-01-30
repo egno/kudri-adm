@@ -6,6 +6,7 @@
       justify-start
     >
       <VFlex
+        v-if="business"
         flex
         row
         align-center
@@ -70,6 +71,7 @@ export default {
   computed: {
     ...mapGetters([
       'actions',
+      'business',
       'businessInfo',
       'employee',
       'navBarVisible',

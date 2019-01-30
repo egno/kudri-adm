@@ -44,7 +44,7 @@ export default {
   data() {
     return {
       formActions: [
-        { label: 'Добавить услугу', action: 'newService', default: true }
+        { label: 'Добавить услугу', action: 'newService', default: false }
       ],
       data: { j: {} },
       edit: false,

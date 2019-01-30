@@ -39,7 +39,7 @@ export default {
   data() {
     return {
       formActions: [
-        { label: 'Добавить клиента', action: 'newClient', default: true }
+        { label: 'Добавить клиента', action: 'newClient', default: false }
       ],
       newClient: newClient(),
       data: [],
