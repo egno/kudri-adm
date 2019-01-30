@@ -1,5 +1,8 @@
 <template>
-  <VCard flat>
+  <VCard
+    v-if="data"
+    flat
+  >
     <VCardTitle>Основная информация</VCardTitle>
     <VBtn
       fab
@@ -127,7 +130,7 @@ export default {
         'Косметологический кабинет',
         'Частный мастер'
       ],
-      data: { j: { phones: [], links: {} } },
+      data: undefined,
       rules: {
         category: value => !value || value.length > 2 || 'Выберите тип',
         INN_counter: value =>
@@ -166,6 +169,7 @@ export default {
     },
     fetchData() {
       if (this.id === 'new') {
+        this.data = this.dataPrefill();
         return;
       }
       Api()

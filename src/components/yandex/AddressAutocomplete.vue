@@ -16,7 +16,7 @@
         no-filter
         persistent-hint
         :prepend-icon="prependIcon"
-        :rules="[rules.success]"
+        :rules="[rules.found]"
         :search-input.sync="search"
       />
     </v-flex>
@@ -62,7 +62,7 @@ export default {
       edited: false,
       items: undefined,
       loading: false,
-      search: '',
+      search: undefined,
       success: false
     };
   },
@@ -74,7 +74,7 @@ export default {
     },
     rules() {
       return {
-        success: () => {
+        found: () => {
           return (
             this.success ||
             `Адрес не найден. Проверьте правильность введенных данных`
@@ -86,13 +86,15 @@ export default {
   watch: {
     address(val) {
       this.$emit('input', val);
-      this.search = val;
+      this.search = (val && val.name) || '';
       this.success =
-        !this.edited || (this.items && this.items.some(x => x === this.search));
+        !this.edited ||
+        (this.items &&
+          this.items.map(x => x.name).some(x => x === this.search));
     },
     value: 'fetchValue',
     search(val) {
-      val && val !== this.address && this.geocode(val);
+      val && val !== this.address.name && this.geocode(val);
     }
   },
   mounted() {
@@ -101,18 +103,22 @@ export default {
   methods: {
     ...mapActions(['openMessageWindow']),
     fetchValue() {
-      if (!this.value || typeof this.value !== 'object') {
+      if (typeof this.value === 'string') {
         this.address = { name: this.value };
-      } else {
+      } else if (typeof this.value === 'object') {
         this.address = this.value;
+        this.address.name = this.address.name || null;
+      } else {
+        this.address = { name: null };
       }
-      this.search = this.address.name;
+      this.search = this.address.name || null;
     },
     geocode(val) {
       this.loading = true;
       this.edited = true;
       if (!(val && val.length > 6)) {
         this.items = undefined;
+        this.loading = false;
         return;
       }
       axios

@@ -34,6 +34,9 @@ export const businessMixins = {
       if (!data.j.links) {
         data.j.links = {};
       }
+      if (!data.j.address) {
+        data.j.address = {};
+      }
       if (!data.j.services) {
         data.j.services = [];
       }
