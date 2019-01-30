@@ -5,9 +5,9 @@
         v-model="address"
         auto-select-first
         browser-autocomplete
+        :error="!success"
         hide-no-data
-        hide-details
-        hint-text="Вводите только адрес дома"
+        hint="Вводите только адрес дома"
         :items="items"
         item-value="name"
         item-text="name"
@@ -16,8 +16,8 @@
         no-filter
         persistent-hint
         :prepend-icon="prependIcon"
+        :rules="[rules.success]"
         :search-input.sync="search"
-        :error="!success"
       />
     </v-flex>
     <v-img
@@ -69,6 +69,13 @@ export default {
       if (!(this.success && this.items && this.items[0] && this.items[0].point))
         return;
       return this.items[0].point.replace(' ', ',');
+    },
+    rules() {
+      return {
+        success: () => {
+          return this.success || 'Адрес не найден';
+        }
+      };
     }
   },
   watch: {

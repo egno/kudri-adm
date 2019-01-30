@@ -5,7 +5,13 @@
         Адрес
       </span>
       &nbsp;
-      <AddressLink :address="address" />
+      <AddressLink
+        v-if="address.point"
+        :address="addressName"
+      />
+      <span v-else>
+        {{ addressName }}
+      </span>
     </div>
     <VSlideYTransition />
   </div>
@@ -16,7 +22,7 @@ import AddressLink from '@/components/yandex/AddressLink.vue';
 export default {
   components: { AddressLink },
   props: {
-    address: { type: String, default: null },
+    address: { default: null },
     captionClass: {
       type: String,
       default: ''
@@ -26,6 +32,14 @@ export default {
     return {
       showDetails: false
     };
+  },
+  computed: {
+    addressName() {
+      if (typeof this.address === 'object') {
+        return this.address.name;
+      }
+      return this.address;
+    }
   }
 };
 </script>
