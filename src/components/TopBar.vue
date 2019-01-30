@@ -13,7 +13,8 @@
         headline
         class="title"
       >
-        {{ name }}
+        {{ name }},
+        {{ type }}
       </VFlex>
       <!--<VFlex v-if="!navBarVisible">-->
       <!--<VLayout-->
@@ -88,6 +89,7 @@ export default {
       searchString: '',
       selectedEmployee: null,
       name: "Salon name",
+      type: "salon",
       logo:
           'http://files.softicons.com/download/internet-icons/adorable-twitter-icons-by-naldz-graphics/png/128/cute_twitter1.png'
     };
