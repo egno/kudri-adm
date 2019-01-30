@@ -192,7 +192,12 @@ export default new Vuex.Store({
         .post(path, payload)
         .then(res => res.data)
         .then(res => {
-          if (res.status !== 'sended') {
+          if (res.status === 'sended') {
+            commit('ADD_ALERT', {
+              message:
+                'Мы уже решаем эту проблему! При необходимости мы свяжемся с вами'
+            });
+          } else {
             commit('ADD_ALERT', res);
           }
         })
