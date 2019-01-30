@@ -101,13 +101,10 @@ export default {
     snackColor: 'error',
     menuList: [
       {
-        title: 'Мой профиль',
-        action: 'qwe',
-        url: ''
+        title: 'Мой профиль'
       },
       {
         title: 'Сообщения',
-        action: '',
         route: { name: 'messages' }
       },
       {
@@ -165,6 +162,7 @@ export default {
   methods: {
     ...mapActions(['login', 'logout']),
     menuHandler(action) {
+      this.menu = false;
       switch (action) {
         case 'logout':
           this.sendLogout();

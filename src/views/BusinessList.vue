@@ -57,15 +57,15 @@
       <td>{{ props.item.j.category }}</td>
       <td>{{ props.item.j.inn }}</td>
       <td>
-        {{ props.item.j.address }}
+        {{ props.item.j && props.item.j.address && props.item.j.address.name || props.item.j.address }}
         <div
-          v-if="props.item.filials"
+          v-if="props.item.j.filials"
           class="caption text-no-wrap grey--text text--darken-1"
         >
           <RouterLink
             :to="{name: 'businessCardFilal',params:{id: props.item.id}}"
           >
-            Филиалов: {{ props.item.filials }}
+            Филиалов: {{ props.item.j.filials }}
           </RouterLink>
         </div>
       </td>
