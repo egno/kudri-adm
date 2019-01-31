@@ -2,7 +2,7 @@
   <div>
     <VTextField
       v-model="newPhone"
-      label="Телефон"
+      :label="label"
       mask="phone"
       prefix="+7"
       prepend-icon="phone"
@@ -15,6 +15,7 @@
 <script>
 export default {
   props: {
+    label: { type: String, default: 'Телефон' },
     phone: {
       type: String,
       default() {

@@ -119,7 +119,12 @@
       </VBtn>
     </VForm>
 
-    <ModalModer v-if="loginIsEmail || (loginIsEmail === false && !showPasswordInputs)" />
+    <a
+      href="#"
+      @click="openMessageWindow"
+    >
+      Связаться с тех. поддержкой
+    </a>
   </VFlex>
 </template>  
 
@@ -127,10 +132,8 @@
 import Api from '@/api/backend';
 import { makeAlert } from '@/api/utils';
 import { mapGetters, mapActions } from 'vuex';
-import ModalModer from '@/components/register/ModalModer.vue';
 
 export default {
-  components: { ModalModer },
   props: {
     frole: { type: String, default: 'business' }
   },
@@ -236,7 +239,13 @@ export default {
   },
   watch: {},
   methods: {
-    ...mapActions(['alert', 'login', 'logout', 'register']),
+    ...mapActions([
+      'alert',
+      'login',
+      'logout',
+      'openMessageWindow',
+      'register'
+    ]),
     registerAndLogin() {
       if (this.$refs.passwords.validate()) {
         this.register({

@@ -37,7 +37,7 @@
           >
             <UserAvatar
               class="ma-1"
-              :name="props.item.j.name || props.item.j.email"
+              :name="props.item.j && props.item.j.name || props.item.j.email"
               size="2.4em"
               :src="props.item.j.avatar"
             />
@@ -57,7 +57,7 @@
       <td>{{ props.item.j.category }}</td>
       <td>{{ props.item.j.inn }}</td>
       <td>
-        {{ props.item.j && props.item.j.address && props.item.j.address.name || props.item.j.address }}
+        {{ props.item.j && props.item.j.address && props.item.j.address.name }}
         <div
           v-if="props.item.j.filials"
           class="caption text-no-wrap grey--text text--darken-1"
@@ -69,8 +69,8 @@
           </RouterLink>
         </div>
       </td>
-      <td>{{ props.item.j.email }}</td>
-      <td>{{ props.item.j.manager.email }}</td>
+      <td>{{ props.item.j && props.item.j.email }}</td>
+      <td>{{ props.item.j && props.item.j.manager && props.item.j.manager.email }}</td>
       <td>-</td>
       <td>-</td>
       <td class="justify-center layout px-0">

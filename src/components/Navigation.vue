@@ -90,7 +90,7 @@ export default {
       return businessCards.some(x => x === this.$route.name);
     },
     isCompany() {
-      return this.$store.state.userInfo.role === 'business';
+      return this.businessId && this.$store.state.userInfo.role === 'business';
     },
     isManagerMenu() {
       return !this.isBusinessCard;

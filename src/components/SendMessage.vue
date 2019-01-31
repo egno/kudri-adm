@@ -5,7 +5,12 @@
     @input="onInput"
   >
     <VCard flat>
-      <VCardTitle>У вас проблема?</VCardTitle>
+      <VCardTitle
+        class="headline grey lighten-2"
+        primary-title
+      >
+        У вас проблема?
+      </VCardTitle>
       <v-card-text>
         <v-layout column>
           <v-flex>
@@ -26,6 +31,8 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
+          color="primary"
+          flat
           :disabled="!message"
           @click="onInput(true)"
         >
