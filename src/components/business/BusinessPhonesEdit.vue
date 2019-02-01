@@ -20,12 +20,13 @@
         small
         @click="newPhones.splice(i, 1)"
       >
-        <v-icon>
-          delete
-        </v-icon>
+        <v-icon>delete</v-icon>
       </VBtn>
     </div>
-    <VBtn @click="newPhones.push('')">
+    <VBtn
+      :disabled="hasEmptyPhone"
+      @click="newPhones.push('')"
+    >
       Добавить телефон
     </VBtn>
   </div>
@@ -55,6 +56,11 @@ export default {
       newPhones: []
     };
   },
+  computed: {
+    hasEmptyPhone() {
+      return this.newPhones.some(x => !x);
+    }
+  },
   watch: { phones: 'update' },
   mounted() {
     this.update();
@@ -62,7 +68,7 @@ export default {
   },
   methods: {
     onEdit(i, payload) {
-      this.newPhones[i] = payload;
+      this.$set(this.newPhones, i, payload);
       this.$emit('onEdit', this.newPhones);
     },
     update() {
@@ -72,10 +78,10 @@ export default {
 };
 </script>
 <style>
-  .phone-input {
-    display: flex;
-    width: 300px;
-    justify-content: center;
-    align-items: center;
-  }
+.phone-input {
+  display: flex;
+  width: 300px;
+  justify-content: center;
+  align-items: center;
+}
 </style>

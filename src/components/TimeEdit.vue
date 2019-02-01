@@ -6,7 +6,7 @@
       placeholder="00:00"
       return-masked-value
       :rules="[rules.time]"
-      @change="onEdit"
+      @input="onEdit"
     />
   </VFlex>
 </template>

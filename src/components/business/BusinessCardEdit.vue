@@ -17,7 +17,10 @@
       />
     </VBtn>
     <VCardText>
-      <VForm>
+      <VForm
+        v-model="valid"
+        lazy-validation
+      >
         <VTextField
           v-model="data.j.name"
           label="Название"
@@ -80,6 +83,7 @@
     <VCardActions>
       <VSpacer />
       <VBtn
+        :disabled="hasErrors"
         color="primary"
         @click="close"
       >
@@ -142,7 +146,8 @@ export default {
               value.length === 12 ||
               'В ИНН должно быть 10 или 12 цифр')) ||
           true
-      }
+      },
+      valid: true
     };
   },
   computed: {
@@ -152,6 +157,54 @@ export default {
         return this.data.j.avatar;
       }
       return null;
+    },
+    hasAddress() {
+      return !!(
+        this.data &&
+        this.data.j &&
+        this.data.j.address &&
+        this.data.j.address.name
+      );
+    },
+    hasName() {
+      return !!(this.data && this.data.j && this.data.j.name);
+    },
+    hasPhone() {
+      return !!(
+        this.data &&
+        this.data.j &&
+        this.data.j.phones &&
+        this.data.j.phones[0]
+      );
+    },
+    hasINN() {
+      return !!(
+        this.data &&
+        this.data.j &&
+        (this.data.j.category === 'Частный мастер' || this.data.j.inn)
+      );
+    },
+    hasSchedule() {
+      return !!(
+        this.data &&
+        this.data.j &&
+        this.data.j.schedule &&
+        this.data.j.schedule.data &&
+        this.data.j.schedule.data.reduce(
+          (acc, cur) => acc || (cur && cur.length > 1 && cur[0] && cur[1]),
+          false
+        )
+      );
+    },
+    hasErrors() {
+      return !(
+        this.hasAddress &&
+        this.hasName &&
+        this.hasPhone &&
+        this.hasINN &&
+        this.hasSchedule &&
+        this.valid
+      );
     },
     id() {
       return this.$route.params.id;
@@ -193,6 +246,8 @@ export default {
             this.userInfo.data.j.category
           ) {
             this.data.j.category = this.userInfo.data.j.category;
+          }
+          if (this.data.j.category) {
             this.categoryDisabled = true;
           }
         });

@@ -12,8 +12,9 @@
         v-for="(item, i) in schedule.data"
         :key="dow[i]"
         :caption="dow[i]"
-        :period="item"
-        @onEdit="onEdit"
+        :period-start="item[0]"
+        :period-end="item[1]"
+        @onEdit="onEdit(i,$event)"
       />
     </VLayout>
   </VLayout>
@@ -48,7 +49,8 @@ export default {
     };
   },
   methods: {
-    onEdit() {
+    onEdit(i, payload) {
+      this.$set(this.schedule.data, i, payload);
       this.$emit('onEdit', this.schedule);
     }
   }
