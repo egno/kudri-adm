@@ -2,13 +2,29 @@
   <div>
     <span :class="captionClass">
       Телефоны
-    </span>&nbsp;
-    <PhoneEdit
+    </span>
+    <div
       v-for="(phone, i) in newPhones"
       :key="i"
-      :phone="phone"
-      @onEdit="onEdit(i, $event)"
-    />
+      class="phone-input"
+    >
+      <PhoneEdit
+        :phone="phone"
+        @onEdit="onEdit(i, $event)"
+      />
+      <VBtn
+        v-if="newPhones.length > 1"
+        depressed
+        flat
+        fab
+        small
+        @click="newPhones.splice(i, 1)"
+      >
+        <v-icon>
+          delete
+        </v-icon>
+      </VBtn>
+    </div>
     <VBtn @click="newPhones.push('')">
       Добавить телефон
     </VBtn>
@@ -42,6 +58,7 @@ export default {
   watch: { phones: 'update' },
   mounted() {
     this.update();
+    this.newPhones.length === 0 ? this.newPhones.push('') : false;
   },
   methods: {
     onEdit(i, payload) {
@@ -54,3 +71,11 @@ export default {
   }
 };
 </script>
+<style>
+  .phone-input {
+    display: flex;
+    width: 300px;
+    justify-content: center;
+    align-items: center;
+  }
+</style>

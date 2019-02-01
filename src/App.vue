@@ -79,8 +79,13 @@ export default {
 </script>
 
 <style>
-  #app, #app .headline {
+  #app .headline {
     font-family: 'Roboto-Slab', sans-serif!important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  #app {
+    font-family: 'Lato', sans-serif!important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
