@@ -117,7 +117,9 @@ export default {
       axios
         .post(process.env.VUE_APP_UPLOAD, formData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            business_id: this.data.parent
           }
         })
         .then(function() {

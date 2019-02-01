@@ -54,14 +54,29 @@
           v-if="addPlace"
           xs4
         >
-          <v-btn
-            block
-            depressed
-            large
-            icon
+          <form
+            enctype="multipart/form-data"
+            novalidate
           >
-            <v-icon>add</v-icon>
-          </v-btn>
+            <div class="dropbox">
+              <input
+                type="file"
+                multiple
+                :name="uploadFieldName"
+                :disabled="!isInitial"
+                accept="image/*"
+                class="input-file"
+                @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
+              >
+              <p v-if="isInitial">
+                Drag your file(s) here to begin
+                <br>or click to browse
+              </p>
+              <p v-if="!isInitial">
+                Uploading {{ fileCount }} files...
+              </p>
+            </div>
+          </form>
         </v-flex>
       </v-layout>
     </v-container>
@@ -69,6 +84,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   props: {
     edit: { type: Boolean, default: false },
@@ -83,7 +100,9 @@ export default {
     return {
       full: false,
       index: 0,
-      maxImages: 9
+      isInitial: true,
+      maxImages: 9,
+      uploadFieldName: 'file'
     };
   },
   computed: {
@@ -102,6 +121,35 @@ export default {
     },
     addPlace() {
       return this.edit && !this.more;
+    }
+  },
+  methods: {
+    filesChange(fieldName, fileList) {
+      const formData = new FormData();
+      if (!fileList.length) return;
+      Array.from(Array(fileList.length).keys()).map(x => {
+        formData.append(fieldName, fileList[x], fileList[x].name);
+      });
+      this.saveImage(formData);
+    },
+    saveImage(formData) {
+      this.isInitial = false;
+      let vm = this;
+      axios
+        .post(process.env.VUE_APP_UPLOAD, formData, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            // TODO подтянуть реальный id бизнеса
+            business_id: '1a7ce435-0a77-11e9-9a7e-f7a172b556a7'
+          }
+        })
+        .then(() => {
+          vm.isInitial = true;
+        })
+        .catch(function() {
+          console.log('FAILURE!!');
+          vm.isInitial = true;
+        });
     }
   }
 };

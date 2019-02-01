@@ -4,7 +4,7 @@
       <UserAvatar
         class="ma-1"
         :name="item.j.name || item.j.email"
-        :src="item.j.avatar"
+        :src="`${item.parent}/${item.j.avatar}`"
       />
       <VBtn
         v-if="item.access"
