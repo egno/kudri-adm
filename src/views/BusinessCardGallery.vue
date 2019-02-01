@@ -1,12 +1,18 @@
 <template>
-  <Gallery />
+  <v-container>
+    <v-layout row>
+      <v-flex>
+        <gallery-card />
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
-import Gallery from '@/components/Gallery.vue';
+import GalleryCard from '@/components/gallery/GalleryCard.vue';
 
 export default {
-  components: { Gallery },
+  components: { GalleryCard },
   data() {
     return {
       data: { data: {} }
