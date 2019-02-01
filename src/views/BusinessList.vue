@@ -198,7 +198,7 @@ export default {
           return res.data;
         })
         .then(res => {
-          this.data = res;
+          this.data = res.filter(x => x.j);
           this.progressQuery = false;
         })
         .catch(() => {
