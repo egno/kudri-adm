@@ -27,6 +27,7 @@
         />
         <VCombobox
           v-model="data.j.category"
+          :disabled="categoryDisabled"
           :items="businessCategories"
           label="Тип"
           :rules="[rules.category]"
@@ -107,6 +108,7 @@ import Api from '@/api/backend';
 import router from '@/router';
 import { backendMixins } from '@/api/mixins';
 import { businessMixins } from '@/components/business/mixins';
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
@@ -130,6 +132,7 @@ export default {
         'Косметологический кабинет',
         'Частный мастер'
       ],
+      categoryDisabled: false,
       data: undefined,
       rules: {
         category: value => !value || value.length > 2 || 'Выберите тип',
@@ -143,6 +146,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(['userInfo']),
     avatar() {
       if (this.data.j) {
         return this.data.j.avatar;
@@ -181,6 +185,16 @@ export default {
             this.$emit('onEditClose');
           }
           this.data = this.dataPrefill(res);
+          if (
+            !(this.data.j && this.data.j.category) &&
+            this.userInfo &&
+            this.userInfo.data &&
+            this.userInfo.data.j &&
+            this.userInfo.data.j.category
+          ) {
+            this.data.j.category = this.userInfo.data.j.category;
+            this.categoryDisabled = true;
+          }
         });
     },
     phonesEdit(payload) {

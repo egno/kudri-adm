@@ -194,8 +194,8 @@ export default {
           this.business = res;
           this.setBusinessInfo({
             id: res.id,
-            category: res.j.category,
-            name: res.j.name
+            category: res.j && res.j.category,
+            name: res.j && res.j.name
           });
         })
         .catch(this.setAppTitle());

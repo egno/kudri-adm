@@ -240,10 +240,6 @@ export default new Vuex.Store({
     setAppTitle({ commit }, payload) {
       commit('SET_APP_TITLE', payload);
     },
-    // setBusiness({ commit, dispatch }, payload) {
-    //   commit('SET_BUSINESS', payload);
-    //   dispatch('loadEmployee', payload);
-    // },
     setBusinessInfo({ commit, dispatch }, payload) {
       commit('SET_BUSINESS_INFO', payload);
       dispatch('loadEmployee', payload && payload.id);

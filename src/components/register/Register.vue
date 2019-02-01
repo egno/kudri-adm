@@ -12,7 +12,7 @@
         v-model="ftype"
         :items="roles"
         item-text="name"
-        item-value="value"
+        item-value="name"
         label="Ваш бизнес"
         :rules="froleRules"
       />
@@ -223,7 +223,7 @@ export default {
     ...mapGetters({
       loggedIn: 'loggedIn',
       avatar: 'userAvatar',
-      userID: 'userLogin',
+      userID: 'userID',
       userInfo: 'userInfo'
     }),
     url() {
@@ -237,7 +237,13 @@ export default {
       }
     }
   },
-  watch: {},
+  watch: {
+    userID: function(oldVal, newVal) {
+      if (newVal && oldVal !== newVal) {
+        this.goHome();
+      }
+    }
+  },
   methods: {
     ...mapActions([
       'alert',
@@ -246,6 +252,11 @@ export default {
       'openMessageWindow',
       'register'
     ]),
+    goHome() {
+      this.$router.push({
+        name: 'home'
+      });
+    },
     registerAndLogin() {
       if (this.$refs.passwords.validate()) {
         this.register({
@@ -260,7 +271,8 @@ export default {
         Api()
           .post(this.url, {
             login: this.flogin,
-            code: null
+            code: null,
+            j: { category: this.ftype }
           })
           .then(res => {
             this.sended = true;
