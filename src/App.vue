@@ -79,17 +79,20 @@ export default {
 </script>
 
 <style>
-#app,
-#app .headline {
-  font-family: 'Roboto-Slab', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, 'Helvetica Neue', Ubuntu, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-.v-toolbar {
-  z-index: 10;
-}
-.v-navigation-drawer {
-  z-index: 11;
-}
+  #app .headline {
+    font-family: 'Roboto-Slab', sans-serif!important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  #app {
+    font-family: 'Lato', sans-serif!important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .v-toolbar {
+    z-index: 10;
+  }
+  .v-navigation-drawer {
+    z-index: 11;
+  }
 </style>

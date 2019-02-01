@@ -14,20 +14,9 @@
         headline
         class="title"
       >
-        {{ businessInfo.name }}, {{ businessInfo.category }}
+        {{ businessInfo.category }} {{ businessInfo.name }}
       </VFlex>
-      <VFlex>
-        <VBtn
-          v-if="defaultAction"
-          key="mainButton"
-          color="primary"
-          :href="href"
-          :target="target"
-          @click="onDefaultAction"
-        >
-          {{ defaultAction.label }}
-        </VBtn>
-      </VFlex>
+      
 
       <VFlex v-if="showEmployee">
         <v-select

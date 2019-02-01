@@ -13,6 +13,7 @@
     "@mdi/font": "^3.3.92",
     "axios": "^0.18.0",
     "babel-runtime": "^6.26.0",
+    "lato-font-face": "^1.1.0",
     "lodash": "^4.17.11",
     "material-design-icons-iconfont": "^4.0.3",
     "promise-polyfill": "^8.1.0",

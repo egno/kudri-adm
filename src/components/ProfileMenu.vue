@@ -1,6 +1,7 @@
 <template>
   <VMenu
     v-model="menu"
+    left
     :close-on-content-click="false"
   >
     <VBtn
