@@ -1,7 +1,13 @@
 <template>
   <VMenu
+    v-if="loggedIn"
     v-model="menu"
     left
+    full-width
+    offset-y
+    disable-resize-watcher
+    min-width="150"
+    max-width="150"
     :close-on-content-click="false"
   >
     <VBtn
@@ -15,20 +21,12 @@
       >
         <VFlex>
           <UserAvatar
-            v-if="loggedIn"
             class="ma-1"
             :name="displayName"
             :src="avatar"
           />
         </VFlex>
-        <VFlex
-          v-if="!loggedIn"
-          class="hidden-sm-and-down"
-        >
-          {{ "Войти" }}
-        </VFlex>
         <div
-          v-else
           style="width: 24px; height: 24px"
         >
           <v-icon>expand_more</v-icon>
@@ -36,7 +34,7 @@
       </VLayout>
     </VBtn>
     <VList>
-      <template v-if="loggedIn">
+      <template>
         <VListTile
           v-for="(item, index) in menuList"
           :key="index"
@@ -44,9 +42,45 @@
           @click="menuHandler(item.action)"
         >
           <VListTileTitle>{{ item.title }}</VListTileTitle>
+          <span
+            v-if="item.count"
+            flat
+          >
+            {{ item.count }}
+          </span>
         </VListTile>
       </template>
-      <template v-else>
+    </VList>
+  </VMenu>
+  <VMenu
+    v-else
+    v-model="menu"
+    left
+    full-width
+    offset-y
+    disable-resize-watcher
+    min-width="300"
+    max-width="300"
+    :close-on-content-click="false"
+  >
+    <VBtn
+      slot="activator"
+      flat
+    >
+      <VLayout
+        align-center
+        row
+        spacer
+      >
+        <VFlex
+          class="hidden-sm-and-down"
+        >
+          {{ "Войти" }}
+        </VFlex>
+      </VLayout>
+    </VBtn>
+    <VList>
+      <template>
         <VCardText>
           <VForm>
             <VTextField
@@ -69,7 +103,6 @@
         <VCardActions>
           <VSpacer />
           <VBtn
-            color="primary"
             @click="sendLogin"
           >
             Войти
@@ -83,6 +116,7 @@
 <script>
 import router from '@/router';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
+
 import { mapGetters, mapActions } from 'vuex';
 import _ from 'lodash';
 
@@ -92,7 +126,7 @@ export default {
     source: { type: String, default: () => '' }
   },
   data: () => ({
-    drawer: null,
+    dialog: false,
     errorMessage: null,
     flogin: 'manager000000050@test.com',
     fpassword: '000000050',
@@ -102,11 +136,13 @@ export default {
     snackColor: 'error',
     menuList: [
       {
-        title: 'Мой профиль'
+        title: 'Мой профиль',
+        action: 'drawer'
       },
       {
         title: 'Сообщения',
-        route: { name: 'messages' }
+        route: { name: 'messages' },
+        count: 2
       },
       {
         title: 'Выйти',
@@ -122,6 +158,9 @@ export default {
       userID: 'userLogin',
       userInfo: 'userInfo'
     }),
+    menuWidth() {
+      return this.loggedIn ? '154' : '300';
+    },
     displayName() {
       if (!this.userInfo) return;
       if (this.userInfo.data) {
@@ -161,12 +200,18 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['login', 'logout']),
+    ...mapActions([
+        'login',
+        'logout',
+        'openProfileDrawer']),
     menuHandler(action) {
       this.menu = false;
       switch (action) {
         case 'logout':
           this.sendLogout();
+          break;
+        case 'drawer':
+          this.openDrawer();
           break;
         default:
       }
@@ -175,10 +220,12 @@ export default {
       this.login({ login: this.flogin, pass: this.fpassword });
       this.menu = false;
     },
+    openDrawer() {
+      this.openProfileDrawer();
+    },
     sendLogout() {
       this.logout();
       router.push({ name: 'home' });
-      this.menu = false;
     }
   }
 };
