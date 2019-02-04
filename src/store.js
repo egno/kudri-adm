@@ -25,6 +25,7 @@ export default new Vuex.Store({
     defaultAppTitle: 'UNO',
     employee: [],
     messageWindow: false,
+    profileDrawer: false,
     navBarVisible: true,
     schedule: [],
     searchString: '',
@@ -54,6 +55,7 @@ export default new Vuex.Store({
       return getters.userID;
     },
     messageWindow: state => state.messageWindow,
+    profileDrawer: state => state.profileDrawer,
     navBarVisible: state => state.navBarVisible,
     schedule: state => state.schedule,
     searchString: state => state.searchString,
@@ -130,6 +132,9 @@ export default new Vuex.Store({
     MESSAGE_WINDOW(state, payload) {
       state.messageWindow = !!payload;
     },
+    PROFILE_DRAWER(state, payload) {
+      state.profileDrawer = !!payload;
+    },
     NAVBAR(state, payload) {
       var status = payload == undefined ? !state.navBarVisible : payload;
       state.navBarVisible = status;
@@ -181,6 +186,9 @@ export default new Vuex.Store({
         dispatch('sendMessage', payload);
       }
       commit('MESSAGE_WINDOW', false);
+    },
+    closeProfileDrawer({ commit }) {
+      commit('PROFILE_DRAWER', false);
     },
     delAlert({ commit }, payload) {
       commit('DEL_ALERT', payload);
@@ -347,6 +355,9 @@ export default new Vuex.Store({
     },
     openMessageWindow({ commit }) {
       commit('MESSAGE_WINDOW', true);
+    },
+    openProfileDrawer({ commit }) {
+      commit('PROFILE_DRAWER', true);
     },
     register({ commit, dispatch }, payload) {
       const registerPath = 'rpc/register';

@@ -71,6 +71,11 @@ export default new Router({
       path: '/businessCard/v/:id/:date',
       name: 'businessVisit',
       component: () => import('./views/VisitCalendar.vue')
+    },
+    {
+      path: '/managerCard',
+      name: 'managerCard',
+      component: () => import('./views/ManagerCard.vue')
     }
   ]
 });
