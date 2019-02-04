@@ -22,7 +22,7 @@ import AddressLink from '@/components/yandex/AddressLink.vue';
 export default {
   components: { AddressLink },
   props: {
-    address: { default: null },
+    address: { type: [String, Object], default: null },
     captionClass: {
       type: String,
       default: ''

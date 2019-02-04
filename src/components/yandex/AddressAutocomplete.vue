@@ -52,7 +52,7 @@ import { mapActions } from 'vuex';
 
 export default {
   props: {
-    value: { default: undefined },
+    value: { type: [String, Object], default: undefined },
     label: { type: String, default: undefined },
     prependIcon: { type: String, default: undefined }
   },
