@@ -76,6 +76,9 @@ export default {
     filialsCount() {
       return this.business && this.business.j && this.business.j.filials;
     },
+    galleryCount() {
+      return this.business && this.business.j && this.business.j.gallery;
+    },
     isBusinessCard() {
       const businessCards = [
         'businessCard',
@@ -161,7 +164,7 @@ export default {
         },
         {
           title: 'Галерея',
-          count: '12',
+          count: this.galleryCount,
           route: { name: 'businessCardGallery', id: this.$route.params.id },
           show: this.loggedIn && !this.isManagerMenu
         }

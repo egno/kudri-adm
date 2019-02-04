@@ -158,6 +158,9 @@ export default {
       }
       return null;
     },
+    business() {
+      return this.id;
+    },
     hasAddress() {
       return !!(
         this.data &&

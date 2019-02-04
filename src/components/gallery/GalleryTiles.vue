@@ -21,7 +21,10 @@
             tile
             class="d-flex"
           >
-            <v-img :src="image">
+            <v-img
+              :src="image"
+              aspect-ratio="1"
+            >
               <v-layout
                 slot="placeholder"
                 fill-height
@@ -69,11 +72,10 @@
                 @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
               >
               <p v-if="isInitial">
-                Drag your file(s) here to begin
-                <br>or click to browse
+                Перетащите фалы сюда
               </p>
               <p v-if="!isInitial">
-                Uploading {{ fileCount }} files...
+                Загружено файлов: {{ fileCount }}
               </p>
             </div>
           </form>
@@ -85,20 +87,21 @@
 
 <script>
 import axios from 'axios';
+import { mapGetters } from 'vuex';
+import Api from '@/api/backend';
+import { uuidv4 } from '@/components/utils';
 
 export default {
   props: {
     edit: { type: Boolean, default: false },
-    images: {
-      type: Array,
-      default() {
-        return [];
-      }
-    }
+    company: { type: String, default: undefined },
+    service: { type: String, default: undefined },
+    employee: { type: String, default: undefined }
   },
   data() {
     return {
       full: false,
+      data: [],
       index: 0,
       isInitial: true,
       maxImages: 9,
@@ -106,7 +109,15 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(['business']),
+    addPlace() {
+      return this.edit && !this.more;
+    },
+    currentCompany() {
+      return this.company || this.business;
+    },
     currentImages() {
+      if (!this.images) return;
       if (!this.full) {
         return this.images.slice(
           0,
@@ -116,32 +127,89 @@ export default {
       }
       return this.images;
     },
-    more() {
-      return this.images.length > this.currentImages.length;
+    filterString() {
+      let cond = [`business_id.eq.${this.currentCompany}`];
+      if (this.service) {
+        cond.push(`services.cs.{${this.service}}`);
+      }
+      if (this.employee) {
+        cond.push(`employees.cs.{${this.employee}}`);
+      }
+      return this.currentCompany && `and=(${cond.join(',')})`;
     },
-    addPlace() {
-      return this.edit && !this.more;
+    images() {
+      return (
+        this.data &&
+        this.business &&
+        this.data.map(
+          x => `${process.env.VUE_APP_IMAGES}${this.business}/${x.id}`
+        )
+      );
+    },
+    more() {
+      return this.images && this.images.length > this.currentImages.length;
     }
+  },
+  watch: {
+    currentCompany: 'load'
+  },
+  mounted() {
+    this.load();
   },
   methods: {
     filesChange(fieldName, fileList) {
       const formData = new FormData();
+      let fileNames = [];
       if (!fileList.length) return;
       Array.from(Array(fileList.length).keys()).map(x => {
-        formData.append(fieldName, fileList[x], fileList[x].name);
+        const newFile = { file: fileList[x].name, path: uuidv4() };
+        fileNames.push(newFile);
+        formData.append(fieldName, fileList[x], newFile.path);
       });
-      this.saveImage(formData);
+      this.saveImage(formData, fileNames);
     },
-    saveImage(formData) {
+    load() {
+      if (!this.filterString) return;
+      let vm = this;
+      Api()
+        .get(`gallery?${this.filterString}`)
+        .then(res => res.data)
+        .then(res => {
+          vm.data = res.map(x => {
+            return { id: x.id, j: x.j };
+          });
+        });
+    },
+    saveImage(formData, fileNames) {
+      console.log(formData, fileNames);
       this.isInitial = false;
       let vm = this;
+      if (!this.business) return;
       axios
         .post(process.env.VUE_APP_UPLOAD, formData, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-            // TODO подтянуть реальный id бизнеса
-            business_id: '1a7ce435-0a77-11e9-9a7e-f7a172b556a7'
+            business_id: this.business
           }
+        })
+        .then(() => {
+          let url = 'gallery';
+          let payload = fileNames.map(x => {
+            return {
+              id: x.path,
+              business_id: this.business,
+              j: {
+                file_name: x.file,
+                service: [this.service],
+                employee: [this.employee]
+              }
+            };
+          });
+          Api()
+            .post(url, payload)
+            .then(() => {
+              vm.data = [...payload, ...vm.data];
+            });
         })
         .then(() => {
           vm.isInitial = true;

@@ -85,6 +85,9 @@ export default {
       }
       return null;
     },
+    business() {
+      return this.id;
+    },
     name() {
       if (this.data.j) {
         return this.data.j.name;
@@ -117,15 +120,12 @@ export default {
       axios
         .post(process.env.VUE_APP_UPLOAD, formData, {
           headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-            business_id: this.data.parent
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
           }
         })
         .then(function() {
           vm.data.j.avatar = newFileName;
         })
-        .then(() => vm.sendData())
         .catch(function() {
           console.log('FAILURE!!');
         });

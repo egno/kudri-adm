@@ -8,7 +8,7 @@
         <v-card-title>Компания</v-card-title>
         <v-responsive>
           <gallery-tiles
-            :images="images"
+            service="SPA"
             edit
           />
         </v-responsive>

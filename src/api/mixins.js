@@ -23,7 +23,7 @@ export const backendMixins = {
       axios
         .post(process.env.VUE_APP_UPLOAD, formData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
           }
         })
         .then(function() {
