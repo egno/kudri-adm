@@ -189,7 +189,7 @@ export default {
         .post(process.env.VUE_APP_UPLOAD, formData, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-            business_id: this.business
+            businessid: this.business
           }
         })
         .then(() => {
