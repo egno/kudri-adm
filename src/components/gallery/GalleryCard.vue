@@ -1,47 +1,41 @@
 <template>
-  <v-layout
-    row
-    align-center
-  >
-    <v-flex>
-      <v-card max-width="30em">
-        <v-card-title>Компания</v-card-title>
-        <v-responsive>
-          <gallery-tiles
-            service="SPA"
-            edit
-          />
-        </v-responsive>
-      </v-card>
-    </v-flex>
-    <v-flex>
-      <v-card max-width="30em">
-        <v-card-title>Сотрудники</v-card-title>
-        <v-responsive>
-          <gallery-tiles
-            :images="images"
-            edit
-          />
-        </v-responsive>
-      </v-card>
-    </v-flex>
-  </v-layout>
+  <v-card max-width="30em">
+    <v-card-title>
+      <v-layout column>
+        <v-flex
+          class="caption font-weight-medium grey--text"
+          pa-0
+        >
+          {{ subtitle }}
+        </v-flex>
+        <v-flex pa-0>
+          {{ title }}
+        </v-flex>
+      </v-layout>
+    </v-card-title>
+    <v-responsive>
+      <gallery-tiles
+        :employee="employee"
+        :images="images"
+        edit
+      />
+    </v-responsive>
+  </v-card>
 </template>
 
 <script>
 import GalleryTiles from '@/components/gallery/GalleryTiles.vue';
 export default {
   components: { GalleryTiles },
+  props: {
+    title: { type: String, default: '' },
+    subtitle: { type: String, default: '' },
+    employee: { type: String, default: undefined },
+    service: { type: String, default: undefined },
+    images: { type: Array, default: undefined }
+  },
   data() {
-    return {
-      images: [
-        'https://placekitten.com/801/800',
-        'https://placekitten.com/802/800',
-        'https://placekitten.com/803/800',
-        'https://placekitten.com/804/800',
-        'https://placekitten.com/820/800'
-      ]
-    };
+    return {};
   }
 };
 </script>

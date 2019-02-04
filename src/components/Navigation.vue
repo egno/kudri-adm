@@ -86,6 +86,8 @@ export default {
         'businessCardEmployee',
         'businessCardFilal',
         'businessCardGallery',
+        'businessCardServiceGallery',
+        'businessCardEmployeeGallery',
         'businessCardService',
         'businessVisit',
         'employeeCard'

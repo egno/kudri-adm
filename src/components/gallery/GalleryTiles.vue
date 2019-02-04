@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-container
-      grid-list-sm
+      grid-list-xs
       fluid
       align-content-space-between
       fill-height
@@ -50,7 +50,7 @@
             large
             @click="full=true"
           >
-            Ещё {{ images.length - currentImages.length }}
+            Ещё {{ imagesArray.length - currentImages.length }}
           </v-btn>
         </v-flex>
         <v-flex
@@ -96,7 +96,8 @@ export default {
     edit: { type: Boolean, default: false },
     company: { type: String, default: undefined },
     service: { type: String, default: undefined },
-    employee: { type: String, default: undefined }
+    employee: { type: String, default: undefined },
+    images: { type: Array, default: undefined }
   },
   data() {
     return {
@@ -117,15 +118,15 @@ export default {
       return this.company || this.business;
     },
     currentImages() {
-      if (!this.images) return;
+      if (!this.imagesArray) return;
       if (!this.full) {
-        return this.images.slice(
+        return this.imagesArray.slice(
           0,
           this.maxImages -
-            (this.edit || this.images.length !== this.maxImages ? 1 : 0)
+            (this.edit || this.imagesArray.length !== this.maxImages ? 1 : 0)
         );
       }
-      return this.images;
+      return this.imagesArray;
     },
     filterString() {
       let cond = [`business_id.eq.${this.currentCompany}`];
@@ -137,7 +138,7 @@ export default {
       }
       return this.currentCompany && `and=(${cond.join(',')})`;
     },
-    images() {
+    imagesArray() {
       return (
         this.data &&
         this.business &&
@@ -147,11 +148,15 @@ export default {
       );
     },
     more() {
-      return this.images && this.images.length > this.currentImages.length;
+      return (
+        this.imagesArray && this.imagesArray.length > this.currentImages.length
+      );
     }
   },
   watch: {
-    currentCompany: 'load'
+    currentCompany: 'load',
+    business: 'load',
+    images: 'load'
   },
   mounted() {
     this.load();
@@ -169,6 +174,10 @@ export default {
       this.saveImage(formData, fileNames);
     },
     load() {
+      if (this.images) {
+        this.data = this.images;
+        return;
+      }
       if (!this.filterString) return;
       let vm = this;
       Api()
