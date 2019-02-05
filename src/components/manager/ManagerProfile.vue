@@ -8,17 +8,18 @@
         class="avatar"
         fab
         left
-        large
         @click="avatarEdit = !avatarEdit"
       >
         <UserAvatar
           :name="name"
-          size="4em"
+          size="100px"
           :src="avatar"
+          :required="true"
         />
       </VBtn>
       <VTextField
         v-model="fname"
+        class="centered-input"
         name="fname"
         label="Имя"
         type="text"
@@ -26,6 +27,7 @@
       />
       <VTextField
         v-model="flastname"
+        class="centered-input"
         name="flastname"
         label="Фамилия"
         :rules="[required]"
@@ -33,6 +35,7 @@
       />
       <VTextField
         v-model="femail"
+        class="centered-input"
         name="femail"
         label="e-mail"
         type="email"
@@ -106,29 +109,31 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-a {
-  text-decoration: none;
-}
-.drawer {
-  .title {
-    font-size: 18px !important;
+  a {
+    text-decoration: none;
   }
-}
-.avatar {
-  margin-bottom: 35px;
-}
-.display-3 {
-  margin-bottom: 75px;
-}
-.v-input {
-  margin-bottom: 15px;
-}
-.v-text-field {
-  input,
-  label {
-    &.v-label--active {
-      transform: scale(1) translateY(-18px);
+  .drawer {
+    .title {
+      font-size: 18px!important;
     }
   }
-}
+  .avatar {
+    margin-bottom: 35px;
+    height: 100px;
+    width: 100px;
+    left: 0;
+  }
+  .display-3 {
+    margin-bottom: 75px;
+  }
+  .v-input {
+    margin-bottom: 15px;
+  }
+  .v-text-field {
+    input, label {
+      &.v-label--active {
+        transform: scale(1) translateY(-18px);
+      }
+    }
+  }
 </style>

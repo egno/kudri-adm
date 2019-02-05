@@ -84,25 +84,30 @@ export default {
 
 <style lang="scss">
   #app {
-    .title {
-      font-size: 18px!important;
-    }
-    .headline,.title {
-    }
-    .v-btn.success {
-      width: 240px;
-      height: 56px;
-      background: linear-gradient(270deg, #C9A15D -9.86%, #BA9462 103.49%);
-      &:hover {
-        background: #07101C!important;
+    .v-btn {
+      &.success {
+        width: 240px;
+        height: 56px;
+        box-shadow: none !important;
+        background: linear-gradient(270deg, #C9A15D -9.86%, #BA9462 103.49%);
+        &:hover {
+          background: #07101C !important;
+          box-shadow: none !important;
+        }
+        &:active {
+          background: #142941 !important;
+          box-shadow: none !important;
+        }
+        .v-ripple__container {
+          display: none !important;
+        }
       }
-      &:active {
-        background: #142941!important;
+      &.avatar {
+        box-shadow: none !important;
       }
     }
     .v-text-field {
       input, label {
-        text-align: center;
         max-width: 100%;
         width: 100%;
         text-transform: uppercase!important;
@@ -112,6 +117,11 @@ export default {
           font-size: 13px;
           color: #07101C!important;
           transform: scale(1) translateY(-18px);
+        }
+      }
+      &.centered-input {
+        input, label {
+          text-align: center;
         }
       }
       label {

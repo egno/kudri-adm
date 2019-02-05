@@ -3,6 +3,7 @@
     disable-resize-watcher
     app
     width="240"
+    class="navigation"
     @input="onInput($event)"
   >
     <VToolbar flat>
@@ -27,7 +28,11 @@
         <VListTileContent>
           <VListTileTitle>{{ item.title }}</VListTileTitle>
         </VListTileContent>
-        <VListTileAction>{{ item.count }}</VListTileAction>
+        <VListTileAction>
+          <span class="list-item--count">
+            {{ item.count }}
+          </span>
+        </VListTileAction>
         <div
           v-show="$route.name === (item.route && item.route.name) && (item.action)"
           class="add-btn"
@@ -219,20 +224,52 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.v-navigation-drawer {
+  &.navigation {
+    background: linear-gradient(180.36deg, #142941 0.06%, #07101C 85.63%);
+    .v-list {
+      background: transparent;
+      padding: 0;
+      .list-item--count {
+        padding-right: 24px;
+      }
+      .v-list__tile--link {
+        color: #fff!important;
+        &:hover {
+          background-color: rgba(137, 149, 175, 0.2);
+        }
+      }
+    }
+
+    .v-toolbar, .v-toolbar__content {
+      height: 56px!important;
+    }
+
+  .v-list__tile {
+    padding-right: 0 !important;
+    padding-left: 40px;
+  }
+  .theme--light.v-toolbar {
+    background: transparent;
+  }
+    .add-btn {
+      width: 40px;
+      height: 100%;
+      background: #ef4d37;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-left: 10px;
+    }
+  }
+  
+  
+  
+}
 .v-navigation-drawer > .v-list:not(.v-list--dense) .v-list__tile {
   padding-right: 0;
 }
-.v-list__tile {
-  padding-right: 0 !important;
-}
-.add-btn {
-  width: 40px;
-  height: 100%;
-  background: #ef4d37;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-left: 10px;
-}
+
+
 </style>

@@ -5,17 +5,32 @@
     :color="color.bg"
     :tile="tile"
   >
-    <img
-      v-if="image_exists"
-      :src="imagePath"
-      alt
-    >
-    <div
-      v-else
-      :class="`avatar-letters font-weight-bold ${color.bg}--text text--${color.text}-4`"
-    >
-      {{ initials }}
-    </div>
+    <template v-if="required">
+      <img
+        v-if="!valid_error"
+        :src="imagePath"
+        alt
+      >      
+      <img
+        v-else
+        :src="userError"
+        alt
+      >      
+    </template>
+    
+    <template v-else>
+      <img
+        v-if="image_exists"
+        :src="imagePath"
+        alt
+      >      
+      <div
+        v-else
+        :class="`avatar-letters font-weight-bold ${color.bg}--text text--${color.text}-4`"
+      >        
+        {{ initials }}
+      </div>
+    </template>
   </VAvatar>
 </template>  
 
@@ -27,10 +42,14 @@ export default {
     size: { type: String, default: '3em' },
     name: { type: String, default: '' },
     src: { type: String, default: '' },
-    tile: { type: Boolean, default: false }
+    tile: { type: Boolean, default: false },
+    required: { type: Boolean, default: false },
+    validError: { type: Boolean, default: false },
   },
   data() {
     return {
+      user: require('@/assets/user.svg'),
+      userError: require('@/assets/user-error.svg'),
       grayScaleColors: { bg: 'grey', text: 'lighten' },
       colors: [
         { bg: 'red', text: 'lighten' },
@@ -78,10 +97,11 @@ export default {
         .join('');
     },
     imagePath() {
-      if (this.src) {
+      if (this.src !== '' && this.src !== null && !this.valid_error) {
         return `${process.env.VUE_APP_IMAGES || ''}${this.src}`;
+      } else {
+        return this.user
       }
-      return '';
     }
   },
   watch: {
@@ -112,5 +132,11 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+  .v-avatar {
+    margin: 0!important;
+    img {
+      background: #fff;
+    }
+  }
 </style>
