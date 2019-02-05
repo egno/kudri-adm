@@ -349,6 +349,7 @@ export default new Vuex.Store({
     logout({ commit }) {
       commit('SET_TOKEN', '');
       commit('SET_USERINFO', {});
+      commit('SET_BUSINESS_INFO', {});
     },
     navBar({ commit }, payload) {
       commit('NAVBAR', payload);
