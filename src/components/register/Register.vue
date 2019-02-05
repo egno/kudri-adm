@@ -5,16 +5,13 @@
     class="text-xs-center"
   >
     <VForm
-      v-if="!sended"
+      v-if="!sended && !keyCode"
       ref="formLogin"
     >
       <VSelect
         v-model="ftype"
         :items="roles"
-        item-text="name"
-        item-value="name"
         label="Ваш бизнес"
-        :rules="froleRules"
       />
       <VTextField
         id="flogin"
@@ -33,7 +30,7 @@
       </VBtn>
     </VForm>
 
-    <div v-if="loginIsEmail === true">
+    <div v-if="loginIsEmail === true && !keyCode">
       <div>
         Вам на почту
         <strong>{{ flogin }}</strong>
@@ -51,7 +48,7 @@
     </div>
 
     <VForm
-      v-if="loginIsEmail === false && !showPasswordInputs"
+      v-if="loginIsEmail === false && !showPasswordInputs && !keyCode"
       ref="formCode"
     >
       <div>
@@ -119,6 +116,10 @@
       </VBtn>
     </VForm>
 
+    <div v-if="keyCode">
+      {{ badCode }}
+    </div>
+
     <a
       href="#"
       @click="openMessageWindow"
@@ -165,38 +166,14 @@ export default {
       showPasswordInputs: false,
       ftype: '',
       roles: [
-        {
-          name: 'Салон красоты',
-          value: '1'
-        },
-        {
-          name: 'Spa салон',
-          value: '2'
-        },
-        {
-          name: 'Массажный салон',
-          value: '3'
-        },
-        {
-          name: 'Фитнес клуб',
-          value: '4'
-        },
-        {
-          name: 'Тату салон',
-          value: '5'
-        },
-        {
-          name: 'Маникюрная студия',
-          value: '6'
-        },
-        {
-          name: 'Косметологический кабинет',
-          value: '7'
-        },
-        {
-          name: 'Частный мастер',
-          value: '8'
-        }
+        'Салон красоты',
+        'Spa салон',
+        'Массажный салон',
+        'Фитнес клуб',
+        'Тату салон',
+        'Маникюрная студия',
+        'Косметологический кабинет',
+        'Частный мастер'
       ],
       codeTries: 1,
       flogin: '',
@@ -226,6 +203,9 @@ export default {
       userID: 'userID',
       userInfo: 'userInfo'
     }),
+    keyCode() {
+      return this.$route.params.code;
+    },
     url() {
       return this.flogin.includes('@') ? 'rpc/check_email' : 'rpc/check_phone';
     },
@@ -242,7 +222,8 @@ export default {
       if (newVal && oldVal !== newVal) {
         this.goHome();
       }
-    }
+    },
+    keyCode: 'checkKeyCode'
   },
   methods: {
     ...mapActions([
@@ -252,6 +233,12 @@ export default {
       'openMessageWindow',
       'register'
     ]),
+    checkKeyCode() {
+      if (!this.keyCode) {
+        return;
+      }
+      this.sendKeyCode(this.keyCode);
+    },
     goHome() {
       this.$router.push({
         name: 'home'
@@ -323,7 +310,35 @@ export default {
             this.alert(makeAlert(err));
           });
       }
+    },
+    sendKeyCode(code) {
+      if (!code) return;
+
+      Api()
+        .post('rpc/check_email', {
+          login: null,
+          code: code
+        })
+        .then(res => {
+          if (res.data.status === 'confirmed') {
+            this.showPasswordInputs = true;
+            this.flogin = res.data.login;
+            this.$nextTick(function() {
+              this.$refs.passwords.resetValidation();
+            });
+          }
+          if (res.data.status === 'fail') {
+            this.badCode = 'Ссылка устарела';
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          this.alert(makeAlert(err));
+        });
     }
+  },
+  mounted() {
+    this.checkKeyCode();
   }
 };
 </script>

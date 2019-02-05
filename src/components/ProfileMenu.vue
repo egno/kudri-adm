@@ -193,7 +193,6 @@ export default {
       }
     },
     userInfo(newVal, oldVal) {
-      console.log(oldVal, newVal);
       if (newVal && newVal.role === 'manager' && newVal.role !== oldVal.role) {
         this.$router.push('myBusinessList');
       }

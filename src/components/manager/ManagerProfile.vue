@@ -1,13 +1,9 @@
 <template>
-  <VFlex
-    class="text-xs-center"
-  >
+  <VFlex class="text-xs-center">
     <h2 class="display-3">
       Мой профиль
     </h2>
-    <VForm
-      ref="FormManagerProfile"
-    >
+    <VForm ref="FormManagerProfile">
       <VBtn
         class="avatar"
         fab
@@ -26,13 +22,13 @@
         name="fname"
         label="Имя"
         type="text"
-        :rules="required"
+        :rules="[required]"
       />
       <VTextField
         v-model="flastname"
         name="flastname"
         label="Фамилия"
-        :rules="required"
+        :rules="[required]"
         type="text"
       />
       <VTextField
@@ -62,76 +58,73 @@
 </template>
 
 <script>
-  import UserAvatar from '@/components/avatar/UserAvatar.vue';
-  import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue';
+import UserAvatar from '@/components/avatar/UserAvatar.vue';
+import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue';
 
-  export default {
-    components: {
-      UserAvatar,
-      VueAvatarEditor
+export default {
+  components: {
+    UserAvatar,
+    VueAvatarEditor
+  },
+  data() {
+    return {
+      data: undefined,
+      avatarEdit: false,
+      fname: '',
+      flastname: '',
+      femail: '',
+      required: v => !!v || 'Обязательное поле',
+      email: value => {
+        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return pattern.test(value) || 'Введите действительный e-mail.';
+      }
+    };
+  },
+  computed: {
+    initiales() {
+      return this.fname + ' ' + this.flastname;
     },
-    data() {
-      return {
-        data: undefined,
-        avatarEdit: false,
-        fname: '',
-        flastname: '',
-        femail: '',
-        required: [v => !!v || 'Обязательное поле'],
-        email: value => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          return (
-            pattern.test(value) ||
-            'Введите действительный e-mail.'
-          );
-        }
-
-      };
+    avatar() {
+      return null;
     },
-    computed: {
-        initiales() {
-            return this.fname + ' ' + this.flastname
-        },
-        avatar() {
-          return null
-        },
-        name() {
-          return this.initiales || null;
-        }
-    },
-    methods: {
-      saveProfile() {
-        if (this.$refs.FormManagerProfile.validate()) {
-          console.log('Profile saved!')
-        }
+    name() {
+      return this.initiales || null;
+    }
+  },
+  methods: {
+    saveProfile() {
+      if (this.$refs.FormManagerProfile.validate()) {
+        console.log('Profile saved!');
       }
     }
-  };
+  }
+};
 </script>
 
 <style lang="scss" scoped>
-  a {
-    text-decoration: none;
+a {
+  text-decoration: none;
+}
+.drawer {
+  .title {
+    font-size: 18px !important;
   }
-  .drawer {
-    .title {
-      font-size: 18px!important;
+}
+.avatar {
+  margin-bottom: 35px;
+}
+.display-3 {
+  margin-bottom: 75px;
+}
+.v-input {
+  margin-bottom: 15px;
+}
+.v-text-field {
+  input,
+  label {
+    &.v-label--active {
+      transform: scale(1) translateY(-18px);
     }
   }
-  .avatar {
-    margin-bottom: 35px;
-  }
-  .display-3 {
-    margin-bottom: 75px;
-  }
-  .v-input {
-    margin-bottom: 15px;
-  }
-  .v-text-field {
-    input, label {
-      &.v-label--active {
-        transform: scale(1) translateY(-18px);
-      }
-    }
-  }
+}
 </style>
