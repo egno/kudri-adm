@@ -11,15 +11,17 @@
   },
   "dependencies": {
     "@mdi/font": "^3.3.92",
+    "ajv": "^6.8.1",
     "axios": "^0.18.0",
     "babel-runtime": "^6.26.0",
     "lato-font-face": "^1.1.0",
+    "listr": "^0.14.3",
     "lodash": "^4.17.11",
     "material-design-icons-iconfont": "^4.0.3",
     "promise-polyfill": "^8.1.0",
     "register-service-worker": "^1.5.2",
     "roboto-fontface": "*",
-    "vue": "^2.5.21",
+    "vue": "^2.6.1",
     "vue-axios": "^2.1.4",
     "vue-cache-data": "^1.5.1",
     "vue-gallery-slideshow": "^1.2.10",
@@ -55,7 +57,7 @@
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "vue-cli-plugin-vuetify": "^0.4.6",
-    "vue-template-compiler": "^2.5.21",
+    "vue-template-compiler": "^2.6.1",
     "vuetify-loader": "^1.1.1"
   },
   "gitHooks": {
