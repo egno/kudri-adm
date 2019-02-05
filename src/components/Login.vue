@@ -72,7 +72,7 @@ export default {
     snackColor: 'error'
   }),
   computed: {
-    ...mapGetters(['loggedIn', 'userID'])
+    ...mapGetters(['loggedIn', 'userID', 'userInfo'])
   },
   methods: {
     ...mapActions(['login', 'logout']),

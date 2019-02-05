@@ -26,9 +26,7 @@
             :src="avatar"
           />
         </VFlex>
-        <div
-          style="width: 24px; height: 24px"
-        >
+        <div style="width: 24px; height: 24px">
           <v-icon>expand_more</v-icon>
         </div>
       </VLayout>
@@ -72,9 +70,7 @@
         row
         spacer
       >
-        <VFlex
-          class="hidden-sm-and-down"
-        >
+        <VFlex class="hidden-sm-and-down">
           {{ "Войти" }}
         </VFlex>
       </VLayout>
@@ -102,9 +98,7 @@
         </VCardText>
         <VCardActions>
           <VSpacer />
-          <VBtn
-            @click="sendLogin"
-          >
+          <VBtn @click="sendLogin">
             Войти
           </VBtn>
         </VCardActions>
@@ -197,13 +191,16 @@ export default {
           1
         );
       }
+    },
+    userInfo(newVal, oldVal) {
+      console.log(oldVal, newVal);
+      if (newVal && newVal.role === 'manager' && newVal.role !== oldVal.role) {
+        this.$router.push('myBusinessList');
+      }
     }
   },
   methods: {
-    ...mapActions([
-        'login',
-        'logout',
-        'openProfileDrawer']),
+    ...mapActions(['login', 'logout', 'openProfileDrawer']),
     menuHandler(action) {
       this.menu = false;
       switch (action) {
