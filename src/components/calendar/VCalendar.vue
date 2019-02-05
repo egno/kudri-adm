@@ -3,6 +3,7 @@
     <VFlex
       v-if="showHeader"
       px-2
+      class="month-header"
     >
       <VLayout
         align-center
@@ -11,7 +12,7 @@
         fill-height
       >
         <div
-          class="cal-head"
+          class="cal-head display-3"
         >
           {{ dateMonthHeader }}
         </div>
@@ -21,6 +22,7 @@
             depressed
             flat
             small
+            color="#ffffff"
             @click="addMonth(-1)"
           >
             <v-icon>
@@ -31,7 +33,7 @@
         <div>
           <v-btn
             class="cal-next-prev"
-            
+            color="#ffffff"
             depressed
             flat
             small
@@ -489,10 +491,16 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+  .month-header {
+    background: linear-gradient(270deg, #C9A15D -9.86%, #BA9462 103.49%);
+    height: 40px;
+
+  }
   .cal-head {
     margin-right: 10px;
     font-size: 18px;
     text-transform: capitalize;
+    color: #fff
   }
   .cal-next-prev {
     margin: 0;

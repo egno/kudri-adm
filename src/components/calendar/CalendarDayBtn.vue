@@ -54,4 +54,8 @@ export default {
   }
 };
 </script>
-
+<style lang="scss" scoped>
+  .v-btn--block {
+    color: #fff
+  }
+</style>
