@@ -96,6 +96,10 @@ export default {
       if (this.$refs.FormManagerProfile.validate()) {
         console.log('Profile saved!');
       }
+    },
+    saveImage() {
+      // TODO
+      console.log('saveImage');
     }
   }
 };
