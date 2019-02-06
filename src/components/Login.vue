@@ -32,6 +32,7 @@
           name="email"
           label="e-mail"
           type="text"
+          browser-autocomplete="username"
         />
         <VTextField
           id="password"
@@ -40,6 +41,7 @@
           name="password"
           label="Пароль"
           type="password"
+          browser-autocomplete="current-password"
         />
       </VForm>
     </VCardText>

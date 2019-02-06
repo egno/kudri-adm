@@ -93,6 +93,7 @@
               name="password"
               label="Пароль"
               type="password"
+              browser-autocomplete="current-password"
             />
           </VForm>
         </VCardText>

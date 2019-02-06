@@ -96,6 +96,7 @@
         :rules="passRules"
         label="Пароль"
         type="password"
+        browser-autocomplete="new-password"
         required
       />
       <VTextField
@@ -106,6 +107,7 @@
         name="fpasswordRepeat"
         label="Повторите пароль"
         type="password"
+        browser-autocomplete="new-password"
         required
       />
       <VBtn

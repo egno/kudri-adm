@@ -258,6 +258,20 @@ export default new Vuex.Store({
     setAppTitle({ commit }, payload) {
       commit('SET_APP_TITLE', payload);
     },
+    setBusiness({ commit }, payload) {
+      const path = `business?id=eq.${payload}`;
+      Api()
+        .get(path)
+        .then(res => res.data[0])
+        .then(res => {
+          commit('SET_BUSINESS_INFO', {
+            id: res.id,
+            category: res.j && res.j.category,
+            name: res.j && res.j.name
+          });
+        })
+        .catch(err => commit('ADD_ALERT', makeAlert(err)));
+    },
     setBusinessInfo({ commit, dispatch }, payload) {
       commit('SET_BUSINESS_INFO', payload);
       dispatch('loadEmployee', payload && payload.id);
