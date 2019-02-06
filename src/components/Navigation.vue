@@ -193,6 +193,7 @@ export default {
       'navBar',
       'loadUserInfo',
       'openMessageWindow',
+      'setAppTitle',
       'setBusinessInfo'
     ]),
     getBusiness() {
@@ -227,7 +228,7 @@ export default {
 <style lang="scss">
 .v-navigation-drawer {
   &.navigation {
-    background: linear-gradient(180.36deg, #142941 0.06%, #07101C 85.63%);
+    background: linear-gradient(180.36deg, #142941 0.06%, #07101c 85.63%);
     .v-list {
       background: transparent;
       padding: 0;
@@ -235,24 +236,25 @@ export default {
         padding-right: 24px;
       }
       .v-list__tile--link {
-        color: #fff!important;
+        color: #fff !important;
         &:hover {
           background-color: rgba(137, 149, 175, 0.2);
         }
       }
     }
 
-    .v-toolbar, .v-toolbar__content {
-      height: 56px!important;
+    .v-toolbar,
+    .v-toolbar__content {
+      height: 56px !important;
     }
 
-  .v-list__tile {
-    padding-right: 0 !important;
-    padding-left: 40px;
-  }
-  .theme--light.v-toolbar {
-    background: transparent;
-  }
+    .v-list__tile {
+      padding-right: 0 !important;
+      padding-left: 40px;
+    }
+    .theme--light.v-toolbar {
+      background: transparent;
+    }
     .add-btn {
       width: 40px;
       height: 100%;
@@ -263,13 +265,8 @@ export default {
       margin-left: 10px;
     }
   }
-  
-  
-  
 }
 .v-navigation-drawer > .v-list:not(.v-list--dense) .v-list__tile {
   padding-right: 0;
 }
-
-
 </style>

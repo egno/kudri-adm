@@ -11,9 +11,7 @@
         row
         fill-height
       >
-        <div
-          class="cal-head display-3"
-        >
+        <div class="cal-head display-3">
           {{ dateMonthHeader }}
         </div>
         <div>
@@ -25,9 +23,7 @@
             color="#ffffff"
             @click="addMonth(-1)"
           >
-            <v-icon>
-              navigate_before
-            </v-icon>
+            <v-icon>navigate_before</v-icon>
           </v-btn>
         </div>
         <div>
@@ -39,14 +35,12 @@
             small
             @click="addMonth(1)"
           >
-            <v-icon>
-              navigate_next
-            </v-icon>
+            <v-icon>navigate_next</v-icon>
           </v-btn>
         </div>
       </VLayout>
     </VFlex>
-    <VFlex>
+    <VFlex v-if="dates">
       <VContainer py-1>
         <VLayout
           v-if="period==='month'"
@@ -186,37 +180,9 @@ export default {
   },
   data() {
     return {
-      currentDay: {"dt":"2019-02-01","j":{"holiday": false}},
+      currentDay: { dt: '2019-02-01', j: { holiday: false } },
       currentVisit: visitInit(),
-      dates: [{"dt":"2019-02-01","j":{"holiday": false}},
-          {"dt":"2019-02-02","j":{"holiday": true}},
-          {"dt":"2019-02-03","j":{"holiday": true}},
-          {"dt":"2019-02-04","j":{"holiday": false}},
-          {"dt":"2019-02-05","j":{"holiday": false}},
-          {"dt":"2019-02-06","j":{"holiday": false}},
-          {"dt":"2019-02-07","j":{"holiday": false}},
-          {"dt":"2019-02-08","j":{"holiday": false}},
-          {"dt":"2019-02-09","j":{"holiday": true}},
-          {"dt":"2019-02-10","j":{"holiday": true}},
-          {"dt":"2019-02-11","j":{"holiday": false}},
-          {"dt":"2019-02-12","j":{"holiday": false}},
-          {"dt":"2019-02-13","j":{"holiday": false}},
-          {"dt":"2019-02-14","j":{"holiday": false}},
-          {"dt":"2019-02-15","j":{"holiday": false}},
-          {"dt":"2019-02-16","j":{"holiday": true}},
-          {"dt":"2019-02-17","j":{"holiday": true}},
-          {"dt":"2019-02-18","j":{"holiday": false}},
-          {"dt":"2019-02-19","j":{"holiday": false}},
-          {"dt":"2019-02-20","j":{"holiday": false}},
-          {"dt":"2019-02-21","j":{"holiday": false}},
-          {"dt":"2019-02-22","j":{"holiday": false}},
-          {"dt":"2019-02-23","j":{"holiday": true}},
-          {"dt":"2019-02-24","j":{"holiday": true}},
-          {"dt":"2019-02-25","j":{"holiday": false}},
-          {"dt":"2019-02-26","j":{"holiday": false}},
-          {"dt":"2019-02-27","j":{"holiday": false}},
-          {"dt":"2019-02-28","j":{"holiday": false}},
-          {"dt":"2019-03-01","j":{"holiday": false}}],
+      dates: undefined,
       days: [],
       edit: false,
       editVisitPage: undefined,
@@ -491,21 +457,20 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-  .month-header {
-    background: linear-gradient(270deg, #C9A15D -9.86%, #BA9462 103.49%);
-    height: 40px;
-
-  }
-  .cal-head {
-    margin-right: 10px;
-    font-size: 18px;
-    text-transform: capitalize;
-    color: #fff
-  }
-  .cal-next-prev {
-    margin: 0;
-    width: 16px;
-    max-width: 16px;
-    min-width: 16px;
-  }
+.month-header {
+  background: linear-gradient(270deg, #c9a15d -9.86%, #ba9462 103.49%);
+  height: 40px;
+}
+.cal-head {
+  margin-right: 10px;
+  font-size: 18px;
+  text-transform: capitalize;
+  color: #fff;
+}
+.cal-next-prev {
+  margin: 0;
+  width: 16px;
+  max-width: 16px;
+  min-width: 16px;
+}
 </style>

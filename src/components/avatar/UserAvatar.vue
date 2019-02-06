@@ -105,6 +105,9 @@ export default {
       } else {
         return this.user;
       }
+    },
+    valid_error() {
+      return !this.src;
     }
   },
   watch: {
