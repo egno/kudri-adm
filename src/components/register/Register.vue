@@ -165,15 +165,6 @@ export default {
       snackbar: false,
       showPasswordInputs: false,
       ftype: '',
-      roles: [
-        'Салон красоты',
-        'Частный мастер',
-        'Spa салон',
-        'Массажный салон',
-        'Тату салон',
-        'Маникюрная студия',
-        'Косметологический кабинет',
-      ],
       codeTries: 1,
       flogin: '',
       fcode: null,
@@ -198,6 +189,7 @@ export default {
   computed: {
     ...mapGetters({
       loggedIn: 'loggedIn',
+      roles: 'businessCategories',
       avatar: 'userAvatar',
       userID: 'userID',
       userInfo: 'userInfo'

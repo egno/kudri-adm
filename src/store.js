@@ -27,6 +27,15 @@ export default new Vuex.Store({
     messageWindow: false,
     profileDrawer: false,
     navBarVisible: true,
+    businessCategories: [
+      'Салон красоты',
+      'Частный мастер',
+      'Spa салон',
+      'Массажный салон',
+      'Тату салон',
+      'Маникюрная студия',
+      'Косметологический кабинет'
+    ],
     schedule: [],
     searchString: '',
     selectedVisit: undefined,
@@ -56,6 +65,7 @@ export default new Vuex.Store({
     },
     messageWindow: state => state.messageWindow,
     profileDrawer: state => state.profileDrawer,
+    businessCategories: state => state.businessCategories,
     navBarVisible: state => state.navBarVisible,
     schedule: state => state.schedule,
     searchString: state => state.searchString,

@@ -126,15 +126,6 @@ export default {
   data() {
     return {
       avatarEdit: false,
-      businessCategories: [
-        'Салон красоты',
-        'Частный мастер',
-        'Spa салон',
-        'Массажный салон',
-        'Тату салон',
-        'Маникюрная студия',
-        'Косметологический кабинет',
-      ],
       categoryDisabled: false,
       data: undefined,
       rules: {
@@ -150,7 +141,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['userInfo']),
+    ...mapGetters({
+      userInfo: 'userInfo',
+      businessCategories: 'businessCategories'
+    }),
     avatar() {
       if (this.data.j) {
         return this.data.j.avatar;
