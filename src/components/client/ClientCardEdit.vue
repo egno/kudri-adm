@@ -53,6 +53,7 @@
                   <VTextField
                     v-model="client.email"
                     label="E-mail"
+                    name="email"
                   />
                 </v-layout>
               </v-flex>

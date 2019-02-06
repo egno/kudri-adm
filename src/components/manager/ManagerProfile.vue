@@ -40,6 +40,7 @@
         label="e-mail"
         type="email"
         :rules="[required, email]"
+        browser-autocomplete="username"
       />
       <VBtn
         color="success"
@@ -109,31 +110,32 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  a {
-    text-decoration: none;
+a {
+  text-decoration: none;
+}
+.drawer {
+  .title {
+    font-size: 18px !important;
   }
-  .drawer {
-    .title {
-      font-size: 18px!important;
+}
+.avatar {
+  margin-bottom: 35px;
+  height: 100px;
+  width: 100px;
+  left: 0;
+}
+.display-3 {
+  margin-bottom: 75px;
+}
+.v-input {
+  margin-bottom: 15px;
+}
+.v-text-field {
+  input,
+  label {
+    &.v-label--active {
+      transform: scale(1) translateY(-18px);
     }
   }
-  .avatar {
-    margin-bottom: 35px;
-    height: 100px;
-    width: 100px;
-    left: 0;
-  }
-  .display-3 {
-    margin-bottom: 75px;
-  }
-  .v-input {
-    margin-bottom: 15px;
-  }
-  .v-text-field {
-    input, label {
-      &.v-label--active {
-        transform: scale(1) translateY(-18px);
-      }
-    }
-  }
+}
 </style>

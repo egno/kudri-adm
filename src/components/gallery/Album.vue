@@ -9,7 +9,7 @@
         <v-flex>{{ title }}</v-flex>
       </v-layout>
     </v-card-title>
-    <v-card-media>
+    <v-responsive>
       <v-img
         :src="image"
         height="10em"
@@ -26,7 +26,7 @@
           color="grey lighten-5"
         />
       </v-layout>
-    </v-card-media>
+    </v-responsive>
   </v-card>
 </template>
 

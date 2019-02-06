@@ -29,6 +29,8 @@
               v-model="data.data.email"
               label="E-mail"
               prepend-icon="email"
+              type="text"
+              browser-autocomplete="username"
             />
           </VFlex>
         </VLayout>

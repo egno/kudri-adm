@@ -85,6 +85,7 @@
               name="email"
               label="e-mail"
               type="text"
+              browser-autocomplete="login"
             />
             <VTextField
               id="password"
