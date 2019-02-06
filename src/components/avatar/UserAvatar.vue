@@ -10,24 +10,24 @@
         v-if="!valid_error"
         :src="imagePath"
         alt
-      >      
+      >
       <img
         v-else
         :src="userError"
         alt
-      >      
+      >
     </template>
-    
+
     <template v-else>
       <img
         v-if="image_exists"
         :src="imagePath"
         alt
-      >      
+      >
       <div
         v-else
         :class="`avatar-letters font-weight-bold ${color.bg}--text text--${color.text}-4`"
-      >        
+      >
         {{ initials }}
       </div>
     </template>
@@ -44,7 +44,7 @@ export default {
     src: { type: String, default: '' },
     tile: { type: Boolean, default: false },
     required: { type: Boolean, default: false },
-    validError: { type: Boolean, default: false },
+    validError: { type: Boolean, default: false }
   },
   data() {
     return {
@@ -89,6 +89,9 @@ export default {
       if (!this.name) {
         return;
       }
+      if (this.name[0] === '7' && this.name.length === 11) {
+        return this.name.slice(-2);
+      }
       return this.name
         .split(splitChars)
         .filter(x => x)
@@ -100,7 +103,7 @@ export default {
       if (this.src !== '' && this.src !== null && !this.valid_error) {
         return `${process.env.VUE_APP_IMAGES || ''}${this.src}`;
       } else {
-        return this.user
+        return this.user;
       }
     }
   },
@@ -133,10 +136,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .v-avatar {
-    margin: 0!important;
-    img {
-      background: #fff;
-    }
+.v-avatar {
+  margin: 0 !important;
+  img {
+    background: #fff;
   }
+}
 </style>
