@@ -128,13 +128,12 @@ export default {
       avatarEdit: false,
       businessCategories: [
         'Салон красоты',
+        'Частный мастер',
         'Spa салон',
         'Массажный салон',
-        'Фитнес клуб',
         'Тату салон',
         'Маникюрная студия',
         'Косметологический кабинет',
-        'Частный мастер'
       ],
       categoryDisabled: false,
       data: undefined,
