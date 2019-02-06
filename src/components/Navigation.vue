@@ -70,7 +70,9 @@ export default {
   computed: {
     ...mapGetters(['defaultAppTitle', 'loggedIn', 'token', 'navBarVisible']),
     businessId() {
-      return this.$route && this.$route.params && this.$route.params.id;
+      return (
+        (this.$route && this.$route.params && this.$route.params.id) || '/'
+      );
     },
     clientsCount() {
       return this.business && this.business.j && this.business.j.clients;
@@ -122,7 +124,10 @@ export default {
         {
           title: 'Сотрудники',
           count: this.employeesCount,
-          route: { name: 'businessCardEmployee', id: this.$route.params.id },
+          route: {
+            name: 'businessCardEmployee',
+            params: { id: this.businessId }
+          },
           show: this.loggedIn && !this.isManagerMenu,
           action: {
             label: 'Добавить сотрудника',
@@ -133,7 +138,10 @@ export default {
         {
           title: 'Услуги',
           count: this.servicesCount,
-          route: { name: 'businessCardService', id: this.$route.params.id },
+          route: {
+            name: 'businessCardService',
+            params: { id: this.businessId }
+          },
           show: this.loggedIn && !this.isManagerMenu,
           action: {
             label: 'Добавить услугу',
@@ -144,7 +152,10 @@ export default {
         {
           title: 'Клиенты',
           count: this.clientsCount,
-          route: { name: 'businessCardClients', id: this.$route.params.id },
+          route: {
+            name: 'businessCardClients',
+            params: { id: this.businessId }
+          },
           show: this.loggedIn && !this.isManagerMenu,
           action: {
             label: 'Добавить клиента',
@@ -155,7 +166,10 @@ export default {
         {
           title: 'Филиалы',
           count: this.filialsCount,
-          route: { name: 'businessCardFilal', id: this.$route.params.id },
+          route: {
+            name: 'businessCardFilal',
+            params: { id: this.businessId }
+          },
           show: this.loggedIn && !this.isManagerMenu,
           action: {
             label: 'Добавить филиал',
@@ -166,13 +180,19 @@ export default {
         {
           title: 'Информация',
           count: undefined,
-          route: { name: 'businessCard', id: this.$route.params.id },
+          route: {
+            name: 'businessCard',
+            params: { id: this.businessId }
+          },
           show: this.loggedIn && !this.isManagerMenu
         },
         {
           title: 'Галерея',
           count: this.galleryCount,
-          route: { name: 'businessCardGallery', id: this.$route.params.id },
+          route: {
+            name: 'businessCardGallery',
+            params: { id: this.businessId }
+          },
           show: this.loggedIn && !this.isManagerMenu
         }
       ];

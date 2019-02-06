@@ -193,8 +193,13 @@ export default {
       }
     },
     userInfo(newVal, oldVal) {
-      if (newVal && newVal.role === 'manager' && newVal.role !== oldVal.role) {
-        this.$router.push('myBusinessList');
+      if (
+        newVal &&
+        newVal.role === 'manager' &&
+        newVal.role !== oldVal.role &&
+        this.$route.name === 'home'
+      ) {
+        this.$router.push({ name: 'myBusinessList' });
       }
     }
   },

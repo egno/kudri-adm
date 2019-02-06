@@ -24,7 +24,7 @@
       >
         <album
           title="Сотрудники"
-          :to="{name:'businessCardEmployeeGallery', id: id}"
+          :to="{name:'businessCardEmployeeGallery', params:{id: id}}"
           :images="imagesEmployees"
         />
       </v-flex>
