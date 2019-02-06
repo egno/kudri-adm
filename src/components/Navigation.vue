@@ -68,10 +68,18 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['defaultAppTitle', 'loggedIn', 'token', 'navBarVisible']),
+    ...mapGetters([
+      'businessInfo',
+      'defaultAppTitle',
+      'loggedIn',
+      'token',
+      'navBarVisible'
+    ]),
     businessId() {
       return (
-        (this.$route && this.$route.params && this.$route.params.id) || '/'
+        (this.$route && this.$route.params && this.$route.params.id) ||
+        (this.businessInfo && this.businessInfo.id) ||
+        'null'
       );
     },
     clientsCount() {
@@ -97,7 +105,8 @@ export default {
         'businessCardEmployeeGallery',
         'businessCardService',
         'businessVisit',
-        'employeeCard'
+        'employeeCard',
+        'employeeGallery'
       ];
       return businessCards.some(x => x === this.$route.name);
     },

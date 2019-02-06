@@ -1,5 +1,5 @@
 <template>
-  <v-card max-width="30em">
+  <v-card width="30em">
     <v-card-title>
       <v-layout column>
         <v-flex
@@ -16,7 +16,9 @@
     <v-responsive>
       <gallery-tiles
         :employee="employee"
+        :service="service"
         :images="images"
+        :to="to"
         edit
       />
     </v-responsive>
@@ -32,7 +34,8 @@ export default {
     subtitle: { type: String, default: '' },
     employee: { type: String, default: undefined },
     service: { type: String, default: undefined },
-    images: { type: Array, default: undefined }
+    images: { type: Array, default: undefined },
+    to: { type: Object, default: undefined }
   },
   data() {
     return {};

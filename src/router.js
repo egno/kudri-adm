@@ -78,6 +78,11 @@ export default new Router({
       component: () => import('./views/BusinessCardGallery.vue')
     },
     {
+      path: '/employeeGallery/:employee',
+      name: 'employeeGallery',
+      component: () => import('./views/EmployeeGalleryFull.vue')
+    },
+    {
       path: '/businessCard/s/:id',
       name: 'businessCardService',
       component: () => import('./views/BusinessCardService.vue')

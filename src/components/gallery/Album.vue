@@ -1,7 +1,7 @@
 <template>
   <v-card
     :to="to"
-    hover
+    :hover="!!to"
   >
     <v-card-title>
       <v-layout row>

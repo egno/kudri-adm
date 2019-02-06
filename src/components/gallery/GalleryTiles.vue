@@ -48,7 +48,7 @@
             block
             depressed
             large
-            @click="full=true"
+            @click="onClickMore"
           >
             Ещё {{ imagesArray.length - currentImages.length }}
           </v-btn>
@@ -97,7 +97,8 @@ export default {
     company: { type: String, default: undefined },
     service: { type: String, default: undefined },
     employee: { type: String, default: undefined },
-    images: { type: Array, default: undefined }
+    images: { type: Array, default: undefined },
+    to: { type: Object, default: undefined }
   },
   data() {
     return {
@@ -189,8 +190,14 @@ export default {
           });
         });
     },
+    onClickMore() {
+      if (this.to) {
+        this.$router.push(this.to);
+      } else {
+        this.full = true;
+      }
+    },
     saveImage(formData, fileNames) {
-      console.log(formData, fileNames);
       this.isInitial = false;
       let vm = this;
       if (!this.business) return;

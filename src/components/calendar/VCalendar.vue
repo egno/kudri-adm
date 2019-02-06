@@ -193,7 +193,7 @@ export default {
   computed: {
     ...mapGetters(['actualDate', 'calendar', 'schedule']),
     business() {
-      return this.businessInfo.id || this.$route.params.id;
+      return this.businessInfo && this.businessInfo.id;
     },
     dateMonthHeader() {
       const d = new Date(this.workDate);
@@ -296,6 +296,7 @@ export default {
       return d && d.j && d.j.schedule;
     },
     fetchData() {
+      if (!this.business) return;
       if (this.workDate) {
         this.setActualDate(this.workDate);
       }

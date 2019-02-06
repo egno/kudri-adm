@@ -48,10 +48,9 @@
       <v-flex
         v-for="emp in employee"
         :key="emp.id"
-        xs12
-        sm6
       >
         <gallery-card
+          :to="{name: 'employeeGallery', params: {employee: emp.id}}"
           :title="emp.j && emp.j.name"
           :subtitle="emp.j && emp.j.category"
           :employee="emp.id"
