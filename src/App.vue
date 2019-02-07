@@ -137,11 +137,52 @@ export default {
           border-color: #8995AF;
         }
       }
+      &.workmode {
+        width: 34px;
+        height: 24px;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        .v-input__slot {
+          &:before, &:after {
+            display: none;
+          }
+        }
+      }
     }
   }
   #app {
     .title {
       font-size: 18px!important;
+    }
+    .workmode-wrap {
+      margin: 0;
+      padding-left: 7px;
+      padding-right: 7px;
+      height: 24px;
+      border-left: 1px solid #8995AF;
+      border-right: 1px solid #8995AF;
+      width: 95px;
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      &:before {
+        content: '';
+        position: absolute;
+        width: 7px;
+        height: 1px;
+        background: #8995AF;
+        top: 58%;
+        left: 45%;
+      }
+      .close {
+        width: 10px;
+        height: 10px;
+        background: url('./assets/close.svg');
+        position: absolute;
+        right: -18px;
+        top: 8px;
+      }
     }
   }
   .v-toolbar {

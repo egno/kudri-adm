@@ -1,44 +1,58 @@
 <template>
-  <VFlex d-flex>
-    <VCard>
-      <VContainer>
+  <VFlex
+    d-flex
+    class="wrapper"
+  >
+    <VLayout
+      column
+      align-center
+      justify-center
+    >
+      <VFlex>
+        <VLayout row>
+          <VFlex>
+            <v-switch
+              v-if="showSwitch"
+              v-model="switchValue"
+            />
+          </VFlex>
+        </VLayout>
+      </VFlex>
+      <VLayout row>
         <VLayout
-          column
           align-center
           justify-center
+          row
         >
-          <VFlex>
-            <VLayout row>
-              <VFlex>
-                <v-switch
-                  v-if="showSwitch"
-                  v-model="switchValue"
-                />
-              </VFlex>
-              <VFlex>
-                <v-card-text>{{ caption }}</v-card-text>
-              </VFlex>
-            </VLayout>
-          </VFlex>
-          <VLayout row>
-            <VFlex>
-              <TimeEdit
-                enabled="!showSwitch || switchValue"
-                :time="startVal"
-                @onEdit="onEditStart"
-              />
-            </VFlex>
-            <VFlex>
-              <TimeEdit
-                enabled="!showSwitch || switchValue"
-                :time="endVal"
-                @onEdit="onEditEnd"
-              />
-            </VFlex>
+          <div
+            v-for="(day, i) in days"
+            :key="i"
+            :style="{ 'z-index': 7 - i }"
+            class="text-xs-center"
+            :class="{ fill : day.select, empty : !day.select }"
+            @click="selectDay(i)"
+          >
+            {{ day.name }}
+          </div>
+          <VLayout class="workmode-wrap">
+            <TimeEdit
+              enabled="!showSwitch || switchValue"
+              :time="startVal"
+              @onEdit="onEditStart"
+            />
+            <TimeEdit
+              enabled="!showSwitch || switchValue"
+              :time="endVal"
+              @onEdit="onEditEnd"
+            />
+            <div
+              class="close"
+              @click="startVal = ''; endVal=''; $emit('onEdit', [startVal, endVal]);"
+            />
           </VLayout>
         </VLayout>
-      </VContainer>
-    </VCard>
+      </VLayout>
+    </VLayout>
   </VFlex>
 </template>
 
@@ -47,24 +61,44 @@ import TimeEdit from '@/components/TimeEdit.vue';
 export default {
   components: { TimeEdit },
   props: {
-    caption: { type: String, default: '' },
+    selected: [],
     periodStart: {
       type: String,
-      default: undefined
+      default: ''
     },
     periodEnd: {
       type: String,
-      default: undefined
+      default: ''
     },
     showSwitch: { type: Boolean, default: false },
     switch: { type: Boolean, default: false }
   },
   data() {
     return {
+      dow: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
       switchValue: undefined,
       startVal: undefined,
-      endVal: undefined
+      endVal: undefined,
     };
+  },
+  computed: {
+    days() {
+      let days = [];
+      this.dow.forEach((el, i) => {
+        let obj = {
+          name: '',
+          select: false
+        };
+        obj.name = el;
+          if (this.selected.length !== 0 && this.selected.includes(i)) {
+          obj.select = true;
+        } else {
+          obj.select = false;
+        }
+        days.push(obj);
+      });
+      return days
+    }
   },
   watch: {
     switchValue: 'loadValues',
@@ -83,6 +117,13 @@ export default {
       this.endVal = payload;
       this.$emit('onEdit', [this.startVal, this.endVal]);
     },
+    selectDay(index) {
+      if (!this.days[index].select) {
+        this.$emit('selectDay', [index, this.startVal, this.endVal]);
+      } else {
+        this.$emit('selectDay', [index, '', '']);
+      }
+    },
     loadValues() {
       this.switchValue = this.switch;
       this.startVal = this.periodStart;
@@ -91,3 +132,44 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+  #app .workmode-wrap{
+    margin-left: 12px;
+  }
+  .wrapper {
+    margin-bottom: 37px;
+  }
+  .fill, .empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: capitalize;
+    margin-right: 6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50px;
+    background: #fff;
+    font-size: 13px;
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+    user-select: none;
+  }
+  .empty {
+    color: rgba(137, 149, 175, 0.35);
+  }
+  .fill {
+    background: #d6dae3;
+    +.fill {
+      &:before {
+        content: '';
+        height: 24px;
+        width: 30px;
+        position: absolute;
+        left: -17px;
+        z-index: -1;
+        background: #d6dae3;
+      }
+    }
+  }
+</style>
