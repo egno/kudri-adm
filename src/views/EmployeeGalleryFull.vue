@@ -34,38 +34,55 @@
           fill-height
           wrap
         >
-          <gallery-card
+          <v-flex
             v-for="(service, n) in services"
             :key="service+n"
-            :title="service"
-            :employee="id"
-            :service="service"
-            :images="serviceImages(service)"
-          />
-          <gallery-card
-            key="others"
-            title="Прочее"
-            :employee="id"
-            :images="serviceImages()"
-          />
+          >
+            <album
+              :title="service"
+              :employee="id"
+              :service="service"
+              :images="serviceImages(service)"
+              @showSlider="showSlider($event)"
+            />
+          </v-flex>
+          <v-flex key="others">
+            <album
+              title="Прочее"
+              :employee="id"
+              :images="serviceImages()"
+            />
+          </v-flex>
         </v-layout>
       </v-responsive>
     </v-card>
+    <album-slider
+      :display="!!sliderImages"
+      :title="sliderTitle"
+      :subtitle="sliderSubTitle"
+      :images="sliderImages"
+      :select="selectedImage"
+      @close="onSliderClose()"
+    />
   </v-container>
 </template>
 
 <script>
-import GalleryCard from '@/components/gallery/GalleryCard.vue';
+import Album from '@/components/gallery/Album.vue';
+import AlbumSlider from '@/components/gallery/AlbumSlider.vue';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import Api from '@/api/backend';
 import { mapActions } from 'vuex';
 
 export default {
-  components: { GalleryCard, UserAvatar },
+  components: { Album, AlbumSlider, UserAvatar },
   data() {
     return {
       data: undefined,
-      images: []
+      images: [],
+      sliderImages: undefined,
+      sliderTitle: '',
+      selectedImage: 0
     };
   },
   computed: {
@@ -77,11 +94,17 @@ export default {
     },
     services() {
       return this.data && this.data.j && this.data.j.services;
+    },
+    sliderSubTitle() {
+      return this.data && this.data.j && this.data.j.name;
     }
   },
   watch: {
     id: 'load',
     business: 'loadBusiness'
+  },
+  mounted() {
+    this.load();
   },
   methods: {
     ...mapActions(['setBusiness']),
@@ -119,10 +142,17 @@ export default {
           )
         );
       }
+    },
+    onSliderClose() {
+      this.sliderImages = undefined;
+      this.selectedImage = undefined;
+      this.sliderTitle = undefined;
+    },
+    showSlider(payload) {
+      this.sliderImages = payload.images;
+      this.selectedImage = payload.selected;
+      this.sliderTitle = payload.title;
     }
-  },
-  mounted() {
-    this.load();
   }
 };
 </script>

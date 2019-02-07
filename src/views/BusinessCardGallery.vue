@@ -16,6 +16,7 @@
         <album
           title="Компания"
           :images="imagesBusiness"
+          @showSlider="showSlider($event)"
         />
       </v-flex>
       <v-flex
@@ -26,6 +27,7 @@
           title="Сотрудники"
           :to="{name:'businessCardEmployeeGallery', params:{id: id}}"
           :images="imagesEmployees"
+          @showSlider="showSlider($event)"
         />
       </v-flex>
       <v-flex
@@ -55,23 +57,35 @@
           :subtitle="emp.j && emp.j.category"
           :employee="emp.id"
           :images="employeeImages(emp.id)"
+          @showSlider="showSlider($event)"
         />
       </v-flex>
     </v-layout>
+    <album-slider
+      :display="!!sliderImages"
+      :title="sliderTitle"
+      :images="sliderImages"
+      :select="selectedImage"
+      @close="onSliderClose()"
+    />
   </v-container>
 </template>
 
 <script>
 import Album from '@/components/gallery/Album.vue';
+import AlbumSlider from '@/components/gallery/AlbumSlider.vue';
 import GalleryCard from '@/components/gallery/GalleryCard.vue';
 import { mapGetters } from 'vuex';
 import Api from '@/api/backend';
 
 export default {
-  components: { Album, GalleryCard },
+  components: { Album, AlbumSlider, GalleryCard },
   data() {
     return {
-      data: []
+      data: [],
+      sliderImages: undefined,
+      sliderTitle: '',
+      selectedImage: 0
     };
   },
   computed: {
@@ -118,6 +132,16 @@ export default {
         this.data &&
         this.data.filter(x => x.employees && x.employees.some(e => e === id))
       );
+    },
+    onSliderClose() {
+      this.sliderImages = undefined;
+      this.selectedImage = undefined;
+      this.sliderTitle = undefined;
+    },
+    showSlider(payload) {
+      this.sliderImages = payload.images;
+      this.selectedImage = payload.selected;
+      this.sliderTitle = payload.title;
     }
   }
 };

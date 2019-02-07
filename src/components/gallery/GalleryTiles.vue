@@ -15,6 +15,7 @@
           v-for="(image, n) in currentImages"
           :key="n"
           xs4
+          @click="showSlider(n)"
         >
           <v-card
             flat
@@ -197,6 +198,10 @@ export default {
         this.full = true;
       }
     },
+    showSlider(payload) {
+      this.$emit('showSlider', payload);
+    },
+
     saveImage(formData, fileNames) {
       this.isInitial = false;
       let vm = this;

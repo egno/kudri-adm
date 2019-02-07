@@ -20,6 +20,7 @@
         :images="images"
         :to="to"
         edit
+        @showSlider="showSlider($event)"
       />
     </v-responsive>
   </v-card>
@@ -39,6 +40,16 @@ export default {
   },
   data() {
     return {};
+  },
+  methods: {
+    showSlider(payload) {
+      this.$emit('showSlider', {
+        selected: payload,
+        images: this.images,
+        title: this.title,
+        subtitle: this.subtitle
+      });
+    }
   }
 };
 </script>
