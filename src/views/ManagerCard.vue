@@ -7,35 +7,29 @@
       xs4
       offset-xs4
     >
-      <ManagerProfile />
+      <UserProfile />
     </VFlex>
   </VContainer>
 </template>
 
 <script>
-import ManagerProfile from '@/components/manager/ManagerProfile.vue';
+import UserProfile from '@/components/user/UserProfile.vue';
 import { mapActions } from 'vuex';
 
 export default {
   components: {
-    ManagerProfile: ManagerProfile,
+    UserProfile
   },
   data() {
     return {
-      data: null,
+      data: null
     };
   },
-  computed: {
-
-  },
-  watch: {
-
-  },
-  mounted() {
-  
-  },
+  computed: {},
+  watch: {},
+  mounted() {},
   methods: {
-    ...mapActions(['setActions']),
+    ...mapActions(['setActions'])
   }
 };
 </script>

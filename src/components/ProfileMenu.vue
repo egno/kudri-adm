@@ -158,13 +158,18 @@ export default {
       return this.loggedIn ? '154' : '300';
     },
     displayName() {
-      if (!this.userInfo) return;
-      if (this.userInfo.data) {
-        if (this.userInfo.data.name) {
-          return this.userInfo.data.name;
-        }
-      }
-      return this.userID;
+      if (!this.userID) return;
+
+      return (
+        (this.userInfo &&
+          this.userInfo.data &&
+          this.userInfo.data.j &&
+          this.userInfo.data.j.name &&
+          this.userInfo.data.j.name +
+            ' ' +
+            (this.userInfo.data.j.surname || '')) ||
+        this.userID
+      );
     }
   },
   watch: {
@@ -198,7 +203,7 @@ export default {
       if (
         newVal &&
         newVal.role === 'manager' &&
-        newVal.role !== oldVal.role &&
+        newVal.role !== (oldVal && oldVal.role) &&
         this.$route.name === 'home'
       ) {
         this.$router.push({ name: 'myBusinessList' });

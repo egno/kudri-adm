@@ -10,10 +10,12 @@ const getters = {
     return getters.userID;
   },
   userAvatar: state => {
-    if (!state.userInfo) return;
-    if (state.userInfo.avatar) return state.userInfo.avatar;
-    if (!state.userInfo.data) return;
-    return state.userInfo.data.avatar;
+    return (
+      state.userInfo &&
+      state.userInfo.data &&
+      state.userInfo.data.j &&
+      state.userInfo.data.j.avatar
+    );
   },
   userID: (state, getters) => {
     const info = getters.userInfo;
@@ -78,6 +80,21 @@ const actions = {
     commit('SET_TOKEN', '');
     commit('SET_USERINFO', {});
     commit('SET_BUSINESS_INFO', {});
+  },
+  setUserAvatar({ dispatch, state }, payload) {
+    if (!payload) return;
+    if (!state.userInfo) return;
+    let j = state.userInfo.data.j;
+    j.avatar = payload;
+    dispatch('uploadUserInfo', j);
+  },
+  uploadUserInfo({ commit }, payload) {
+    const path = 'rpc/set_user_info';
+    Api()
+      .post(path, { j: payload })
+      .then(res => {
+        commit('SET_USERINFO', res.data);
+      });
   }
 };
 

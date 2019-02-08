@@ -55,7 +55,7 @@
     >
       <VueAvatarEditor
         :avatar="avatar"
-        @finished="saveImage"
+        @finished="saveImage($event)"
       />
     </VDialog>
   </VFlex>
@@ -64,6 +64,9 @@
 <script>
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue';
+import { mapGetters, mapActions } from 'vuex';
+import ImageApi from '@/api/images';
+import { canvasToFormData } from '@/components/avatar/utils';
 
 export default {
   components: {
@@ -85,25 +88,67 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(['userAvatar', 'userInfo', 'userID']),
     initiales() {
       return this.fname + ' ' + this.flastname;
     },
     avatar() {
-      return null;
+      return this.userAvatar;
     },
     name() {
       return this.initiales || null;
     }
   },
+  watch: {
+    userID: 'load'
+  },
+  mounted() {
+    this.load();
+  },
   methods: {
+    ...mapActions(['alert', 'setUserAvatar', 'uploadUserInfo']),
+    load() {
+      if (!this.userID) return;
+      this.fname =
+        (this.userInfo &&
+          this.userInfo.data &&
+          this.userInfo.data.j &&
+          this.userInfo.data.j.name) ||
+        '';
+      this.flastname =
+        (this.userInfo &&
+          this.userInfo.data &&
+          this.userInfo.data.j &&
+          this.userInfo.data.j.surname) ||
+        '';
+      this.femail =
+        (this.userInfo && this.userInfo.data && this.userInfo.data.email) || '';
+    },
     saveProfile() {
       if (this.$refs.FormManagerProfile.validate()) {
-        console.log('Profile saved!');
+        const data = {
+          name: this.fname,
+          surname: this.flastname
+        };
+        this.uploadUserInfo(data);
+        this.$emit('close');
       }
     },
-    saveImage() {
-      // TODO
-      console.log('saveImage');
+    saveImage(payload) {
+      if (!payload) return;
+      let formData = canvasToFormData(payload);
+      let vm = this;
+      let newFileName = formData.get('file').name;
+
+      ImageApi()
+        .post('/', formData)
+        .then(() => {
+          vm.setUserAvatar(newFileName);
+          this.avatarEdit = false;
+        })
+        .catch(err => {
+          this.alert({ message: err });
+        });
     }
   }
 };

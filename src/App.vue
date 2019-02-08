@@ -7,12 +7,12 @@
     </VContent>
     <Alerts />
     <SendMessage :edit="messageWindow" />
-    <ManagerProfileModal :show="profileDrawer" />
+    <UserProfileModal :show="profileDrawer" />
   </VApp>
 </template>
 
 <script>
-import ManagerProfileModal from '@/components/manager/ManagerProfileModal.vue';
+import UserProfileModal from '@/components/user/UserProfileModal.vue';
 import Navigation from '@/components/Navigation.vue';
 import TopBar from '@/components/TopBar.vue';
 import Alerts from '@/components/Alerts.vue';
@@ -27,11 +27,11 @@ export default {
     Navigation,
     SendMessage,
     TopBar,
-    ManagerProfileModal
+    UserProfileModal
   },
   data() {
     return {
-        //
+      //
     };
   },
   computed: {
@@ -83,112 +83,115 @@ export default {
 </script>
 
 <style lang="scss">
-  #app {
-    .v-btn {
-      &.success {
-        width: 240px;
-        height: 56px;
+#app {
+  .v-btn {
+    &.success {
+      width: 240px;
+      height: 56px;
+      box-shadow: none !important;
+      background: linear-gradient(270deg, #c9a15d -9.86%, #ba9462 103.49%);
+      &:hover {
+        background: #07101c !important;
         box-shadow: none !important;
-        background: linear-gradient(270deg, #C9A15D -9.86%, #BA9462 103.49%);
-        &:hover {
-          background: #07101C !important;
-          box-shadow: none !important;
-        }
-        &:active {
-          background: #142941 !important;
-          box-shadow: none !important;
-        }
-        .v-ripple__container {
-          display: none !important;
-        }
       }
-      &.avatar {
+      &:active {
+        background: #142941 !important;
         box-shadow: none !important;
+      }
+      .v-ripple__container {
+        display: none !important;
       }
     }
-    .v-text-field {
-      input, label {
-        max-width: 100%;
-        width: 100%;
-        text-transform: uppercase!important;
+    &.avatar {
+      box-shadow: none !important;
+    }
+  }
+  .v-text-field {
+    input,
+    label {
+      max-width: 100%;
+      width: 100%;
+      text-transform: uppercase !important;
+      font-size: 13px;
+      &.v-label--active {
+        opacity: 1;
         font-size: 13px;
-        &.v-label--active {
-          opacity: 1;
-          font-size: 13px;
-          color: #07101C!important;
-          transform: scale(1) translateY(-18px);
-        }
+        color: #07101c !important;
+        transform: scale(1) translateY(-18px);
       }
-      &.centered-input {
-        input, label {
-          text-align: center;
-        }
-      }
+    }
+    &.centered-input {
+      input,
       label {
-        color: #07101C;
-        opacity: 0.35;
-        letter-spacing: 25%;
-      }
-      input {
-        color: #07101C;
-      }
-      .v-input__slot {
-        &:before {
-          border-color: #8995AF;
-        }
-      }
-      &.workmode {
-        width: 34px;
-        height: 24px;
-        padding: 0;
-        margin: 0;
-        overflow: hidden;
-        .v-input__slot {
-          &:before, &:after {
-            display: none;
-          }
-        }
+        text-align: center;
       }
     }
-  }
-  #app {
-    .title {
-      font-size: 18px!important;
+    label {
+      color: #07101c;
+      opacity: 0.35;
+      letter-spacing: 25%;
     }
-    .workmode-wrap {
-      margin: 0;
-      padding-left: 7px;
-      padding-right: 7px;
-      height: 24px;
-      border-left: 1px solid #8995AF;
-      border-right: 1px solid #8995AF;
-      width: 95px;
-      display: flex;
-      justify-content: space-between;
-      position: relative;
+    input {
+      color: #07101c;
+    }
+    .v-input__slot {
       &:before {
-        content: '';
-        position: absolute;
-        width: 7px;
-        height: 1px;
-        background: #8995AF;
-        top: 58%;
-        left: 45%;
+        border-color: #8995af;
       }
-      .close {
-        width: 10px;
-        height: 10px;
-        background: url('./assets/close.svg');
-        position: absolute;
-        right: -18px;
-        top: 8px;
+    }
+    &.workmode {
+      width: 34px;
+      height: 24px;
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+      .v-input__slot {
+        &:before,
+        &:after {
+          display: none;
+        }
       }
     }
   }
-  .v-toolbar {
-    z-index: 10;
+}
+#app {
+  .title {
+    font-size: 18px !important;
   }
-  .v-navigation-drawer {
-    z-index: 11;
+  .workmode-wrap {
+    margin: 0;
+    padding-left: 7px;
+    padding-right: 7px;
+    height: 24px;
+    border-left: 1px solid #8995af;
+    border-right: 1px solid #8995af;
+    width: 95px;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    &:before {
+      content: '';
+      position: absolute;
+      width: 7px;
+      height: 1px;
+      background: #8995af;
+      top: 58%;
+      left: 45%;
+    }
+    .close {
+      width: 10px;
+      height: 10px;
+      background: url('./assets/close.svg');
+      position: absolute;
+      right: -18px;
+      top: 8px;
+    }
   }
+}
+.v-toolbar {
+  z-index: 10;
+}
+.v-navigation-drawer {
+  z-index: 11;
+}
 </style>
