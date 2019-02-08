@@ -107,6 +107,9 @@ export default {
     sendData() {
       // Api().patch(`employee?id=eq.${this.id}`, this.data);
     }
+  },
+  beforeDestroy() {
+    this.$root.$off('onAction', this.onAction);
   }
 };
 </script>

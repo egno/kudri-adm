@@ -89,6 +89,9 @@ export default {
         Api().patch(`filial?id=eq.${data.id}`, data);
       }
     }
+  },
+  beforeDestroy() {
+    this.$root.$off('onAction', this.onAction);
   }
 };
 </script>

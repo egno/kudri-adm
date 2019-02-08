@@ -98,6 +98,9 @@ export default {
           this.alert(makeAlert(err));
         });
     }
+  },
+  beforeDestroy() {
+    this.$root.$off('onAction', this.onAction);
   }
 };
 </script>

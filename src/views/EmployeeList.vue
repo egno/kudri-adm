@@ -90,6 +90,9 @@ export default {
         Api().patch(`employee?id=eq.${data.id}`, data);
       }
     }
+  },
+  beforeDestroy() {
+    this.$root.$off('onAction', this.onAction);
   }
 };
 </script>
