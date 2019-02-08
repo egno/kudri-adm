@@ -1,14 +1,15 @@
 <template>
-  <VFlex>
+  <div>
     <VTextField
       v-model="val"
       mask="time"
+      class="workmode"
       placeholder="00:00"
       return-masked-value
       :rules="[rules.time]"
-      @input="onEdit"
+      @blur="onEdit"
     />
-  </VFlex>
+  </div>
 </template>
 
 <script>
