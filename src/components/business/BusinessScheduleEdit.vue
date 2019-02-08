@@ -59,46 +59,47 @@ export default {
       dow: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
       modes: [],
       qwe: [
-          ['', ''],
-          ['', ''],
-          ['', ''],
-          ['', ''],
-          ['', ''],
-          ['', ''],
-          ['', '']
-      ],
+        ['', ''],
+        ['', ''],
+        ['', ''],
+        ['', ''],
+        ['', ''],
+        ['', ''],
+        ['', '']
+      ]
     };
   },
-  computed:{
+  computed: {
     modesIndexes() {
       let indexes = [];
-      for(let i=0; i<this.modes.length;i++) {
+      for (let i = 0; i < this.modes.length; i++) {
         let item = this.modes[i].join('');
         let index = this.getAllIndexes(this.schedule.data, item);
         indexes.push(index);
       }
       return indexes;
-    },
+    }
   },
   mounted() {
-    this.modes =  _.uniqBy(this.schedule.data, function (e) {
+    this.modes = _.uniqBy(this.schedule.data, function(e) {
       return e[0] && e[1];
     });
-    this.modes =  _.remove(this.modes, function(n) {
-        return n[0] !== '';
+    this.modes = _.remove(this.modes, function(n) {
+      return n[0] !== '';
     });
   },
   methods: {
     addMode() {
-      this.modes.push(['', ''])
+      this.modes.push(['', '']);
     },
     getAllIndexes(arr, val) {
       let arrString = [];
       arr.forEach(function(element) {
         arrString.push(element.join(''));
       });
-      let indexes = [], i = -1;
-      while ((i = arrString.indexOf(val, i+1)) != -1){
+      let indexes = [],
+        i = -1;
+      while ((i = arrString.indexOf(val, i + 1)) != -1) {
         indexes.push(i);
       }
       return indexes;
@@ -109,21 +110,19 @@ export default {
       this.$emit('onEdit', this.schedule);
     },
     onEdit(i, payload) {
-        
-        let indexes = this.modesIndexes[i];
-        indexes.forEach((el) => {
-          this.$set(this.schedule.data, el, payload);
-        });
+      let indexes = this.modesIndexes[i];
+      indexes.forEach(el => {
+        this.$set(this.schedule.data, el, payload);
+      });
       this.$emit('onEdit', this.schedule);
 
-        this.modes =  _.uniqBy(this.schedule.data, function (e) {
-            return e[0] && e[1];
-        });
-        
-        console.log(this.modes);
-        // this.modes =  _.remove(this.modes, function(n) {
-        //     return n[0] !== '';
-        // });
+      this.modes = _.uniqBy(this.schedule.data, function(e) {
+        return e[0] && e[1];
+      });
+
+      // this.modes =  _.remove(this.modes, function(n) {
+      //     return n[0] !== '';
+      // });
     }
   }
 };

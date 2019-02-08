@@ -61,7 +61,12 @@ import TimeEdit from '@/components/TimeEdit.vue';
 export default {
   components: { TimeEdit },
   props: {
-    selected: [],
+    selected: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
     periodStart: {
       type: String,
       default: ''
@@ -78,7 +83,7 @@ export default {
       dow: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
       switchValue: undefined,
       startVal: undefined,
-      endVal: undefined,
+      endVal: undefined
     };
   },
   computed: {
@@ -90,14 +95,14 @@ export default {
           select: false
         };
         obj.name = el;
-          if (this.selected.length !== 0 && this.selected.includes(i)) {
+        if (this.selected.length !== 0 && this.selected.includes(i)) {
           obj.select = true;
         } else {
           obj.select = false;
         }
         days.push(obj);
       });
-      return days
+      return days;
     }
   },
   watch: {
@@ -133,43 +138,44 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-  #app .workmode-wrap{
-    margin-left: 12px;
-  }
-  .wrapper {
-    margin-bottom: 37px;
-  }
-  .fill, .empty {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-transform: capitalize;
-    margin-right: 6px;
-    width: 24px;
-    height: 24px;
-    border-radius: 50px;
-    background: #fff;
-    font-size: 13px;
-    position: relative;
-    z-index: 2;
-    cursor: pointer;
-    user-select: none;
-  }
-  .empty {
-    color: rgba(137, 149, 175, 0.35);
-  }
-  .fill {
-    background: #d6dae3;
-    +.fill {
-      &:before {
-        content: '';
-        height: 24px;
-        width: 30px;
-        position: absolute;
-        left: -17px;
-        z-index: -1;
-        background: #d6dae3;
-      }
+#app .workmode-wrap {
+  margin-left: 12px;
+}
+.wrapper {
+  margin-bottom: 37px;
+}
+.fill,
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-transform: capitalize;
+  margin-right: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50px;
+  background: #fff;
+  font-size: 13px;
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+  user-select: none;
+}
+.empty {
+  color: rgba(137, 149, 175, 0.35);
+}
+.fill {
+  background: #d6dae3;
+  + .fill {
+    &:before {
+      content: '';
+      height: 24px;
+      width: 30px;
+      position: absolute;
+      left: -17px;
+      z-index: -1;
+      background: #d6dae3;
     }
   }
+}
 </style>

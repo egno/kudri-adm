@@ -218,6 +218,9 @@ export default {
     },
     keyCode: 'checkKeyCode'
   },
+  mounted() {
+    this.checkKeyCode();
+  },
   methods: {
     ...mapActions([
       'alert',
@@ -329,9 +332,6 @@ export default {
           this.alert(makeAlert(err));
         });
     }
-  },
-  mounted() {
-    this.checkKeyCode();
   }
 };
 </script>

@@ -43,7 +43,7 @@ export default {
     this.$root.$on('onSelectEmployee', this.onSelectEmployee);
     this.fetchData();
   },
-  destroyed() {
+  beforeDestroy() {
     this.$root.$off('onAction', this.onAction);
     this.$root.$off('onSelectEmployee', this.onSelectEmployee);
   },
@@ -67,6 +67,6 @@ export default {
     onSelectEmployee(payload) {
       this.selectedEmployee = payload;
     }
-  },
+  }
 };
 </script>

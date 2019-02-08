@@ -61,6 +61,9 @@ export default {
     this.setActions(this.formActions);
     this.$root.$on('onAction', this.onAction);
   },
+  beforeDestroy() {
+    this.$root.$off('onAction', this.onAction);
+  },
   methods: {
     ...mapActions(['setActions']),
     fetchData() {
