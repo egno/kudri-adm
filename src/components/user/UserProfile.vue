@@ -26,13 +26,25 @@
         :rules="[required]"
       />
       <VTextField
+        v-if="!isPersonalMaster"
         v-model="flastname"
         class="centered-input"
         name="flastname"
         label="Фамилия"
-        :rules="[required]"
+        :rules="[lastNameRequired]"
         type="text"
       />
+      <v-combobox
+        v-if="!(isPersonalMaster || isManager)"
+        v-model="fspecialisation"
+        class="centered-input"
+        name="flastname"
+        label="Должность"
+        :items="specialisations"
+        :rules="[specRequired]"
+        type="text"
+      />
+
       <VTextField
         v-model="femail"
         class="centered-input"
@@ -80,7 +92,24 @@ export default {
       fname: '',
       flastname: '',
       femail: '',
+      fspecialisation: '',
+      specialisations: [
+        'Администратор',
+        ' Парикмахер',
+        ' Барбер',
+        ' Колорист',
+        ' Стилист',
+        ' Визажист',
+        ' Косметолог',
+        ' Персональный Тренер',
+        ' Диетолог',
+        ' Массажист'
+      ],
       required: v => !!v || 'Обязательное поле',
+      lastNameRequired: v =>
+        this.isPersonalMaster || !!v || 'Обязательное поле',
+      specRequired: v =>
+        this.isPersonalMaster || this.isManager || !!v || 'Обязательное поле',
       email: value => {
         const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return pattern.test(value) || 'Введите действительный e-mail.';
@@ -88,9 +117,18 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['userAvatar', 'userInfo', 'userID']),
+    ...mapGetters([
+      'businessInfo',
+      'isPersonalMaster',
+      'userAvatar',
+      'userInfo',
+      'userID'
+    ]),
     initiales() {
       return this.fname + ' ' + this.flastname;
+    },
+    isManager() {
+      return this.userInfo && this.userInfo.role === 'manager';
     },
     avatar() {
       return this.userAvatar;
@@ -123,12 +161,19 @@ export default {
         '';
       this.femail =
         (this.userInfo && this.userInfo.data && this.userInfo.data.email) || '';
+      this.fspecialisation =
+        (this.userInfo &&
+          this.userInfo.data &&
+          this.userInfo.data.j &&
+          this.userInfo.data.j.category) ||
+        '';
     },
     saveProfile() {
       if (this.$refs.FormManagerProfile.validate()) {
         const data = {
           name: this.fname,
-          surname: this.flastname
+          surname: this.flastname,
+          category: this.fspecialisation || null
         };
         this.uploadUserInfo(data);
         this.$emit('close');

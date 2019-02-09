@@ -56,14 +56,12 @@
 <script>
 import VCalendar from '@/components/calendar/VCalendar.vue';
 import router from '@/router';
-import Api from '@/api/backend';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
   components: { VCalendar },
   data() {
     return {
-      business: {},
       name: 'Business Name'
     };
   },
@@ -75,6 +73,9 @@ export default {
       'token',
       'navBarVisible'
     ]),
+    business() {
+      return this.businessInfo;
+    },
     businessId() {
       return (
         (this.$route && this.$route.params && this.$route.params.id) ||
@@ -215,7 +216,7 @@ export default {
   },
   watch: {
     token: 'loadUserInfo',
-    businessId: 'getBusiness'
+    businessId: 'loadBusiness'
   },
   methods: {
     ...mapActions([
@@ -223,22 +224,23 @@ export default {
       'loadUserInfo',
       'openMessageWindow',
       'setAppTitle',
-      'setBusinessInfo'
+      'setBusiness'
     ]),
-    getBusiness() {
-      Api()
-        .get(`business?id=eq.${this.businessId}`)
-        .then(res => res.data)
-        .then(res => res[0])
-        .then(res => {
-          this.business = res;
-          this.setBusinessInfo({
-            id: res.id,
-            category: res.j && res.j.category,
-            name: res.j && res.j.name
-          });
-        })
-        .catch(this.setAppTitle());
+    loadBusiness() {
+      this.setBusiness(this.businessId);
+      // Api()
+      //   .get(`business?id=eq.${this.businessId}`)
+      //   .then(res => res.data)
+      //   .then(res => res[0])
+      //   .then(res => {
+      //     this.business = res;
+      //     this.setBusinessInfo({
+      //       id: res.id,
+      //       category: res.j && res.j.category,
+      //       name: res.j && res.j.name
+      //     });
+      //   })
+      //   .catch(this.setAppTitle());
     },
     goHome() {
       router.push({ name: 'home' });

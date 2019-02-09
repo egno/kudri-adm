@@ -50,7 +50,19 @@ const getters = {
   },
   appTitle: state => state.appTitle || state.defaultAppTitle,
   business: state => state.businessInfo && state.businessInfo.id,
-  businessInfo: state => state.businessInfo,
+  businessInfo: state => ({
+    ...state.businessInfo,
+    ...{
+      category:
+        state.businessInfo &&
+        state.businessInfo.j &&
+        state.businessInfo.j.category
+    },
+    ...{
+      name:
+        state.businessInfo && state.businessInfo.j && state.businessInfo.j.name
+    }
+  }),
   calendar: state => state.calendar,
   defaultAppTitle: state => state.defaultAppTitle,
   employee: state => state.employee,
@@ -147,7 +159,6 @@ const actions = {
   closeProfileDrawer({ commit }) {
     commit('PROFILE_DRAWER', false);
   },
-
   selectVisit({ commit }, payload) {
     commit('SELECT_VISIT', payload);
   },
@@ -203,24 +214,21 @@ const actions = {
   setAppTitle({ commit }, payload) {
     commit('SET_APP_TITLE', payload);
   },
-  setBusiness({ commit }, payload) {
+  setBusiness({ commit, dispatch }, payload) {
     const path = `business?id=eq.${payload}`;
     Api()
       .get(path)
       .then(res => res.data[0])
       .then(res => {
-        commit('SET_BUSINESS_INFO', {
-          id: res.id,
-          category: res.j && res.j.category,
-          name: res.j && res.j.name
-        });
+        commit('SET_BUSINESS_INFO', res);
+        dispatch('loadEmployee', payload && payload.id);
       })
       .catch(err => commit('ADD_ALERT', makeAlert(err)));
   },
-  setBusinessInfo({ commit, dispatch }, payload) {
-    commit('SET_BUSINESS_INFO', payload);
-    dispatch('loadEmployee', payload && payload.id);
-  },
+  // setBusinessInfo({ commit, dispatch }, payload) {
+  //   commit('SET_BUSINESS_INFO', payload);
+  //   dispatch('loadEmployee', payload && payload.id);
+  // },
   setSearchString({ commit }, payload) {
     commit('SET_SEARCH_STRING', payload);
   },

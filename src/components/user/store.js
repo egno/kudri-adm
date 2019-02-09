@@ -35,6 +35,17 @@ const getters = {
   userPhone: (state, getters) => {
     const info = getters.userInfo;
     return info && info.data && info.data.phone;
+  },
+  isPersonalMaster: (state, getters) => {
+    const info = getters.userInfo;
+    const business = getters.businessInfo;
+    return (
+      (info &&
+        info.data &&
+        info.data.j &&
+        info.data.j.business_category === 'Частный мастер') ||
+      (business && business.type === 'P')
+    );
   }
 };
 
