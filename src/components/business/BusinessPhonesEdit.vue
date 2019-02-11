@@ -24,6 +24,7 @@
       </VBtn>
     </div>
     <VBtn
+      class="transparent add"
       :disabled="hasEmptyPhone"
       @click="newPhones.push('')"
     >

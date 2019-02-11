@@ -1,59 +1,45 @@
 <template>
-  <VFlex
-    d-flex
+  <VLayout
+    align-center
+    justify-start
+    row
     class="wrapper"
   >
-    <VLayout
-      column
-      align-center
-      justify-center
+    <div
+      v-for="(day, i) in days"
+      :key="i"
+      :style="{ 'z-index': 7 - i }"
+      class="text-xs-center"
+      :class="{ fill : day.select, empty : !day.select }"
+      @click="selectDay(i)"
     >
-      <VFlex>
-        <VLayout row>
-          <VFlex>
-            <v-switch
-              v-if="showSwitch"
-              v-model="switchValue"
-            />
-          </VFlex>
-        </VLayout>
-      </VFlex>
-      <VLayout row>
-        <VLayout
-          align-center
-          justify-center
-          row
-        >
-          <div
-            v-for="(day, i) in days"
-            :key="i"
-            :style="{ 'z-index': 7 - i }"
-            class="text-xs-center"
-            :class="{ fill : day.select, empty : !day.select }"
-            @click="selectDay(i)"
-          >
-            {{ day.name }}
-          </div>
-          <VLayout class="workmode-wrap">
-            <TimeEdit
-              enabled="!showSwitch || switchValue"
-              :time="startVal"
-              @onEdit="onEditStart"
-            />
-            <TimeEdit
-              enabled="!showSwitch || switchValue"
-              :time="endVal"
-              @onEdit="onEditEnd"
-            />
-            <div
-              class="close"
-              @click="startVal = ''; endVal=''; $emit('onEdit', [startVal, endVal]);"
-            />
-          </VLayout>
-        </VLayout>
-      </VLayout>
+      {{ day.name }}
+    </div>
+    <VLayout class="workmode-wrap">
+      <TimeEdit
+        enabled="!showSwitch || switchValue"
+        :time="startVal"
+        @onEdit="onEditStart"
+      />
+      <TimeEdit
+        enabled="!showSwitch || switchValue"
+        :time="endVal"
+        @onEdit="onEditEnd"
+      />
+      <div
+        class="close"
+        @click="startVal = ''; endVal=''; $emit('onEdit', [startVal, endVal]);"
+      />
+      <VBtn
+        v-if="itemindex !== 0"
+        depressed
+        flat
+        small
+        class="delete"
+        @click="deletePeriod"
+      />
     </VLayout>
-  </VFlex>
+  </VLayout>
 </template>
 
 <script>
@@ -76,7 +62,8 @@ export default {
       default: ''
     },
     showSwitch: { type: Boolean, default: false },
-    switch: { type: Boolean, default: false }
+    switch: { type: Boolean, default: false },
+    itemindex: { type: Number, default: null }
   },
   data() {
     return {
@@ -114,6 +101,10 @@ export default {
     this.loadValues();
   },
   methods: {
+    deletePeriod() {
+      this.startVal = null; this.endVal=null;
+      this.$emit('onEdit', [this.startVal, this.endVal]);
+    },
     onEditStart(payload) {
       this.startVal = payload;
       this.$emit('onEdit', [this.startVal, this.endVal]);
@@ -141,8 +132,14 @@ export default {
 #app .workmode-wrap {
   margin-left: 12px;
 }
+#app .v-btn.delete {
+  right: -66px;
+  top: -2px;
+  position: absolute;
+}
 .wrapper {
-  margin-bottom: 37px;
+  margin-bottom: 35px!important;
+  margin-top: 35px!important;
 }
 .fill,
 .empty {
