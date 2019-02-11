@@ -1,31 +1,34 @@
 <template>
-  <VLayout column>
-    <VFlex>
-      <div>Режим работы</div>
-    </VFlex>
-    <VLayout
+  <VLayout
+    column
+    d-flex
+  >
+    <div>Режим работы</div>
+    <VFlex
       justify-space-around
       row
       wrap
     >
       <VFlex>
-        <VBtn
-          fab
-          @click="addMode"
-        >
-          Add
-        </VBtn>
         <PeriodEdit
           v-for="(item, i) in modes"
           :key="i"
+          :itemindex="i"
           :selected="modesIndexes[i]"
           :period-start="item[0]"
           :period-end="item[1]"
+          @onDel="onDel(i,$event)"
           @onEdit="onEdit(i,$event)"
           @selectDay="selectDay(i, $event)"
         />
       </VFlex>
-    </VLayout>
+      <VBtn
+        class="transparent add"
+        @click="addMode"
+      >
+        Добавить режим работы
+      </VBtn>
+    </VFlex>
   </VLayout>
 </template>
 
@@ -82,7 +85,7 @@ export default {
   },
   mounted() {
     this.modes = _.uniqBy(this.schedule.data, function(e) {
-      return e[0] && e[1];
+      return [e[0], e[1]].join();
     });
     this.modes = _.remove(this.modes, function(n) {
       return n[0] !== '';
@@ -90,7 +93,9 @@ export default {
   },
   methods: {
     addMode() {
-      this.modes.push(['', '']);
+      if (_.findIndex(this.modes, function(o) { return o[0] === '' && o[1] === '' }) === -1) {
+        this.modes.push(['', '']);
+      }
     },
     getAllIndexes(arr, val) {
       let arrString = [];
@@ -115,14 +120,12 @@ export default {
         this.$set(this.schedule.data, el, payload);
       });
       this.$emit('onEdit', this.schedule);
-
       this.modes = _.uniqBy(this.schedule.data, function(e) {
-        return e[0] && e[1];
+        return [e[0], e[1]].join();
       });
-
-      // this.modes =  _.remove(this.modes, function(n) {
-      //     return n[0] !== '';
-      // });
+      this.modes = _.remove(this.modes, function(n) {
+          return n[0] !== null;
+      });
     }
   }
 };

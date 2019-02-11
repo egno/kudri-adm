@@ -105,6 +105,53 @@ export default {
     &.avatar {
       box-shadow: none !important;
     }
+    &.delete {
+      width: 20px;
+      min-width: 20px;
+      max-width: 20px;
+      height: 20px;
+      background: url('assets/del.svg') no-repeat center center;
+      background-size: 12px 20px;
+      &:before {
+        display: none;
+      }
+      &:hover {
+        background: url('assets/delh.svg') no-repeat center center;
+      }
+    }
+    &.transparent {
+      color: #8995AF;
+      box-shadow: none !important;
+      background: transparent;
+      text-transform: none;
+      height: 20px;
+      .v-ripple__container {
+        display: none !important;
+      }
+      &:before {
+        display: none;
+      }
+      &:hover {
+        box-shadow: none !important;
+        background: transparent;
+      }
+      &.add {
+        padding-left: 22px;
+        &:after {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 1px;
+          background: url('assets/plus.svg') no-repeat center center;
+          width: 16px;
+          height: 16px;
+          background-size: 12px 20px;
+        }
+      }
+      &.v-btn--disabled {
+        background: transparent!important;
+      }
+    }
   }
   .v-text-field {
     input,
@@ -166,6 +213,7 @@ export default {
     border-left: 1px solid #8995af;
     border-right: 1px solid #8995af;
     width: 95px;
+    max-width: 95px;
     display: flex;
     justify-content: space-between;
     position: relative;
