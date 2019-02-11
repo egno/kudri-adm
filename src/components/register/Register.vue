@@ -255,7 +255,7 @@ export default {
           .post(this.url, {
             login: this.flogin,
             code: null,
-            j: { category: this.ftype }
+            j: { business_category: this.ftype }
           })
           .then(res => {
             this.sended = true;
