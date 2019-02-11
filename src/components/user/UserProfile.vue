@@ -51,8 +51,19 @@
         name="femail"
         label="e-mail"
         type="email"
+        disabled
         :rules="[required, email]"
         browser-autocomplete="username"
+      />
+      <VTextField
+        v-model="fphone"
+        class="centered-input"
+        name="fphone"
+        label="Телефон"
+        type="phone"
+        disabled
+        :rules="[required]"
+        browser-autocomplete="tel"
       />
       <VBtn
         color="success"
@@ -92,6 +103,7 @@ export default {
       fname: '',
       flastname: '',
       femail: '',
+      fphone: '',
       fspecialisation: '',
       specialisations: [
         'Администратор',
@@ -161,6 +173,8 @@ export default {
         '';
       this.femail =
         (this.userInfo && this.userInfo.data && this.userInfo.data.email) || '';
+      this.fphone =
+        (this.userInfo && this.userInfo.data && this.userInfo.data.phone) || '';
       this.fspecialisation =
         (this.userInfo &&
           this.userInfo.data &&
