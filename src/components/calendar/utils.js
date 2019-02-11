@@ -108,16 +108,18 @@ export function monthDates(year, month) {
 }
 
 export function visitInit(visit) {
-  console.log(visit);
   return {
-    business_id: null,
-    client: {
-      name: '',
-      phone: '',
-      service: { name: '', category: '', duration: null }
+    ...{
+      business_id: null,
+      client: {
+        name: '',
+        phone: '',
+        service: { name: '', category: '', duration: null }
+      },
+      ts_begin: null,
+      ts_end: null
     },
-    ts_begin: null,
-    ts_end: null
+    ...visit
   };
 }
 

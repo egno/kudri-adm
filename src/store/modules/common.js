@@ -243,7 +243,6 @@ const actions = {
       .catch(err => commit('ADD_ALERT', makeAlert(err)));
   },
   loadCalendar({ commit }, payload) {
-    console.log(payload);
     if (!payload.business) {
       return;
     }
