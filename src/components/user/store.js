@@ -7,7 +7,7 @@ const state = {
 
 const getters = {
   loggedIn: (state, getters) => {
-    return getters.userID;
+    return !!getters.userID;
   },
   userAvatar: state => {
     return (
