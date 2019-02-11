@@ -161,12 +161,6 @@ export default {
     VisitEdit
   },
   props: {
-    businessInfo: {
-      type: Object,
-      default() {
-        return {};
-      }
-    },
     employee: {
       type: Array,
       default() {
@@ -191,7 +185,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['actualDate', 'calendar', 'schedule']),
+    ...mapGetters(['actualDate', 'businessInfo', 'calendar', 'schedule']),
     business() {
       return this.businessInfo && this.businessInfo.id;
     },

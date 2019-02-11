@@ -183,7 +183,7 @@ const actions = {
   setActions({ commit }, payload) {
     commit('SET_ACTIONS', payload);
   },
-  setActualDate({ commit, dispatch, state }, payload) {
+  setActualDate({ commit, dispatch, getters, state }, payload) {
     if (payload instanceof Date) {
       payload = formatDate(payload);
     }
@@ -200,9 +200,9 @@ const actions = {
       d1.setDate(1);
       d1.setYear(payload.slice(0, 4));
       d1.setMonth(payload.slice(5, 7));
-      if (state.business && state.business.id) {
+      if (getters.business) {
         dispatch('loadCalendar', {
-          business: state.business.id,
+          business: getters.business,
           dates: [from, formatDate(d1)]
         });
       } else {
@@ -243,6 +243,7 @@ const actions = {
       .catch(err => commit('ADD_ALERT', makeAlert(err)));
   },
   loadCalendar({ commit }, payload) {
+    console.log(payload);
     if (!payload.business) {
       return;
     }
