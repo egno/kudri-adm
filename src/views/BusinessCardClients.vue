@@ -1,15 +1,26 @@
 <template>
-  <v-container>
-    <v-layout>
-      <v-flex
+  <VContainer>
+    <VFlex>
+      <VTextField
+        key="mainSearch"
+        v-model="searchString"
+        autofocus
+        clearable
+        label="Поиск"
+        single-line
+        type="text"
+      />
+    </VFlex>
+    <VLayout>
+      <VFlex
         v-for="(client,i) in data"
         :key="i"
       >
         <ClientMiniCard :client="client">
           {{ client }}
         </ClientMiniCard>
-      </v-flex>
-    </v-layout>
+      </VFlex>
+    </VLayout>
     <VDialog
       v-model="edit"
       max-width="60em"
@@ -19,7 +30,7 @@
         @onSave="onSave($event)"
       />
     </VDialog>
-  </v-container>
+  </VContainer>
 </template>
 
 <script>
@@ -38,6 +49,7 @@ export default {
   components: { ClientCardEdit, ClientMiniCard },
   data() {
     return {
+      searchString: '',
       formActions: [
         { label: 'Добавить клиента', action: 'newClient', default: false }
       ],
@@ -63,7 +75,8 @@ export default {
     }
   },
   watch: {
-    querySearchString: 'fetchData'
+    querySearchString: 'fetchData',
+    searchString: 'setStoreSearchString'
   },
   mounted() {
     this.fetchData();
@@ -74,7 +87,10 @@ export default {
     this.$root.$off('onAction', this.onAction);
   },
   methods: {
-    ...mapActions(['alert', 'setActions']),
+    ...mapActions(['alert', 'setActions', 'setSearchString']),
+    setStoreSearchString() {
+      this.setSearchString(this.searchString);
+    },
     fetchData() {
       Api()
         .get(`client?business_id=eq.${this.id}${this.querySearchString}`)

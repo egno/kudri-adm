@@ -3,6 +3,17 @@
     fluid
     grid-list-lg
   >
+    <VFlex>
+      <VTextField
+        key="mainSearch"
+        v-model="searchString"
+        autofocus
+        clearable
+        label="Поиск"
+        single-line
+        type="text"
+      />
+    </VFlex>
     <VLayout
       row
       wrap
@@ -43,6 +54,7 @@ export default {
   mixins: [businessMixins],
   data() {
     return {
+      searchString: '',
       formActions: [
         { label: 'Добавить услугу', action: 'newService', default: false }
       ],
@@ -60,6 +72,9 @@ export default {
       return this.data.j['services'];
     }
   },
+  watch: {
+    searchString: 'setStoreSearchString'
+  },
   mounted() {
     this.fetchData();
     this.setActions(this.formActions);
@@ -69,7 +84,10 @@ export default {
     this.$root.$off('onAction', this.onAction);
   },
   methods: {
-    ...mapActions(['setActions']),
+    ...mapActions(['setActions', 'setSearchString']),
+    setStoreSearchString() {
+      this.setSearchString(this.searchString);
+    },
     fetchData() {
       Api()
         .get(`business?id=eq.${this.id}`)

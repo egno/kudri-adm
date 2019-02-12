@@ -3,6 +3,17 @@
     fluid
     grid-list-lg
   >
+    <VFlex>
+      <VTextField
+        key="mainSearch"
+        v-model="searchString"
+        autofocus
+        clearable
+        label="Поиск"
+        single-line
+        type="text"
+      />
+    </VFlex>
     <VLayout
       row
       wrap
@@ -35,6 +46,7 @@ export default {
   components: { EmployeeCard },
   data() {
     return {
+      searchString: '',
       formActions: [
         {
           label: 'Добавить сотрудника',
@@ -51,6 +63,9 @@ export default {
       return this.$route.params.id;
     }
   },
+  watch: {
+    searchString: 'setStoreSearchString'
+  },
   mounted() {
     this.fetchData();
     this.setActions(this.formActions);
@@ -60,7 +75,10 @@ export default {
     this.$root.$off('onAction', this.onAction);
   },
   methods: {
-    ...mapActions(['setActions']),
+    ...mapActions(['setActions', 'setSearchString']),
+    setStoreSearchString() {
+      this.setSearchString(this.searchString);
+    },
     fetchData() {
       Api()
         .get(`employee?parent=eq.${this.id}`)

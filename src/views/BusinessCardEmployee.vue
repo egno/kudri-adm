@@ -43,6 +43,7 @@ export default {
   mixins: [businessMixins],
   data() {
     return {
+      searchString: '',
       formActions: [
         { label: 'Добавить сотрудника', action: 'newEmployee', default: false }
       ],

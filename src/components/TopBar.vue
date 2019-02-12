@@ -33,6 +33,18 @@
           @input="onSelectEmployee"
         />
       </VFlex>
+  
+      <!--<VFlex>-->
+      <!--<VTextField-->
+      <!--key="mainSearch"-->
+      <!--v-model="searchString"-->
+      <!--autofocus-->
+      <!--clearable-->
+      <!--label="Поиск"-->
+      <!--single-line-->
+      <!--type="text"-->
+      <!--/>-->
+      <!--</VFlex>-->
     </VLayout>
 
     <VSpacer />
