@@ -84,12 +84,32 @@ export default {
 
 <style lang="scss">
 #app {
+  .blue-link {
+    font-family: Lato;
+    font-style: normal;
+    font-weight: normal;
+    line-height: normal;
+    font-size: 13px;
+    color: #5699FF;
+  }
+  .v-menu__content {
+    box-shadow: none;
+    border: 1px solid rgba(137, 149, 175, 0.1);
+  }
+  .topbar {
+    box-shadow: none;
+    border-bottom: 1px solid rgba(137, 149, 175, 0.1);
+    .v-toolbar__content {
+      background: #fff;
+    }
+  }
   .v-btn {
     &.success {
       width: 240px;
       height: 56px;
       box-shadow: none !important;
       background: linear-gradient(270deg, #c9a15d -9.86%, #ba9462 103.49%);
+      transition: none;
       &:hover {
         background: #07101c !important;
         box-shadow: none !important;

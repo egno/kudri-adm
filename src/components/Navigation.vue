@@ -38,18 +38,26 @@
           class="add-btn"
           @click="onAction(item.action)"
         >
-          <v-icon>add</v-icon>
+          <v-icon color="white">
+            add
+          </v-icon>
         </div>
       </VListTile>
     </VList>
     <v-spacer />
-    <VList>
-      <VListTile @click="openMessageWindow">
-        <VListTileContent>
-          <VListTileTitle>Техподдержка</VListTileTitle>
-        </VListTileContent>
-      </VListTile>
-    </VList>
+    <div
+      class="blue-link help-link"
+      @click="openMessageWindow"
+    >
+      Сообщить о проблеме
+    </div>
+    <!--<VList>-->
+    <!--<VListTile @click="openMessageWindow">-->
+    <!--<VListTileContent>-->
+    <!--<VListTileTitle>Сообщить о проблеме</VListTileTitle>-->
+    <!--</VListTileContent>-->
+    <!--</VListTile>-->
+    <!--</VList>-->
   </VNavigationDrawer>
 </template>
 
@@ -138,7 +146,7 @@ export default {
             name: 'businessCardEmployee',
             params: { id: this.businessId }
           },
-          show: this.loggedIn && !this.isManagerMenu,
+          show: this.loggedIn && !!this.isManagerMenu,
           action: {
             label: 'Добавить сотрудника',
             action: 'newEmployee',
@@ -259,7 +267,16 @@ export default {
 <style lang="scss">
 .v-navigation-drawer {
   &.navigation {
+    display: flex;
+    flex-direction: column;
     background: linear-gradient(180.36deg, #142941 0.06%, #07101c 85.63%);
+    .help-link {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 40px;
+      cursor: pointer;
+    }
     .v-list {
       background: transparent;
       padding: 0;
@@ -268,6 +285,7 @@ export default {
       }
       .v-list__tile--link {
         color: #fff !important;
+        height: 40px;
         &:hover {
           background-color: rgba(137, 149, 175, 0.2);
         }

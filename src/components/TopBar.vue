@@ -1,5 +1,9 @@
 <template>
-  <VToolbar app>
+  <VToolbar
+    class="topbar"
+    app
+    height="55px"
+  >
     <VLayout
       row
       align-center

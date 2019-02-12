@@ -1,5 +1,8 @@
 <template>
-  <VLayout column>
+  <VLayout
+    column
+    class="calendar-wrapper"
+  >
     <VFlex
       v-if="showHeader"
       px-2
@@ -45,10 +48,34 @@
         <VLayout
           v-if="period==='month'"
           align-space-between
-          justify-space-between
+          justify-center
           fill-height
           column
         >
+          <VFlex>
+            <VLayout
+              justify-center
+              row
+              fill-height
+              class="week-wrapper dow"
+            >
+              <VFlex
+                v-for="(d, i) in dow"
+                :key="i"
+                xs2
+                justify-center
+                row
+                class="text-xs-center"
+              >
+                <span
+                  class="dow"
+                  :class="{ weekend: i > 4 }"
+                >
+                  {{ d }}
+                </span>
+              </VFlex>
+            </VLayout>
+          </VFlex>
           <VFlex
             v-for="(week,i) in dates"
             :key="i"
@@ -57,6 +84,7 @@
               justify-center
               row
               fill-height
+              class="week-wrapper"
             >
               <VFlex
                 v-for="(day, di) in week"
@@ -68,6 +96,7 @@
                   :counter="day.visits && day.visits.length"
                   :day="day"
                   :holiday="isHoliday(day.dateKey)"
+                  :weekend="(di > 4)"
                   @onClickDate="goDate($event)"
                 />
                 <CalendarDayCard
@@ -181,7 +210,8 @@ export default {
       edit: false,
       editVisitPage: undefined,
       timeEdit: false,
-      visits: []
+      visits: [],
+      dow: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
     };
   },
   computed: {
@@ -452,9 +482,34 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+  .dow {
+    font-family: Lato;
+    font-style: normal;
+    font-weight: normal;
+    line-height: normal;
+    font-size: 11px;
+    text-align: center;
+    color: #fff;
+    text-transform: capitalize;
+    text-align: center;
+    &.weekend {
+      color: #8995AF;
+    }
+  }
 .month-header {
   background: linear-gradient(270deg, #c9a15d -9.86%, #ba9462 103.49%);
   height: 40px;
+}
+.week-wrapper {
+  width: 160px;
+  margin: 0 auto;
+  &.dow {
+    margin-top: 17px;
+  }
+}
+.calendar-wrapper {
+  padding-bottom: 30px;
+  border-bottom: 1px solid rgba(137, 149, 175, 0.2);
 }
 .cal-head {
   margin-right: 10px;

@@ -2,6 +2,7 @@
   <VMenu
     v-if="loggedIn"
     v-model="menu"
+    class="profile-menu"
     left
     full-width
     offset-y
@@ -21,7 +22,8 @@
       >
         <VFlex>
           <UserAvatar
-            class="ma-1"
+            :new-message="newMessage"
+            :size="avatarSize"
             :name="displayName"
             :src="avatar"
           />
@@ -31,7 +33,7 @@
         </div>
       </VLayout>
     </VBtn>
-    <VList>
+    <VList class="menu-list">
       <template>
         <VListTile
           v-for="(item, index) in menuList"
@@ -39,9 +41,13 @@
           :to="item.route"
           @click="menuHandler(item.action)"
         >
-          <VListTileTitle>{{ item.title }}</VListTileTitle>
+          <VListTileTitle class="caption">
+            {{ item.title }}
+          </VListTileTitle>
           <span
             v-if="item.count"
+            class="caption count"
+            :class="{ attention: item.count === '!' }"
             flat
           >
             {{ item.count }}
@@ -122,7 +128,9 @@ export default {
     source: { type: String, default: () => '' }
   },
   data: () => ({
+    avatarSize: '24px',
     dialog: false,
+    newMessage: false,
     errorMessage: null,
     flogin: 'manager000000050@test.com',
     fpassword: '000000050',
@@ -133,7 +141,8 @@ export default {
     menuList: [
       {
         title: 'Мой профиль',
-        action: 'drawer'
+        action: 'drawer',
+        count: '!'
       },
       {
         title: 'Сообщения',
@@ -238,3 +247,35 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+  .v-menu.profile-menu {
+    border-left: 1px solid rgba(137, 149, 175, 0.1);
+  }
+  .menu-list {
+    padding: 17px 0;
+    .v-list__tile {
+      height: 24px;
+      &__title {
+        display: flex;
+        align-items: center;
+      }
+    }
+    .count, .attention {
+      width: 16px;
+      min-width: 16px;
+      height: 16px;
+      display: block;
+      background: #EF4D37;
+      border-radius: 16px;
+      text-align: center;
+      color: #fff;
+      font-size: 11px!important;
+    }
+    .attention {
+      color: #EF4D37;
+      background: #fff;
+      border: 1px solid #EF4D37;
+    }
+  }
+  
+</style>
