@@ -104,6 +104,9 @@ export default {
     }
   }
   .v-btn {
+    .v-ripple__container {
+      display: none !important;
+    }
     &.success {
       width: 240px;
       height: 56px;
@@ -237,6 +240,9 @@ export default {
     display: flex;
     justify-content: space-between;
     position: relative;
+    .v-input--is-focused {
+      border-bottom: 1px solid #5699FF!important;
+    }
     &:before {
       content: '';
       position: absolute;

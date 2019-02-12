@@ -8,6 +8,7 @@
       return-masked-value
       :rules="[rules.time]"
       @blur="onEdit"
+      @focus="$event.target.select()"
     />
   </div>
 </template>

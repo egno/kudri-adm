@@ -206,7 +206,6 @@ export default {
         },
         {
           title: 'Галерея',
-          count: this.galleryCount,
           route: {
             name: 'businessCardGallery',
             params: { id: this.businessId }
@@ -285,6 +284,7 @@ export default {
       }
       .v-list__tile--link {
         color: #fff !important;
+        font-weight: 400!important;
         height: 40px;
         &:hover {
           background-color: rgba(137, 149, 175, 0.2);

@@ -3,11 +3,8 @@
     :value="counter"
     overlap
   >
-    <div slot="badge">
-      {{ counter }}
-    </div>
     <VBtn
-      :class="{ weekend : weekend }"
+      :class="{ weekend : weekend, badge : (counter > 0) }"
       class="calendar-btn"
       fab
       small
@@ -64,7 +61,7 @@ export default {
     font-size: 11px;
   }
   .v-btn--block {
-    color: #fff;
+    color: #D6DAE3;
     &.weekend {
       color: #8995AF;
     }
@@ -72,13 +69,13 @@ export default {
       background: #fff!important;
       color: #142941;
       font-weight: bold;
-      &.selected {
+      &.badge {
         &:after {
           top: 20px;
         }
       }
     }
-    &.selected {
+    &.badge {
       position: relative;
       &:after {
         content: '';
