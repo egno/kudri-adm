@@ -1,100 +1,115 @@
 <template>
-  <VDataTable
-    :headers="headers"
-    :items="data"
-    :loading="progressQuery"
-    :pagination.sync="pagination"
-    :rows-per-page-items="[5, 10,25]"
-    rows-per-page-text="Записей на страницу:"
-    :total-items="totalItems"
-    class="elevation-1"
-  >
-    <VProgressLinear
-      slot="progress"
-      color="blue"
-      indeterminate
-    />
-    <template
-      slot="items"
-      slot-scope="props"
+  <div>
+    <VContainer>
+      <VFlex>
+        <VTextField
+          key="mainSearch"
+          v-model="searchString"
+          autofocus
+          clearable
+          label="Поиск"
+          single-line
+          type="text"
+        />
+      </VFlex>
+    </VContainer>
+    <VDataTable
+      :headers="headers"
+      :items="data"
+      :loading="progressQuery"
+      :pagination.sync="pagination"
+      :rows-per-page-items="[5, 10,25]"
+      rows-per-page-text="Записей на страницу:"
+      :total-items="totalItems"
+      class="elevation-1"
     >
-      <td>
-        <VLayout
-          row
-          align-center
-          fill-height
-          justify-start
-        >
-          <VBtn
-            fab
-            flat
-            right
-            small
-            :outline="props.item.access"
-            color="green"
+      <VProgressLinear
+        slot="progress"
+        color="blue"
+        indeterminate
+      />
+      <template
+        slot="items"
+        slot-scope="props"
+      >
+        <td>
+          <VLayout
+            row
+            align-center
+            fill-height
+            justify-start
+          >
+            <VBtn
+              fab
+              flat
+              right
+              small
+              :outline="props.item.access"
+              color="green"
+              :href="'businessCard/'+props.item.id"
+              target="_blank"
+            >
+              <UserAvatar
+                class="ma-1"
+                :name="props.item.j && props.item.j.name || props.item.j.email"
+                size="2.4em"
+                :src="props.item.j.avatar"
+              />
+            </VBtn>
+            <VFlex
+              align-self-center
+              justify-start
+            >
+              {{ props.item.j.name }}
+            </VFlex>
+          </VLayout>
+          <a
+            :href="'businessCard/'+props.item.id"
+            target="_blank"
+          />
+        </td>
+        <td>{{ props.item.j.category }}</td>
+        <td>{{ props.item.j.inn }}</td>
+        <td>
+          {{ props.item.j && props.item.j.address && props.item.j.address.name }}
+          <div
+            v-if="props.item.j.filials"
+            class="caption text-no-wrap grey--text text--darken-1"
+          >
+            <RouterLink
+              :to="{name: 'businessCardFilal',params:{id: props.item.id}}"
+            >
+              Филиалов: {{ props.item.j.filials }}
+            </RouterLink>
+          </div>
+        </td>
+        <td>{{ props.item.j && props.item.j.email }}</td>
+        <td>{{ props.item.j && props.item.j.manager && props.item.j.manager.email }}</td>
+        <td>-</td>
+        <td>-</td>
+        <td class="justify-center layout px-0">
+          <a
+            v-if="props.item.access"
             :href="'businessCard/'+props.item.id"
             target="_blank"
           >
-            <UserAvatar
-              class="ma-1"
-              :name="props.item.j && props.item.j.name || props.item.j.email"
-              size="2.4em"
-              :src="props.item.j.avatar"
-            />
-          </VBtn>
-          <VFlex
-            align-self-center
-            justify-start
-          >
-            {{ props.item.j.name }}
-          </VFlex>
-        </VLayout>
-        <a
-          :href="'businessCard/'+props.item.id"
-          target="_blank"
-        />
-      </td>
-      <td>{{ props.item.j.category }}</td>
-      <td>{{ props.item.j.inn }}</td>
-      <td>
-        {{ props.item.j && props.item.j.address && props.item.j.address.name }}
-        <div
-          v-if="props.item.j.filials"
-          class="caption text-no-wrap grey--text text--darken-1"
-        >
-          <RouterLink
-            :to="{name: 'businessCardFilal',params:{id: props.item.id}}"
-          >
-            Филиалов: {{ props.item.j.filials }}
-          </RouterLink>
-        </div>
-      </td>
-      <td>{{ props.item.j && props.item.j.email }}</td>
-      <td>{{ props.item.j && props.item.j.manager && props.item.j.manager.email }}</td>
-      <td>-</td>
-      <td>-</td>
-      <td class="justify-center layout px-0">
-        <a
-          v-if="props.item.access"
-          :href="'businessCard/'+props.item.id"
-          target="_blank"
-        >
-          <VIcon
-            small
-            class="mr-2"
-          >
-            edit
-          </VIcon>
-        </a>
-      </td>
-    </template>
-    <template
-      slot="pageText"
-      slot-scope="props"
-    >
-      {{ props.pageStart }}-{{ props.pageStop }} из {{ props.itemsLength }}
-    </template>
-  </VDataTable>
+            <VIcon
+              small
+              class="mr-2"
+            >
+              edit
+            </VIcon>
+          </a>
+        </td>
+      </template>
+      <template
+        slot="pageText"
+        slot-scope="props"
+      >
+        {{ props.pageStart }}-{{ props.pageStop }} из {{ props.itemsLength }}
+      </template>
+    </VDataTable>
+  </div>
 </template>
 
 <script>
@@ -107,6 +122,7 @@ export default {
   components: { UserAvatar },
   data() {
     return {
+      searchString: '',
       formActions: [
         {
           label: 'Добавить',
