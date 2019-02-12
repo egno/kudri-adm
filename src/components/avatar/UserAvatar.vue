@@ -5,6 +5,10 @@
     :color="color.bg"
     :tile="tile"
   >
+    <div
+      v-if="newMessage"
+      class="new-message"
+    />
     <template v-if="required">
       <img
         v-if="!valid_error"
@@ -39,6 +43,7 @@ import { hash } from '@/components/utils';
 
 export default {
   props: {
+    newMessage: { type: Boolean, default: false },
     size: { type: String, default: '3em' },
     name: { type: String, default: '' },
     src: { type: String, default: '' },
@@ -141,6 +146,16 @@ export default {
 <style lang="scss" scoped>
 .v-avatar {
   margin: 0 !important;
+  .new-message {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border: 1px solid #fff;
+    background: #EF4D37;
+    border-radius: 16px;
+    top: 0;
+    left: 0;
+  }
   img {
     background: #fff;
   }

@@ -7,6 +7,8 @@
       {{ counter }}
     </div>
     <VBtn
+      :class="{ weekend : weekend }"
+      class="calendar-btn"
       fab
       small
       block
@@ -28,6 +30,7 @@ export default {
   props: {
     counter: { type: Number, default: 0 },
     holiday: { type: Boolean },
+    weekend: { type: Boolean, default: false },
     day: {
       type: Object,
       default() {
@@ -55,7 +58,37 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+  .calendar-btn {
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+  }
   .v-btn--block {
-    color: #fff
+    color: #fff;
+    &.weekend {
+      color: #8995AF;
+    }
+    &.v-btn--outline {
+      background: #fff!important;
+      color: #142941;
+      font-weight: bold;
+      &.selected {
+        &:after {
+          top: 20px;
+        }
+      }
+    }
+    &.selected {
+      position: relative;
+      &:after {
+        content: '';
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 4px;
+        top: 16px;
+        background: #5699FF;
+      }
+    }
   }
 </style>
