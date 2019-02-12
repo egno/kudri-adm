@@ -175,7 +175,7 @@ export default {
 .visit-container {
   position: relative;
   display: block;
-  overflow: scroll;
+  overflow: hidden;
   transition: all 0.5s ease 0s;
   z-index: 1;
   height: auto;
