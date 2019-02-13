@@ -68,10 +68,7 @@
             </v-card-text>
             <v-card-text>
               Ошиблись?
-              <a
-                href="#"
-                @click="clear"
-              >
+              <a @click="clear">
                 Укажите другой e-mail
               </a>
             </v-card-text>
@@ -84,10 +81,7 @@
                 <span>{{ timeDisplay }}</span>.
               </span>
               <span v-else>
-                <a
-                  href="#"
-                  @click="save"
-                >
+                <a @click="save">
                   Повторить отправку
                 </a>
               </span>

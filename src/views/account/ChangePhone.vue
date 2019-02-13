@@ -74,10 +74,7 @@
             </v-card-text>
             <v-card-text>
               Неправильно ввели номер телефона?
-              <a
-                href="#"
-                @click="clear"
-              >
+              <a @click="clear">
                 Укажите другой телефон
               </a>
             </v-card-text>
@@ -90,10 +87,7 @@
                 <span>{{ timeDisplay }}</span>.
               </span>
               <span v-else>
-                <a
-                  href="#"
-                  @click="code=null; save()"
-                >
+                <a @click="code=null; save()">
                   Повторить отправку
                 </a>
               </span>
