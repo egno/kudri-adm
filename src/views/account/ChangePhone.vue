@@ -36,6 +36,8 @@
                   <v-text-field
                     v-model="phone"
                     label="Новый телефон"
+                    prefix="+7"
+                    mask="phone"
                     :rules="phoneRules"
                   />
                 </v-flex>
@@ -57,10 +59,21 @@
           <div v-if="status==='waiting'">
             <v-card-text>
               На телефон
-              <span>+{{ phone }}</span> отправлен код подтверждения.
+              <span>+7{{ phone }}</span> отправлен код подтверждения.
             </v-card-text>
             <v-card-text>
-              Ошиблись?
+              <v-text-field
+                v-model="code"
+                label="Код подтверждения"
+                mask="####"
+                :rules="codeRules"
+              />
+              <div v-if="counter!==undefined">
+                Осталось количество попыток: {{ counter }}
+              </div>
+            </v-card-text>
+            <v-card-text>
+              Неправильно ввели номер телефона?
               <a
                 href="#"
                 @click="clear"
@@ -79,12 +92,56 @@
               <span v-else>
                 <a
                   href="#"
-                  @click="save"
+                  @click="code=null; save()"
                 >
                   Повторить отправку
                 </a>
               </span>
             </v-card-text>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn
+                :disabled="!successCode"
+                flat
+                color="primary"
+                @click="save"
+              >
+                Подтвердить
+              </v-btn>
+            </v-card-actions>
+          </div>
+
+          <div v-if="status==='fail'">
+            <v-card-text>
+              <div>Исчерпано количество попыток ввода кода.</div>
+            </v-card-text>
+            <v-card-text>
+              <span v-if="timeDisplay">
+                Повторно отправить код подтверждения можно будет через
+                <span>{{ timeDisplay }}</span>.
+              </span>
+              <span v-else>
+                <a
+                  href="#"
+                  @click="code=null; save()"
+                >
+                  Повторить отправку
+                </a>
+              </span>
+            </v-card-text>
+            <v-card-text>
+              Неправильно ввели номер телефона?
+              <a
+                href="#"
+                @click="clear"
+              >
+                Укажите другой телефон
+              </a>
+            </v-card-text>
+          </div>
+
+          <div v-if="status==='success'">
+            <v-card-text>{{ response.info }}</v-card-text>
           </div>
         </v-card>
         <v-card
@@ -99,25 +156,31 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import Api from '@/api/backend';
 
 export default {
   data() {
     return {
+      code: null,
+      counter: undefined,
       phone: '',
       repeatphone: '',
       response: undefined,
       rules: {
+        code: value => {
+          const pattern = /^\d{4}$/;
+          return pattern.test(value) || 'Некорректный код подтверждения.';
+        },
         required: value => !!value || 'Обязательно для заполнения.',
         phone: value => {
-          const pattern = /^\d$/;
-          return pattern.test(value) || 'Некорректный телефон.';
+          const pattern = /^\d{10}$/;
+          return pattern.test(value) || 'Некорректный номер телефона.';
         },
         oldMatches: value =>
           !this.oldPhone ||
-          value.trim().toUpperCase() != this.oldPhone.toUpperCase() ||
-          'Введенные адрес телефон уже используется вами.'
+          value.trim().slice(-10) != this.oldPhone.slice(-10) ||
+          'Новый номер телефона совпадает с уже имеющимся.'
       },
       status: '',
       timeToRepeat: undefined
@@ -125,6 +188,9 @@ export default {
   },
   computed: {
     ...mapGetters(['userID', 'userInfo']),
+    codeRules() {
+      return [this.rules.required, this.rules.code];
+    },
     phoneRules() {
       return [this.rules.required, this.rules.phone, this.rules.oldMatches];
     },
@@ -136,6 +202,9 @@ export default {
     success() {
       return !!this.phone && !this.phoneRules.some(r => r(this.phone) !== true);
     },
+    successCode() {
+      return !!this.code && !this.codeRules.some(r => r(this.code) !== true);
+    },
     timeDisplay() {
       if (!this.timeToRepeat) return;
       return `${this.timeToRepeat} мин`;
@@ -145,9 +214,12 @@ export default {
     response: 'processResponse'
   },
   methods: {
+    ...mapActions(['loadUserInfo']),
     clear() {
       this.status = undefined;
       this.timeToRepeat = undefined;
+      this.counter = undefined;
+      this.phone = '';
     },
     processResponse() {
       if (!this.response) return;
@@ -156,12 +228,21 @@ export default {
         this.setTime(+this.response.seconds.split(':')[1] + 1);
         return;
       }
+      if (this.response.error_code === '22U10') {
+        this.counter = this.response.attempts;
+      }
+      if (this.response.error_code === '22U11') {
+        this.counter = this.response.attempts;
+      }
+      if (this.response.status === 'success') {
+        this.loadUserInfo();
+      }
     },
     save() {
       if (!this.success) return;
       const data = {
         login: this.phone.trim(),
-        code: null
+        code: this.code
       };
       Api()
         .post('rpc/check_phone', data)

@@ -32,6 +32,10 @@ const getters = {
       return info['login'];
     }
   },
+  userEmail: (state, getters) => {
+    const info = getters.userInfo;
+    return info && info.data && info.data.email;
+  },
   userPhone: (state, getters) => {
     const info = getters.userInfo;
     return info && info.data && info.data.phone;
