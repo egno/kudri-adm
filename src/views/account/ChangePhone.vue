@@ -36,6 +36,8 @@
                   <v-text-field
                     v-model="phone"
                     label="Новый телефон"
+                    prefix="+7"
+                    mask="phone"
                     :rules="phoneRules"
                   />
                 </v-flex>
@@ -57,7 +59,15 @@
           <div v-if="status==='waiting'">
             <v-card-text>
               На телефон
-              <span>+{{ phone }}</span> отправлен код подтверждения.
+              <span>+7{{ phone }}</span> отправлен код подтверждения.
+            </v-card-text>
+            <v-card-text>
+              <v-text-field
+                v-model="code"
+                label="Код подтверждения"
+                mask="####"
+                :rules="codeRules"
+              />
             </v-card-text>
             <v-card-text>
               Ошиблись?
@@ -79,12 +89,27 @@
               <span v-else>
                 <a
                   href="#"
-                  @click="save"
+                  @click="code=null; save()"
                 >
                   Повторить отправку
                 </a>
               </span>
             </v-card-text>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn
+                :disabled="!successCode"
+                flat
+                color="primary"
+                @click="save"
+              >
+                Подтвердить
+              </v-btn>
+            </v-card-actions>
+          </div>
+
+          <div v-if="status==='success'">
+            <v-card-text>{{ response.info }}</v-card-text>
           </div>
         </v-card>
         <v-card
@@ -99,25 +124,30 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import Api from '@/api/backend';
 
 export default {
   data() {
     return {
+      code: null,
       phone: '',
       repeatphone: '',
       response: undefined,
       rules: {
+        code: value => {
+          const pattern = /^\d{4}$/;
+          return pattern.test(value) || 'Некорректный код подтверждения.';
+        },
         required: value => !!value || 'Обязательно для заполнения.',
         phone: value => {
-          const pattern = /^\d$/;
-          return pattern.test(value) || 'Некорректный телефон.';
+          const pattern = /^\d{10}$/;
+          return pattern.test(value) || 'Некорректный номер телефона.';
         },
         oldMatches: value =>
           !this.oldPhone ||
-          value.trim().toUpperCase() != this.oldPhone.toUpperCase() ||
-          'Введенные адрес телефон уже используется вами.'
+          value.trim().slice(-10) != this.oldPhone.slice(-10) ||
+          'Новый номер телефона совпадает с уже имеющимся.'
       },
       status: '',
       timeToRepeat: undefined
@@ -125,6 +155,9 @@ export default {
   },
   computed: {
     ...mapGetters(['userID', 'userInfo']),
+    codeRules() {
+      return [this.rules.required, this.rules.code];
+    },
     phoneRules() {
       return [this.rules.required, this.rules.phone, this.rules.oldMatches];
     },
@@ -136,6 +169,9 @@ export default {
     success() {
       return !!this.phone && !this.phoneRules.some(r => r(this.phone) !== true);
     },
+    successCode() {
+      return !!this.code && !this.codeRules.some(r => r(this.code) !== true);
+    },
     timeDisplay() {
       if (!this.timeToRepeat) return;
       return `${this.timeToRepeat} мин`;
@@ -145,6 +181,7 @@ export default {
     response: 'processResponse'
   },
   methods: {
+    ...mapActions(['loadUserInfo']),
     clear() {
       this.status = undefined;
       this.timeToRepeat = undefined;
@@ -156,12 +193,15 @@ export default {
         this.setTime(+this.response.seconds.split(':')[1] + 1);
         return;
       }
+      if (this.response.status === 'success') {
+        this.loadUserInfo();
+      }
     },
     save() {
       if (!this.success) return;
       const data = {
         login: this.phone.trim(),
-        code: null
+        code: this.code
       };
       Api()
         .post('rpc/check_phone', data)

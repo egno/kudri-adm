@@ -47,7 +47,7 @@
       <v-layout row>
         <VFlex>
           <VTextField
-            v-model="femail"
+            v-model="userEmail"
             class="centered-input"
             name="femail"
             label="e-mail"
@@ -66,17 +66,29 @@
           </VBtn>
         </VFlex>
       </v-layout>
+      <v-layout row>
+        <VFlex>
+          <VTextField
+            v-model="userPhone"
+            class="centered-input"
+            name="fphone"
+            label="Телефон"
+            type="phone"
+            disabled
+            :rules="[required]"
+            browser-autocomplete="tel"
+          />
+        </VFlex>
+        <VFlex>
+          <VBtn
+            icon
+            :to="{name:'AccountChangePhone'}"
+          >
+            <v-icon>edit</v-icon>
+          </VBtn>
+        </VFlex>
+      </v-layout>
 
-      <VTextField
-        v-model="fphone"
-        class="centered-input"
-        name="fphone"
-        label="Телефон"
-        type="phone"
-        disabled
-        :rules="[required]"
-        browser-autocomplete="tel"
-      />
       <VBtn
         color="success"
         @click="saveProfile"
@@ -145,6 +157,8 @@ export default {
       'businessInfo',
       'isPersonalMaster',
       'userAvatar',
+      'userEmail',
+      'userPhone',
       'userInfo',
       'userID'
     ]),
