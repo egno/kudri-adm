@@ -18,6 +18,11 @@ export default new Router({
       component: () => import('./views/account/ChangeEmail.vue')
     },
     {
+      path: '/account/changephone',
+      name: 'AccountChangePhone',
+      component: () => import('./views/account/ChangePhone.vue')
+    },
+    {
       path: '/register',
       name: 'register',
       component: () => import('./views/Register.vue')

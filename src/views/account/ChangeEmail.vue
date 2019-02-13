@@ -17,7 +17,7 @@
           flat
         >
           <v-card-title primary-title>
-            <h3>Изменение пароля</h3>
+            <h3>Изменение email</h3>
           </v-card-title>
 
           <div v-if="!status">
@@ -127,7 +127,7 @@ export default {
           'Введенные адрес e-mail уже используется вами.',
         repeatMatches: value =>
           value.trim().toUpperCase() == this.email.trim().toUpperCase() ||
-          'Введенные e-mail не совпадают.'
+          'Введенные адреса e-mail не совпадают.'
       },
       status: '',
       timeToRepeat: undefined
