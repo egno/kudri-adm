@@ -13,6 +13,11 @@ export default new Router({
       component: () => import('./views/Main.vue')
     },
     {
+      path: '/account/changeemail',
+      name: 'AccountChangeEmail',
+      component: () => import('./views/account/ChangeEmail.vue')
+    },
+    {
       path: '/register',
       name: 'register',
       component: () => import('./views/Register.vue')

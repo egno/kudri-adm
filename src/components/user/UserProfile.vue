@@ -44,17 +44,29 @@
         :rules="[specRequired]"
         type="text"
       />
+      <v-layout row>
+        <VFlex>
+          <VTextField
+            v-model="femail"
+            class="centered-input"
+            name="femail"
+            label="e-mail"
+            type="email"
+            disabled
+            :rules="[required, email]"
+            browser-autocomplete="username"
+          />
+        </VFlex>
+        <VFlex>
+          <VBtn
+            icon
+            :to="{name:'AccountChangeEmail'}"
+          >
+            <v-icon>edit</v-icon>
+          </VBtn>
+        </VFlex>
+      </v-layout>
 
-      <VTextField
-        v-model="femail"
-        class="centered-input"
-        name="femail"
-        label="e-mail"
-        type="email"
-        disabled
-        :rules="[required, email]"
-        browser-autocomplete="username"
-      />
       <VTextField
         v-model="fphone"
         class="centered-input"
