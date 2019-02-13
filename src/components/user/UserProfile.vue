@@ -88,7 +88,11 @@
           </VBtn>
         </VFlex>
       </v-layout>
-
+      <div>
+        <router-link :to="{ name: 'AccountSetPassword'}">
+          Изменить пароль
+        </router-link>
+      </div>
       <VBtn
         color="success"
         @click="saveProfile"

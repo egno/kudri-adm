@@ -23,6 +23,11 @@ export default new Router({
       component: () => import('./views/account/ChangePhone.vue')
     },
     {
+      path: '/account/setpassword',
+      name: 'AccountSetPassword',
+      component: () => import('./views/account/ChangePassword.vue')
+    },
+    {
       path: '/register',
       name: 'register',
       component: () => import('./views/Register.vue')
