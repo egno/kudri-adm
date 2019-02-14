@@ -236,19 +236,6 @@ export default {
     ]),
     loadBusiness() {
       this.setBusiness(this.businessId);
-      // Api()
-      //   .get(`business?id=eq.${this.businessId}`)
-      //   .then(res => res.data)
-      //   .then(res => res[0])
-      //   .then(res => {
-      //     this.business = res;
-      //     this.setBusinessInfo({
-      //       id: res.id,
-      //       category: res.j && res.j.category,
-      //       name: res.j && res.j.name
-      //     });
-      //   })
-      //   .catch(this.setAppTitle());
     },
     goHome() {
       router.push({ name: 'home' });

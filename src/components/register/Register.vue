@@ -211,7 +211,8 @@ export default {
     }
   },
   watch: {
-    userID: function(oldVal, newVal) {
+    userID: function(newVal, oldVal) {
+      console.log(newVal, oldVal);
       if (newVal && oldVal !== newVal) {
         this.goHome();
       }

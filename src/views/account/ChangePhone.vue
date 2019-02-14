@@ -106,23 +106,34 @@
           </div>
 
           <div v-if="status==='fail'">
-            <v-card-text>
-              <div>Исчерпано количество попыток ввода кода.</div>
-            </v-card-text>
-            <v-card-text>
-              <span v-if="timeDisplay">
-                Повторно отправить код подтверждения можно будет через
-                <span>{{ timeDisplay }}</span>.
-              </span>
-              <span v-else>
-                <a
-                  href="#"
-                  @click="code=null; save()"
-                >
-                  Повторить отправку
+            <div v-if="response && response.error_code === '22U13'">
+              <v-card-text>
+                <div>Невозможно сменить телефон, так как такой номер уже зарегистрирован у другого пользователя.</div>
+                <a @click="openMessageWindow">
+                  Обратитетесь в техподдержку
                 </a>
-              </span>
-            </v-card-text>
+              </v-card-text>
+            </div>
+            <div v-else>
+              <v-card-text>
+                <div>Исчерпано количество попыток ввода кода.</div>
+              </v-card-text>
+              <v-card-text>
+                <span v-if="timeDisplay">
+                  Повторно отправить код подтверждения можно будет через
+                  <span>{{ timeDisplay }}</span>.
+                </span>
+                <span v-else>
+                  <a
+                    href="#"
+                    @click="code=null; save()"
+                  >
+                    Повторить отправку
+                  </a>
+                </span>
+              </v-card-text>
+            </div>
+
             <v-card-text>
               Неправильно ввели номер телефона?
               <a
@@ -208,7 +219,7 @@ export default {
     response: 'processResponse'
   },
   methods: {
-    ...mapActions(['loadUserInfo']),
+    ...mapActions(['loadUserInfo', 'openMessageWindow']),
     clear() {
       this.status = undefined;
       this.timeToRepeat = undefined;
@@ -224,9 +235,14 @@ export default {
       }
       if (this.response.error_code === '22U10') {
         this.counter = this.response.attempts;
+        return;
       }
       if (this.response.error_code === '22U11') {
         this.counter = this.response.attempts;
+        return;
+      }
+      if (this.response.error_code === '22U13') {
+        return;
       }
       if (this.response.status === 'success') {
         this.loadUserInfo();
