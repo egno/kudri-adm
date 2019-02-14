@@ -15,8 +15,7 @@
         row
         align-center
         justify-start
-        headline
-        class="title"
+        display-4
       >
         {{ businessInfo.category }} {{ businessInfo.name }}
       </VFlex>
@@ -124,7 +123,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.title {
+.display-4 {
   display: flex;
   padding-left: 16px;
   align-items: center;

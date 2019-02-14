@@ -510,6 +510,7 @@ export default {
 .calendar-wrapper {
   padding-bottom: 30px;
   border-bottom: 1px solid rgba(137, 149, 175, 0.2);
+  margin-bottom: 30px;
 }
 .cal-head {
   margin-right: 10px;
@@ -522,5 +523,16 @@ export default {
   width: 16px;
   max-width: 16px;
   min-width: 16px;
+  .v-ripple__container {
+    display: none!important;
+  }
+  &:before {
+    border-radius: 50px;
+    width: 16px;
+    min-width: 16px;
+    height: 16px;
+    top: 6px;
+    left: 0px;
+  }
 }
 </style>
