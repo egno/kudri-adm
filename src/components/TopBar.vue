@@ -20,7 +20,6 @@
       >
         {{ businessInfo.category }} {{ businessInfo.name }}
       </VFlex>
-      
 
       <VFlex v-if="showEmployee">
         <v-select
@@ -33,18 +32,6 @@
           @input="onSelectEmployee"
         />
       </VFlex>
-  
-      <!--<VFlex>-->
-      <!--<VTextField-->
-      <!--key="mainSearch"-->
-      <!--v-model="searchString"-->
-      <!--autofocus-->
-      <!--clearable-->
-      <!--label="Поиск"-->
-      <!--single-line-->
-      <!--type="text"-->
-      <!--/>-->
-      <!--</VFlex>-->
     </VLayout>
 
     <VSpacer />

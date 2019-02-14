@@ -103,6 +103,11 @@
               browser-autocomplete="current-password"
             />
           </VForm>
+          <div>
+            <a @click="goRestorePassword">
+              Забыли пароль?
+            </a>
+          </div>
         </VCardText>
         <VCardActions>
           <VSpacer />
@@ -221,6 +226,10 @@ export default {
   },
   methods: {
     ...mapActions(['login', 'logout', 'openProfileDrawer']),
+    goRestorePassword() {
+      this.menu = false;
+      this.$router.push({ name: 'restorePassword' });
+    },
     menuHandler(action) {
       this.menu = false;
       switch (action) {
@@ -248,34 +257,34 @@ export default {
 };
 </script>
 <style lang="scss">
-  .v-menu.profile-menu {
-    border-left: 1px solid rgba(137, 149, 175, 0.1);
-  }
-  .menu-list {
-    padding: 17px 0;
-    .v-list__tile {
-      height: 24px;
-      &__title {
-        display: flex;
-        align-items: center;
-      }
-    }
-    .count, .attention {
-      width: 16px;
-      min-width: 16px;
-      height: 16px;
-      display: block;
-      background: #EF4D37;
-      border-radius: 16px;
-      text-align: center;
-      color: #fff;
-      font-size: 11px!important;
-    }
-    .attention {
-      color: #EF4D37;
-      background: #fff;
-      border: 1px solid #EF4D37;
+.v-menu.profile-menu {
+  border-left: 1px solid rgba(137, 149, 175, 0.1);
+}
+.menu-list {
+  padding: 17px 0;
+  .v-list__tile {
+    height: 24px;
+    &__title {
+      display: flex;
+      align-items: center;
     }
   }
-  
+  .count,
+  .attention {
+    width: 16px;
+    min-width: 16px;
+    height: 16px;
+    display: block;
+    background: #ef4d37;
+    border-radius: 16px;
+    text-align: center;
+    color: #fff;
+    font-size: 11px !important;
+  }
+  .attention {
+    color: #ef4d37;
+    background: #fff;
+    border: 1px solid #ef4d37;
+  }
+}
 </style>

@@ -9,6 +9,7 @@
       ref="formLogin"
     >
       <VSelect
+        v-if="!restoreMode"
         v-model="ftype"
         :items="roles"
         label="Ваш бизнес"
@@ -17,7 +18,7 @@
         id="flogin"
         v-model="flogin"
         name="flogin"
-        label="Телефон или e-mail"
+        :label="'Телефон' + (restoreMode ? '' : ' или e-mail')"
         phone
         type="flogin"
         :rules="[rules.email]"
@@ -26,7 +27,7 @@
         color="success"
         @click="sendLogin"
       >
-        Создать
+        Подтвердить
       </VBtn>
     </VForm>
 
@@ -70,7 +71,7 @@
         color="success"
         @click="sendCode"
       >
-        Создать
+        Проверить
       </VBtn>
       <div>Не пришёл код?</div>
       <a
@@ -144,7 +145,7 @@ export default {
     return {
       rules: {
         email: value => {
-          if (value.includes('@')) {
+          if (value.includes('@') && !this.restoreMode) {
             const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             return (
               pattern.test(value) ||
@@ -154,7 +155,9 @@ export default {
             const pattern = /^[+]*([0-9]){11}$/;
             return (
               pattern.test(value) ||
-              'Введите действительный номер телефона или e-mail.'
+              'Введите действительный номер телефона' +
+                (this.restoreMode ? '' : ' или e-mail') +
+                '.'
             );
           }
         }
@@ -208,6 +211,9 @@ export default {
       } else {
         return undefined;
       }
+    },
+    restoreMode() {
+      return this.$route && this.$route.name === 'restorePassword';
     }
   },
   watch: {
@@ -288,7 +294,10 @@ export default {
             code: this.fcode
           })
           .then(res => {
-            if (res.data.status == 'confirmed') {
+            if (
+              res.data.status === 'confirmed' ||
+              res.data.status === 'success'
+            ) {
               this.showPasswordInputs = true;
               this.$nextTick(function() {
                 this.$refs.passwords.resetValidation();

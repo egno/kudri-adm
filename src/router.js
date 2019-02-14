@@ -33,6 +33,11 @@ export default new Router({
       component: () => import('./views/Register.vue')
     },
     {
+      path: '/restore',
+      name: 'restorePassword',
+      component: () => import('./views/Register.vue')
+    },
+    {
       path: '/register/:code',
       name: 'registerCode',
       component: () => import('./views/Register.vue')
