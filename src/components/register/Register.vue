@@ -18,7 +18,7 @@
         id="flogin"
         v-model="flogin"
         name="flogin"
-        :label="'Телефон' + (restoreMode ? '' : ' или e-mail')"
+        label="Телефон"
         phone
         type="flogin"
         :rules="[rules.email]"
@@ -145,21 +145,10 @@ export default {
     return {
       rules: {
         email: value => {
-          if (value.includes('@') && !this.restoreMode) {
-            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return (
-              pattern.test(value) ||
-              'Введите действительный номер телефона или e-mail.'
-            );
-          } else {
-            const pattern = /^[+]*([0-9]){11}$/;
-            return (
-              pattern.test(value) ||
-              'Введите действительный номер телефона' +
-                (this.restoreMode ? '' : ' или e-mail') +
-                '.'
-            );
-          }
+          const pattern = /^[+]*([0-9]){11}$/;
+          return (
+            pattern.test(value) || 'Введите действительный номер телефона.'
+          );
         }
       },
       fpasswordRepeat: '',
