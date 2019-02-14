@@ -40,6 +40,7 @@
 
 <script>
 import { hash } from '@/components/utils';
+import { imagePath } from '@/components/avatar/utils';
 
 export default {
   props: {
@@ -105,11 +106,7 @@ export default {
         .join('');
     },
     imagePath() {
-      if (this.src !== '' && this.src !== null && !this.valid_error) {
-        return `${process.env.VUE_APP_IMAGES || ''}${this.src}`;
-      } else {
-        return this.user;
-      }
+      return imagePath(this.src) || this.user;
     },
     valid_error() {
       return !this.src;
@@ -151,7 +148,7 @@ export default {
     width: 8px;
     height: 8px;
     border: 1px solid #fff;
-    background: #EF4D37;
+    background: #ef4d37;
     border-radius: 16px;
     top: 0;
     left: 0;

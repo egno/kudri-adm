@@ -1,32 +1,41 @@
 <template>
-  <div>
-    <canvas
-      id="avatarEditorCanvas"
-      ref="avatarEditorCanvas"
-      :width="canvasWidth"
-      :height="canvasHeight"
-      class="cursorPointer"
-      @dragover.prevent
-      @drop="onDrop"
-      @mousedown="onDragStart"
-      @touchstart="onDragStart"
-      @click="clicked"
-    />
-    <input
-      ref="input"
-      type="file"
-      style="display:none;"
-      @change="fileSelected"
+  <div :style="{width: canvasWidth+'px', height: canvasHeight+'px'}">
+    <div
+      v-if="background"
+      class="pic-background"
     >
+      <div :style="{margin: canvasBorder+'px'}">
+        <v-img
+          :width="width"
+          :height="height"
+          :src="background"
+        />
+      </div>
+    </div>
+    <div class="pic-editor">
+      <canvas
+        id="avatarEditorCanvas"
+        ref="avatarEditorCanvas"
+        :width="canvasWidth"
+        :height="canvasHeight"
+        class="cursorPointer"
+        @dragover.prevent
+        @drop="onDrop"
+        @mousedown="onDragStart"
+        @touchstart="onDragStart"
+        @click="clicked"
+      />
+      <input
+        ref="input"
+        type="file"
+        style="display:none;"
+        @change="fileSelected"
+      >
+    </div>
   </div>
 </template>
 
 <style type="text/css">
-canvas {
-  width: 300px;
-  height: 300px;
-}
-
 .cursorPointer {
   cursor: pointer;
 }
@@ -48,6 +57,10 @@ canvas {
 export default {
   props: {
     image: {
+      type: String,
+      default: ''
+    },
+    background: {
       type: String,
       default: ''
     },
@@ -107,6 +120,9 @@ export default {
     },
     canvasHeight() {
       return this.getDimensions().canvas.height;
+    },
+    canvasBorder() {
+      return this.getDimensions().border;
     },
     rotationRadian() {
       return (this.rotation * Math.PI) / 180;
@@ -567,3 +583,16 @@ export default {
   }
 };
 </script>
+
+<style>
+.pic-editor {
+  position: absolute;
+  z-index: 1;
+}
+.pic-background {
+  position: absolute;
+  opacity: 0.2;
+  z-index: 0;
+}
+</style>
+

@@ -105,7 +105,9 @@
       max-width="350px"
     >
       <VueAvatarEditor
-        :avatar="avatar"
+        :width="250"
+        :height="250"
+        :background="avatarPath"
         @finished="saveImage($event)"
       />
     </VDialog>
@@ -117,7 +119,7 @@ import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue';
 import { mapGetters, mapActions } from 'vuex';
 import ImageApi from '@/api/images';
-import { canvasToFormData } from '@/components/avatar/utils';
+import { canvasToFormData, imagePath } from '@/components/avatar/utils';
 
 export default {
   components: {
@@ -166,6 +168,9 @@ export default {
       'userInfo',
       'userID'
     ]),
+    avatarPath() {
+      return imagePath(this.userAvatar);
+    },
     initiales() {
       return this.fname + ' ' + this.flastname;
     },

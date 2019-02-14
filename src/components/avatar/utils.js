@@ -12,3 +12,12 @@ export function canvasToFormData(img, fileName) {
   formData.append('file', file, newFileName);
   return formData;
 }
+
+export function imagePath(src) {
+  return (
+    src &&
+    src !== '' &&
+    src !== null &&
+    `${process.env.VUE_APP_IMAGES || ''}${src}`
+  );
+}

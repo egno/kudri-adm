@@ -11,7 +11,10 @@
           justify-space-around
           column
         >
-          <VFlex justify-center>
+          <VFlex
+            justify-center
+            pb-3
+          >
             <VueAvatar
               ref="vueavatar"
               :width="width"
@@ -21,6 +24,7 @@
               :border="border"
               :color="color"
               :scale="+scale"
+              :background="background"
               @vue-avatar-editor:image-ready="onImageReady"
               @select-file="onSelectFile($event)"
             />
@@ -73,6 +77,10 @@ export default {
   },
   props: {
     avatar: {
+      type: String,
+      default: ''
+    },
+    background: {
       type: String,
       default: ''
     },
