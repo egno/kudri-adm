@@ -72,6 +72,7 @@
       <gallery-images
         :images="serviceImages"
         @showSlider="showSlider($event)"
+        @deleteImage="deleteImage($event)"
       />
     </v-layout>
     <album-slider
@@ -91,6 +92,7 @@ import GalleryCard from '@/components/gallery/GalleryCard.vue';
 import GalleryImages from '@/components/gallery/GalleryImages.vue';
 import { mapGetters } from 'vuex';
 import Api from '@/api/backend';
+import { deleteImage } from '@/components/gallery/utils';
 
 export default {
   components: { Album, AlbumSlider, GalleryCard, GalleryImages },
@@ -116,12 +118,6 @@ export default {
         this.data.filter(x => x.employees && x.employees.some(e => !!e))
       );
     },
-    imagesServices() {
-      return (
-        this.data &&
-        this.data.filter(x => x.services && x.services.some(e => !!e))
-      );
-    },
     serviceImages() {
       return (
         this.data &&
@@ -136,6 +132,19 @@ export default {
     this.load();
   },
   methods: {
+    deleteImage(image) {
+      console.log(image);
+      if (!image) return;
+      const idx = this.data.findIndex(x => x.id === image);
+      if (!idx === -1) return;
+      deleteImage(image)
+        .then(() => {
+          this.data.splice(idx, 1);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     load() {
       if (!this.business) return;
       Api()

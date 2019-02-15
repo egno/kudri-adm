@@ -1,5 +1,15 @@
 <template>
   <v-card hover>
+    <v-card-actions v-if="editMode">
+      <v-spacer />
+      <v-btn
+        flat
+        icon
+        @click="deleteImage()"
+      >
+        <v-icon>delete</v-icon>
+      </v-btn>
+    </v-card-actions>
     <v-img :src="src">
       <v-container
         fill-height
@@ -41,9 +51,15 @@
 <script>
 export default {
   props: {
+    editMode: { type: Boolean, default: false },
     title: { type: String, default: '' },
     subtitle: { type: String, default: '' },
     src: { type: String, default: undefined }
+  },
+  methods: {
+    deleteImage() {
+      this.$emit('deleteImage');
+    }
   }
 };
 </script>

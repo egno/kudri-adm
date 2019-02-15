@@ -8,6 +8,7 @@
         <v-card-title>
           <v-layout row>
             <v-flex
+              v-if="!editMode"
               xs12
               sm6
             >
@@ -22,6 +23,7 @@
               />
             </v-flex>
             <v-flex
+              v-if="!editMode"
               xs12
               sm6
             >
@@ -36,6 +38,32 @@
                 deletable-chips
                 clearable
               />
+            </v-flex>
+            <v-spacer />
+            <v-flex v-if="!editMode">
+              <v-btn
+                icon
+                fab
+                flat
+                ripple
+                @click="editMode = true"
+              >
+                <v-icon>edit</v-icon>
+              </v-btn>
+            </v-flex>
+            <v-flex v-if="editMode">
+              <v-layout row>
+                <v-flex>
+                  <v-btn
+                    flat
+                    color="primary"
+                    ripple
+                    @click="editMode = false"
+                  >
+                    Закрыть режим редактирования
+                  </v-btn>
+                </v-flex>
+              </v-layout>
             </v-flex>
           </v-layout>
         </v-card-title>
@@ -52,12 +80,14 @@
               md3
               lg2
               xl1
-              @click="showSlider(n)"
+              @click="!editMode && showSlider(n)"
             >
               <image-card
                 :src="image.src"
                 :title="image.service"
+                :edit-mode="editMode"
                 :subtitle="image.employee && fullName(image.employee)"
+                @deleteImage="deleteImage(image)"
               />
             </v-flex>
           </v-layout>
@@ -80,6 +110,7 @@ export default {
   },
   data() {
     return {
+      editMode: false,
       selectedEmployee: [],
       selectedService: []
     };
@@ -144,6 +175,10 @@ export default {
     }
   },
   methods: {
+    deleteImage(image) {
+      if (!(image && image.id)) return;
+      this.$emit('deleteImage', image.id);
+    },
     fullName(emp) {
       return fullName(emp);
     },
