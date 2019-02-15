@@ -106,6 +106,7 @@ export default {
         'businessCardService',
         'businessVisit',
         'employeeCard',
+        'employeeFull',
         'employeeGallery'
       ];
       return businessCards.some(x => x === this.$route.name);

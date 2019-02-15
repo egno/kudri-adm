@@ -3,31 +3,56 @@
     fluid
     grid-list-lg
   >
-    <VFlex>
-      <VTextField
-        key="mainSearch"
-        v-model="searchString"
-        autofocus
-        clearable
-        label="Поиск"
-        single-line
-        type="text"
-      />
-    </VFlex>
-    <VLayout
-      row
-      wrap
-    >
-      <VFlex
-        v-for="(item, i) in data"
-        :key="i"
-      >
-        <EmployeeCard
-          :item="item"
-          @onSave="onSave"
-        >
-          {{ i }} {{ item.id }}
-        </EmployeeCard>
+    <VLayout column>
+      <VFlex>
+        <VTextField
+          key="mainSearch"
+          v-model="searchString"
+          autofocus
+          clearable
+          label="Поиск"
+          single-line
+          type="text"
+        />
+      </VFlex>
+      <VFlex>
+        <VLayout column>
+          <VFlex
+            v-for="(category, ci) in categories"
+            :key="'cat'+ci"
+            xs12
+          >
+            <VLayout column>
+              <VFlex pb-0>
+                <span class="title">
+                  {{ category || 'Прочие' }}
+                </span>
+              </VFlex>
+              <VFlex>
+                <VLayout
+                  row
+                  wrap
+                >
+                  <VFlex
+                    v-for="(item, i) in categoryItems(category)"
+                    :key="i"
+                    xs12
+                    md6
+                    lg4
+                    xl2
+                  >
+                    <EmployeeCard
+                      :item="item"
+                      @onSave="onSave"
+                    >
+                      {{ i }} {{ item.id }}
+                    </EmployeeCard>
+                  </VFlex>
+                </VLayout>
+              </VFlex>
+            </VLayout>
+          </VFlex>
+        </VLayout>
       </VFlex>
     </VLayout>
   </VContainer>
@@ -55,12 +80,15 @@ export default {
         }
       ],
       edit: false,
-      data: {}
+      data: []
     };
   },
   computed: {
     id() {
       return this.$route.params.id;
+    },
+    categories() {
+      return [...new Set(this.data && this.data.map(x => x.j && x.j.category))];
     }
   },
   watch: {
@@ -76,8 +104,10 @@ export default {
   },
   methods: {
     ...mapActions(['setActions', 'setSearchString']),
-    setStoreSearchString() {
-      this.setSearchString(this.searchString);
+    categoryItems(category) {
+      return (
+        this.data && this.data.filter(x => x.j && x.j.category === category)
+      );
     },
     fetchData() {
       Api()
@@ -101,15 +131,12 @@ export default {
       data.type = 'E';
       if (!data.id) {
         Api().post(`employee`, data);
-        // .then(res => {
-        //   const newId = this.locationId(res.headers);
-        // if (newId) {
-        // router.push({ name: 'businessCard', params: { id: newId } });
-        // }
-        // });
       } else {
         Api().patch(`employee?id=eq.${data.id}`, data);
       }
+    },
+    setStoreSearchString() {
+      this.setSearchString(this.searchString);
     }
   }
 };
