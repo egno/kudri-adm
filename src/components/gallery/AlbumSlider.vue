@@ -149,7 +149,9 @@ export default {
   methods: {
     imagePath(image) {
       return (
-        image && `${process.env.VUE_APP_IMAGES}${image.business_id}/${image.id}`
+        image &&
+        (image.src ||
+          `${process.env.VUE_APP_IMAGES}${image.business_id}/${image.id}`)
       );
     },
     initProps() {

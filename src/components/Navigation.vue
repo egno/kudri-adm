@@ -13,8 +13,6 @@
       >
         <span>{{ defaultAppTitle }}</span>
       </VToolbarTitle>
-      <!--<VSpacer />-->
-      <!--<VToolbarSideIcon @click="navBar()" />-->
     </VToolbar>
 
     <VList>
@@ -51,13 +49,6 @@
     >
       Сообщить о проблеме
     </div>
-    <!--<VList>-->
-    <!--<VListTile @click="openMessageWindow">-->
-    <!--<VListTileContent>-->
-    <!--<VListTileTitle>Сообщить о проблеме</VListTileTitle>-->
-    <!--</VListTileContent>-->
-    <!--</VListTile>-->
-    <!--</VList>-->
   </VNavigationDrawer>
 </template>
 
@@ -146,7 +137,7 @@ export default {
             name: 'businessCardEmployee',
             params: { id: this.businessId }
           },
-          show: this.loggedIn && !!this.isManagerMenu,
+          show: this.loggedIn && !this.isManagerMenu,
           action: {
             label: 'Добавить сотрудника',
             action: 'newEmployee',
@@ -206,6 +197,7 @@ export default {
         },
         {
           title: 'Галерея',
+          count: this.galleryCount,
           route: {
             name: 'businessCardGallery',
             params: { id: this.businessId }
@@ -271,7 +263,7 @@ export default {
       }
       .v-list__tile--link {
         color: #fff !important;
-        font-weight: 400!important;
+        font-weight: 400 !important;
         height: 40px;
         &:hover {
           background-color: rgba(137, 149, 175, 0.2);

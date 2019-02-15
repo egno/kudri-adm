@@ -3,14 +3,15 @@
     <v-card
       v-if="!!(images && images.length)"
       :hover="!!to"
+      @click="$router.push(to)"
     >
-      <v-card-title @click="$router.push(to)">
+      <v-card-title>
         <v-layout row>
           <v-flex>{{ subtitle }}</v-flex>
           <v-flex>{{ title }}</v-flex>
         </v-layout>
       </v-card-title>
-      <v-responsive @click="showSlider(images)">
+      <v-responsive>
         <v-img
           :src="image"
           height="10em"

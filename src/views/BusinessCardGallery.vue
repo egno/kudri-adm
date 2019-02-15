@@ -1,13 +1,12 @@
 <template>
   <v-container
     fluid
-    grid-list-sm
+    grid-list-md
   >
     <v-layout
       v-if="$route.name === 'businessCardGallery'"
       justify-space-around
-      row
-      wrap
+      column
     >
       <v-flex
         xs12
@@ -35,8 +34,10 @@
         sm6
       >
         <album
-          title="Услуги"
-          :images="imagesServices"
+          title="Работы"
+          :to="{name:'businessCardServiceGallery', params:{id: id}}"
+          :images="imagesEmployees"
+          @showSlider="showSlider($event)"
         />
       </v-flex>
     </v-layout>
@@ -61,6 +62,18 @@
         />
       </v-flex>
     </v-layout>
+
+    <v-layout
+      v-if="$route.name === 'businessCardServiceGallery'"
+      justify-space-around
+      row
+      wrap
+    >
+      <gallery-images
+        :images="serviceImages"
+        @showSlider="showSlider($event)"
+      />
+    </v-layout>
     <album-slider
       :display="!!sliderImages"
       :title="sliderTitle"
@@ -75,11 +88,12 @@
 import Album from '@/components/gallery/Album.vue';
 import AlbumSlider from '@/components/gallery/AlbumSlider.vue';
 import GalleryCard from '@/components/gallery/GalleryCard.vue';
+import GalleryImages from '@/components/gallery/GalleryImages.vue';
 import { mapGetters } from 'vuex';
 import Api from '@/api/backend';
 
 export default {
-  components: { Album, AlbumSlider, GalleryCard },
+  components: { Album, AlbumSlider, GalleryCard, GalleryImages },
   data() {
     return {
       data: [],
@@ -103,6 +117,12 @@ export default {
       );
     },
     imagesServices() {
+      return (
+        this.data &&
+        this.data.filter(x => x.services && x.services.some(e => !!e))
+      );
+    },
+    serviceImages() {
       return (
         this.data &&
         this.data.filter(x => x.services && x.services.some(e => !!e))

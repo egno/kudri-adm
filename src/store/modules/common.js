@@ -215,24 +215,20 @@ const actions = {
     commit('SET_APP_TITLE', payload);
   },
   setBusiness({ commit, dispatch }, payload) {
+    console.log('setBusiness', payload);
     const path = `business?id=eq.${payload}`;
     Api()
       .get(path)
       .then(res => res.data[0])
       .then(res => {
         commit('SET_BUSINESS_INFO', res);
-        dispatch('loadEmployee', payload && payload.id);
+        dispatch('loadEmployee', payload);
       })
       .catch(err => commit('ADD_ALERT', makeAlert(err)));
   },
-  // setBusinessInfo({ commit, dispatch }, payload) {
-  //   commit('SET_BUSINESS_INFO', payload);
-  //   dispatch('loadEmployee', payload && payload.id);
-  // },
   setSearchString({ commit }, payload) {
     commit('SET_SEARCH_STRING', payload);
   },
-
   loadApiTime({ commit }) {
     Api()
       .get('info')
