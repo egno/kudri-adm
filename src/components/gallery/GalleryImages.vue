@@ -40,7 +40,7 @@
               />
             </v-flex>
             <v-spacer />
-            <v-flex v-if="!editMode">
+            <v-flex v-if="!editMode && businessInfo && businessInfo.access">
               <v-btn
                 icon
                 fab
@@ -116,7 +116,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({ employeeList: 'employee' }),
+    ...mapGetters(['businessInfo', { employeeList: 'employee' }]),
     employees() {
       return [
         ...new Set(
