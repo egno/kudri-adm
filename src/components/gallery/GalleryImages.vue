@@ -116,7 +116,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['businessInfo', { employeeList: 'employee' }]),
+    ...mapGetters(['businessInfo', 'employee']),
     employees() {
       return [
         ...new Set(
@@ -183,7 +183,7 @@ export default {
       return fullName(emp);
     },
     getEmployee(id) {
-      return this.employeeList && this.employeeList.filter(e => e.id === id)[0];
+      return this.employee && this.employee.filter(e => e.id === id)[0];
     },
     showSlider(n) {
       this.$emit('showSlider', {
