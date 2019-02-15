@@ -4,7 +4,7 @@
     flat
   >
     <v-layout column>
-      <v-flex>
+      <v-flex pa-4>
         <v-img :src="imagePath" />
       </v-flex>
       <v-flex>
@@ -66,7 +66,7 @@ export default {
   },
   computed: {
     imagePath() {
-      return imagePath(this.item.image, this.item.parent);
+      return imagePath(this.item.j && this.item.j.image, this.item.parent);
     }
   }
 };
