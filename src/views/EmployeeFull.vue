@@ -1,5 +1,5 @@
 <template>
-  <v-layout>
+  <v-layout row>
     <v-flex
       xs12
       offset-sm1
@@ -20,7 +20,8 @@
             Сотрудник [{{ employee_id }} || 'новый']
           </div>
         </v-card-title>
-        <v-card-text>
+        <v-divider />
+        <v-card-text v-if="data && data.id">
           <v-layout column>
             <v-flex xs12>
               <v-tabs v-model="activeTab">
@@ -55,6 +56,7 @@
             </v-flex>
           </v-layout>
         </v-card-text>
+        <v-divider />
         <v-card-actions>
           <v-spacer />
           <v-btn
@@ -66,6 +68,7 @@
           <v-btn
             depressed
             color="primary"
+            :disabled="!(data && data.access)"
             @click="save"
           >
             Сохранить

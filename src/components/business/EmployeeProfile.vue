@@ -1,7 +1,9 @@
 <template>
-  <v-card
-    v-if="item && item.j"
-    flat
+  <v-container
+    fluid
+    grid-list-lg
+    pa-0
+    pt-3
   >
     <v-layout column>
       <v-flex xs12>
@@ -10,7 +12,6 @@
           wrap
         >
           <v-flex
-            pa-4
             xs12
             md4
           >
@@ -19,7 +20,10 @@
               aspect-ratio="1"
             />
           </v-flex>
-          <v-flex>
+          <v-flex
+            xs12
+            md8
+          >
             <v-layout column>
               <v-flex>
                 <v-text-field
@@ -79,7 +83,7 @@
         />
       </v-flex>
     </v-layout>
-  </v-card>
+  </v-container>
 </template>
 
 <script>
