@@ -5,82 +5,96 @@
     pa-0
     pt-3
   >
-    <v-layout column>
-      <v-flex xs12>
-        <v-layout
-          row
-          wrap
-        >
-          <v-flex
-            xs12
-            md4
-          >
-            <v-img
-              :src="imagePath"
-              aspect-ratio="1"
-            />
-          </v-flex>
-          <v-flex
-            xs12
-            md8
-          >
-            <v-layout column>
-              <v-flex>
-                <v-text-field
-                  v-model="item.j.name"
-                  browser-autocomplete="name"
-                  label="Имя"
-                  required
-                  :disabled="!item.access"
+    <v-layout row>
+      <v-flex
+        xs12
+        offset-sm1
+        sm10
+        offset-md2
+        md8
+        offset-lg3
+        lg6
+        offset-xl4
+        xl4
+      >
+        <v-layout column>
+          <v-flex xs12>
+            <v-layout
+              row
+              wrap
+            >
+              <v-flex
+                xs12
+                md4
+              >
+                <v-img
+                  :src="imagePath"
+                  aspect-ratio="1"
                 />
               </v-flex>
-              <v-flex>
-                <v-text-field
-                  v-model="item.j.surname"
-                  label="Фамилия"
-                  :disabled="!item.access"
-                />
-              </v-flex>
-              <v-flex>
-                <v-combobox
-                  v-model="item.j.category"
-                  label="Специальность"
-                  :items="employeeCategories"
-                  :disabled="!item.access"
-                />
-              </v-flex>
-              <v-flex>
-                <v-combobox
-                  v-model="item.j.position"
-                  label="Должность"
-                  :items="employeePositions"
-                  :disabled="!item.access"
-                />
-              </v-flex>
-              <v-flex>
-                <PhoneEdit
-                  :phone="item.j.phone"
-                  :disabled="!item.access"
-                />
-              </v-flex>
-              <v-flex>
-                <v-text-field
-                  v-model="item.j.email"
-                  label="e-mail"
-                  :disabled="!item.access"
-                />
+              <v-flex
+                xs12
+                md8
+              >
+                <v-layout column>
+                  <v-flex>
+                    <v-text-field
+                      v-model="item.j.name"
+                      browser-autocomplete="name"
+                      label="Имя"
+                      required
+                      :disabled="!item.access"
+                    />
+                  </v-flex>
+                  <v-flex>
+                    <v-text-field
+                      v-model="item.j.surname"
+                      label="Фамилия"
+                      :disabled="!item.access"
+                    />
+                  </v-flex>
+                  <v-flex>
+                    <v-combobox
+                      v-model="item.j.category"
+                      label="Специальность"
+                      :items="employeeCategories"
+                      :disabled="!item.access"
+                    />
+                  </v-flex>
+                  <v-flex>
+                    <v-combobox
+                      v-model="item.j.position"
+                      label="Должность"
+                      :items="employeePositions"
+                      :disabled="!item.access"
+                    />
+                  </v-flex>
+                  <v-flex>
+                    <PhoneEdit
+                      :phone="item.j.phone"
+                      :disabled="!item.access"
+                    />
+                  </v-flex>
+                  <v-flex>
+                    <v-text-field
+                      v-model="item.j.email"
+                      label="e-mail"
+                      :disabled="!item.access"
+                    />
+                  </v-flex>
+                </v-layout>
               </v-flex>
             </v-layout>
           </v-flex>
+          <v-flex xs12>
+            <v-textarea
+              v-model="item.j.notes"
+              label="Примечания"
+              :disabled="!item.access"
+              outline
+            />
+          </v-flex>
         </v-layout>
-      </v-flex>
-      <v-flex xs12>
-        <v-textarea
-          v-model="item.j.notes"
-          label="Примечания"
-          :disabled="!item.access"
-          outline
-        />
       </v-flex>
     </v-layout>
   </v-container>

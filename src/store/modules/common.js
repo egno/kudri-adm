@@ -215,7 +215,6 @@ const actions = {
     commit('SET_APP_TITLE', payload);
   },
   setBusiness({ commit, dispatch }, payload) {
-    console.log('setBusiness', payload);
     const path = `business?id=eq.${payload}`;
     Api()
       .get(path)

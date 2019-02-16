@@ -1,82 +1,98 @@
 <template>
-  <v-layout row>
-    <v-flex
-      xs12
-      offset-sm1
-      sm10
-      offset-md2
-      md8
-      offset-lg3
-      lg6
-      offset-xl4
-      xl4
-    >
-      <v-card flat>
-        <v-card-title>
-          <div v-if="fullName">
-            {{ fullName }}
-          </div>
-          <div v-else>
-            Сотрудник [{{ employee_id }} || 'новый']
-          </div>
-        </v-card-title>
-        <v-divider />
-        <v-card-text v-if="data && data.id">
-          <v-layout column>
-            <v-flex xs12>
-              <v-tabs v-model="activeTab">
-                <v-tab
-                  key="0"
-                  ripple
-                >
-                  Профиль
-                </v-tab>
-                <v-tab
-                  key="1"
-                  ripple
-                >
-                  Услуги
-                </v-tab>
-                <v-tab
-                  key="2"
-                  ripple
-                >
-                  График работы
-                </v-tab>
-                <v-tab-item key="0">
-                  <EmployeeProfile :item="data" />
-                </v-tab-item>
-                <v-tab-item key="1">
-                  <EmployeeServices :item="data" />
-                </v-tab-item>
-                <v-tab-item key="2">
-                  <div>tab2</div>
-                </v-tab-item>
-              </v-tabs>
-            </v-flex>
-          </v-layout>
-        </v-card-text>
-        <v-divider />
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            depressed
-            @click="exit"
-          >
-            Закрыть
-          </v-btn>
-          <v-btn
-            depressed
-            color="primary"
-            :disabled="!(data && data.access)"
-            @click="save"
-          >
-            Сохранить
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-flex>
-  </v-layout>
+  <v-container>
+    <v-card>
+      <v-layout row>
+        <v-flex>
+          <v-card flat>
+            <v-card-title>
+              <v-layout
+                row
+                wrap
+              >
+                <v-flex>
+                  <div class="caption grey--text">
+                    Сотрудник
+                  </div>
+                  <div v-if="fullName">
+                    {{ fullName }}
+                  </div>
+                  <div
+                    v-else
+                    class="grey--text"
+                  >
+                    [{{ employee_id || 'новый' }}]
+                  </div>
+                </v-flex>
+              </v-layout>
+              <v-btn
+                icon
+                @click="exit"
+              >
+                <v-icon>close</v-icon>
+              </v-btn>
+            </v-card-title>
+            <v-divider />
+            <v-card-text v-if="data && data.id">
+              <v-layout column>
+                <v-flex xs12>
+                  <v-tabs
+                    v-model="activeTab"
+                    color="grey lighten-4"
+                  >
+                    <v-tab
+                      key="0"
+                      ripple
+                    >
+                      Профиль
+                    </v-tab>
+                    <v-tab
+                      key="1"
+                      ripple
+                    >
+                      Услуги
+                    </v-tab>
+                    <v-tab
+                      key="2"
+                      ripple
+                    >
+                      График работы
+                    </v-tab>
+                    <v-tab-item key="0">
+                      <EmployeeProfile :item="data" />
+                    </v-tab-item>
+                    <v-tab-item key="1">
+                      <EmployeeServices :item="data" />
+                    </v-tab-item>
+                    <v-tab-item key="2">
+                      <div>tab2</div>
+                    </v-tab-item>
+                  </v-tabs>
+                </v-flex>
+              </v-layout>
+            </v-card-text>
+            <v-divider />
+            <v-card-actions>
+              <v-spacer />
+              <v-btn
+                depressed
+                @click="exit"
+              >
+                Закрыть
+              </v-btn>
+              <v-btn
+                depressed
+                color="primary"
+                :disabled="!(data && data.access)"
+                @click="save"
+              >
+                Сохранить
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-card>
+  </v-container>
 </template>
 
 <script>
