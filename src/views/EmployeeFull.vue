@@ -53,18 +53,24 @@
                 </v-tab-item>
               </v-tabs>
             </v-flex>
-            <v-flex>
-              <v-btn
-                flat
-                color="primary"
-                block
-              >
-                Сохранить
-              </v-btn>
-            </v-flex>
-            <v-flex xs12 />
           </v-layout>
         </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            depressed
+            @click="exit"
+          >
+            Закрыть
+          </v-btn>
+          <v-btn
+            depressed
+            color="primary"
+            @click="save"
+          >
+            Сохранить
+          </v-btn>
+        </v-card-actions>
       </v-card>
     </v-flex>
   </v-layout>
@@ -77,6 +83,7 @@ import Api from '@/api/backend';
 import { fullName } from '@/components/business/utils';
 import EmployeeProfile from '@/components/business/EmployeeProfile.vue';
 import EmployeeServices from '@/components/business/EmployeeServices.vue';
+import { makeAlert } from '@/api/utils';
 
 export default {
   components: { EmployeeProfile, EmployeeServices },
@@ -97,8 +104,14 @@ export default {
     id: 'loadBusiness',
     employee_id: 'loadEmployee'
   },
+  mounted() {
+    this.load();
+  },
   methods: {
-    ...mapActions(['setBusiness']),
+    ...mapActions(['alert', 'setBusiness']),
+    exit() {
+      this.$router.back();
+    },
     load() {
       this.loadBusiness();
       this.loadEmployee();
@@ -118,10 +131,18 @@ export default {
         .then(res => {
           this.data = this.dataPrefill(res);
         });
+    },
+    save() {
+      if (!this.employee_id) return;
+      Api()
+        .patch(`employee?id=eq.${this.employee_id}`, this.data)
+        .then(() => {
+          this.alert(makeAlert('Успешно'));
+        })
+        .catch(err => {
+          this.alert(makeAlert(err));
+        });
     }
-  },
-  mounted() {
-    this.load();
   }
 };
 </script>

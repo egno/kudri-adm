@@ -9,8 +9,12 @@ function alert(message, info) {
 }
 
 export function makeAlert(err) {
+  console.log(err);
   if (!err) {
     return alert('Ой! Что-то пошло не так...');
+  }
+  if (typeof err === 'string') {
+    return alert(err);
   }
   if (!err.response) {
     return alert('Сервер недоступен', err.message);
