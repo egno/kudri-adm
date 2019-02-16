@@ -15,6 +15,7 @@
 <script>
 export default {
   props: {
+    disabled: { type: Boolean, default: false },
     label: { type: String, default: 'Телефон' },
     phone: {
       type: String,

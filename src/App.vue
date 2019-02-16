@@ -58,10 +58,14 @@ export default {
     this.loadUserInfo();
     this.loadServiceList();
     this.checkDate();
+    this.loadEmployeeCategories();
+    this.loadEmployeePositions();
   },
   methods: {
     ...mapActions([
       'loadApiTime',
+      'loadEmployeeCategories',
+      'loadEmployeePositions',
       'loadFromStorage',
       'loadServiceList',
       'loadUserInfo',
@@ -90,7 +94,7 @@ export default {
     font-weight: normal;
     line-height: normal;
     font-size: 13px;
-    color: #5699FF;
+    color: #5699ff;
   }
   .v-menu__content {
     box-shadow: none;
@@ -143,7 +147,7 @@ export default {
       }
     }
     &.transparent {
-      color: #8995AF;
+      color: #8995af;
       box-shadow: none !important;
       background: transparent;
       text-transform: none;
@@ -172,54 +176,7 @@ export default {
         }
       }
       &.v-btn--disabled {
-        background: transparent!important;
-      }
-    }
-  }
-  .v-text-field {
-    input,
-    label {
-      max-width: 100%;
-      width: 100%;
-      text-transform: uppercase !important;
-      font-size: 13px;
-      &.v-label--active {
-        opacity: 1;
-        font-size: 13px;
-        color: #07101c !important;
-        transform: scale(1) translateY(-18px);
-      }
-    }
-    &.centered-input {
-      input,
-      label {
-        text-align: center;
-      }
-    }
-    label {
-      color: #07101c;
-      opacity: 0.35;
-      letter-spacing: 25%;
-    }
-    input {
-      color: #07101c;
-    }
-    .v-input__slot {
-      &:before {
-        border-color: #8995af;
-      }
-    }
-    &.workmode {
-      width: 34px;
-      height: 24px;
-      padding: 0;
-      margin: 0;
-      overflow: hidden;
-      .v-input__slot {
-        &:before,
-        &:after {
-          display: none;
-        }
+        background: transparent !important;
       }
     }
   }
@@ -241,7 +198,7 @@ export default {
     justify-content: space-between;
     position: relative;
     .v-input--is-focused {
-      border-bottom: 1px solid #5699FF!important;
+      border-bottom: 1px solid #5699ff !important;
     }
     &:before {
       content: '';
