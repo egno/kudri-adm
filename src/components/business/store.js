@@ -3,12 +3,14 @@ import { makeAlert } from '@/api/utils';
 
 const state = {
   employeeCategories: [],
-  employeePositions: []
+  employeePositions: [],
+  serviceGroups: []
 };
 
 const getters = {
   employeeCategories: state => state.employeeCategories,
-  employeePositions: state => state.employeePositions
+  employeePositions: state => state.employeePositions,
+  serviceGroups: state => state.serviceGroups
 };
 
 const mutations = {
@@ -27,6 +29,9 @@ const mutations = {
   },
   SET_POSITIONS(state, payload) {
     state.employeePositions = payload;
+  },
+  SET_SERVICE_GROUPS(state, payload) {
+    state.serviceGroups = payload;
   }
 };
 
@@ -54,6 +59,16 @@ const actions = {
       .then(res => res.data)
       .then(res => {
         commit('SET_POSITIONS', res.map(x => x.name));
+      })
+      .catch(err => commit('ADD_ALERT', makeAlert(err)));
+  },
+  loadServiceGroups({ commit }) {
+    const path = 'service_groups?name=not.is.null';
+    Api()
+      .get(path)
+      .then(res => res.data)
+      .then(res => {
+        commit('SET_SERVICE_GROUPS', res.map(x => x.name));
       })
       .catch(err => commit('ADD_ALERT', makeAlert(err)));
   }

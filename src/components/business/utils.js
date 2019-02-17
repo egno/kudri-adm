@@ -4,7 +4,7 @@ export function fullName(obj) {
 
 export function serviceInit(service) {
   return {
-    ...(typeof service !== 'object' ? { name: service } : service),
-    ...{ category: undefined, price: 0, duration: 60, notes: undefined }
+    ...{ group: undefined, price: 0, duration: 60, notes: undefined },
+    ...(typeof service !== 'object' ? { name: service } : service)
   };
 }

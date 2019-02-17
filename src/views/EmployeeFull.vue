@@ -32,7 +32,7 @@
               </v-btn>
             </v-card-title>
             <v-divider />
-            <v-card-text v-if="data && data.id">
+            <v-card-text>
               <v-layout column>
                 <v-flex xs12>
                   <v-tabs
@@ -58,10 +58,17 @@
                       График работы
                     </v-tab>
                     <v-tab-item key="0">
-                      <EmployeeProfile :item="data" />
+                      <EmployeeProfile
+                        v-if="data && data.id"
+                        :item="data"
+                      />
                     </v-tab-item>
                     <v-tab-item key="1">
-                      <EmployeeServices :item="data" />
+                      <EmployeeServices
+                        v-if="data && data.id"
+                        :item="data"
+                        @onSave="onServiceSave($event)"
+                      />
                     </v-tab-item>
                     <v-tab-item key="2">
                       <div>tab2</div>
@@ -150,6 +157,10 @@ export default {
         .then(res => {
           this.data = this.dataPrefill(res);
         });
+    },
+    onServiceSave(payload) {
+      this.$set(this.data, 'j', { ...this.data.j, ...{ services: payload } });
+      this.save();
     },
     save() {
       if (!this.employee_id) return;

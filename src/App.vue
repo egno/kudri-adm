@@ -57,6 +57,7 @@ export default {
     this.loadFromStorage();
     this.loadUserInfo();
     this.loadServiceList();
+    this.loadServiceGroups();
     this.checkDate();
     this.loadEmployeeCategories();
     this.loadEmployeePositions();
@@ -68,6 +69,7 @@ export default {
       'loadEmployeePositions',
       'loadFromStorage',
       'loadServiceList',
+      'loadServiceGroups',
       'loadUserInfo',
       'setActions',
       'setActualDate',

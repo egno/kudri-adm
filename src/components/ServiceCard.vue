@@ -1,78 +1,110 @@
 <template>
-  <VCard>
-    <VToolbar>
-      <VBtn
-        small
-        fab
-        bottom
-        right
-        absolute
-        color="light-grey"
-        @click="edit = true"
-      >
-        <VIcon>edit</VIcon>
-      </VBtn>
-      <VToolbarTitle primary-title>
-        <div>
-          <h4>{{ item.name }}</h4>
+  <v-card
+    hover
+    @click="edit=true"
+  >
+    <v-card-title>
+      <v-layout column>
+        <v-flex py-0>
           <div class="caption grey--text text--darken-1">
-            {{ item.category }}
+            {{ item.group }}
           </div>
-        </div>
-      </VToolbarTitle>
-    </VToolbar>
-    <VCardText>
-      <div>
-        <span class="font-weight-bold">
-          Цена:
-        </span>
-        от {{ item.price }}
-      </div>
-      <div>
-        <span class="font-weight-bold">
-          Продолжительность:
-        </span>
-        {{ item.duration }} мин.
-      </div>
-      <span />
-      {{ item.note }}
-    </VCardText>
-    <VDialog v-model="edit">
+        </v-flex>
+        <v-flex py-0>
+          <h4>{{ item.name }}</h4>
+        </v-flex>
+      </v-layout>
+    </v-card-title>
+    <v-divider />
+    <v-card-text>
+      <v-layout column>
+        <v-flex py-0>
+          <div>
+            <span class="caption grey--text text--darken-1">
+              Цена: от
+            </span>
+            <span class="text-value">
+              {{ item.price }}
+            </span>
+            <span>₽</span>
+          </div>
+        </v-flex>
+        <v-flex py-0>
+          <div>
+            <span class="caption grey--text text--darken-1">
+              Продолжительность:
+            </span>
+            <span class="text-value">
+              {{ item.duration }}
+            </span>
+            <span>мин.</span>
+          </div>
+        </v-flex>
+        <v-flex v-if="item.notes">
+          <div>{{ item.notes }}</div>
+        </v-flex>
+      </v-layout>
+    </v-card-text>
+    <v-dialog
+      v-model="edit"
+      max-width="40em"
+    >
       <ServiceCardEdit
         :item="item"
-        @onSave="onSave"
         @onDelete="onDelete"
+        @onSave="onSave($event)"
       />
-    </VDialog>
-  </VCard>
+    </v-dialog>
+  </v-card>
 </template>
 
 <script>
-import ServiceCardEdit from "@/components/ServiceCardEdit.vue";
+import ServiceCardEdit from '@/components/ServiceCardEdit.vue';
 
 export default {
   components: { ServiceCardEdit },
   props: {
+    access: { type: Boolean, default: false },
+    editMode: { type: Boolean, default: false },
     item: {
       type: Object,
-      default: ()=> {return {};}
+      default: () => {
+        return {};
+      }
     }
   },
-  data () {
+  data() {
     return {
       edit: false
     };
   },
+  watch: {
+    editMode: 'onInit'
+  },
+  mount() {
+    this.onInit();
+  },
   methods: {
-    onDelete () {
-      this.edit = false;
-      this.$emit("onDelete", this.item);
+    onInit() {
+      console.log(this.editMode);
+      this.edit = this.editMode;
     },
-    onSave () {
+    onDelete() {
       this.edit = false;
-      //   this.item = Object.assign(this.item, data);
-      this.$emit("onSave", this.item);
+      this.$emit('onDelete');
+    },
+    onSave(payload) {
+      this.edit = false;
+      this.$emit('onSave', payload);
     }
   }
 };
 </script>
+
+<style scoped>
+.text-value {
+  padding-left: 0.5em;
+  padding-right: 0.2em;
+}
+</style>
+

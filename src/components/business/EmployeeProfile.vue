@@ -105,7 +105,7 @@
           <v-flex xs12>
             <v-textarea
               v-model="item.j.notes"
-              label="Примечания"
+              label="Примечание"
               :disabled="!item.access"
               outline
             />
