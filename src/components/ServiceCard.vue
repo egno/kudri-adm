@@ -51,6 +51,7 @@
     >
       <ServiceCardEdit
         :item="item"
+        :employee="employee"
         @onDelete="onDelete"
         @onSave="onSave($event)"
       />
@@ -66,6 +67,7 @@ export default {
   props: {
     access: { type: Boolean, default: false },
     editMode: { type: Boolean, default: false },
+    employee: { type: String, default: undefined },
     item: {
       type: Object,
       default: () => {

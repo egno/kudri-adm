@@ -107,7 +107,7 @@ export default {
       data: [],
       index: 0,
       isInitial: true,
-      maxImages: 9,
+      maxImages: 6,
       uploadFieldName: 'file'
     };
   },
@@ -130,16 +130,6 @@ export default {
       }
       return this.imagesArray;
     },
-    filterString() {
-      let cond = [`business_id.eq.${this.currentCompany}`];
-      if (this.service) {
-        cond.push(`services.cs.{${this.service}}`);
-      }
-      if (this.employee) {
-        cond.push(`employees.cs.{${this.employee}}`);
-      }
-      return this.currentCompany && `and=(${cond.join(',')})`;
-    },
     imagesArray() {
       return (
         this.data &&
@@ -158,7 +148,9 @@ export default {
   watch: {
     currentCompany: 'load',
     business: 'load',
-    images: 'load'
+    images: 'load',
+    employee: 'load',
+    dervice: 'load'
   },
   mounted() {
     this.load();
@@ -180,10 +172,18 @@ export default {
         this.data = this.images;
         return;
       }
-      if (!this.filterString) return;
+      let cond = [`business_id.eq.${this.currentCompany}`];
+      if (this.service) {
+        cond.push(`services.cs.{${this.service}}`);
+      }
+      if (this.employee) {
+        cond.push(`employees.cs.{${this.employee}}`);
+      }
+      let filterString = `and=(${cond.join(',')})`;
+      if (!filterString) return;
       let vm = this;
       Api()
-        .get(`gallery?${this.filterString}`)
+        .get(`gallery?${filterString}`)
         .then(res => res.data)
         .then(res => {
           vm.data = res.map(x => {

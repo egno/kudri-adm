@@ -3,69 +3,96 @@
     <VCardTitle class="headline">
       Услуга
     </VCardTitle>
+    <v-divider />
     <VCardText>
-      <VContainer grid-list-md>
-        <VLayout wrap>
-          <VFlex
-            xs12
-            sm6
-          >
-            <VSelect
-              v-model="item.group"
-              :items="categories"
-              label="Категория"
-              required
-              @input="onCategoryUpdate"
-            />
-          </VFlex>
-          <VFlex
-            xs12
-            sm6
-          >
-            <VCombobox
-              v-model="selectedService"
-              autofocus
-              :items="services"
-              item-value="name"
-              item-text="name"
-              label="Наименование"
-              required
-              :progress="loading"
-              :search-input.sync="serviceSearch"
-              @input="onNameUpdate"
-            />
-          </VFlex>
-
-          <VFlex
-            xs12
-            sm6
-          >
-            <VTextField
-              v-model="item.price"
-              label="Цена от"
-              mask="######"
-            />
-          </VFlex>
-          <VFlex
-            xs12
-            sm6
-          >
-            <VTextField
-              v-model="item.duration"
-              label="Продолжительность, минут"
-              mask="###"
-            />
-          </VFlex>
-          <VFlex xs12>
-            <VTextarea
-              v-model="item.note"
-              outline
-              label="Примечание"
-            />
-          </VFlex>
-        </VLayout>
-      </VContainer>
+      <v-tabs
+        v-model="activeTab"
+        color="grey lighten-4"
+      >
+        <v-tab
+          :key="0"
+          ripple
+        >
+          Сведения
+        </v-tab>
+        <v-tab
+          :key="1"
+          ripple
+        >
+          Фото
+        </v-tab>
+        <v-tab-item :key="0">
+          <VContainer grid-list-md>
+            <VLayout wrap>
+              <VFlex
+                xs12
+                sm6
+              >
+                <VSelect
+                  v-model="item.group"
+                  :items="categories"
+                  label="Категория"
+                  required
+                  @input="onCategoryUpdate"
+                />
+              </VFlex>
+              <VFlex
+                xs12
+                sm6
+              >
+                <VCombobox
+                  v-model="selectedService"
+                  autofocus
+                  :items="services"
+                  item-value="name"
+                  item-text="name"
+                  label="Наименование"
+                  required
+                  :progress="loading"
+                  :search-input.sync="serviceSearch"
+                  @input="onNameUpdate"
+                />
+              </VFlex>
+              <VFlex
+                xs12
+                sm6
+              >
+                <VTextField
+                  v-model="item.price"
+                  label="Цена от"
+                  mask="######"
+                />
+              </VFlex>
+              <VFlex
+                xs12
+                sm6
+              >
+                <VTextField
+                  v-model="item.duration"
+                  label="Продолжительность, минут"
+                  mask="###"
+                />
+              </VFlex>
+              <VFlex xs12>
+                <VTextarea
+                  v-model="item.note"
+                  outline
+                  label="Примечание"
+                />
+              </VFlex>
+            </VLayout>
+          </VContainer>
+        </v-tab-item>
+        <v-tab-item :key="1">
+          <GalleryTiles
+            :service="selectedService"
+            :employee="employee"
+            edit
+          />
+        </v-tab-item>
+      </v-tabs>
     </VCardText>
+    <v-divider />
     <VCardActions>
       <VSpacer />
       <VBtn @click="onDelete">
@@ -84,9 +111,12 @@
 <script>
 import { mapGetters } from 'vuex';
 import Api from '@/api/backend';
+import GalleryTiles from '@/components/gallery/GalleryTiles.vue';
 
 export default {
+  components: { GalleryTiles },
   props: {
+    employee: { type: String, default: undefined },
     item: {
       type: Object,
       default: () => {
@@ -96,6 +126,7 @@ export default {
   },
   data() {
     return {
+      activeTab: 0,
       loading: false,
       selectedService: undefined,
       serviceSearch: '',

@@ -22,10 +22,20 @@
             sm6
             md4
           >
-            <v-img
-              :src="imagePath"
-              aspect-ratio="1"
-            />
+            <v-layout column>
+              <v-flex pb-1>
+                <v-img
+                  :src="imagePath"
+                  aspect-ratio="1"
+                />
+              </v-flex>
+              <v-flex>
+                <ImageLoader
+                  :src="imagePath"
+                  @onFilesUpload="onFilesUpload($event)"
+                />
+              </v-flex>
+            </v-layout>
           </v-flex>
           <v-flex
             xs12
@@ -120,9 +130,10 @@
 import { imagePath } from '@/components/gallery/utils';
 import { mapGetters } from 'vuex';
 import PhoneEdit from '@/components/business/PhoneEdit.vue';
+import ImageLoader from '@/components/gallery/ImageLoader.vue';
 
 export default {
-  components: { PhoneEdit },
+  components: { ImageLoader, PhoneEdit },
   props: {
     item: {
       type: Object,
@@ -131,11 +142,27 @@ export default {
       }
     }
   },
+  data() {
+    return {
+      defaultImage: require('@/assets/user.svg')
+    };
+  },
   computed: {
     ...mapGetters(['employeePositions', 'employeeCategories']),
     imagePath() {
-      return imagePath(this.item.j && this.item.j.image, this.item.parent);
+      return (
+        imagePath(this.item.j && this.item.j.image, this.item.parent) ||
+        this.defaultImage
+      );
     }
+  },
+  methods: {
+    onFilesUpload(payload) {
+      if (payload && payload[0] && payload[0].path) {
+        this.$emit('onImageUpload', payload[0].path);
+      }
+    },
+    onLoadPhotoClick() {}
   }
 };
 </script>

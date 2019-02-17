@@ -61,6 +61,7 @@
                       <EmployeeProfile
                         v-if="data && data.id"
                         :item="data"
+                        @onImageUpload="onImageUpload($event)"
                       />
                     </v-tab-item>
                     <v-tab-item key="1">
@@ -161,6 +162,10 @@ export default {
         .then(res => {
           this.data = this.dataPrefill(res);
         });
+    },
+    onImageUpload(payload) {
+      this.$set(this.data, 'j', { ...this.data.j, ...{ image: payload } });
+      this.save();
     },
     onServiceSave(payload) {
       this.$set(this.data, 'j', { ...this.data.j, ...{ services: payload } });

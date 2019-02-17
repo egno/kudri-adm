@@ -88,6 +88,7 @@
                   >
                     <ServiceCard
                       :item="service"
+                      :employee="item.id"
                       @onDelete="onDelete(service.n)"
                       @onSave="onSave(service.n, $event)"
                     />

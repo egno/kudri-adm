@@ -88,7 +88,9 @@ export default {
       return this.$route.params.id;
     },
     categories() {
-      return [...new Set(this.data && this.data.map(x => x.j && x.j.category))];
+      return [
+        ...new Set(this.data && this.data.map(x => x.j && x.j.category))
+      ].sort((a, b) => (a < b ? -1 : 1));
     }
   },
   watch: {
