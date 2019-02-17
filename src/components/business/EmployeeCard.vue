@@ -26,7 +26,6 @@
           </VFlex>
         </VLayout>
       </div>
-      <v-spacer />
     </v-card-title>
     <VCardText>
       <div>
@@ -37,7 +36,7 @@
           v-for="(service, i) in item.j && item.j.services"
           :key="i"
         >
-          {{ service.name }}
+          {{ service.name || service }}
         </div>
       </div>
       <BusinessSchedule
@@ -48,6 +47,17 @@
       <span />
       {{ item.j.note }}
     </VCardText>
+    <v-card-media>
+      <VLayout>
+        <VFlex pa-3>
+          <GalleryTiles
+            :employee="item.id"
+            :rows="1"
+            fixed
+          />
+        </VFlex>
+      </VLayout>
+    </v-card-media>
   </VCard>
 </template>
 
@@ -55,9 +65,10 @@
 import BusinessSchedule from '@/components/business/BusinessSchedule.vue';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import { fullName } from '@/components/business/utils';
+import GalleryTiles from '@/components/gallery/GalleryTiles.vue';
 
 export default {
-  components: { BusinessSchedule, UserAvatar },
+  components: { BusinessSchedule, GalleryTiles, UserAvatar },
   props: {
     item: {
       type: Object,

@@ -87,6 +87,7 @@
           <GalleryTiles
             :service="selectedService"
             :employee="employee"
+            :rows="2"
             edit
           />
         </v-tab-item>

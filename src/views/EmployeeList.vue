@@ -45,7 +45,7 @@
                       :item="item"
                       @onSave="onSave"
                     >
-                      {{ i }} {{ item.id }}
+                      }
                     </EmployeeCard>
                   </VFlex>
                 </VLayout>
@@ -93,9 +93,6 @@ export default {
       ].sort((a, b) => (a < b ? -1 : 1));
     }
   },
-  watch: {
-    searchString: 'setStoreSearchString'
-  },
   mounted() {
     this.fetchData();
     this.setActions(this.formActions);
@@ -105,10 +102,44 @@ export default {
     this.$root.$off('onAction', this.onAction);
   },
   methods: {
-    ...mapActions(['setActions', 'setSearchString']),
+    ...mapActions(['setActions']),
     categoryItems(category) {
       return (
-        this.data && this.data.filter(x => x.j && x.j.category === category)
+        this.data &&
+        this.data.filter(
+          x =>
+            x.j &&
+            x.j.category === category &&
+            (!this.searchString ||
+              (x.j.category &&
+                x.j.category
+                  .toUpperCase()
+                  .indexOf(this.searchString.toUpperCase()) > -1) ||
+              // (x.j.phone &&
+              //   x.j.phone
+              //     .toUpperCase()
+              //     .indexOf(this.searchString.toUpperCase()) > -1) ||
+              // (x.j.email &&
+              //   x.j.email
+              //     .toUpperCase()
+              //     .indexOf(this.searchString.toUpperCase()) > -1) ||
+              (x.j.surname &&
+                x.j.surname
+                  .toUpperCase()
+                  .indexOf(this.searchString.toUpperCase()) > -1) ||
+              (x.j.name &&
+                x.j.name
+                  .toUpperCase()
+                  .indexOf(this.searchString.toUpperCase()) > -1) ||
+              (x.j.services &&
+                x.j.services.length > 0 &&
+                x.j.services.some(
+                  s =>
+                    (s.name || s)
+                      .toUpperCase()
+                      .indexOf(this.searchString.toUpperCase()) > -1
+                )))
+        )
       );
     },
     fetchData() {

@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card flat>
     <v-container
       grid-list-xs
       fluid
@@ -99,6 +99,8 @@ export default {
     service: { type: String, default: undefined },
     employee: { type: String, default: undefined },
     images: { type: Array, default: undefined },
+    fixed: { type: Boolean, default: false },
+    rows: { type: Number, default: 3 },
     to: { type: Object, default: undefined }
   },
   data() {
@@ -107,14 +109,15 @@ export default {
       data: [],
       index: 0,
       isInitial: true,
-      maxImages: 6,
       uploadFieldName: 'file'
     };
   },
   computed: {
     ...mapGetters(['business']),
     addPlace() {
-      return this.edit && !this.more;
+      return (
+        this.employee && this.service && !this.fixed && this.edit && !this.more
+      );
     },
     currentCompany() {
       return this.company || this.business;
@@ -125,7 +128,10 @@ export default {
         return this.imagesArray.slice(
           0,
           this.maxImages -
-            (this.edit || this.imagesArray.length !== this.maxImages ? 1 : 0)
+            (!this.fixed &&
+            (this.edit || this.imagesArray.length !== this.maxImages)
+              ? 1
+              : 0)
         );
       }
       return this.imagesArray;
@@ -139,9 +145,14 @@ export default {
         )
       );
     },
+    maxImages() {
+      return this.rows * 3;
+    },
     more() {
       return (
-        this.imagesArray && this.imagesArray.length > this.currentImages.length
+        !this.fixed &&
+        this.imagesArray &&
+        this.imagesArray.length > this.currentImages.length
       );
     }
   },
@@ -172,6 +183,7 @@ export default {
         this.data = this.images;
         return;
       }
+      if (!this.currentCompany) return;
       let cond = [`business_id.eq.${this.currentCompany}`];
       if (this.service) {
         cond.push(`services.cs.{${this.service}}`);

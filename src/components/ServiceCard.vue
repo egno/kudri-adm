@@ -43,6 +43,14 @@
         <v-flex v-if="item.notes">
           <div>{{ item.notes }}</div>
         </v-flex>
+        <v-flex pa-0>
+          <GalleryTiles
+            :service="item.name"
+            :employee="employee"
+            :rows="1"
+            fixed
+          />
+        </v-flex>
       </v-layout>
     </v-card-text>
     <v-dialog
@@ -61,9 +69,10 @@
 
 <script>
 import ServiceCardEdit from '@/components/ServiceCardEdit.vue';
+import GalleryTiles from '@/components/gallery/GalleryTiles.vue';
 
 export default {
-  components: { ServiceCardEdit },
+  components: { GalleryTiles, ServiceCardEdit },
   props: {
     access: { type: Boolean, default: false },
     editMode: { type: Boolean, default: false },
