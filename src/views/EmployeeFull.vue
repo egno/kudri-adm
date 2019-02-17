@@ -71,7 +71,10 @@
                       />
                     </v-tab-item>
                     <v-tab-item key="2">
-                      <div>tab2</div>
+                      <EmployeeSchedule
+                        v-if="data && data.id"
+                        :item="data"
+                      />
                     </v-tab-item>
                   </v-tabs>
                 </v-flex>
@@ -109,10 +112,11 @@ import Api from '@/api/backend';
 import { fullName } from '@/components/business/utils';
 import EmployeeProfile from '@/components/business/EmployeeProfile.vue';
 import EmployeeServices from '@/components/business/EmployeeServices.vue';
+import EmployeeSchedule from '@/components/business/EmployeeSchedule.vue';
 import { makeAlert } from '@/api/utils';
 
 export default {
-  components: { EmployeeProfile, EmployeeServices },
+  components: { EmployeeProfile, EmployeeServices, EmployeeSchedule },
   mixins: [businessMixins],
   data() {
     return {
