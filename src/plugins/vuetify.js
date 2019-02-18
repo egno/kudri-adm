@@ -10,6 +10,6 @@ Vue.use(Vuetify, {
     current: 'ru'
   },
   theme: {
-    primary: '#c9a15d'
+    primary: '#b69768'
   }
 });

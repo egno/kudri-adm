@@ -58,7 +58,6 @@
           :subtitle="emp.j && emp.j.category"
           :employee="emp.id"
           :images="employeeImages(emp.id)"
-          @showSlider="showSlider($event)"
         />
       </v-flex>
     </v-layout>

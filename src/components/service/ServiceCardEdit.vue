@@ -27,18 +27,18 @@
         color="grey lighten-4"
       >
         <v-tab
-          key="0"
+          key="tab-0"
           ripple
         >
           Сведения
         </v-tab>
         <v-tab
-          key="1"
+          key="tab-1"
           ripple
         >
           Фото
         </v-tab>
-        <v-tab-item key="0">
+        <v-tab-item key="tab-0">
           <VContainer grid-list-md>
             <v-layout wrap>
               <v-flex
@@ -100,7 +100,7 @@
             </v-layout>
           </VContainer>
         </v-tab-item>
-        <v-tab-item key="1">
+        <v-tab-item key="tab-1">
           <GalleryTiles
             :service="selectedService"
             :employee="employee"

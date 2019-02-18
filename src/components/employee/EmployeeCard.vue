@@ -62,13 +62,17 @@
     <VCardText>
       <div>
         <span :class="captionClass">
-          Услуги:
+          Услуги: {{ servicesCount || '-' }}
         </span>
         <div
           v-for="(service, i) in item.j && item.j.services"
+          v-show="(i < displayItemsCount)"
           :key="i"
         >
           {{ service.name || service }}
+        </div>
+        <div v-if="servicesCount > displayItemsCount">
+          ...
         </div>
       </div>
       <BusinessSchedule
@@ -103,6 +107,7 @@ import { imagePath } from '@/components/gallery/utils';
 export default {
   components: { BusinessSchedule, GalleryTiles, UserAvatar },
   props: {
+    displayItemsCount: { type: Number, default: 5 },
     item: {
       type: Object,
       default: () => {
@@ -124,6 +129,14 @@ export default {
       return (
         this.item &&
         imagePath(this.item.j && this.item.j.image, this.item.parent)
+      );
+    },
+    servicesCount() {
+      return (
+        this.item &&
+        this.item.j &&
+        this.item.j.services &&
+        this.item.j.services.length
       );
     }
   },
