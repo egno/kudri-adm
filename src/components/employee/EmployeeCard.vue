@@ -3,30 +3,62 @@
     :hover="item.access"
     :to="{name:'employeeFull', params: {employee: item.id}}"
   >
-    <v-card-title>
-      <UserAvatar
-        class="ma-1"
-        :name="item.j && item.j.name || item.j.email"
-        :src="item.j && item.j.avatar"
-      />
-      <div>
-        <VLayout
-          align-left
-          row
-          spacer
-          pl-2
-        >
-          <VFlex xs12>
-            <div>
-              <div class="caption grey--text text--darken-1">
-                {{ item.j && item.j.category }}
-              </div>
-              <h4>{{ fullName(item) }}</h4>
-            </div>
-          </VFlex>
-        </VLayout>
+    <v-responsive min-height="5em">
+      <div
+        v-if="photo"
+        class="card-image"
+      >
+        <v-img
+          :src="photo"
+          width="5em"
+          aspect-ratio="1"
+        />
       </div>
-    </v-card-title>
+      <v-container
+        v-if="!photo"
+        pa-3
+      >
+        <UserAvatar
+          class="ma-1"
+          :name="item.j && item.j.name || item.j.email"
+          :src="avatar"
+        />
+      </v-container>
+      <div class="card-title">
+        <v-container
+          fill-height
+          px-1
+          py-2
+        >
+          <VLayout
+            align-left
+            row
+            spacer
+            pl-2
+          >
+            <VFlex xs12>
+              <VLayout
+                column
+                align-space-around
+                fill-height
+                justify-center
+              >
+                <VFlex pa-0>
+                  <div class="caption grey--text text--darken-1">
+                    {{ item.j && item.j.category }}
+                  </div>
+                </VFlex>
+                <VFlex pa-0>
+                  <h4>{{ fullName(item) }}</h4>
+                </VFlex>
+              </VLayout>
+              <div />
+            </VFlex>
+          </VLayout>
+        </v-container>
+      </div>
+    </v-responsive>
+    <v-divider />
     <VCardText>
       <div>
         <span :class="captionClass">
@@ -66,6 +98,7 @@ import BusinessSchedule from '@/components/business/BusinessSchedule.vue';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import { fullName } from '@/components/business/utils';
 import GalleryTiles from '@/components/gallery/GalleryTiles.vue';
+import { imagePath } from '@/components/gallery/utils';
 
 export default {
   components: { BusinessSchedule, GalleryTiles, UserAvatar },
@@ -83,6 +116,17 @@ export default {
         'caption font-weight-bold text-no-wrap grey--text text--darken-1'
     };
   },
+  computed: {
+    avatar() {
+      return this.item && (this.item.j && this.item.j.avatar);
+    },
+    photo() {
+      return (
+        this.item &&
+        imagePath(this.item.j && this.item.j.image, this.item.parent)
+      );
+    }
+  },
   methods: {
     fullName(emp) {
       return fullName(emp);
@@ -96,3 +140,13 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.card-title {
+  position: absolute;
+  width: calc(100% - 5.5em);
+  top: 0;
+  left: 5.5em;
+  height: 5em;
+}
+</style>
