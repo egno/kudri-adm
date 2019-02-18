@@ -17,20 +17,25 @@
 
     <VList>
       <VCalendar v-if="!isManagerMenu" />
-      <VListTile
+      <div
         v-for="item in menu"
         v-show="item.show"
         :key="item.title"
-        :to="item.route"
+        class="menu-item-container"
       >
-        <VListTileContent>
-          <VListTileTitle>{{ item.title }}</VListTileTitle>
-        </VListTileContent>
-        <VListTileAction>
-          <span class="list-item--count">
-            {{ item.count }}
-          </span>
-        </VListTileAction>
+        <div class="menu-item-left">
+          <VListTile :to="item.route">
+            <VListTileContent>
+              <VListTileTitle>{{ item.title }}</VListTileTitle>
+            </VListTileContent>
+            <VListTileAction>
+              <span class="list-item--count">
+                {{ item.count }}
+              </span>
+            </VListTileAction>
+          </VListTile>
+        </div>
+
         <div
           v-show="$route.name === (item.route && item.route.name) && (item.action)"
           class="add-btn"
@@ -40,7 +45,7 @@
             add
           </v-icon>
         </div>
-      </VListTile>
+      </div>
     </VList>
     <v-spacer />
     <div
@@ -277,8 +282,13 @@ export default {
           background-color: rgba(137, 149, 175, 0.2);
         }
       }
+      .menu-item-container {
+        display: flex;
+      }
+      .menu-item-left {
+        flex-grow: 1;
+      }
     }
-
     .v-toolbar,
     .v-toolbar__content {
       height: 56px !important;
@@ -293,12 +303,12 @@ export default {
     }
     .add-btn {
       width: 40px;
-      height: 100%;
+      height: 40px;
       background: #ef4d37;
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-left: 10px;
+      cursor: pointer;
     }
   }
 }

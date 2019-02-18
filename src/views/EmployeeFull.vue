@@ -145,6 +145,7 @@ export default {
       this.$router.back();
     },
     load() {
+      console.log('load');
       this.loadBusiness();
       this.loadEmployee();
     },
@@ -183,7 +184,7 @@ export default {
           .post(`employee?`, this.data)
           .then(res => responseGetId(res))
           .then(id => {
-            this.$router.replace({
+            this.$router.push({
               name: 'employeeFull',
               params: { id: this.id, employee: id }
             });
