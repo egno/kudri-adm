@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-card
-      v-if="!!(images && images.length)"
       :hover="!!to"
       @click="$router.push(to)"
     >
@@ -14,7 +13,8 @@
       <v-responsive>
         <v-img
           :src="image"
-          height="10em"
+          :height="height"
+          :aspect-ratio="aspectRatio"
         />
         <v-layout
           slot="placeholder"
@@ -30,30 +30,27 @@
         </v-layout>
       </v-responsive>
     </v-card>
-    <gallery-card
-      v-else
-      :images="images"
-      :title="title"
-      :subtitle="subtitle"
-      :service="service"
-      :employee="employee"
-    />
   </div>
 </template>
 
 <script>
-import GalleryCard from '@/components/gallery/GalleryCard.vue';
 import { mapGetters } from 'vuex';
 
 export default {
-  components: { GalleryCard },
   props: {
+    aspectRatio: { type: String, default: '1' },
     title: { type: String, default: '' },
     subtitle: { type: String, default: '' },
+    height: { type: String, default: undefined },
     images: { type: Array, default: undefined },
     to: { type: Object, default: undefined },
     service: { type: String, default: undefined },
-    employee: { type: String, default: undefined }
+    employee: { type: String, default: undefined },
+    placeholder: {
+      type: String,
+      default:
+        'https://i1.wp.com/makeupandbeautyhome.com/wp-content/uploads/2013/10/Kiwi-and-Cream-Dry-Skin-Facial.jpg'
+    }
   },
   computed: {
     ...mapGetters(['business']),
@@ -72,7 +69,7 @@ export default {
           `${process.env.VUE_APP_IMAGES}${this.business}/${
             this.images[this.selected].id
           }`) ||
-        'https://i1.wp.com/makeupandbeautyhome.com/wp-content/uploads/2013/10/Kiwi-and-Cream-Dry-Skin-Facial.jpg'
+        this.placeholder
       );
     }
   },

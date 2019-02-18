@@ -106,7 +106,8 @@ import { fullName } from '@/components/business/utils';
 export default {
   components: { ImageCard },
   props: {
-    images: { type: Array, default: undefined }
+    images: { type: Array, default: undefined },
+    employeeFilter: { type: String, default: undefined }
   },
   data() {
     return {
@@ -174,7 +175,19 @@ export default {
       ];
     }
   },
+  watch: {
+    employeeFilter: 'load'
+  },
+  mounted() {
+    this.load();
+  },
   methods: {
+    load() {
+      console.log(this.employeeFilter);
+      if (this.employeeFilter) {
+        this.selectedEmployee = [this.employeeFilter];
+      }
+    },
     deleteImage(image) {
       if (!(image && image.id)) return;
       this.$emit('deleteImage', image.id);

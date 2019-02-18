@@ -6,37 +6,50 @@
     <v-layout
       v-if="$route.name === 'businessCardGallery'"
       justify-space-around
-      column
+      row
+      wrap
     >
       <v-flex
         xs12
         sm6
+        md4
+        lg3
+        xl2
       >
         <album
           title="Компания"
           :images="imagesBusiness"
+          aspect-ratio="1"
           @showSlider="showSlider($event)"
         />
       </v-flex>
       <v-flex
         xs12
         sm6
+        md4
+        lg3
+        xl2
       >
         <album
           title="Сотрудники"
           :to="{name:'businessCardEmployeeGallery', params:{id: id}}"
-          :images="imagesEmployees"
+          :images="empImages"
+          aspect-ratio="1"
           @showSlider="showSlider($event)"
         />
       </v-flex>
       <v-flex
         xs12
         sm6
+        md4
+        lg3
+        xl2
       >
         <album
           title="Работы"
           :to="{name:'businessCardServiceGallery', params:{id: id}}"
           :images="imagesEmployees"
+          aspect-ratio="1"
           @showSlider="showSlider($event)"
         />
       </v-flex>
@@ -49,15 +62,23 @@
       wrap
     >
       <v-flex
-        v-for="emp in employee"
+        v-for="emp in empList"
         :key="emp.id"
+        xs12
+        sm6
+        md4
+        lg3
+        xl2
       >
-        <gallery-card
-          :to="{name: 'employeeGallery', params: {employee: emp.id}}"
-          :title="emp.j && emp.j.name"
-          :subtitle="emp.j && emp.j.category"
+        <album
           :employee="emp.id"
-          :images="employeeImages(emp.id)"
+          :title="emp.title"
+          :subtitle="emp.subtitle"
+          :to="{name:'businessCardServiceGallery', params:{id: id}, query:{employee: emp.id}}"
+          :images="emp.images"
+          aspect-ratio="1"
+          :placeholder="defaultEmployeeImage"
+          @showSlider="showSlider($event)"
         />
       </v-flex>
     </v-layout>
@@ -70,6 +91,7 @@
     >
       <gallery-images
         :images="serviceImages"
+        :employee-filter="employee_id"
         @showSlider="showSlider($event)"
         @deleteImage="deleteImage($event)"
       />
@@ -87,17 +109,18 @@
 <script>
 import Album from '@/components/gallery/Album.vue';
 import AlbumSlider from '@/components/gallery/AlbumSlider.vue';
-import GalleryCard from '@/components/gallery/GalleryCard.vue';
 import GalleryImages from '@/components/gallery/GalleryImages.vue';
 import { mapGetters } from 'vuex';
 import Api from '@/api/backend';
 import { deleteImage } from '@/components/gallery/utils';
+import { fullName } from '@/components/business/utils';
 
 export default {
-  components: { Album, AlbumSlider, GalleryCard, GalleryImages },
+  components: { Album, AlbumSlider, GalleryImages },
   data() {
     return {
       data: [],
+      defaultEmployeeImage: require('@/assets/user.svg'),
       sliderImages: undefined,
       sliderTitle: '',
       selectedImage: 0
@@ -105,6 +128,28 @@ export default {
   },
   computed: {
     ...mapGetters(['business', 'employee']),
+    empList() {
+      return (
+        this.employee &&
+        this.employee
+          .filter(x => x.j && x.j.image)
+          .map(x => ({
+            id: x.id,
+            title: fullName(x),
+            subtitle: x.j.category,
+            images: x.j.image ? [{ id: x.j.image }] : undefined
+          }))
+          .sort((a, b) => (a.subtitle < b.subtitle ? -1 : 1))
+      );
+    },
+    empImages() {
+      return [
+        ...new Set(this.empList && this.empList.map(x => x.images).flat())
+      ];
+    },
+    employee_id() {
+      return this.$route && this.$route.query && this.$route.query.employee;
+    },
     id() {
       return this.$route.params.id;
     },
