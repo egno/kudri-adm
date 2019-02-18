@@ -1,6 +1,6 @@
 <template>
   <VCard flat>
-    <v-tabs
+    <AppTabs
       v-model="active"
       fixed-tabs
     >
@@ -137,7 +137,7 @@
           </v-card-text>
         </VCard>
       </v-tab-item>
-    </v-tabs>
+    </AppTabs>
     <VCardActions>
       <VSpacer />
       <VBtn
@@ -152,6 +152,7 @@
 
 <script>
 import PhoneEdit from '@/components/business/PhoneEdit.vue';
+import AppTabs from '@/components/common/AppTabs.vue';
 import {
   dateInLocalTimeZone,
   formatDate,
@@ -161,7 +162,7 @@ import {
 import { mapGetters } from 'vuex';
 
 export default {
-  components: { PhoneEdit },
+  components: { AppTabs, PhoneEdit },
   props: {
     id: { type: String, default: '' },
     businessInfo: {

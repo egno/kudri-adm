@@ -35,10 +35,7 @@
             <v-card-text>
               <v-layout column>
                 <v-flex xs12>
-                  <v-tabs
-                    v-model="activeTab"
-                    color="grey lighten-4"
-                  >
+                  <AppTabs v-model="activeTab">
                     <v-tab
                       key="0"
                       ripple
@@ -77,7 +74,7 @@
                         :item="data"
                       />
                     </v-tab-item>
-                  </v-tabs>
+                  </AppTabs>
                 </v-flex>
               </v-layout>
             </v-card-text>
@@ -109,12 +106,19 @@ import { makeAlert } from '@/api/utils';
 import { fullName } from '@/components/business/utils';
 import Api from '@/api/backend';
 import AppBtn from '@/components/common/AppBtn.vue';
+import AppTabs from '@/components/common/AppTabs.vue';
 import EmployeeProfile from '@/components/employee/EmployeeProfile.vue';
 import EmployeeServices from '@/components/employee/EmployeeServices.vue';
 import EmployeeSchedule from '@/components/employee/EmployeeSchedule.vue';
 
 export default {
-  components: { AppBtn, EmployeeProfile, EmployeeServices, EmployeeSchedule },
+  components: {
+    AppBtn,
+    AppTabs,
+    EmployeeProfile,
+    EmployeeServices,
+    EmployeeSchedule
+  },
   mixins: [businessMixins],
   data() {
     return {

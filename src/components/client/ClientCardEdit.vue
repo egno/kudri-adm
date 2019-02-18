@@ -1,6 +1,6 @@
 <template>
   <v-card flat>
-    <v-tabs
+    <AppTabs
       v-model="active"
       fixed-tabs
     >
@@ -91,7 +91,7 @@
           <VCardText />
         </v-card>
       </v-tab-item>
-    </v-tabs>
+    </AppTabs>
     <VCardActions>
       <VSpacer />
       <VBtn
@@ -106,7 +106,10 @@
 
 <script>
 import { newClient } from '@/components/client/utils';
+import AppTabs from '@/components/common/AppTabs.vue';
+
 export default {
+  components: { AppTabs },
   props: {
     client: {
       type: Object,

@@ -5,7 +5,7 @@
     </VCardTitle>
     <v-divider />
     <VCardText>
-      <v-tabs
+      <AppTabs
         v-model="activeTab"
         color="grey lighten-4"
       >
@@ -91,7 +91,7 @@
             edit
           />
         </v-tab-item>
-      </v-tabs>
+      </AppTabs>
     </VCardText>
     <v-divider />
     <VCardActions>
@@ -114,9 +114,10 @@ import { mapGetters } from 'vuex';
 import Api from '@/api/backend';
 import GalleryTiles from '@/components/gallery/GalleryTiles.vue';
 import AppBtn from '@/components/common/AppBtn.vue';
+import AppTabs from '@/components/common/AppTabs.vue';
 
 export default {
-  components: { AppBtn, GalleryTiles },
+  components: { AppBtn, AppTabs, GalleryTiles },
   props: {
     employee: { type: String, default: undefined },
     item: {
