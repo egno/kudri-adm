@@ -65,26 +65,30 @@ export default {
   },
   computed: {
     scheduleGroup() {
-      return this.schedule.data
-        .reduce((r, x, i) => {
-          let prev = r[r.length - 1] || [['', '']];
-          if (!(prev[0][0] === x[0] && prev[0][1] === x[1])) {
-            r.push([x, i, i]);
-          } else {
-            prev[2] = i;
-          }
-          return r;
-        }, [])
-        .map(x => {
-          return {
-            time: `${x[0][0]}-${x[0][1]}`,
-            dow:
-              x[1] === x[2]
-                ? this.dow[x[1]]
-                : `${this.dow[x[1]]}-${this.dow[x[2]]}`,
-            works: !!x[0][0]
-          };
-        });
+      return (
+        this.schedule &&
+        this.schedule.data &&
+        this.schedule.data
+          .reduce((r, x, i) => {
+            let prev = r[r.length - 1] || [['', '']];
+            if (!(prev[0][0] === x[0] && prev[0][1] === x[1])) {
+              r.push([x, i, i]);
+            } else {
+              prev[2] = i;
+            }
+            return r;
+          }, [])
+          .map(x => {
+            return {
+              time: `${x[0][0]}-${x[0][1]}`,
+              dow:
+                x[1] === x[2]
+                  ? this.dow[x[1]]
+                  : `${this.dow[x[1]]}-${this.dow[x[2]]}`,
+              works: !!x[0][0]
+            };
+          })
+      );
     }
   }
 };

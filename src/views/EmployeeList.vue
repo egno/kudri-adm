@@ -72,13 +72,6 @@ export default {
   data() {
     return {
       searchString: '',
-      formActions: [
-        {
-          label: 'Добавить сотрудника',
-          action: 'newEmployee',
-          default: true
-        }
-      ],
       edit: false,
       data: []
     };
@@ -95,11 +88,7 @@ export default {
   },
   mounted() {
     this.fetchData();
-    this.setActions(this.formActions);
-    this.$root.$on('onAction', this.onAction);
-  },
-  beforeDestroy() {
-    this.$root.$off('onAction', this.onAction);
+    this.setActions();
   },
   methods: {
     ...mapActions(['setActions']),
@@ -149,11 +138,6 @@ export default {
         .then(res => {
           this.data = res;
         });
-    },
-    onAction(payload) {
-      if (payload === this.formActions[0].action) {
-        this.data.push({ access: true, j: {} });
-      }
     },
     onSave(payload) {
       this.sendData(payload);

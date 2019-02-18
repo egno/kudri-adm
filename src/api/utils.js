@@ -33,3 +33,8 @@ export function makeAlert(err) {
   }
   return alert(err.message, err.response);
 }
+
+export function responseGetId(res) {
+  if (!(res && res.headers && res.headers.location)) return;
+  return res.headers.location.split('.')[1];
+}

@@ -11,6 +11,11 @@
 
 <script>
 export default {
-  props: { value: [Number, String], default: undefined }
+  props: {
+    value: { String, Number },
+    default() {
+      return 0;
+    }
+  }
 };
 </script>

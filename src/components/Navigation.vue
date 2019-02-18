@@ -142,6 +142,10 @@ export default {
           action: {
             label: 'Добавить сотрудника',
             action: 'newEmployee',
+            to: {
+              name: 'employeeFull',
+              params: { id: this.businessId, employee: 'new' }
+            },
             default: true
           }
         },
@@ -233,7 +237,10 @@ export default {
       router.push({ name: 'home' });
     },
     onAction(action) {
-      console.log(action);
+      if (action && action.to) {
+        this.$router.push(action.to);
+        return;
+      }
       this.$emit('onAction', action.action);
     },
     onInput(event) {

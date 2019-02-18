@@ -39,32 +39,34 @@
                     <v-tab
                       key="1"
                       ripple
+                      :disabled="!(data && data.id)"
                     >
                       Услуги
                     </v-tab>
                     <v-tab
                       key="2"
                       ripple
+                      :disabled="!(data && data.id)"
                     >
                       График работы
                     </v-tab>
                     <v-tab-item key="0">
                       <EmployeeProfile
-                        v-if="data && data.id"
+                        v-if="data"
                         :item="data"
                         @onImageUpload="onImageUpload($event)"
                       />
                     </v-tab-item>
                     <v-tab-item key="1">
                       <EmployeeServices
-                        v-if="data && data.id"
+                        v-if="data"
                         :item="data"
                         @onSave="onServiceSave($event)"
                       />
                     </v-tab-item>
                     <v-tab-item key="2">
                       <EmployeeSchedule
-                        v-if="data && data.id"
+                        v-if="data"
                         :item="data"
                       />
                     </v-tab-item>
@@ -98,6 +100,8 @@ import { businessMixins } from '@/components/business/mixins';
 import { mapGetters, mapActions } from 'vuex';
 import { makeAlert } from '@/api/utils';
 import { fullName } from '@/components/business/utils';
+import { employeeInit } from '@/components/employee/utils';
+import { responseGetId } from '@/api/utils';
 import Api from '@/api/backend';
 import AppBtn from '@/components/common/AppBtn.vue';
 import AppCardTitle from '@/components/common/AppCardTitle.vue';
@@ -119,7 +123,7 @@ export default {
   data() {
     return {
       activeTab: 0,
-      data: {}
+      data: undefined
     };
   },
   computed: {
@@ -152,6 +156,10 @@ export default {
     },
     loadEmployee() {
       if (!this.employee_id) return;
+      if (this.employee_id === 'new') {
+        this.data = employeeInit({ parent: this.id });
+        return;
+      }
       if (this.data && this.data.id === this.employee_id) return;
       Api()
         .get(`employee?id=eq.${this.employee_id}`)
@@ -170,6 +178,21 @@ export default {
     },
     save() {
       if (!this.employee_id) return;
+      if (this.employee_id === 'new') {
+        Api()
+          .post(`employee?`, this.data)
+          .then(res => responseGetId(res))
+          .then(id => {
+            this.$router.replace({
+              name: 'employeeFull',
+              params: { id: this.id, employee: id }
+            });
+          })
+          .catch(err => {
+            this.alert(makeAlert(err));
+          });
+        return;
+      }
       Api()
         .patch(`employee?id=eq.${this.employee_id}`, this.data)
         .then(() => {
