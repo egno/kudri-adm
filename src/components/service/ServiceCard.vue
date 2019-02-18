@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import ServiceCardEdit from '@/components/ServiceCardEdit.vue';
+import ServiceCardEdit from '@/components/service/ServiceCardEdit.vue';
 import GalleryTiles from '@/components/gallery/GalleryTiles.vue';
 
 export default {

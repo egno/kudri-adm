@@ -47,7 +47,7 @@
       <span />
       {{ item.j.note }}
     </VCardText>
-    <v-card-media>
+    <v-responsive>
       <VLayout>
         <VFlex pa-3>
           <GalleryTiles
@@ -57,7 +57,7 @@
           />
         </VFlex>
       </VLayout>
-    </v-card-media>
+    </v-responsive>
   </VCard>
 </template>
 

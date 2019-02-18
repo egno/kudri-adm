@@ -105,13 +105,13 @@
 <script>
 import { businessMixins } from '@/components/business/mixins';
 import { mapGetters, mapActions } from 'vuex';
-import Api from '@/api/backend';
-import { fullName } from '@/components/business/utils';
-import EmployeeProfile from '@/components/business/EmployeeProfile.vue';
-import EmployeeServices from '@/components/business/EmployeeServices.vue';
-import EmployeeSchedule from '@/components/business/EmployeeSchedule.vue';
 import { makeAlert } from '@/api/utils';
+import { fullName } from '@/components/business/utils';
+import Api from '@/api/backend';
 import AppBtn from '@/components/common/AppBtn.vue';
+import EmployeeProfile from '@/components/employee/EmployeeProfile.vue';
+import EmployeeServices from '@/components/employee/EmployeeServices.vue';
+import EmployeeSchedule from '@/components/employee/EmployeeSchedule.vue';
 
 export default {
   components: { AppBtn, EmployeeProfile, EmployeeServices, EmployeeSchedule },

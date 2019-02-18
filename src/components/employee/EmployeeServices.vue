@@ -105,7 +105,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import ServiceCard from '@/components/ServiceCard.vue';
+import ServiceCard from '@/components/service/ServiceCard.vue';
 import { serviceInit } from '@/components/business/utils';
 
 export default {

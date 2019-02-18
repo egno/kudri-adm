@@ -40,8 +40,8 @@
 </template>
 
 <script>
-import ServiceCard from '@/components/ServiceCard.vue';
-import ServiceCardEdit from '@/components/ServiceCardEdit.vue';
+import ServiceCard from '@/components/service/ServiceCard.vue';
+import ServiceCardEdit from '@/components/service/ServiceCardEdit.vue';
 import Api from '@/api/backend';
 import { businessMixins } from '@/components/business/mixins';
 import { mapActions } from 'vuex';

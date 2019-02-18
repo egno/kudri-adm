@@ -60,7 +60,7 @@
 
 <script>
 import Api from '@/api/backend';
-import EmployeeCard from '@/components/business/EmployeeCard.vue';
+import EmployeeCard from '@/components/employee/EmployeeCard.vue';
 import { mapActions } from 'vuex';
 
 export default {
