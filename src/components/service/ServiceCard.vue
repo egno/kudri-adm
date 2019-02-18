@@ -60,8 +60,10 @@
       <ServiceCardEdit
         :item="item"
         :employee="employee"
+        :employee-name="employeeName"
         @onDelete="onDelete"
         @onSave="onSave($event)"
+        @close="edit=false"
       />
     </v-dialog>
   </v-card>
@@ -77,6 +79,7 @@ export default {
     access: { type: Boolean, default: false },
     editMode: { type: Boolean, default: false },
     employee: { type: String, default: undefined },
+    employeeName: { type: String, default: undefined },
     item: {
       type: Object,
       default: () => {

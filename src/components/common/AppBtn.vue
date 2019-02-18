@@ -11,7 +11,6 @@
 
 <script>
 export default {
-  name: 'AppBtn',
   props: {
     disabled: { type: Boolean, default: false },
     primary: { type: Boolean, default: false }

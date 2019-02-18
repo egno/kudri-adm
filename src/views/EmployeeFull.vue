@@ -4,7 +4,7 @@
       <v-layout row>
         <v-flex>
           <v-card flat>
-            <v-card-title>
+            <AppCardTitle @close="exit">
               <v-layout
                 row
                 wrap
@@ -24,13 +24,7 @@
                   </div>
                 </v-flex>
               </v-layout>
-              <v-btn
-                icon
-                @click="exit"
-              >
-                <v-icon>close</v-icon>
-              </v-btn>
-            </v-card-title>
+            </AppCardTitle>
             <v-divider />
             <v-card-text>
               <v-layout column>
@@ -106,6 +100,7 @@ import { makeAlert } from '@/api/utils';
 import { fullName } from '@/components/business/utils';
 import Api from '@/api/backend';
 import AppBtn from '@/components/common/AppBtn.vue';
+import AppCardTitle from '@/components/common/AppCardTitle.vue';
 import AppTabs from '@/components/common/AppTabs.vue';
 import EmployeeProfile from '@/components/employee/EmployeeProfile.vue';
 import EmployeeServices from '@/components/employee/EmployeeServices.vue';
@@ -114,6 +109,7 @@ import EmployeeSchedule from '@/components/employee/EmployeeSchedule.vue';
 export default {
   components: {
     AppBtn,
+    AppCardTitle,
     AppTabs,
     EmployeeProfile,
     EmployeeServices,

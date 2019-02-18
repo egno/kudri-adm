@@ -1,8 +1,25 @@
 <template>
   <VCard>
-    <VCardTitle class="headline">
-      Услуга
-    </VCardTitle>
+    <AppCardTitle @close="$emit('close')">
+      <v-layout column>
+        <v-flex>
+          <span class="grey--text text--darken-1">
+            Услуга:
+          </span>
+          <span
+            v-if="selectedService"
+            class="span-main-text title text-truncate"
+          >
+            {{ selectedService.name || selectedService }}
+          </span>
+        </v-flex>
+        <v-flex v-if="employeeName">
+          <span class="caption grey--text">
+            {{ employeeName }}
+          </span>
+        </v-flex>
+      </v-layout>
+    </AppCardTitle>
     <v-divider />
     <VCardText>
       <AppTabs
@@ -23,8 +40,8 @@
         </v-tab>
         <v-tab-item key="0">
           <VContainer grid-list-md>
-            <VLayout wrap>
-              <VFlex
+            <v-layout wrap>
+              <v-flex
                 xs12
                 sm6
               >
@@ -35,8 +52,8 @@
                   required
                   @input="onCategoryUpdate"
                 />
-              </VFlex>
-              <VFlex
+              </v-flex>
+              <v-flex
                 xs12
                 sm6
               >
@@ -52,8 +69,8 @@
                   :search-input.sync="serviceSearch"
                   @input="onNameUpdate"
                 />
-              </VFlex>
-              <VFlex
+              </v-flex>
+              <v-flex
                 xs12
                 sm6
               >
@@ -62,8 +79,8 @@
                   label="Цена от"
                   mask="######"
                 />
-              </VFlex>
-              <VFlex
+              </v-flex>
+              <v-flex
                 xs12
                 sm6
               >
@@ -72,15 +89,15 @@
                   label="Продолжительность, минут"
                   mask="###"
                 />
-              </VFlex>
-              <VFlex xs12>
+              </v-flex>
+              <v-flex xs12>
                 <VTextarea
                   v-model="item.note"
                   outline
                   label="Примечание"
                 />
-              </VFlex>
-            </VLayout>
+              </v-flex>
+            </v-layout>
           </VContainer>
         </v-tab-item>
         <v-tab-item key="1">
@@ -115,11 +132,13 @@ import Api from '@/api/backend';
 import GalleryTiles from '@/components/gallery/GalleryTiles.vue';
 import AppBtn from '@/components/common/AppBtn.vue';
 import AppTabs from '@/components/common/AppTabs.vue';
+import AppCardTitle from '@/components/common/AppCardTitle.vue';
 
 export default {
-  components: { AppBtn, AppTabs, GalleryTiles },
+  components: { AppBtn, AppCardTitle, AppTabs, GalleryTiles },
   props: {
     employee: { type: String, default: undefined },
+    employeeName: { type: String, default: undefined },
     item: {
       type: Object,
       default: () => {

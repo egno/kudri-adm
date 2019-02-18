@@ -11,7 +11,6 @@
 
 <script>
 export default {
-  name: 'AppBtn',
-  props: ['value']
+  props: { value: [Number, String], default: undefined }
 };
 </script>

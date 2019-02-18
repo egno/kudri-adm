@@ -227,4 +227,7 @@ export default {
 .v-navigation-drawer {
   z-index: 11;
 }
+.span-main-text {
+  padding-left: 0.5em;
+}
 </style>

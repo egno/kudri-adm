@@ -89,6 +89,7 @@
                     <ServiceCard
                       :item="service"
                       :employee="item.id"
+                      :employee-name="fullName"
                       @onDelete="onDelete(service.n)"
                       @onSave="onSave(service.n, $event)"
                     />
@@ -107,6 +108,7 @@
 import { mapGetters } from 'vuex';
 import ServiceCard from '@/components/service/ServiceCard.vue';
 import { serviceInit } from '@/components/business/utils';
+import { fullName } from '@/components/business/utils';
 
 export default {
   components: { ServiceCard },
@@ -156,6 +158,9 @@ export default {
           (x.price && x.price == this.searchString) ||
           (x.duration && x.duration == this.searchString)
       );
+    },
+    fullName() {
+      return fullName(this.item);
     }
   },
   methods: {
