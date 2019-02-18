@@ -10,18 +10,18 @@
         color="grey lighten-4"
       >
         <v-tab
-          :key="0"
+          key="0"
           ripple
         >
           Сведения
         </v-tab>
         <v-tab
-          :key="1"
+          key="1"
           ripple
         >
           Фото
         </v-tab>
-        <v-tab-item :key="0">
+        <v-tab-item key="0">
           <VContainer grid-list-md>
             <VLayout wrap>
               <VFlex
@@ -83,7 +83,7 @@
             </VLayout>
           </VContainer>
         </v-tab-item>
-        <v-tab-item :key="1">
+        <v-tab-item key="1">
           <GalleryTiles
             :service="selectedService"
             :employee="employee"
@@ -96,15 +96,15 @@
     <v-divider />
     <VCardActions>
       <VSpacer />
-      <VBtn @click="onDelete">
+      <app-btn @click="onDelete">
         Удалить
-      </VBtn>
-      <VBtn
-        color="primary"
+      </app-btn>
+      <app-btn
+        primary
         @click="onSave"
       >
         Сохранить
-      </VBtn>
+      </app-btn>
     </VCardActions>
   </VCard>
 </template>
@@ -113,9 +113,10 @@
 import { mapGetters } from 'vuex';
 import Api from '@/api/backend';
 import GalleryTiles from '@/components/gallery/GalleryTiles.vue';
+import AppBtn from '@/components/common/AppBtn.vue';
 
 export default {
-  components: { GalleryTiles },
+  components: { AppBtn, GalleryTiles },
   props: {
     employee: { type: String, default: undefined },
     item: {

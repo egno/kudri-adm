@@ -84,20 +84,16 @@
             <v-divider />
             <v-card-actions>
               <v-spacer />
-              <v-btn
-                depressed
-                @click="exit"
-              >
+              <app-btn @click="exit">
                 Закрыть
-              </v-btn>
-              <v-btn
-                depressed
-                color="primary"
+              </app-btn>
+              <app-btn
+                primary
                 :disabled="!(data && data.access)"
                 @click="save"
               >
                 Сохранить
-              </v-btn>
+              </app-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
@@ -115,9 +111,10 @@ import EmployeeProfile from '@/components/business/EmployeeProfile.vue';
 import EmployeeServices from '@/components/business/EmployeeServices.vue';
 import EmployeeSchedule from '@/components/business/EmployeeSchedule.vue';
 import { makeAlert } from '@/api/utils';
+import AppBtn from '@/components/common/AppBtn.vue';
 
 export default {
-  components: { EmployeeProfile, EmployeeServices, EmployeeSchedule },
+  components: { AppBtn, EmployeeProfile, EmployeeServices, EmployeeSchedule },
   mixins: [businessMixins],
   data() {
     return {
