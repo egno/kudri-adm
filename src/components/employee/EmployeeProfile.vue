@@ -29,7 +29,7 @@
                   aspect-ratio="1"
                 />
               </v-flex>
-              <v-flex>
+              <v-flex v-if="item && item.id">
                 <ImageLoader
                   :src="imagePath"
                   @onFilesUpload="onFilesUpload($event)"
