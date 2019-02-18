@@ -68,17 +68,7 @@
                   :disabled="!item.access"
                 />
               </v-flex>
-              <v-flex
-                xs12
-                md6
-              >
-                <v-combobox
-                  v-model="item.j.category"
-                  label="Специальность"
-                  :items="employeeCategories"
-                  :disabled="!item.access"
-                />
-              </v-flex>
+
               <v-flex
                 xs12
                 md6
@@ -87,6 +77,17 @@
                   v-model="item.j.position"
                   label="Должность"
                   :items="employeePositions"
+                  :disabled="!item.access"
+                />
+              </v-flex>
+              <v-flex
+                xs12
+                md6
+              >
+                <v-combobox
+                  v-model="item.j.category"
+                  label="Категория"
+                  :items="employeeCategories"
                   :disabled="!item.access"
                 />
               </v-flex>
