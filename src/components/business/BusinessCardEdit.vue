@@ -4,18 +4,19 @@
     flat
   >
     <VCardTitle>Основная информация</VCardTitle>
-    <VBtn
-      fab
-      left
-      large
+   
+    <div
+      class="d-inline-block"
+      :name="name"
       @click="avatarEdit = !avatarEdit"
     >
       <UserAvatar
-        :name="name"
         size="4em"
         :src="avatar"
+        :type="'square'"
       />
-    </VBtn>
+    </div>
+    
     <VCardText>
       <VForm
         v-model="valid"
@@ -79,6 +80,17 @@
           @onEdit="scheduleEdit"
         />
       </VForm>
+  
+      <v-textarea
+        label="Описание"
+        counter="400"
+        value=""
+        height="auto"
+        auto-grow
+        rows="1"
+        placeholder="Описание компании"
+        maxlength="400"
+      />
     </VCardText>
     <VCardActions>
       <VSpacer />
@@ -273,3 +285,11 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+  .v-input {
+    width: 312px;
+    .v-counter {
+      order: -1;
+    }
+  }
+</style>

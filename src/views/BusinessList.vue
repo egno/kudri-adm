@@ -18,7 +18,7 @@
       :items="data"
       :loading="progressQuery"
       :pagination.sync="pagination"
-      :rows-per-page-items="[5, 10,25]"
+      :rows-per-page-items="[5, 10, 25]"
       rows-per-page-text="Записей на страницу:"
       :total-items="totalItems"
       class="elevation-1"

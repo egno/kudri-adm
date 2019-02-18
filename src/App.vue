@@ -103,6 +103,7 @@ export default {
     border: 1px solid rgba(137, 149, 175, 0.1);
   }
   .topbar {
+    z-index: 5;
     box-shadow: none;
     border-bottom: 1px solid rgba(137, 149, 175, 0.1);
     .v-toolbar__content {
@@ -110,13 +111,40 @@ export default {
     }
   }
   .v-btn {
+    box-shadow: none !important;
+    &:hover {
+      &:before {
+        display: none;
+      }
+    }
     .v-ripple__container {
       display: none !important;
+    }
+    &.back {
+      width: 16px;
+      height: 16px;
+      background: url('assets/back.svg') no-repeat center center;
+    }
+    &.equal {
+      width: 16px;
+      height: 16px;
+      border-radius: 0;
+      background: url('assets/equal.svg') no-repeat center center;
+      &:hover {
+        &:before {
+          display: none;
+        }
+      }
+    }
+    &.close {
+      width: 16px;
+      height: 16px;
+      border-radius: 0;
+      background: url('assets/close.svg') no-repeat center center;
     }
     &.success {
       width: 240px;
       height: 56px;
-      box-shadow: none !important;
       background: linear-gradient(270deg, #c9a15d -9.86%, #ba9462 103.49%);
       transition: none;
       &:hover {
@@ -182,10 +210,68 @@ export default {
       }
     }
   }
+  .v-text-field {
+    input,
+    label {
+      max-width: 100%;
+      width: 100%;
+      text-transform: uppercase !important;
+      font-size: 13px;
+      &.v-label--active {
+        opacity: 1;
+        font-size: 13px;
+        color: #07101c !important;
+        transform: scale(1) translateY(-18px);
+      }
+    }
+    &.centered-input {
+      input,
+      label {
+        text-align: center;
+      }
+    }
+    label {
+      color: #07101c;
+      opacity: 0.35;
+      letter-spacing: 25%;
+    }
+    input {
+      color: #07101c;
+    }
+    .v-input__slot {
+      &:before {
+        border-color: #8995af;
+      }
+    }
+    &.workmode {
+      width: 34px;
+      height: 24px;
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+      margin-top: -1px;
+      &.error--text {
+        input {
+          color: #EF4D37;
+        }
+      }
+      .v-input__slot {
+        &:before,
+        &:after {
+          display: none;
+        }
+      }
+    }
+  }
 }
 #app {
   .title {
     font-size: 18px !important;
+  }
+  main.v-content {
+    @media only screen and (max-width: 1024px) {
+      padding-left: 0!important;
+    }
   }
   .workmode-wrap {
     margin: 0;
@@ -219,6 +305,18 @@ export default {
       right: -18px;
       top: 8px;
     }
+  }
+}
+.v-tooltip__content {
+  background: linear-gradient(142.11deg, #536976 -29.81%, #292E49 136.3%);
+  box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.04);
+  padding: 15px 20px;
+  .text-secondary {
+    line-height: 17px;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .text-primary {
+    line-height: 24px;
   }
 }
 .v-toolbar {

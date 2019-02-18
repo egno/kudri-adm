@@ -1,8 +1,13 @@
 <template>
   <VNavigationDrawer
+    touchless
     disable-resize-watcher
+    disable-route-watcher
+    permanent
     app
     width="240"
+    :mini-variant.sync="mini"
+    :mini-variant-width="40"
     class="navigation"
     @input="onInput($event)"
   >
@@ -13,6 +18,11 @@
       >
         <span>{{ defaultAppTitle }}</span>
       </VToolbarTitle>
+      <VBtn
+        :class="{ back: !mini, equal: mini}"
+        icon
+        @click.stop="mini = !mini"
+      />
     </VToolbar>
 
     <VList>
@@ -66,7 +76,8 @@ export default {
   components: { VCalendar },
   data() {
     return {
-      name: 'Business Name'
+      name: 'Business Name',
+      mini: false,
     };
   },
   computed: {
@@ -257,10 +268,38 @@ export default {
 
 <style lang="scss">
 .v-navigation-drawer {
+  &.v-navigation-drawer--mini-variant {
+    background: #fff!important;
+    .v-list, .help-link, .v-toolbar__title {
+      display: none !important;
+    }
+  }
+  .v-btn {
+    &.back, &.equal {
+      position: absolute;
+      right: 19px;
+      top: 50%;
+      margin-top: 0;
+      margin-bottom: 0;
+      transform: translateY(-50%);
+    }
+  }
   &.navigation {
     display: flex;
     flex-direction: column;
+    z-index: 5;
     background: linear-gradient(180.36deg, #142941 0.06%, #07101c 85.63%);
+    @media only screen and (max-width: 1024px) {
+      &.v-navigation-drawer--mini-variant {
+        width: 56px!important;
+        height: 56px!important;
+        overflow: hidden!important;
+        border-bottom: 1px solid rgba(137, 149, 175, 0.1);
+        .v-btn.equal {
+          margin: 0!important;
+        }
+      }
+    }
     .help-link {
       display: flex;
       justify-content: center;

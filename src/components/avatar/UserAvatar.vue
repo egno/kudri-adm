@@ -4,7 +4,34 @@
     :size="size"
     :color="color.bg"
     :tile="tile"
+    :class="{ square: type === 'square' }"
+
+    @mouseover="tooltip = true"
+    @mouseout="tooltip = false"
+    @mousemove="move"
   >
+    <v-tooltip
+      v-if="type === 'square'"
+      v-model="tooltip"
+      right
+      :position-x="x"
+      :position-y="y"
+    >
+      <span class="text-primary">
+        Это главное фото вашей компании.
+      </span> <br>
+      <span class="text-secondary">
+        Может быть логотип или любое <br> другое привлекательное фото <br> компании
+      </span>
+    </v-tooltip>
+    <span
+      v-if="type === 'square'"
+      class="load-text"
+    >
+      Загрузить фотографию
+    </span>
+  
+  
     <div
       v-if="newMessage"
       class="new-message"
@@ -46,6 +73,7 @@ export default {
   props: {
     newMessage: { type: Boolean, default: false },
     size: { type: String, default: '3em' },
+    type: { type: String, default: '' },
     name: { type: String, default: '' },
     src: { type: String, default: '' },
     tile: { type: Boolean, default: false },
@@ -57,6 +85,9 @@ export default {
       user: require('@/assets/user.svg'),
       userError: require('@/assets/user-error.svg'),
       grayScaleColors: { bg: 'grey', text: 'lighten' },
+      tooltip: false,
+      x: 0,
+      y: 0,
       colors: [
         { bg: 'red', text: 'lighten' },
         { bg: 'pink', text: 'lighten' },
@@ -126,6 +157,11 @@ export default {
     });
   },
   methods: {
+    move (e) {
+      if (!this.tooltip) return
+      this.x = e.x + 20;
+      this.y = e.y + 80
+    },
     loadImage() {
       setTimeout(() => {
         const img = new Image();
@@ -140,21 +176,43 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.v-avatar {
-  margin: 0 !important;
-  .new-message {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    border: 1px solid #fff;
-    background: #ef4d37;
-    border-radius: 16px;
-    top: 0;
-    left: 0;
+
+<style lang="scss">
+  .v-avatar {
+    margin: 0 !important;
+    .new-message {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border: 1px solid #fff;
+      background: #ef4d37;
+      border-radius: 16px;
+      top: 0;
+      left: 0;
+    }
+    .load-text {
+      position: absolute;
+      z-index: 1;
+      top: 114px;
+      font-family: Roboto-Slab;
+      font-size: 13px;
+      color: rgba(137, 149, 175, 0.5);
+    }
+    img {
+      background: #fff;
+      position: relative;
+      z-index: 2;
+    }
+    &.square {
+      width: 312px!important;
+      height: 184px!important;
+      background: url('../../assets/phot.svg') no-repeat top 57px center;
+      background-size: 40px;
+      background-color: rgba(137, 149, 175, 0.1)!important;
+      border-radius: 0;
+      img {
+        border-radius: 0;
+      }
+    }
   }
-  img {
-    background: #fff;
-  }
-}
 </style>

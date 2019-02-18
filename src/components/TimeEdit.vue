@@ -33,7 +33,7 @@ export default {
     };
   },
   watch: {
-    time: 'loadVal'
+    time: 'loadVal',
   },
   mounted() {
     this.loadVal();
