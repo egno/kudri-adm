@@ -51,6 +51,16 @@
                 <VFlex pa-0>
                   <h4>{{ fullName(item) }}</h4>
                 </VFlex>
+                <VFlex pa-0>
+                  <v-rating
+                    :value="item.j.rating"
+                    readonly
+                    color="amber"
+                    dense
+                    half-increments
+                    size="12"
+                  />
+                </VFlex>
               </VLayout>
               <div />
             </VFlex>
@@ -161,5 +171,9 @@ export default {
   top: 0;
   left: 5.5em;
   height: 5em;
+}
+.v-rating {
+  height: 1em;
+  margin-bottom: -1em;
 }
 </style>
