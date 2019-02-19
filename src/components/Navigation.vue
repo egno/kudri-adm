@@ -27,35 +27,43 @@
 
     <VList>
       <VCalendar v-if="!isManagerMenu" />
-      <div
+      <v-hover
         v-for="item in menu"
         v-show="item.show"
         :key="item.title"
-        class="menu-item-container"
       >
-        <div class="menu-item-left">
-          <VListTile :to="item.route">
-            <VListTileContent>
-              <VListTileTitle>{{ item.title }}</VListTileTitle>
-            </VListTileContent>
-            <VListTileAction>
-              <span class="list-item--count">
-                {{ item.count }}
-              </span>
-            </VListTileAction>
-          </VListTile>
-        </div>
-
-        <div
-          v-show="$route.name === (item.route && item.route.name) && (item.action)"
-          class="add-btn"
-          @click="onAction(item.action)"
+        <v-card
+          slot-scope="{ hover }"
+          class="menu-item-card"
+          color="rgba(0,0,0,0)"
+          flat
         >
-          <v-icon color="white">
-            add
-          </v-icon>
-        </div>
-      </div>
+          <div class="menu-item-container">
+            <div class="menu-item-left">
+              <VListTile :to="item.route">
+                <VListTileContent>
+                  <VListTileTitle>{{ item.title }}</VListTileTitle>
+                </VListTileContent>
+                <VListTileAction>
+                  <span class="list-item--count">
+                    {{ item.count }}
+                  </span>
+                </VListTileAction>
+              </VListTile>
+            </div>
+
+            <div
+              v-show="item.action && ($route.name === (item.route && item.route.name) || hover)"
+              class="add-btn"
+              @click="onAction(item.action)"
+            >
+              <v-icon color="white">
+                add
+              </v-icon>
+            </div>
+          </div>
+        </v-card>
+      </v-hover>
     </VList>
     <v-spacer />
     <div
@@ -77,7 +85,7 @@ export default {
   data() {
     return {
       name: 'Business Name',
-      mini: false,
+      mini: false
     };
   },
   computed: {
@@ -253,6 +261,7 @@ export default {
       router.push({ name: 'home' });
     },
     onAction(action) {
+      console.log(action);
       if (action && action.to) {
         this.$router.push(action.to);
         return;
@@ -269,13 +278,16 @@ export default {
 <style lang="scss">
 .v-navigation-drawer {
   &.v-navigation-drawer--mini-variant {
-    background: #fff!important;
-    .v-list, .help-link, .v-toolbar__title {
+    background: #fff !important;
+    .v-list,
+    .help-link,
+    .v-toolbar__title {
       display: none !important;
     }
   }
   .v-btn {
-    &.back, &.equal {
+    &.back,
+    &.equal {
       position: absolute;
       right: 19px;
       top: 50%;
@@ -291,12 +303,12 @@ export default {
     background: linear-gradient(180.36deg, #142941 0.06%, #07101c 85.63%);
     @media only screen and (max-width: 1024px) {
       &.v-navigation-drawer--mini-variant {
-        width: 56px!important;
-        height: 56px!important;
-        overflow: hidden!important;
+        width: 56px !important;
+        height: 56px !important;
+        overflow: hidden !important;
         border-bottom: 1px solid rgba(137, 149, 175, 0.1);
         .v-btn.equal {
-          margin: 0!important;
+          margin: 0 !important;
         }
       }
     }
