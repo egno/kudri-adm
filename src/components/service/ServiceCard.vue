@@ -1,6 +1,7 @@
 <template>
   <v-card
     hover
+    ripple
     @click="edit=true"
   >
     <v-card-title>
@@ -43,7 +44,15 @@
         <v-flex v-if="item.notes">
           <div>{{ item.notes }}</div>
         </v-flex>
-        <v-flex pa-0>
+        <v-flex v-if="item.employees">
+          <span class="caption grey--text text--darken-1">
+            Сотрудников:
+          </span>
+          <span class="text-value">
+            {{ item.employees }}
+          </span>
+        </v-flex>
+        <v-flex px-0>
           <GalleryTiles
             :service="item.name"
             :employee="employee"

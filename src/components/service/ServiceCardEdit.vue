@@ -20,12 +20,12 @@
         </v-flex>
         <v-flex v-else>
           <router-link
-            v-if="business && selectedService"
+            v-if="business && selectedService && item.employees"
             :to="{name: 'businessCardEmployee', 
                   params:{id: business}, 
                   query:{service: (selectedService.name || selectedService)}}"
           >
-            Сотрудники
+            Сотрудников: {{ item.employees }}
           </router-link>
         </v-flex>
       </v-layout>

@@ -56,6 +56,7 @@
                     :value="item.j.rating"
                     readonly
                     color="amber"
+                    background-color="grey"
                     dense
                     half-increments
                     size="12"

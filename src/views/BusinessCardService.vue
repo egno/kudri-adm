@@ -17,10 +17,17 @@
     <VLayout
       row
       wrap
+      align-space-around
+      fill-height
     >
       <VFlex
         v-for="(item, i) in services"
         :key="item.name + i"
+        xs12
+        sm6
+        md4
+        lg3
+        xl3
       >
         <ServiceCard
           :item="item"

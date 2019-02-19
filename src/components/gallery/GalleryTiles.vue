@@ -193,6 +193,9 @@ export default {
       }
       let filterString = `and=(${cond.join(',')})`;
       if (!filterString) return;
+      if (this.fixed) {
+        filterString = `${filterString}&limit=${this.maxImages}`;
+      }
       let vm = this;
       Api()
         .get(`gallery?${filterString}`)
