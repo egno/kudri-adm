@@ -182,6 +182,54 @@ export default {
       }
     }
   }
+  .v-text-field {
+    input,
+    label {
+      max-width: 100%;
+      width: 100%;
+      text-transform: uppercase !important;
+      font-size: 13px;
+      &.v-label--active {
+        opacity: 1;
+        font-size: 13px;
+        color: #07101c !important;
+        transform: scale(1) translateY(-18px);
+      }
+    }
+    &.centered-input {
+      input,
+      label {
+        text-align: center;
+      }
+    }
+    label {
+      color: #07101c;
+      opacity: 0.35;
+      letter-spacing: 25%;
+    }
+    input {
+      color: #07101c;
+    }
+    .v-input__slot {
+      &:before {
+        border-color: #8995af;
+      }
+    }
+    &.workmode {
+      width: 34px;
+      height: 24px;
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+      .v-input__slot {
+        height: 1.7em;
+        &:before,
+        &:after {
+          display: none;
+        }
+      }
+    }
+  }
 }
 #app {
   .title {

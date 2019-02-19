@@ -102,7 +102,8 @@ export default {
   },
   methods: {
     deletePeriod() {
-      this.startVal = null; this.endVal=null;
+      this.startVal = null;
+      this.endVal = null;
       this.$emit('onEdit', [this.startVal, this.endVal]);
     },
     onEditStart(payload) {
@@ -128,6 +129,7 @@ export default {
   }
 };
 </script>
+
 <style lang="scss" scoped>
 #app .workmode-wrap {
   margin-left: 12px;
@@ -138,8 +140,8 @@ export default {
   position: absolute;
 }
 .wrapper {
-  margin-bottom: 35px!important;
-  margin-top: 35px!important;
+  margin-bottom: 35px !important;
+  margin-top: 35px !important;
 }
 .fill,
 .empty {
