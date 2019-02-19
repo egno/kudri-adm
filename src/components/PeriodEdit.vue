@@ -26,10 +26,6 @@
         :time="endVal"
         @onEdit="onEditEnd"
       />
-      <div
-        class="close"
-        @click="startVal = ''; endVal=''; $emit('onEdit', [startVal, endVal]);"
-      />
       <VBtn
         v-if="itemindex !== 0"
         depressed
@@ -70,7 +66,8 @@ export default {
       dow: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
       switchValue: undefined,
       startVal: undefined,
-      endVal: undefined
+      endVal: undefined,
+      focus: false,
     };
   },
   computed: {
@@ -102,8 +99,8 @@ export default {
   },
   methods: {
     deletePeriod() {
-      this.startVal = null;
-      this.endVal = null;
+      this.startVal = '';
+      this.endVal = '';
       this.$emit('onEdit', [this.startVal, this.endVal]);
     },
     onEditStart(payload) {
@@ -115,10 +112,10 @@ export default {
       this.$emit('onEdit', [this.startVal, this.endVal]);
     },
     selectDay(index) {
-      if (!this.days[index].select) {
+      if (!this.days[index].select || this.startVal !== null && this.endVal !== null) {
         this.$emit('selectDay', [index, this.startVal, this.endVal]);
       } else {
-        this.$emit('selectDay', [index, '', '']);
+        this.$emit('selectDay', [index, null, null]);
       }
     },
     loadValues() {
@@ -162,6 +159,12 @@ export default {
 }
 .empty {
   color: rgba(137, 149, 175, 0.35);
+  &.fill {
+    background: transparent;
+    &:before {
+      display: none;
+    }
+  }
 }
 .fill {
   background: #d6dae3;

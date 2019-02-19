@@ -61,9 +61,15 @@ export default {
     font-size: 11px;
   }
   .v-btn--block {
-    color: #D6DAE3;
+    color: #fff;
     &.weekend {
       color: #8995AF;
+      &.red--text {
+        color: #8995AF!important;
+      }
+    }
+    &.grey--text {
+      color: #D6DAE3!important;
     }
     &.v-btn--outline {
       background: #fff!important;

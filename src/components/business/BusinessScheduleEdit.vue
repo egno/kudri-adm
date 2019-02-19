@@ -17,12 +17,12 @@
           :selected="modesIndexes[i]"
           :period-start="item[0]"
           :period-end="item[1]"
-          @onDel="onDel(i,$event)"
           @onEdit="onEdit(i,$event)"
           @selectDay="selectDay(i, $event)"
         />
       </VFlex>
       <VBtn
+        v-if="addButton"
         class="transparent add"
         @click="addMode"
       >
@@ -73,6 +73,13 @@ export default {
     };
   },
   computed: {
+    addButton() {
+      if (_.findIndex(this.modes, function(o) { return o[0] === '' && o[1] === '' || o[0] === null || o[1] === null }) === -1) {
+        return true
+      } else {
+        return false
+      }
+    },
     modesIndexes() {
       let indexes = [];
       for (let i = 0; i < this.modes.length; i++) {
@@ -93,8 +100,8 @@ export default {
   },
   methods: {
     addMode() {
-      if (_.findIndex(this.modes, function(o) { return o[0] === '' && o[1] === '' }) === -1) {
-        this.modes.push(['', '']);
+      if (_.findIndex(this.modes, function(o) { return o[0] === '' && o[1] === '' || o[0] === null || o[1] === null }) === -1) {
+        this.modes.push([null, null]);
       }
     },
     getAllIndexes(arr, val) {
@@ -104,7 +111,7 @@ export default {
       });
       let indexes = [],
         i = -1;
-      while ((i = arrString.indexOf(val, i + 1)) != -1) {
+      while ((i = arrString.indexOf(val, i + 1)) !== -1) {
         indexes.push(i);
       }
       return indexes;
@@ -124,7 +131,7 @@ export default {
         return [e[0], e[1]].join();
       });
       this.modes = _.remove(this.modes, function(n) {
-          return n[0] !== null;
+        return n[0] !== '';
       });
     }
   }
