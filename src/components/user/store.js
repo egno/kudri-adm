@@ -32,6 +32,12 @@ const getters = {
       return info['login'];
     }
   },
+  userRole: (state, getters) => {
+    const info = getters.userInfo;
+    if (info) {
+      return info['role'];
+    }
+  },
   userEmail: (state, getters) => {
     const info = getters.userInfo;
     return info && info.data && info.data.email;

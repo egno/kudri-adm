@@ -33,6 +33,7 @@
         :key="item.title"
       >
         <v-card
+          v-if="item.show"
           slot-scope="{ hover }"
           class="menu-item-card"
           color="rgba(0,0,0,0)"
@@ -63,6 +64,7 @@
             </div>
           </div>
         </v-card>
+        <div v-else />
       </v-hover>
     </VList>
     <v-spacer />
@@ -90,33 +92,42 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'business',
       'businessInfo',
+      'businessServiceCount',
       'defaultAppTitle',
       'loggedIn',
       'token',
-      'navBarVisible'
+      'navBarVisible',
+      'userRole'
     ]),
-    business() {
-      return this.businessInfo;
+    routeBisinessId() {
+      return this.$route && this.$route.params && this.$route.params.id;
     },
-    businessId() {
-      return (
-        (this.$route && this.$route.params && this.$route.params.id) ||
-        (this.businessInfo && this.businessInfo.id) ||
-        'null'
-      );
+    businessLink() {
+      return this.business;
     },
     clientsCount() {
-      return this.business && this.business.j && this.business.j.clients;
+      return (
+        this.businessInfo && this.businessInfo.j && this.businessInfo.j.clients
+      );
     },
     employeesCount() {
-      return this.business && this.business.j && this.business.j.employees;
+      return (
+        this.businessInfo &&
+        this.businessInfo.j &&
+        this.businessInfo.j.employees
+      );
     },
     filialsCount() {
-      return this.business && this.business.j && this.business.j.filials;
+      return (
+        this.businessInfo && this.businessInfo.j && this.businessInfo.j.filials
+      );
     },
     galleryCount() {
-      return this.business && this.business.j && this.business.j.gallery;
+      return (
+        this.businessInfo && this.businessInfo.j && this.businessInfo.j.gallery
+      );
     },
     isBusinessCard() {
       const businessCards = [
@@ -136,7 +147,7 @@ export default {
       return businessCards.some(x => x === this.$route.name);
     },
     isCompany() {
-      return this.businessId && this.$store.state.userInfo.role === 'business';
+      return this.business && this.userRole === 'business';
     },
     isManagerMenu() {
       return !this.isBusinessCard;
@@ -160,7 +171,7 @@ export default {
           count: this.employeesCount,
           route: {
             name: 'businessCardEmployee',
-            params: { id: this.businessId }
+            params: { id: this.businessLink }
           },
           show: this.loggedIn && !this.isManagerMenu,
           action: {
@@ -168,17 +179,17 @@ export default {
             action: 'newEmployee',
             to: {
               name: 'employeeFull',
-              params: { id: this.businessId, employee: 'new' }
+              params: { id: this.businessLink, employee: 'new' }
             },
             default: true
           }
         },
         {
           title: 'Услуги',
-          count: this.servicesCount,
+          count: this.businessServiceCount,
           route: {
             name: 'businessCardService',
-            params: { id: this.businessId }
+            params: { id: this.businessLink }
           },
           show: this.loggedIn && !this.isManagerMenu,
           action: {
@@ -192,7 +203,7 @@ export default {
           count: this.clientsCount,
           route: {
             name: 'businessCardClients',
-            params: { id: this.businessId }
+            params: { id: this.businessLink }
           },
           show: this.loggedIn && !this.isManagerMenu,
           action: {
@@ -206,7 +217,7 @@ export default {
           count: this.filialsCount,
           route: {
             name: 'businessCardFilal',
-            params: { id: this.businessId }
+            params: { id: this.businessLink }
           },
           show: this.loggedIn && !this.isManagerMenu,
           action: {
@@ -220,7 +231,7 @@ export default {
           count: undefined,
           route: {
             name: 'businessCard',
-            params: { id: this.businessId }
+            params: { id: this.businessLink }
           },
           show: this.loggedIn && !this.isManagerMenu
         },
@@ -229,22 +240,27 @@ export default {
           count: this.galleryCount,
           route: {
             name: 'businessCardGallery',
-            params: { id: this.businessId }
+            params: { id: this.businessLink }
           },
           show: this.loggedIn && !this.isManagerMenu
         }
       ];
     },
     services() {
-      return this.business && this.business.j && this.business.j.services;
-    },
-    servicesCount() {
-      return this.services && this.services.length;
+      return (
+        this.business &&
+        this.businessInfo &&
+        this.businessInfo.j &&
+        this.businessInfo.j.services
+      );
     }
   },
   watch: {
     token: 'loadUserInfo',
-    businessId: 'loadBusiness'
+    routeBisinessId: 'loadBusiness'
+  },
+  mounted() {
+    this.loadBusiness();
   },
   methods: {
     ...mapActions([
@@ -255,7 +271,7 @@ export default {
       'setBusiness'
     ]),
     loadBusiness() {
-      this.setBusiness(this.businessId);
+      this.setBusiness(this.routeBisinessId);
     },
     goHome() {
       router.push({ name: 'home' });
@@ -332,6 +348,9 @@ export default {
         &:hover {
           background-color: rgba(137, 149, 175, 0.2);
         }
+      }
+      .v-list__tile--active {
+        background-color: rgba(137, 149, 175, 0.4);
       }
       .menu-item-container {
         display: flex;

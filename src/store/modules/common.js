@@ -15,22 +15,14 @@ const state = {
   actualDate: '',
   apiTime: '',
   appTitle: '',
-  businessInfo: {},
+
   calendar: [],
   defaultAppTitle: 'UNO',
   employee: [],
   messageWindow: false,
   profileDrawer: false,
   navBarVisible: true,
-  businessCategories: [
-    'Салон красоты',
-    'Частный мастер',
-    'Spa салон',
-    'Массажный салон',
-    'Тату салон',
-    'Маникюрная студия',
-    'Косметологический кабинет'
-  ],
+
   schedule: [],
   searchString: '',
   selectedVisit: undefined,
@@ -49,26 +41,12 @@ const getters = {
     return getISOTimeZoneOffset(state.apiTime);
   },
   appTitle: state => state.appTitle || state.defaultAppTitle,
-  business: state => state.businessInfo && state.businessInfo.id,
-  businessInfo: state => ({
-    ...state.businessInfo,
-    ...{
-      category:
-        state.businessInfo &&
-        state.businessInfo.j &&
-        state.businessInfo.j.category
-    },
-    ...{
-      name:
-        state.businessInfo && state.businessInfo.j && state.businessInfo.j.name
-    }
-  }),
   calendar: state => state.calendar,
   defaultAppTitle: state => state.defaultAppTitle,
   employee: state => state.employee,
   messageWindow: state => state.messageWindow,
   profileDrawer: state => state.profileDrawer,
-  businessCategories: state => state.businessCategories,
+
   navBarVisible: state => state.navBarVisible,
   schedule: state => state.schedule,
   searchString: state => state.searchString,
@@ -128,9 +106,6 @@ const mutations = {
   },
   SET_APP_TITLE(state, payload) {
     state.appTitle = payload;
-  },
-  SET_BUSINESS_INFO(state, payload) {
-    state.businessInfo = payload;
   },
   SET_SEARCH_STRING(state, payload) {
     state.searchString = payload;
@@ -213,17 +188,6 @@ const actions = {
   },
   setAppTitle({ commit }, payload) {
     commit('SET_APP_TITLE', payload);
-  },
-  setBusiness({ commit, dispatch }, payload) {
-    const path = `business?id=eq.${payload}`;
-    Api()
-      .get(path)
-      .then(res => res.data[0])
-      .then(res => {
-        commit('SET_BUSINESS_INFO', res);
-        dispatch('loadEmployee', payload);
-      })
-      .catch(err => commit('ADD_ALERT', makeAlert(err)));
   },
   setSearchString({ commit }, payload) {
     commit('SET_SEARCH_STRING', payload);

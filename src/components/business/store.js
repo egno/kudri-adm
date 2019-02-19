@@ -2,73 +2,61 @@ import Api from '@/api/backend';
 import { makeAlert } from '@/api/utils';
 
 const state = {
-  employeeCategories: [],
-  employeePositions: [],
-  serviceGroups: []
+  businessInfo: {},
+  businessCategories: [
+    'Салон красоты',
+    'Частный мастер',
+    'Spa салон',
+    'Массажный салон',
+    'Тату салон',
+    'Маникюрная студия',
+    'Косметологический кабинет'
+  ]
 };
 
 const getters = {
-  employeeCategories: state => state.employeeCategories,
-  employeePositions: state => state.employeePositions,
-  serviceGroups: state => state.serviceGroups
+  business: state => state.businessInfo && state.businessInfo.id,
+  businessCategories: state => state.businessCategories,
+  businessInfo: state => ({
+    ...state.businessInfo,
+    ...{
+      category:
+        state.businessInfo &&
+        state.businessInfo.j &&
+        state.businessInfo.j.category
+    },
+    ...{
+      name:
+        state.businessInfo && state.businessInfo.j && state.businessInfo.j.name
+    }
+  }),
+  businessServiceCount: state =>
+    state.businessInfo &&
+    state.businessInfo.j &&
+    state.businessInfo.j.services &&
+    state.businessInfo.j.services.length
 };
 
 const mutations = {
-  ADD_CATEGORIE(state, payload) {
-    if (!payload) return;
-    if (state.employeeCategories.some(x => x.name === payload)) return;
-    state.employeeCategories.unshift({ name: payload });
-  },
-  ADD_POSITION(state, payload) {
-    if (!payload) return;
-    if (state.employeePositions.some(x => x.name === payload)) return;
-    state.employeePositions.unshift({ name: payload });
-  },
-  SET_CATEGORIES(state, payload) {
-    state.employeeCategories = payload;
-  },
-  SET_POSITIONS(state, payload) {
-    state.employeePositions = payload;
-  },
-  SET_SERVICE_GROUPS(state, payload) {
-    state.serviceGroups = payload;
+  SET_BUSINESS_INFO(state, payload) {
+    state.businessInfo = payload;
   }
 };
 
 const actions = {
-  addCategorie({ commit }, payload) {
-    commit('ADD_CATEGORIE', payload);
-  },
-  addPosition({ commit }, payload) {
-    commit('ADD_POSITION', payload);
-  },
-  loadEmployeeCategories({ commit }) {
-    const path = 'employee_categories?name=not.is.null';
+  setBusiness({ commit, dispatch }, payload) {
+    console.log(payload);
+    if (!(payload && payload.length == 36)) {
+      commit('SET_BUSINESS_INFO', {});
+      return;
+    }
+    const path = `business?id=eq.${payload}`;
     Api()
       .get(path)
-      .then(res => res.data)
+      .then(res => res.data[0])
       .then(res => {
-        commit('SET_CATEGORIES', res.map(x => x.name));
-      })
-      .catch(err => commit('ADD_ALERT', makeAlert(err)));
-  },
-  loadEmployeePositions({ commit }) {
-    const path = 'employee_positions?name=not.is.null';
-    Api()
-      .get(path)
-      .then(res => res.data)
-      .then(res => {
-        commit('SET_POSITIONS', res.map(x => x.name));
-      })
-      .catch(err => commit('ADD_ALERT', makeAlert(err)));
-  },
-  loadServiceGroups({ commit }) {
-    const path = 'service_groups?name=not.is.null';
-    Api()
-      .get(path)
-      .then(res => res.data)
-      .then(res => {
-        commit('SET_SERVICE_GROUPS', res.map(x => x.name));
+        commit('SET_BUSINESS_INFO', res);
+        dispatch('loadEmployee', payload);
       })
       .catch(err => commit('ADD_ALERT', makeAlert(err)));
   }
