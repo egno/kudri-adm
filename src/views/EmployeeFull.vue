@@ -77,6 +77,30 @@
             <v-divider />
             <v-card-actions>
               <v-spacer />
+              <v-dialog
+                v-model="dialog"
+                width="30em"
+              >
+                <v-card>
+                  <v-card-text>Уверены, что хотите удалить сотрудника?</v-card-text>
+                  <v-divider />
+                  <v-card-actions>
+                    <v-spacer />
+                    <app-btn
+                      primary
+                      @click="dialog = false"
+                    >
+                      Нет
+                    </app-btn>
+                    <app-btn @click="dialog = false; deleteItem()">
+                      Удалить
+                    </app-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+              <app-btn @click="dialog=true">
+                Удалить
+              </app-btn>
               <app-btn @click="exit">
                 Закрыть
               </app-btn>
@@ -123,7 +147,8 @@ export default {
   data() {
     return {
       activeTab: 0,
-      data: undefined
+      data: undefined,
+      dialog: false
     };
   },
   computed: {
@@ -141,11 +166,24 @@ export default {
   },
   methods: {
     ...mapActions(['alert', 'setBusiness']),
+    deleteItem() {
+      if (this.employee_id && this.employee_id !== 'new') {
+        Api()
+          .delete(`employee?id=eq.${this.employee_id}`)
+          .then(() => {
+            this.exit();
+          })
+          .catch(err => {
+            this.alert(makeAlert(err));
+          });
+      } else {
+        this.exit();
+      }
+    },
     exit() {
       this.$router.back();
     },
     load() {
-      console.log('load');
       this.loadBusiness();
       this.loadEmployee();
     },
