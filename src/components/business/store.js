@@ -30,11 +30,10 @@ const getters = {
         state.businessInfo && state.businessInfo.j && state.businessInfo.j.name
     }
   }),
-  businessServiceCount: state =>
-    state.businessInfo &&
-    state.businessInfo.j &&
-    state.businessInfo.j.services &&
-    state.businessInfo.j.services.length
+  businessServices: state =>
+    state.businessInfo && state.businessInfo.j && state.businessInfo.j.services,
+  businessServiceCount: (state, getters) =>
+    getters.businessServices && getters.businessServices.length
 };
 
 const mutations = {

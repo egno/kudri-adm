@@ -18,6 +18,16 @@
             {{ employeeName }}
           </span>
         </v-flex>
+        <v-flex v-else>
+          <router-link
+            v-if="business && selectedService"
+            :to="{name: 'businessCardEmployee', 
+                  params:{id: business}, 
+                  query:{service: (selectedService.name || selectedService)}}"
+          >
+            Сотрудники
+          </router-link>
+        </v-flex>
       </v-layout>
     </AppCardTitle>
     <v-divider />
@@ -38,6 +48,7 @@
         >
           Фото
         </v-tab>
+
         <v-tab-item key="tab-0">
           <VContainer grid-list-md>
             <v-layout wrap>
@@ -156,7 +167,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['serviceGroups']),
+    ...mapGetters(['business', 'serviceGroups']),
     categories() {
       return this.serviceGroups;
     }

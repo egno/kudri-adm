@@ -4,6 +4,9 @@
     grid-list-lg
   >
     <VLayout column>
+      <VFlex v-if="queryService">
+        <h2>{{ queryService }}</h2>
+      </VFlex>
       <VFlex>
         <VTextField
           key="mainSearch"
@@ -84,6 +87,9 @@ export default {
       return [
         ...new Set(this.data && this.data.map(x => x.j && x.j.category))
       ].sort((a, b) => (a < b ? -1 : 1));
+    },
+    queryService() {
+      return this.$route && this.$route.query && this.$route.query.service;
     }
   },
   mounted() {
@@ -99,6 +105,10 @@ export default {
           x =>
             x.j &&
             x.j.category === category &&
+            (!this.queryService ||
+              (x.j.services &&
+                x.j.services.length > 0 &&
+                x.j.services.some(s => (s.name || s) === this.queryService))) &&
             (!this.searchString ||
               (x.j.category &&
                 x.j.category

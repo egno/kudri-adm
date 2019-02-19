@@ -18,7 +18,7 @@ const state = {
 
   calendar: [],
   defaultAppTitle: 'UNO',
-  employee: [],
+
   messageWindow: false,
   profileDrawer: false,
   navBarVisible: true,
@@ -43,10 +43,9 @@ const getters = {
   appTitle: state => state.appTitle || state.defaultAppTitle,
   calendar: state => state.calendar,
   defaultAppTitle: state => state.defaultAppTitle,
-  employee: state => state.employee,
+
   messageWindow: state => state.messageWindow,
   profileDrawer: state => state.profileDrawer,
-
   navBarVisible: state => state.navBarVisible,
   schedule: state => state.schedule,
   searchString: state => state.searchString,
@@ -69,9 +68,6 @@ const getters = {
 const mutations = {
   LOAD_CALENDAR(state, payload) {
     state.calendar = payload;
-  },
-  LOAD_EMPLOYEE(state, payload) {
-    state.employee = payload || [];
   },
   LOAD_SCHEDULE(state, payload) {
     state.schedule = payload;
@@ -226,20 +222,7 @@ const actions = {
       })
       .catch(err => commit('ADD_ALERT', makeAlert(err)));
   },
-  loadEmployee({ commit }, payload) {
-    commit('LOAD_EMPLOYEE', null);
-    if (!payload) {
-      return;
-    }
-    const path = `employee?parent=eq.${payload}`;
-    Api()
-      .get(path)
-      .then(res => res.data)
-      .then(res => {
-        commit('LOAD_EMPLOYEE', res);
-      })
-      .catch(err => commit('ADD_ALERT', makeAlert(err)));
-  },
+
   loadFromStorage({ commit, dispatch }) {
     commit('SET_TOKEN', localStorage.getItem('accessToken'));
     dispatch('loadUserInfo');
