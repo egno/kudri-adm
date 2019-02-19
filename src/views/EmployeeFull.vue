@@ -98,7 +98,10 @@
                   </v-card-actions>
                 </v-card>
               </v-dialog>
-              <app-btn @click="dialog=true">
+              <app-btn
+                v-if="data && data.access"
+                @click="dialog=true"
+              >
                 Удалить
               </app-btn>
               <app-btn @click="exit">
