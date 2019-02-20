@@ -7,7 +7,6 @@
         browser-autocomplete
         :error="!success"
         hide-no-data
-        hint="Вводите только адрес дома"
         :items="items"
         item-value="name"
         item-text="name"

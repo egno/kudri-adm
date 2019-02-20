@@ -19,14 +19,47 @@
         <span>{{ defaultAppTitle }}</span>
       </VToolbarTitle>
       <VBtn
-        :class="{ back: !mini, equal: mini}"
+        :class="{ back: !mini, equal: mini, invisible: isSalon}"
         icon
         @click.stop="mini = !mini"
       />
     </VToolbar>
-
+    
+    <div class="add-menu-list-mini">
+      <div class="items">
+        <div
+          v-for="(item, i) in adds"
+          :key="i"
+        >
+          <a href="#">
+            {{ item }}
+          </a>
+        </div>
+      </div>
+    </div>
+    
     <VList>
       <VCalendar v-if="!isManagerMenu" />
+      <VListGroup
+        no-action
+        sub-group
+        value="false"
+        class="add-menu-list"
+      >
+        <VListTile
+          slot="activator"
+          class="add-menu-button"
+        >
+          <VListTileTitle>Добавить</VListTileTitle>
+        </VListTile>
+        <VListTile
+          v-for="(item, i) in adds"
+          :key="i"
+          @click="doNothing"
+        >
+          <VListTileTitle>{{ item }}</VListTileTitle>
+        </VListTile>
+      </VListGroup>
       <v-hover
         v-for="item in menu"
         v-show="item.show"
@@ -52,7 +85,6 @@
                 </VListTileAction>
               </VListTile>
             </div>
-
             <div
               v-show="item.action && ($route.name === (item.route && item.route.name) || hover)"
               class="add-btn"
@@ -87,7 +119,13 @@ export default {
   data() {
     return {
       name: 'Business Name',
-      mini: false
+      mini: false,
+      isSalon: false,
+      adds: [
+          'Менеджера',
+          'Компанию',
+          'Частного мастера',
+      ]
     };
   },
   computed: {
@@ -270,6 +308,9 @@ export default {
       'setAppTitle',
       'setBusiness'
     ]),
+    doNothing() {
+      console.log('')
+    },
     loadBusiness() {
       this.setBusiness(this.routeBisinessId);
     },
@@ -293,8 +334,48 @@ export default {
 
 <style lang="scss">
 .v-navigation-drawer {
+  .add-menu-list-mini {
+    display: none;
+  }
   &.v-navigation-drawer--mini-variant {
     background: #fff !important;
+    overflow: visible;
+    .add-menu-list-mini {
+      display: block;
+      width: 40px;
+      height: 40px;
+      background: #EF4D37 url('../assets/plus-w.svg') no-repeat center center;
+      background-size: 24px;
+      cursor: pointer;
+      position: absolute;
+      top: 55px;
+      .items {
+        display: none;
+        position: absolute;
+        left: 100%;
+        &>div {
+          padding: 0 10px;
+        }
+        a {
+          color: #fff;
+          text-decoration: none;
+          white-space: nowrap;
+        }
+      }
+      &:hover {
+        .items {
+          display: block;
+          background: linear-gradient(180.22deg, #333C54 0.06%, #4A5D6D 85.63%);
+          padding: 10px 0;
+          &>div {
+            &:hover {
+              background: rgba(137, 149, 175, 0.2);
+              cursor: pointer;
+            }
+          }
+        }
+      }
+    }
     .v-list,
     .help-link,
     .v-toolbar__title {
@@ -316,8 +397,74 @@ export default {
     display: flex;
     flex-direction: column;
     z-index: 5;
-    background: linear-gradient(180.36deg, #142941 0.06%, #07101c 85.63%);
+    background: linear-gradient(180.36deg, #333C54 0.06%, #4A5D6D 85.63%);
+    .add-menu-button {
+      background: #EF4D37;
+      .v-list__tile__title {
+        color: #fff;
+        font-family: Roboto-Slab;
+        font-style: normal;
+        font-weight: normal;
+        line-height: normal;
+        font-size: 18px;
+        &:before {
+          content: '';
+          width: 12px;
+          height: 8px;
+          background: url('../assets/angle-down.svg') no-repeat center center;
+          background-size: 12px;
+          position: absolute;
+          right: 30px;
+          top: 8px;
+        }
+      }
+    }
+    .add-menu-list{
+      margin-bottom: 22px;
+      .v-list__group__header__prepend-icon {
+        display: none;
+      }
+      .v-list__group__items {
+        background: rgba(137, 149, 175, 0.2);
+        padding-top: 13px;
+        height: 144px;
+        .v-list__tile {
+          .v-list__tile__title {
+            width: auto;
+          }
+          &:hover {
+            background: transparent!important;
+            .v-list__tile__title {
+              width: auto;
+              position: relative;
+              &:before {
+                content: '';
+                position: absolute;
+                left: 0;
+                bottom: 4px;
+                height: 1px;
+                width: 100%;
+                background: rgba(255, 255, 255, 0.6);
+              }
+            }
+          }
+        }
+      }
+      &.v-list__group--active {
+        .v-list__tile__title {
+          &:before {
+            transform: rotate(180deg);
+          }
+        }
+      }
+    }
+    .invisible {
+      display: none;
+    }
     @media only screen and (max-width: 1024px) {
+      .invisible {
+        display: block;
+      }
       &.v-navigation-drawer--mini-variant {
         width: 56px !important;
         height: 56px !important;

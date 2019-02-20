@@ -3,6 +3,24 @@
     :value="counter"
     overlap
   >
+    <v-tooltip
+      v-if="noWorkingDay"
+      v-model="tooltip"
+      right
+      :position-x="x"
+      :position-y="y"
+    >
+      <span class="text-primary">
+        Выходной день
+      </span> <br>
+      <a
+        class="blue-link"
+        href="#"
+        @click="tooltip = false"
+      >
+        Сделать рабочим
+      </a>
+    </v-tooltip>
     <VBtn
       :class="{ weekend : weekend, badge : (counter > 0) }"
       class="calendar-btn"
@@ -13,7 +31,9 @@
       flat
       :color="color"
       :outline="day.today"
-      @click="onClickDate(day.dateKey)"
+      @click="onClickDate(day.dateKey);"
+      @mouseup="move"
+      @mouseleave="tooltip = false"
     >
       {{ day.display }}
     </VBtn>
@@ -36,7 +56,12 @@ export default {
     }
   },
   data() {
-    return {};
+    return {
+      noWorkingDay: false, //для тултипа в нерабочих днях
+      tooltip: false,
+      x: 0,
+      y: 0,
+    };
   },
   computed: {
     ...mapGetters(['actualDate', 'calendar']),
@@ -48,7 +73,14 @@ export default {
     }
   },
   methods: {
+    move (e) {
+        console.log(51651);
+        console.log(e);
+      this.x = e.x + 10;
+      this.y = e.y + 20
+    },
     onClickDate(dt) {
+      this.tooltip = true;
       this.$emit('onClickDate', dt);
     }
   }
@@ -62,14 +94,22 @@ export default {
   }
   .v-btn--block {
     color: #fff;
+    margin: 2px 0!important;
+    line-height: 11px;
     &.weekend {
-      color: #8995AF;
       &.red--text {
         color: #8995AF!important;
       }
     }
+    &.red--text {
+      color: #8995AF!important;
+    }
     &.grey--text {
       color: #D6DAE3!important;
+    }
+    /*цвет для выходного для*/
+    &.v-btn--no-working {
+      color: #8995AF;
     }
     &.v-btn--outline {
       background: #fff!important;

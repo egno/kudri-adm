@@ -181,6 +181,7 @@ export default {
       box-shadow: none !important;
       background: transparent;
       text-transform: none;
+      font-weight: normal;
       height: 20px;
       .v-ripple__container {
         display: none !important;
@@ -210,24 +211,65 @@ export default {
       }
     }
   }
+  .v-select__slot {
+    .v-input__icon {
+      height: 22px;
+    }
+  }
   .v-text-field {
+    .v-input--is-focused {
+      border-bottom: 1px solid #5699ff !important;
+    }
+    textarea {
+      font-family: Lato;
+      font-style: normal;
+      font-weight: 300;
+      line-height: normal;
+      font-size: 13px;
+      color: #07101C;
+      &::placeholder {
+        color: rgba(7, 16, 28, 0.35)!important;
+        font-size: 13px;
+      }
+    }
+    .v-text-field__prefix {
+      padding-top: 5px;
+      font-size: 13px;
+      font-family: Lato;
+      font-style: normal;
+      font-weight: 300;
+      line-height: normal;
+    }
     input,
     label {
+      padding-bottom: 2px;
       max-width: 100%;
       width: 100%;
-      text-transform: uppercase !important;
       font-size: 13px;
+      font-family: Lato;
+      font-style: normal;
+      font-weight: 300;
+      line-height: normal;
       &.v-label--active {
         opacity: 1;
-        font-size: 13px;
-        color: #07101c !important;
+        font-size: 11px;
+        color: rgba(7, 16, 28, 0.35)!important;
         transform: scale(1) translateY(-18px);
       }
     }
+    input {
+      color: #07101C;
+    }
     &.centered-input {
+      text-transform: uppercase !important;
       input,
       label {
         text-align: center;
+        &.v-label--active {
+          text-align: center;
+          font-size: 11px;
+        }
+        
       }
     }
     label {

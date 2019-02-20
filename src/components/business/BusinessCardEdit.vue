@@ -5,27 +5,27 @@
   >
     <VCardTitle>Основная информация</VCardTitle>
    
-    <div
-      class="d-inline-block"
-      :name="name"
-      @click="avatarEdit = !avatarEdit"
-    >
-      <UserAvatar
-        size="4em"
-        :src="avatar"
-        :type="'square'"
-      />
-    </div>
-    
     <VCardText>
       <VForm
         v-model="valid"
         lazy-validation
+        class="business-edit"
       >
+        <div
+          class="d-inline-block"
+          :name="name"
+          @click="avatarEdit = !avatarEdit"
+        >
+          <UserAvatar
+            size="4em"
+            :src="avatar"
+            :type="'square'"
+          />
+        </div>
+        
         <VTextField
           v-model="data.j.name"
           label="Название"
-          prepend-icon="account_box"
           :rules="[() => !!data.j.name || 'Это поле обязательно для заполнения']"
           required
         />
@@ -40,18 +40,16 @@
           v-model="data.j.inn"
           label="ИНН"
           mask="############"
-          prepend-icon="assignment"
           :rules="[rules.INN_counter]"
         />
         <v-layout row>
-          <v-flex>
+          <v-flex xs9>
             <AddressAutocomplete
               v-model="data.j.address"
               label="Адрес"
-              prepend-icon="local_post_office"
             />
           </v-flex>
-          <v-flex>
+          <v-flex xs3>
             <VTextField
               v-model="data.j.office"
               label="Офис"
@@ -63,40 +61,51 @@
           :phones="phones"
           @onEdit="phonesEdit"
         />
-        <VTextField
-          v-model="data.j.links.instagram"
-          label="Имя профиля в Instagram"
-        />
-        <VTextField
-          v-model="data.j.links.vk"
-          label="Имя профиля в VK"
-        />
-        <VTextField
-          v-model="data.j.site"
-          label="Ссылка на собственный сайт"
-        />
+  
+        
+        
         <BusinessScheduleEdit
           :schedule="data.j.schedule"
           @onEdit="scheduleEdit"
         />
-      </VForm>
+        
   
-      <v-textarea
-        label="Описание"
-        counter="400"
-        value=""
-        height="auto"
-        auto-grow
-        rows="1"
-        placeholder="Описание компании"
-        maxlength="400"
-      />
+        <span :class="captionClass">
+          Ссылки
+        </span>
+  
+        <v-flex class="soc-input">
+          <div class="soc-input-ic" />
+          <VTextField
+            v-model="data.j.links.instagram"
+          />
+        </v-flex>
+        <VBtn
+          class="transparent add"
+        >
+          Добавить ссылку
+        </VBtn>
+        
+        
+        <div :class="captionClass">
+          Описание
+        </div>
+        
+        <v-textarea
+          counter="400"
+          value=""
+          height="auto"
+          auto-grow
+          rows="1"
+          placeholder="Введите текст описания"
+          maxlength="400"
+        />
+      </VForm>
     </VCardText>
     <VCardActions>
-      <VSpacer />
       <VBtn
         :disabled="hasErrors"
-        color="primary"
+        color="success"
         @click="close"
       >
         Сохранить
@@ -287,9 +296,26 @@ export default {
 </script>
 <style lang="scss">
   .v-input {
-    width: 312px;
     .v-counter {
       order: -1;
+    }
+  }
+  .business-edit {
+    width: 312px;
+  }
+  .soc-input {
+    position: relative;
+    .v-input__slot {
+      padding-left: 30px;
+    }
+    .soc-input-ic {
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      left: 0px;
+      top: 14px;
+      background: url('../../assets/sllink.svg') no-repeat  center center;
+      background-size: 18px;
     }
   }
 </style>
