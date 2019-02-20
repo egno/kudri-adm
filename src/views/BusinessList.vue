@@ -202,6 +202,9 @@ export default {
       if (page > 1) {
         params.push(`offset=${(page - 1) * rowsPerPage}`);
       }
+      if (this.$route.name == 'myBusinessList') {
+        params.push(`manager_id=not.is.null`);
+      }
       Api()
         .get(`${this.table}?${params.filter(x => !!x).join('&')}`)
         .then(res => {
