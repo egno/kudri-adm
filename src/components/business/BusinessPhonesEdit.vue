@@ -1,8 +1,8 @@
 <template>
   <div>
-    <span :class="captionClass">
-      Телефоны
-    </span>
+    <!--<span :class="captionClass">-->
+    <!--Телефоны-->
+    <!--</span>-->
     <div
       v-for="(phone, i) in newPhones"
       :key="i"
@@ -16,12 +16,10 @@
         v-if="newPhones.length > 1"
         depressed
         flat
-        fab
         small
+        class="phone-delete"
         @click="newPhones.splice(i, 1)"
-      >
-        <v-icon>delete</v-icon>
-      </VBtn>
+      />
     </div>
     <VBtn
       class="transparent add"
@@ -78,11 +76,25 @@ export default {
   }
 };
 </script>
-<style>
+<style lang="scss">
 .phone-input {
-  display: flex;
-  width: 300px;
-  justify-content: center;
-  align-items: center;
+  position: relative;
+  .v-text-field__slot {
+    padding-left: 56px;
+  }
+  .phone-delete {
+    position: absolute;
+    right: -9px;
+    top: 9px;
+    width: 24px;
+    min-width: 24px;
+    max-width: 24px;
+    height: 24px;
+    background: #fff url('../../assets/del.svg') no-repeat center center;
+    background-size: 12px 20px;
+    &:hover {
+      background: #fff url('../../assets/delh.svg') no-repeat center center;
+    }
+  }
 }
 </style>

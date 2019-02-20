@@ -35,6 +35,7 @@
 
     <VSpacer />
     <VToolbarItems>
+      <Notifications />
       <ProfileMenu />
     </VToolbarItems>
   </VToolbar>
@@ -42,12 +43,14 @@
 
 <script>
 import ProfileMenu from '@/components/ProfileMenu.vue';
+import Notifications from '@/components/Notifications.vue';
 import router from '@/router';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
   components: {
-    ProfileMenu
+    ProfileMenu,
+    Notifications
   },
   data() {
     return {

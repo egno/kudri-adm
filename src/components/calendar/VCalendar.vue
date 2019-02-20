@@ -10,13 +10,15 @@
     >
       <VLayout
         align-center
-        justify-center
+        justify-space-between
         row
         fill-height
+        class="cal-month"
       >
         <div class="cal-head display-3">
           {{ dateMonthHeader }}
         </div>
+        
         <div>
           <v-btn
             class="cal-next-prev"
@@ -28,8 +30,6 @@
           >
             <v-icon>navigate_before</v-icon>
           </v-btn>
-        </div>
-        <div>
           <v-btn
             class="cal-next-prev"
             color="#ffffff"
@@ -504,16 +504,20 @@ export default {
   width: 160px;
   margin: 0 auto;
   &.dow {
-    margin-top: 17px;
+    margin-top: 14px;
+    margin-bottom: 6px;
   }
 }
 .calendar-wrapper {
-  padding-bottom: 30px;
+  padding-bottom: 22px;
   border-bottom: 1px solid rgba(137, 149, 175, 0.2);
   margin-bottom: 30px;
 }
+.cal-month {
+  width: 160px;
+  margin: 0 auto;
+}
 .cal-head {
-  margin-right: 10px;
   font-size: 18px;
   text-transform: capitalize;
   color: #fff;

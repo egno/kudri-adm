@@ -5,7 +5,6 @@
     :color="color.bg"
     :tile="tile"
     :class="{ square: type === 'square' }"
-
     @mouseover="tooltip = true"
     @mouseout="tooltip = false"
     @mousemove="move"
