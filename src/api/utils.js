@@ -29,6 +29,9 @@ export function makeAlert(err) {
     if (err.response.data.code === '2F002') {
       return alert('Недостаточно прав для изменения этой записи', err.response);
     }
+    if (err.response.data.code === '23P01') {
+      return alert('Невозможно сохранить. Это время занято', err.response);
+    }
     return alert(err.response.data.message, err.response);
   }
   return alert(err.message, err.response);
