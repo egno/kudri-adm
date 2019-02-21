@@ -10,8 +10,10 @@
       >
         <v-layout column>
           <v-flex>Услуга</v-flex>
-          <v-flex class="caption text-none grey--text">
-            {{ item.client.service.name }}
+          <v-flex
+            class="caption text-none grey--text"
+          >
+            {{ item.client.services && item.client.services[0] && item.client.services[0].name }}
           </v-flex>
         </v-layout>
       </v-tab>
@@ -68,7 +70,7 @@
                     class="table-select"
                     py-2
                     px-1
-                    @click="item.client.service=service"
+                    @click="item.client.services=[service]"
                   >
                     <v-layout row>
                       <v-flex xs10>
@@ -220,6 +222,17 @@ export default {
         this.selectedTime ? this.selectedTime : ''
       }`;
     },
+    duration() {
+      return (
+        this.item &&
+        this.item.client &&
+        this.item.client.services &&
+        this.item.client.services.reduce(
+          (acc, val) => parseInt(val.duration) || 60,
+          0
+        )
+      );
+    },
     filteredServices() {
       return this.services.filter(
         x =>
@@ -269,14 +282,14 @@ export default {
       this.item.client.phone = payload;
     },
     onSave() {
-      const duration = parseInt(this.item.client.service.duration) || 60;
+      const duration = this.duration;
       const ts1 = dateInLocalTimeZone(
         new Date(`${this.selectedDate} ${this.selectedTime}`)
       );
       let ts2 = new Date();
       ts2.setTime(ts1.getTime() + 60000 * duration);
       this.item.business_id = this.employee || this.businessInfo.id;
-      this.item.client.service.duration = duration;
+      this.item.client.duration = duration;
       this.item.ts_begin = ts1.toJSON().slice(0, -1);
       this.item.ts_end = ts2.toJSON().slice(0, -1);
       this.$emit('onSave', this.item);

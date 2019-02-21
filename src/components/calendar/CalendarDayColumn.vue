@@ -63,10 +63,10 @@
           :selected="selectVisit"
           :time-start="formatTime(visit.ts_begin)"
           :time-end="formatTime(visit.ts_end)"
-          :duration="+visit.client.service.duration"
+          :duration="+visit.client.duration"
           :name="visit.client && visit.client.name"
           :phone="visit.client && visit.client.phone"
-          :service="visit.client && visit.client.service"
+          :services="visit.client && visit.client.services"
           @onDelete="onVisitDelete(visit.id)"
           @onEdit="onVisitEdit(visit)"
         />
@@ -188,8 +188,7 @@ export default {
       if (!visit) {
         return;
       }
-      let h =
-        (visit.client.service.duration / this.duration) * this.rowHeightInEm;
+      let h = (visit.client.duration / this.duration) * this.rowHeightInEm;
       return `${h}em`;
     },
     calcVisitOffset(visit) {

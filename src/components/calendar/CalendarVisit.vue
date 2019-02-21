@@ -58,7 +58,12 @@
               light
               :phones="[phone]"
             />
-            <div>{{ service.name }}</div>
+            <div
+              v-for="(service,n) in services"
+              :key="n"
+            >
+              {{ service.name }}
+            </div>
           </div>
         </div>
         <div>
@@ -77,7 +82,12 @@
             light
             :phones="[phone]"
           />
-          <div>{{ service.name }}</div>
+          <div
+            v-for="(service,n) in services"
+            :key="n"
+          >
+            {{ service.name }}
+          </div>
         </div>
       </v-tooltip>
     </div>
@@ -103,10 +113,10 @@ export default {
     phone: { type: String, default: '' },
     email: { type: String, default: '' },
     selected: { type: Boolean, default: false },
-    service: {
-      type: Object,
+    services: {
+      type: Array,
       default() {
-        return {};
+        return [];
       }
     },
     visitor: {

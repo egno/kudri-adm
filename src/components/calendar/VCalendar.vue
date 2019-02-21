@@ -18,7 +18,7 @@
         <div class="cal-head display-3">
           {{ dateMonthHeader }}
         </div>
-        
+
         <div>
           <v-btn
             class="cal-next-prev"
@@ -350,9 +350,9 @@ export default {
           let ts1 = new Date(x.ts_begin);
           let ts2 = new Date(x.ts_end);
           if (!x.client) {
-            x.client = { service: {} };
+            x.client = { services: [] };
           }
-          x.client.service.duration = (ts2.getTime() - ts1.getTime()) / 60000;
+          x.client.duration = (ts2.getTime() - ts1.getTime()) / 60000;
           return x;
         });
     },
@@ -482,20 +482,20 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-  .dow {
-    font-family: Lato;
-    font-style: normal;
-    font-weight: normal;
-    line-height: normal;
-    font-size: 11px;
-    text-align: center;
-    color: #fff;
-    text-transform: capitalize;
-    text-align: center;
-    &.weekend {
-      color: #8995AF;
-    }
+.dow {
+  font-family: Lato;
+  font-style: normal;
+  font-weight: normal;
+  line-height: normal;
+  font-size: 11px;
+  text-align: center;
+  color: #fff;
+  text-transform: capitalize;
+  text-align: center;
+  &.weekend {
+    color: #8995af;
   }
+}
 .month-header {
   background: linear-gradient(270deg, #c9a15d -9.86%, #ba9462 103.49%);
   height: 40px;
@@ -528,7 +528,7 @@ export default {
   max-width: 16px;
   min-width: 16px;
   .v-ripple__container {
-    display: none!important;
+    display: none !important;
   }
   &:before {
     border-radius: 50px;

@@ -114,7 +114,7 @@ export function visitInit(visit) {
       client: {
         name: '',
         phone: '',
-        service: { name: '', category: '', duration: null }
+        services: []
       },
       ts_begin: null,
       ts_end: null
