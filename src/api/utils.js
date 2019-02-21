@@ -26,9 +26,6 @@ export function makeAlert(err) {
     return alert('Неправильный логин или пароль', err.response);
   }
   if (err.response.status === 400) {
-    if (err.response.data.code === '22U40') {
-      return alert('Не указан мастер', err.response);
-    }
     if (err.response.data.code === '2F002') {
       return alert('Недостаточно прав для изменения этой записи', err.response);
     }
