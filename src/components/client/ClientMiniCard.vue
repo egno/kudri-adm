@@ -3,6 +3,7 @@
     <v-card-title>
       {{ client.name.forename }}
       {{ client.name.surname }}
+      {{ client.name.fullname }}
     </v-card-title>
     <v-card-text>{{ client.phone }}</v-card-text>
   </v-card>
