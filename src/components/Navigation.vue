@@ -79,7 +79,10 @@
                   <VListTileTitle>{{ item.title }}</VListTileTitle>
                 </VListTileContent>
                 <VListTileAction>
-                  <span class="list-item--count">
+                  <span
+                    v-if="item.count"
+                    class="list-item--count"
+                  >
                     {{ item.count }}
                   </span>
                 </VListTileAction>
@@ -275,7 +278,7 @@ export default {
         },
         {
           title: 'Галерея',
-          count: this.galleryCount,
+          count: null,
           route: {
             name: 'businessCardGallery',
             params: { id: this.businessLink }
