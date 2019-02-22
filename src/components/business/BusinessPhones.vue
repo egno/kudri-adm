@@ -23,7 +23,10 @@ export default {
   filters: {
     phone(value) {
       if (!value) return '';
-      return value.replace(/(\d{1,3})(\d{1,3})(\d{1,4})/g, '+7($1)$2-$3');
+      return value.replace(
+        /(\d?)(\d{1,3})(\d{1,3})(\d{1,4})$/g,
+        '+$1($2)$3-$4'
+      );
     }
   },
   props: {
