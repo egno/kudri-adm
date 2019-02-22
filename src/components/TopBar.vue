@@ -33,7 +33,7 @@
       </VFlex>
       
       
-      <VFlex>
+      <VFlex v-if="isManagerCabinet">
         <VTextField
           key="mainSearch"
           v-model="searchString"
@@ -70,6 +70,7 @@ export default {
     return {
       searchString: '',
       selectedEmployee: null,
+      isManagerCabinet: true,
       name: 'Salon name',
       type: 'salon',
       logo:
