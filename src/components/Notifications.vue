@@ -28,12 +28,12 @@ export default {
     width: 60px;
     border-left: 1px solid rgba(137, 149, 175, 0.1);
     background: url('../assets/bellh.svg') no-repeat center center;
-    background-size: 20px;
+    background-size: 14px;
     cursor: pointer;
     position: relative;
     &.active {
       background: url('../assets/bell.svg') no-repeat center center;
-      background-size: 20px;
+      background-size: 14px;
     }
     .count {
       position: absolute;
@@ -48,6 +48,7 @@ export default {
       top: 24px;
       right: 14px;
       font-size: 11px;
+      line-height: 17px;
     }
   }
 </style>

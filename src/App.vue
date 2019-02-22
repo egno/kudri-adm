@@ -90,6 +90,34 @@ export default {
 
 <style lang="scss">
 #app {
+  .topsearch {
+    padding-left: 24px;
+    background: url('assets/search.svg') no-repeat left 0px center;
+    background-size: 24px;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    font-size: 11px;
+    .v-label{
+      top: 10px;
+    }
+    .v-input--is-focused {
+      .v-input__slot {
+        &:after {
+          display: none!important;
+        }
+      }
+    }
+    .v-input__slot {
+      &:after {
+        display: none!important;
+      }
+      &:before {
+        display: none!important;
+      }
+    }
+  }
   .blue-link {
     font-family: Lato;
     font-style: normal;

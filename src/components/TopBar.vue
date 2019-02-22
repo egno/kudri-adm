@@ -31,6 +31,20 @@
           @input="onSelectEmployee"
         />
       </VFlex>
+      
+      
+      <VFlex v-if="isManagerCabinet">
+        <VTextField
+          key="mainSearch"
+          v-model="searchString"
+          class="topsearch"
+          autofocus
+          clearable
+          label="Поиск"
+          single-line
+          type="text"
+        />
+      </VFlex>
     </VLayout>
 
     <VSpacer />
@@ -56,6 +70,7 @@ export default {
     return {
       searchString: '',
       selectedEmployee: null,
+      isManagerCabinet: true,
       name: 'Salon name',
       type: 'salon',
       logo:
