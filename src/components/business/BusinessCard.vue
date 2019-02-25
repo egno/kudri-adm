@@ -109,7 +109,6 @@ export default {
   },
   mixins: [businessMixins],
   props: {
-    id: { type: String, default: null },
     business: {
       type: Object,
       default() {
