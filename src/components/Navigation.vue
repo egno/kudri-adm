@@ -484,9 +484,6 @@ export default {
           background-color: rgba(137, 149, 175, 0.2);
         }
       }
-      .v-list__tile--active {
-        //background-color: rgba(137, 149, 175, 0.4);
-      }
       .menu-item-container {
         display: flex;
       }
