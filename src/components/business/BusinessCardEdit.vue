@@ -20,7 +20,7 @@
             :type="'square'"
           />
         </div>
-        
+
         <VTextField
           v-model="data.j.name"
           label="Название"
@@ -54,7 +54,7 @@
             />
           </v-flex>
         </v-layout>
-  
+
         <BusinessPhonesEdit
           :phones="phones"
           @onEdit="phonesEdit"
@@ -65,42 +65,38 @@
         >
           Режим работы
         </div>
-        
+
         <BusinessScheduleEdit
           :schedule="data.j.schedule"
           class="workmode"
           @onEdit="scheduleEdit"
         />
-  
+
         <div
           class="form-caption"
           :class="captionClass"
         >
           Ссылки
         </div>
-  
+
         <v-flex class="soc-input">
           <div class="soc-input-ic" />
-          <VTextField
-            v-model="data.j.links.instagram"
-          />
+          <VTextField v-model="data.j.links.instagram" />
         </v-flex>
-        <VBtn
-          class="transparent add"
-        >
+        <VBtn class="transparent add">
           Добавить ссылку
         </VBtn>
-        
+
         <div
           class="form-caption"
           :class="captionClass"
         >
           Описание
         </div>
-        
+
         <v-textarea
           counter="400"
-          value=""
+          value
           height="auto"
           auto-grow
           rows="1"
@@ -116,7 +112,7 @@
         </VBtn>
       </VForm>
     </div>
-    
+
     <VDialog
       v-model="avatarEdit"
       max-width="350px"
@@ -154,6 +150,7 @@ export default {
     return {
       avatarEdit: false,
       categoryDisabled: false,
+      captionClass: '',
       data: undefined,
       rules: {
         category: value => !value || value.length > 2 || 'Выберите тип',
@@ -301,37 +298,37 @@ export default {
 };
 </script>
 <style lang="scss">
-  .workmode {
-    margin-top: 35px;
+.workmode {
+  margin-top: 35px;
+}
+.form-caption {
+  padding-top: 50px;
+}
+.v-input {
+  .v-counter {
+    order: -1;
   }
-  .form-caption {
-    padding-top: 50px;
+}
+.business-edit {
+  width: 312px;
+  button.success {
+    margin-left: 0;
+    margin-top: 50px;
   }
-  .v-input {
-    .v-counter {
-      order: -1;
-    }
+}
+.soc-input {
+  position: relative;
+  .v-input__slot {
+    padding-left: 30px;
   }
-  .business-edit {
-    width: 312px;
-    button.success {
-      margin-left: 0;
-      margin-top: 50px;
-    }
+  .soc-input-ic {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    left: 0px;
+    top: 14px;
+    background: url('../../assets/sllink.svg') no-repeat center center;
+    background-size: 18px;
   }
-  .soc-input {
-    position: relative;
-    .v-input__slot {
-      padding-left: 30px;
-    }
-    .soc-input-ic {
-      width: 20px;
-      height: 20px;
-      position: absolute;
-      left: 0px;
-      top: 14px;
-      background: url('../../assets/sllink.svg') no-repeat  center center;
-      background-size: 18px;
-    }
-  }
+}
 </style>

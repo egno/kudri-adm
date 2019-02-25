@@ -1,18 +1,5 @@
 <template>
   <div>
-    <VContainer>
-      <VFlex>
-        <VTextField
-          key="mainSearch"
-          v-model="searchString"
-          autofocus
-          clearable
-          label="Поиск"
-          single-line
-          type="text"
-        />
-      </VFlex>
-    </VContainer>
     <VDataTable
       :headers="headers"
       :items="data"
@@ -122,7 +109,6 @@ export default {
   components: { UserAvatar },
   data() {
     return {
-      searchString: '',
       formActions: [
         {
           label: 'Добавить',
