@@ -19,6 +19,7 @@
         <span>{{ defaultAppTitle }}</span>
       </VToolbarTitle>
       <VBtn
+        v-if="isManagerMenu"
         :class="{ back: !mini, equal: mini, invisible: isSalon}"
         icon
         @click.stop="mini = !mini"
