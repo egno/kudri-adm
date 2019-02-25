@@ -1,8 +1,5 @@
 <template>
-  <VContainer
-    fluid
-    grid-list-lg
-  >
+  <div>
     <BusinessCardEdit
       v-if="edit"
       :id="id"
@@ -13,7 +10,7 @@
       :id="id"
       @onEditClick="edit=true"
     />
-  </VContainer>
+  </div>
 </template>
 
 <script>

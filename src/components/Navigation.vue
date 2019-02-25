@@ -500,7 +500,7 @@ export default {
         }
       }
       .v-list__tile--active {
-        background-color: rgba(137, 149, 175, 0.4);
+        //background-color: rgba(137, 149, 175, 0.4);
       }
       .menu-item-container {
         display: flex;

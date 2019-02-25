@@ -1,8 +1,5 @@
 <template>
   <div>
-    <!--<span :class="captionClass">-->
-    <!--Телефоны-->
-    <!--</span>-->
     <div
       v-for="(phone, i) in newPhones"
       :key="i"
@@ -22,7 +19,7 @@
       />
     </div>
     <VBtn
-      class="transparent add"
+      class="transparent add mt-4"
       :disabled="hasEmptyPhone"
       @click="newPhones.push('')"
     >

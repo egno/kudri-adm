@@ -203,6 +203,7 @@ export default {
       z-index: 2;
     }
     &.square {
+      margin-bottom: 20px;
       width: 312px!important;
       height: 184px!important;
       background: url('../../assets/phot.svg') no-repeat top 57px center;

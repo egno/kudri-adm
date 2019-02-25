@@ -3,7 +3,7 @@
     align-center
     justify-start
     row
-    class="wrapper"
+    class="mb-35"
   >
     <div
       v-for="(day, i) in days"
@@ -128,17 +128,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#app .workmode-wrap {
-  margin-left: 12px;
+#app {
+  .last {
+    margin-bottom: 0;
+  }
+  .workmode-wrap {
+    margin-left: 12px;
+  }
 }
 #app .v-btn.delete {
   right: -66px;
   top: -2px;
   position: absolute;
-}
-.wrapper {
-  margin-bottom: 35px !important;
-  margin-top: 35px !important;
 }
 .fill,
 .empty {

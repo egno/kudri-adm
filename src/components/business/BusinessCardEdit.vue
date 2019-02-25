@@ -3,16 +3,14 @@
     v-if="data"
     flat
   >
-    <VCardTitle>Основная информация</VCardTitle>
-   
-    <VCardText>
+    <div class="main-cont">
       <VForm
         v-model="valid"
         lazy-validation
         class="business-edit"
       >
         <div
-          class="d-inline-block"
+          class="d-inline-block mb-20"
           :name="name"
           @click="avatarEdit = !avatarEdit"
         >
@@ -56,23 +54,30 @@
             />
           </v-flex>
         </v-layout>
-
+  
         <BusinessPhonesEdit
           :phones="phones"
           @onEdit="phonesEdit"
         />
-  
-        
+        <div
+          class="form-caption"
+          :class="captionClass"
+        >
+          Режим работы
+        </div>
         
         <BusinessScheduleEdit
           :schedule="data.j.schedule"
+          class="workmode"
           @onEdit="scheduleEdit"
         />
-        
   
-        <span :class="captionClass">
+        <div
+          class="form-caption"
+          :class="captionClass"
+        >
           Ссылки
-        </span>
+        </div>
   
         <v-flex class="soc-input">
           <div class="soc-input-ic" />
@@ -86,8 +91,10 @@
           Добавить ссылку
         </VBtn>
         
-        
-        <div :class="captionClass">
+        <div
+          class="form-caption"
+          :class="captionClass"
+        >
           Описание
         </div>
         
@@ -100,17 +107,16 @@
           placeholder="Введите текст описания"
           maxlength="400"
         />
+        <VBtn
+          :disabled="hasErrors"
+          color="success"
+          @click="close"
+        >
+          Сохранить
+        </VBtn>
       </VForm>
-    </VCardText>
-    <VCardActions>
-      <VBtn
-        :disabled="hasErrors"
-        color="success"
-        @click="close"
-      >
-        Сохранить
-      </VBtn>
-    </VCardActions>
+    </div>
+    
     <VDialog
       v-model="avatarEdit"
       max-width="350px"
@@ -295,6 +301,12 @@ export default {
 };
 </script>
 <style lang="scss">
+  .workmode {
+    margin-top: 35px;
+  }
+  .form-caption {
+    padding-top: 50px;
+  }
   .v-input {
     .v-counter {
       order: -1;
@@ -302,6 +314,10 @@ export default {
   }
   .business-edit {
     width: 312px;
+    button.success {
+      margin-left: 0;
+      margin-top: 50px;
+    }
   }
   .soc-input {
     position: relative;

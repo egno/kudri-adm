@@ -3,7 +3,6 @@
     column
     d-flex
   >
-    <div>Режим работы</div>
     <VFlex
       justify-space-around
       row
@@ -17,13 +16,14 @@
           :selected="modesIndexes[i]"
           :period-start="item[0]"
           :period-end="item[1]"
+          :class="{last: i === modes.length - 1 }"
           @onEdit="onEdit(i,$event)"
           @selectDay="selectDay(i, $event)"
         />
       </VFlex>
       <VBtn
         v-if="addButton"
-        class="transparent add"
+        class="transparent add add-workmode"
         @click="addMode"
       >
         Добавить режим работы
@@ -137,3 +137,8 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+  .add-workmode {
+    margin-top: 35px;
+  }
+</style>

@@ -90,6 +90,15 @@ export default {
 
 <style lang="scss">
 #app {
+  .main-cont {
+    padding: 40px 56px;
+  }
+  .mb-20 {
+    margin-bottom: 20px;
+  }
+  .mb-35 {
+    margin-bottom: 35px;
+  }
   .topsearch {
     padding-left: 24px;
     background: url('assets/search.svg') no-repeat left 0px center;
@@ -223,6 +232,7 @@ export default {
       }
       &.add {
         padding-left: 22px;
+        margin-left: 0;
         &:after {
           content: '';
           position: absolute;
@@ -309,6 +319,7 @@ export default {
       color: #07101c;
     }
     .v-input__slot {
+      margin-bottom: 3px;
       &:before {
         border-color: #8995af;
       }
