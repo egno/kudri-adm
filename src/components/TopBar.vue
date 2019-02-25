@@ -31,8 +31,7 @@
           @input="onSelectEmployee"
         />
       </VFlex>
-      
-      
+
       <VFlex v-if="isManagerCabinet">
         <VTextField
           key="mainSearch"
@@ -60,6 +59,7 @@ import ProfileMenu from '@/components/ProfileMenu.vue';
 import Notifications from '@/components/Notifications.vue';
 import router from '@/router';
 import { mapActions, mapGetters } from 'vuex';
+import { isBusinessCard } from '@/utils';
 
 export default {
   components: {
@@ -70,7 +70,6 @@ export default {
     return {
       searchString: '',
       selectedEmployee: null,
-      isManagerCabinet: true,
       name: 'Salon name',
       type: 'salon',
       logo:
@@ -102,6 +101,12 @@ export default {
         return this.defaultAction.href;
       }
       return null;
+    },
+    isBusinessCard() {
+      return isBusinessCard(this.$route.name);
+    },
+    isManagerCabinet() {
+      return !this.isBusinessCard;
     },
     routePath() {
       return this.$route.path;

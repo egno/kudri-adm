@@ -24,7 +24,7 @@
         @click.stop="mini = !mini"
       />
     </VToolbar>
-    
+
     <div class="add-menu-list-mini">
       <div class="items">
         <div
@@ -37,10 +37,11 @@
         </div>
       </div>
     </div>
-    
+
     <VList>
       <VCalendar v-if="!isManagerMenu" />
       <VListGroup
+        v-if="isManagerMenu"
         no-action
         sub-group
         value="false"
@@ -116,6 +117,7 @@
 import VCalendar from '@/components/calendar/VCalendar.vue';
 import router from '@/router';
 import { mapActions, mapGetters } from 'vuex';
+import { isBusinessCard } from '@/utils';
 
 export default {
   components: { VCalendar },
@@ -124,11 +126,7 @@ export default {
       name: 'Business Name',
       mini: false,
       isSalon: false,
-      adds: [
-          'Менеджера',
-          'Компанию',
-          'Частного мастера',
-      ]
+      adds: ['Менеджера', 'Компанию', 'Частного мастера']
     };
   },
   computed: {
@@ -171,21 +169,7 @@ export default {
       );
     },
     isBusinessCard() {
-      const businessCards = [
-        'businessCard',
-        'businessCardClients',
-        'businessCardEmployee',
-        'businessCardFilal',
-        'businessCardGallery',
-        'businessCardServiceGallery',
-        'businessCardEmployeeGallery',
-        'businessCardService',
-        'businessVisit',
-        'employeeCard',
-        'employeeFull',
-        'employeeGallery'
-      ];
-      return businessCards.some(x => x === this.$route.name);
+      return isBusinessCard(this.$route.name);
     },
     isCompany() {
       return this.business && this.userRole === 'business';
@@ -312,7 +296,7 @@ export default {
       'setBusiness'
     ]),
     doNothing() {
-      console.log('')
+      console.log('');
     },
     loadBusiness() {
       this.setBusiness(this.routeBisinessId);
@@ -347,7 +331,7 @@ export default {
       display: block;
       width: 40px;
       height: 40px;
-      background: #EF4D37 url('../assets/plus-w.svg') no-repeat center center;
+      background: #ef4d37 url('../assets/plus-w.svg') no-repeat center center;
       background-size: 24px;
       cursor: pointer;
       position: absolute;
@@ -356,7 +340,7 @@ export default {
         display: none;
         position: absolute;
         left: 100%;
-        &>div {
+        & > div {
           padding: 0 10px;
         }
         a {
@@ -368,9 +352,9 @@ export default {
       &:hover {
         .items {
           display: block;
-          background: linear-gradient(180.22deg, #333C54 0.06%, #4A5D6D 85.63%);
+          background: linear-gradient(180.22deg, #333c54 0.06%, #4a5d6d 85.63%);
           padding: 10px 0;
-          &>div {
+          & > div {
             &:hover {
               background: rgba(137, 149, 175, 0.2);
               cursor: pointer;
@@ -400,9 +384,9 @@ export default {
     display: flex;
     flex-direction: column;
     z-index: 5;
-    background: linear-gradient(180.36deg, #333C54 0.06%, #4A5D6D 85.63%);
+    background: linear-gradient(180.36deg, #333c54 0.06%, #4a5d6d 85.63%);
     .add-menu-button {
-      background: #EF4D37;
+      background: #ef4d37;
       .v-list__tile__title {
         color: #fff;
         font-family: Roboto-Slab;
@@ -422,7 +406,7 @@ export default {
         }
       }
     }
-    .add-menu-list{
+    .add-menu-list {
       margin-bottom: 22px;
       .v-list__group__header__prepend-icon {
         display: none;
@@ -436,7 +420,7 @@ export default {
             width: auto;
           }
           &:hover {
-            background: transparent!important;
+            background: transparent !important;
             .v-list__tile__title {
               width: auto;
               position: relative;
