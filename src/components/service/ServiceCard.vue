@@ -62,9 +62,11 @@
         </v-flex>
       </v-layout>
     </v-card-text>
-    <v-dialog
+    <v-navigation-drawer
       v-model="edit"
-      max-width="40em"
+      right
+      temporary
+      fixed
     >
       <ServiceCardEdit
         :item="item"
@@ -74,7 +76,7 @@
         @onSave="onSave($event)"
         @close="edit=false"
       />
-    </v-dialog>
+    </v-navigation-drawer>
   </v-card>
 </template>
 

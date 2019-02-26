@@ -1,5 +1,5 @@
 <template>
-  <VCard>
+  <VCard flat>
     <AppCardTitle @close="$emit('close')">
       <v-layout column>
         <v-flex>
@@ -52,10 +52,7 @@
         <v-tab-item key="tab-0">
           <VContainer grid-list-md>
             <v-layout wrap>
-              <v-flex
-                xs12
-                sm6
-              >
+              <v-flex xs12>
                 <VSelect
                   v-model="item.group"
                   :items="categories"
@@ -64,10 +61,7 @@
                   @input="onCategoryUpdate"
                 />
               </v-flex>
-              <v-flex
-                xs12
-                sm6
-              >
+              <v-flex xs12>
                 <VCombobox
                   v-model="selectedService"
                   autofocus
@@ -81,20 +75,14 @@
                   @input="onNameUpdate"
                 />
               </v-flex>
-              <v-flex
-                xs12
-                sm6
-              >
+              <v-flex xs12>
                 <VTextField
                   v-model="item.price"
                   label="Цена от"
                   mask="######"
                 />
               </v-flex>
-              <v-flex
-                xs12
-                sm6
-              >
+              <v-flex xs12>
                 <VTextField
                   v-model="item.duration"
                   label="Продолжительность, минут"
