@@ -77,6 +77,7 @@
                 <v-layout
                   row
                   wrap
+                  fill-height
                 >
                   <v-flex
                     v-for="service in groupServices(group)"
