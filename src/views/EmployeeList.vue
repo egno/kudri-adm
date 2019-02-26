@@ -35,6 +35,7 @@
                 <VLayout
                   row
                   wrap
+                  fill-height
                 >
                   <VFlex
                     v-for="(item, i) in categoryItems(category)"

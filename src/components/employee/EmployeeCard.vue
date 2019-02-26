@@ -94,17 +94,6 @@
       <span />
       {{ item.j.note }}
     </VCardText>
-    <v-responsive>
-      <VLayout>
-        <VFlex pa-3>
-          <GalleryTiles
-            :employee="item.id"
-            :rows="1"
-            fixed
-          />
-        </VFlex>
-      </VLayout>
-    </v-responsive>
   </VCard>
 </template>
 
@@ -112,11 +101,10 @@
 import BusinessSchedule from '@/components/business/BusinessSchedule.vue';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 import { fullName } from '@/components/business/utils';
-import GalleryTiles from '@/components/gallery/GalleryTiles.vue';
 import { imagePath } from '@/components/gallery/utils';
 
 export default {
-  components: { BusinessSchedule, GalleryTiles, UserAvatar },
+  components: { BusinessSchedule, UserAvatar },
   props: {
     displayItemsCount: { type: Number, default: 5 },
     item: {
