@@ -81,7 +81,9 @@ export default {
         this.data.j &&
         this.data.j['services'] &&
         this.data.j['services'].filter(
-          x => !this.searchString || x.name.indexOf(this.searchString) > -1
+          x =>
+            !this.searchString ||
+            x.name.toUpperCase().indexOf(this.searchString.toUpperCase()) > -1
         )
       );
     }
