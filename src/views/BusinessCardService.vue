@@ -21,7 +21,9 @@
       >
         <VLayout column>
           <VFlex>
-            <h3>{{ grp || 'Прочие' }}</h3>
+            <span class="title">
+              {{ grp || 'Прочие' }}
+            </span>
           </VFlex>
           <VFlex>
             <VLayout
