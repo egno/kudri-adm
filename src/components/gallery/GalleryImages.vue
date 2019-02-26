@@ -71,6 +71,8 @@
           <v-layout
             row
             wrap
+            fill-height
+            pa-1
           >
             <v-flex
               v-for="(image,n) in selectedImages"
