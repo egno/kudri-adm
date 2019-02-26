@@ -132,6 +132,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'actualDate',
       'business',
       'businessInfo',
       'businessServiceCount',
@@ -283,7 +284,8 @@ export default {
   },
   watch: {
     token: 'loadUserInfo',
-    routeBisinessId: 'loadBusiness'
+    routeBisinessId: 'loadBusiness',
+    actualDate: 'loadBusiness'
   },
   mounted() {
     this.loadBusiness();
@@ -291,6 +293,7 @@ export default {
   methods: {
     ...mapActions([
       'navBar',
+      'loadDayVisits',
       'loadUserInfo',
       'openMessageWindow',
       'setAppTitle',
@@ -301,6 +304,12 @@ export default {
     },
     loadBusiness() {
       this.setBusiness(this.routeBisinessId);
+      if (!this.actualDate) return;
+      const month = this.actualDate.replace(/\d{2}$/, '01');
+      this.loadDayVisits({
+        business: this.routeBisinessId,
+        month: month
+      });
     },
     goHome() {
       router.push({ name: 'home' });

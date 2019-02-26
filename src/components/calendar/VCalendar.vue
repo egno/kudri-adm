@@ -90,7 +90,7 @@
               >
                 <CalendarDayBtn
                   v-if="kind === 'mini'"
-                  :counter="day.visits && day.visits.length"
+                  :counter="getBusinessDayVisits(day.dateKey)"
                   :day="day"
                   :holiday="isHoliday(day.dateKey)"
                   :weekend="(di > 4)"
@@ -211,7 +211,13 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['actualDate', 'businessInfo', 'calendar', 'schedule']),
+    ...mapGetters([
+      'actualDate',
+      'businessInfo',
+      'calendar',
+      'businessDayVisits',
+      'schedule'
+    ]),
     business() {
       return this.businessInfo && this.businessInfo.id;
     },
@@ -309,6 +315,13 @@ export default {
       let dt = new Date(this.actualDate);
       dt.setMonth(dt.getMonth() + i);
       this.goDate(formatDate(dt));
+    },
+    getBusinessDayVisits(dt) {
+      const cnt =
+        this.businessDayVisits &&
+        this.businessDayVisits.filter(x => x.dt === dt)[0] &&
+        this.businessDayVisits.filter(x => x.dt === dt)[0].count;
+      return cnt;
     },
     getDateSchedule(dt) {
       if (!this.curSchedule) return;
