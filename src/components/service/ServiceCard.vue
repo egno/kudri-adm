@@ -52,14 +52,6 @@
             {{ item.employees }}
           </span>
         </v-flex>
-        <v-flex px-0>
-          <GalleryTiles
-            :service="item.name"
-            :employee="employee"
-            :rows="1"
-            fixed
-          />
-        </v-flex>
       </v-layout>
     </v-card-text>
     <v-navigation-drawer
@@ -69,6 +61,7 @@
       fixed
     >
       <ServiceCardEdit
+        v-if="edit"
         :item="item"
         :employee="employee"
         :employee-name="employeeName"
@@ -82,10 +75,9 @@
 
 <script>
 import ServiceCardEdit from '@/components/service/ServiceCardEdit.vue';
-import GalleryTiles from '@/components/gallery/GalleryTiles.vue';
 
 export default {
-  components: { GalleryTiles, ServiceCardEdit },
+  components: { ServiceCardEdit },
   props: {
     access: { type: Boolean, default: false },
     editMode: { type: Boolean, default: false },

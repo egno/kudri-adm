@@ -76,11 +76,15 @@ export default {
       return this.$route.params.id;
     },
     services() {
-      return this.data.j['services'];
+      return (
+        this.data &&
+        this.data.j &&
+        this.data.j['services'] &&
+        this.data.j['services'].filter(
+          x => !this.searchString || x.name.indexOf(this.searchString) > -1
+        )
+      );
     }
-  },
-  watch: {
-    searchString: 'setStoreSearchString'
   },
   mounted() {
     this.fetchData();
@@ -91,10 +95,7 @@ export default {
     this.$root.$off('onAction', this.onAction);
   },
   methods: {
-    ...mapActions(['setActions', 'setSearchString']),
-    setStoreSearchString() {
-      this.setSearchString(this.searchString);
-    },
+    ...mapActions(['setActions']),
     fetchData() {
       Api()
         .get(`business?id=eq.${this.id}`)
