@@ -14,34 +14,48 @@
         type="text"
       />
     </VFlex>
-    <VLayout
-      row
-      wrap
-      align-space-around
-      fill-height
-    >
+    <VLayout column>
       <VFlex
-        v-for="(item, i) in services"
-        :key="item.name + i"
-        xs12
-        sm6
-        md4
-        lg3
-        xl3
+        v-for="(grp) in groups"
+        :key="'grp'+grp"
       >
-        <ServiceCard
-          :item="item"
-          @onSave="onSave(i)"
-          @onDelete="onDelete(i)"
-        />
+        <VLayout column>
+          <VFlex>
+            <h3>{{ grp || 'Прочие' }}</h3>
+          </VFlex>
+          <VFlex>
+            <VLayout
+              row
+              wrap
+              align-space-around
+              fill-height
+            >
+              <VFlex
+                v-for="(item, i) in servicesInGroup(grp)"
+                :key="item.name + i"
+                xs12
+                sm6
+                md4
+                lg3
+                xl3
+              >
+                <ServiceCard
+                  :item="item"
+                  @onSave="onSave(i)"
+                  @onDelete="onDelete(i)"
+                />
+              </VFlex>
+              <VDialog v-model="edit">
+                <ServiceCardEdit
+                  :item="newService"
+                  @onSave="onSave(-1)"
+                  @onDelete="onDelete(-1)"
+                />
+              </VDialog>
+            </VLayout>
+          </VFlex>
+        </VLayout>
       </VFlex>
-      <VDialog v-model="edit">
-        <ServiceCardEdit
-          :item="newService"
-          @onSave="onSave(-1)"
-          @onDelete="onDelete(-1)"
-        />
-      </VDialog>
     </VLayout>
   </VContainer>
 </template>
@@ -74,6 +88,14 @@ export default {
   computed: {
     id() {
       return this.$route.params.id;
+    },
+    groups() {
+      return (
+        this.services &&
+        [...new Set(this.services.map(x => x.group))].sort((a, b) =>
+          a < b ? -1 : 1
+        )
+      );
     },
     services() {
       return (
@@ -138,6 +160,9 @@ export default {
     },
     sendData() {
       Api().patch(`business?id=eq.${this.id}`, this.data);
+    },
+    servicesInGroup(grp) {
+      return this.services && this.services.filter(x => x.group === grp);
     }
   }
 };
