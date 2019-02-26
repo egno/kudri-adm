@@ -12,7 +12,6 @@
         align-center
         justify-space-between
         row
-        fill-height
         class="cal-month"
       >
         <div class="cal-head display-3">
@@ -56,7 +55,6 @@
             <VLayout
               justify-center
               row
-              fill-height
               class="week-wrapper dow"
             >
               <VFlex
@@ -83,7 +81,6 @@
             <VLayout
               justify-center
               row
-              fill-height
               class="week-wrapper"
             >
               <VFlex
@@ -111,7 +108,6 @@
         </VLayout>
         <VLayout
           v-if="period==='week'"
-          fill-height
           row
           pl-3
         >
