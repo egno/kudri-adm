@@ -59,7 +59,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['searchString']),
+    ...mapGetters([]),
     id() {
       return this.$route.params.id;
     },
@@ -75,8 +75,7 @@ export default {
     }
   },
   watch: {
-    querySearchString: 'fetchData',
-    searchString: 'setStoreSearchString'
+    querySearchString: 'fetchData'
   },
   mounted() {
     this.fetchData();
@@ -87,10 +86,7 @@ export default {
     this.$root.$off('onAction', this.onAction);
   },
   methods: {
-    ...mapActions(['alert', 'setActions', 'setSearchString']),
-    setStoreSearchString() {
-      this.setSearchString(this.searchString);
-    },
+    ...mapActions(['alert', 'setActions']),
     fetchData() {
       Api()
         .get(`client?business_id=eq.${this.id}${this.querySearchString}`)
