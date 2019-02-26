@@ -108,22 +108,22 @@ export default {
     font-weight: 300;
     line-height: normal;
     font-size: 11px;
-    .v-label{
+    .v-label {
       top: 10px;
     }
     .v-input--is-focused {
       .v-input__slot {
         &:after {
-          display: none!important;
+          display: none !important;
         }
       }
     }
     .v-input__slot {
       &:after {
-        display: none!important;
+        display: none !important;
       }
       &:before {
-        display: none!important;
+        display: none !important;
       }
     }
   }
@@ -264,9 +264,9 @@ export default {
       font-weight: 300;
       line-height: normal;
       font-size: 13px;
-      color: #07101C;
+      color: #07101c;
       &::placeholder {
-        color: rgba(7, 16, 28, 0.35)!important;
+        color: rgba(7, 16, 28, 0.35) !important;
         font-size: 13px;
       }
     }
@@ -291,12 +291,12 @@ export default {
       &.v-label--active {
         opacity: 1;
         font-size: 11px;
-        color: rgba(7, 16, 28, 0.35)!important;
+        color: rgba(7, 16, 28, 0.35) !important;
         transform: scale(1) translateY(-18px);
       }
     }
     input {
-      color: #07101C;
+      color: #07101c;
     }
     &.centered-input {
       text-transform: uppercase !important;
@@ -307,7 +307,6 @@ export default {
           text-align: center;
           font-size: 11px;
         }
-        
       }
     }
     label {
@@ -333,7 +332,7 @@ export default {
       margin-top: -1px;
       &.error--text {
         input {
-          color: #EF4D37;
+          color: #ef4d37;
         }
       }
       .v-input__slot {
@@ -351,7 +350,7 @@ export default {
   }
   main.v-content {
     @media only screen and (max-width: 1024px) {
-      padding-left: 0!important;
+      padding-left: 0 !important;
     }
   }
   .workmode-wrap {
@@ -389,7 +388,7 @@ export default {
   }
 }
 .v-tooltip__content {
-  background: linear-gradient(142.11deg, #536976 -29.81%, #292E49 136.3%);
+  background: linear-gradient(142.11deg, #536976 -29.81%, #292e49 136.3%);
   box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.04);
   padding: 15px 20px;
   .text-secondary {
@@ -408,5 +407,12 @@ export default {
 }
 .span-main-text {
   padding-left: 0.5em;
+}
+
+.fill-height .flex {
+  display: flex;
+}
+.fill-height .flex > .v-card {
+  flex: 1 1 auto;
 }
 </style>
