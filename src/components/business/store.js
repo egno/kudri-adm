@@ -62,7 +62,6 @@ const actions = {
       .catch(err => commit('ADD_ALERT', makeAlert(err)));
   },
   setBusiness({ commit, dispatch }, payload) {
-    console.log(payload);
     if (!(payload && payload.length == 36)) {
       commit('SET_BUSINESS_INFO', {});
       return;
