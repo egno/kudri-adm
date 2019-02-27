@@ -4,6 +4,10 @@
     app
     height="55px"
   >
+    <v-toolbar-side-icon
+      v-if="!navigationVisible"
+      @click="setNavigationVisible(true)"
+    />
     <VLayout
       row
       align-center
@@ -82,7 +86,7 @@ export default {
       'business',
       'businessInfo',
       'employee',
-      'navBarVisible',
+      'navigationVisible',
       'userID'
     ]),
     defaultAction() {
@@ -129,7 +133,12 @@ export default {
     this.setStoreSearchString();
   },
   methods: {
-    ...mapActions(['navBar', 'setActions', 'setSearchString']),
+    ...mapActions([
+      'navBar',
+      'setActions',
+      'setNavigationVisible',
+      'setSearchString'
+    ]),
     goHome() {
       router.push({ name: 'home' });
     },

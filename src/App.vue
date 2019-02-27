@@ -348,11 +348,6 @@ export default {
   .title {
     font-size: 18px !important;
   }
-  main.v-content {
-    @media only screen and (max-width: 1024px) {
-      padding-left: 0 !important;
-    }
-  }
   .workmode-wrap {
     margin: 0;
     padding-left: 7px;

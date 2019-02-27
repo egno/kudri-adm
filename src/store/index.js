@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import common from '@/store/modules/common';
+import layout from '@/store/modules/layout';
 import alerts from '@/store/modules/alerts';
 
 import user from '@/components/user/store';
@@ -13,6 +14,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   modules: {
     common,
+    layout,
     alerts,
     business,
     employee,

@@ -1,10 +1,8 @@
 <template>
   <VNavigationDrawer
-    touchless
-    disable-resize-watcher
-    disable-route-watcher
-    permanent
+    v-model="visible"
     app
+    mobile-break-point="1000"
     width="240"
     :mini-variant.sync="mini"
     :mini-variant-width="40"
@@ -19,10 +17,9 @@
         <span>{{ defaultAppTitle }}</span>
       </VToolbarTitle>
       <VBtn
-        v-if="isManagerMenu"
         :class="{ back: !mini, equal: mini, invisible: isSalon}"
         icon
-        @click.stop="mini = !mini"
+        @click.stop="visible = !visible"
       />
     </VToolbar>
 
@@ -139,7 +136,7 @@ export default {
       'defaultAppTitle',
       'loggedIn',
       'token',
-      'navBarVisible',
+      'navigationVisible',
       'userRole'
     ]),
     routeBisinessId() {
@@ -280,6 +277,14 @@ export default {
         this.businessInfo.j &&
         this.businessInfo.j.services
       );
+    },
+    visible: {
+      get() {
+        return this.navigationVisible;
+      },
+      set(val) {
+        this.setNavigationVisible(val);
+      }
     }
   },
   watch: {
@@ -293,6 +298,7 @@ export default {
   methods: {
     ...mapActions([
       'navBar',
+      'setNavigationVisible',
       'loadDayVisits',
       'loadUserInfo',
       'openMessageWindow',
@@ -391,9 +397,6 @@ export default {
     }
   }
   &.navigation {
-    display: flex;
-    flex-direction: column;
-    z-index: 5;
     background: linear-gradient(180.36deg, #333c54 0.06%, #4a5d6d 85.63%);
     .add-menu-button {
       background: #ef4d37;
@@ -458,20 +461,7 @@ export default {
     .invisible {
       display: none;
     }
-    @media only screen and (max-width: 1024px) {
-      .invisible {
-        display: block;
-      }
-      &.v-navigation-drawer--mini-variant {
-        width: 56px !important;
-        height: 56px !important;
-        overflow: hidden !important;
-        border-bottom: 1px solid rgba(137, 149, 175, 0.1);
-        .v-btn.equal {
-          margin: 0 !important;
-        }
-      }
-    }
+
     .help-link {
       display: flex;
       justify-content: center;
