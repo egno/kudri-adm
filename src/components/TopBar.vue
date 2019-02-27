@@ -157,7 +157,7 @@ export default {
 <style lang="scss" scoped>
 .display-4 {
   display: flex;
-  padding-left: 16px;
+  padding-left: 0;
   align-items: center;
 }
 </style>
