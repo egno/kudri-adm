@@ -5,5 +5,5 @@ npm i && \
 npm run build && \
 rm -rf ../html/* && \
 cp -r dist/* ../html && \
-echo "OK"
+echo "Deployed successfully"
 
