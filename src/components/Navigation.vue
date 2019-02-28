@@ -21,9 +21,9 @@
         <span>{{ defaultAppTitle }}</span>
       </VToolbarTitle>
       <VBtn
-        :class="{ back: !mini, equal: mini, invisible: isSalon}"
+        :class="{ back: !mini, equal: mini, invisible: !isManagerMenu}"
         icon
-        @click.stop="visible = !visible"
+        @click.stop="(isManagerMenu) ? mini = !mini : visible = !visible"
       />
     </VToolbar>
 
@@ -95,9 +95,7 @@ export default {
   components: { AddMenu, VCalendar },
   data() {
     return {
-      name: 'Business Name',
-      mini: false,
-      isSalon: false
+      //
     };
   },
   computed: {
@@ -109,6 +107,7 @@ export default {
       'businessServiceCount',
       'defaultAppTitle',
       'loggedIn',
+      'navigationMini',
       'token',
       'navigationVisible',
       'userRole'
@@ -244,6 +243,14 @@ export default {
         }
       ];
     },
+    mini: {
+      get() {
+        return this.navigationMini;
+      },
+      set(val) {
+        this.setNavigationMini(val);
+      }
+    },
     services() {
       return (
         this.business &&
@@ -277,7 +284,8 @@ export default {
       'loadUserInfo',
       'openMessageWindow',
       'setAppTitle',
-      'setBusiness'
+      'setBusiness',
+      'setNavigationMini'
     ]),
     doNothing() {
       console.log('');
