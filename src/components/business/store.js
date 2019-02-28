@@ -42,7 +42,9 @@ const getters = {
     getters.businessServices && getters.businessServices.length,
   businessDayVisits: state => state.dayVisits,
   businessIsIndividual: (state, getters) =>
-    state.businessIndividualCategories.includes(getters.businessCategory)
+    state.businessIndividualCategories.includes(getters.businessCategory),
+  businessIsSalon: (state, getters) =>
+    state.businessCategories.includes(getters.businessCategory)
 };
 
 const mutations = {
