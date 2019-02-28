@@ -40,7 +40,11 @@
           @click="onAction"
         >
           <v-list-tile-content>
-            <VListTileTitle>{{ item }}</VListTileTitle>
+            <VListTileTitle>
+              <span class="body-1">
+                {{ item }}
+              </span>
+            </VListTileTitle>
           </v-list-tile-content>
         </VListTile>
       </VListGroup>

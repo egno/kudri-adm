@@ -46,7 +46,9 @@
             <div class="menu-item-left">
               <VListTile :to="item.route">
                 <VListTileContent>
-                  <VListTileTitle>{{ item.title }}</VListTileTitle>
+                  <VListTileTitle class="body-1">
+                    {{ item.title }}
+                  </VListTileTitle>
                 </VListTileContent>
                 <VListTileAction>
                   <span
@@ -369,7 +371,6 @@ export default {
   }
   &.navigation {
     background-color: var(--v-secondary-base);
-    // background: linear-gradient(180.36deg, #333c54 0.06%, #4a5d6d 85.63%);
     .invisible {
       display: none;
     }
