@@ -3,9 +3,9 @@ import { makeAlert } from '@/api/utils';
 
 const state = {
   businessInfo: {},
+  businessIndividualCategories: ['Частный мастер'],
   businessCategories: [
     'Салон красоты',
-    'Частный мастер',
     'Spa салон',
     'Массажный салон',
     'Тату салон',
@@ -17,7 +17,12 @@ const state = {
 
 const getters = {
   business: state => state.businessInfo && state.businessInfo.id,
-  businessCategories: state => state.businessCategories,
+  businessCategories: state => [
+    ...state.businessCategories,
+    ...state.businessIndividualCategories
+  ],
+  businessCategory: state =>
+    state.businessInfo && state.businessInfo.j && state.businessInfo.j.category,
   businessInfo: state => ({
     ...state.businessInfo,
     ...{
@@ -35,7 +40,9 @@ const getters = {
     state.businessInfo && state.businessInfo.j && state.businessInfo.j.services,
   businessServiceCount: (state, getters) =>
     getters.businessServices && getters.businessServices.length,
-  businessDayVisits: state => state.dayVisits
+  businessDayVisits: state => state.dayVisits,
+  businessIsIndividual: (state, getters) =>
+    state.businessIndividualCategories.includes(getters.businessCategory)
 };
 
 const mutations = {

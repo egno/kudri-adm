@@ -105,6 +105,7 @@ export default {
       'actualDate',
       'business',
       'businessInfo',
+      'businessIsIndividual',
       'businessServiceCount',
       'defaultAppTitle',
       'loggedIn',
@@ -170,7 +171,8 @@ export default {
             name: 'businessCardEmployee',
             params: { id: this.businessLink }
           },
-          show: this.loggedIn && !this.isManagerMenu,
+          show:
+            this.loggedIn && !this.isManagerMenu && !this.businessIsIndividual,
           action: {
             label: 'Добавить сотрудника',
             action: 'newEmployee',
@@ -216,7 +218,8 @@ export default {
             name: 'businessCardFilal',
             params: { id: this.businessLink }
           },
-          show: this.loggedIn && !this.isManagerMenu,
+          show:
+            this.loggedIn && !this.isManagerMenu && !this.businessIsIndividual,
           action: {
             label: 'Добавить филиал',
             action: 'newFilial',
