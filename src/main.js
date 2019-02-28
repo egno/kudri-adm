@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import './plugins/vuetify';
+import Meta from 'vue-meta';
 import App from './App.vue';
 import router from './router';
 import store from './store';
@@ -12,7 +13,7 @@ import '@mdi/font/css/materialdesignicons.css';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 
 Vue.config.productionTip = false;
-//Vue.use(Vuetify);
+Vue.use(Meta);
 
 new Vue({
   router,

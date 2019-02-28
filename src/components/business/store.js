@@ -36,6 +36,8 @@ const getters = {
         state.businessInfo && state.businessInfo.j && state.businessInfo.j.name
     }
   }),
+  businessName: (state, getters) =>
+    getters.businessInfo && getters.businessInfo.name,
   businessServices: state =>
     state.businessInfo && state.businessInfo.j && state.businessInfo.j.services,
   businessServiceCount: (state, getters) =>

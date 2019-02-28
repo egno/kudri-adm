@@ -21,6 +21,11 @@ import router from '@/router';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
+  metaInfo() {
+    return {
+      title: this.title
+    };
+  },
   name: 'App',
   components: {
     Alerts,
@@ -39,16 +44,30 @@ export default {
       'actions',
       'actualDate',
       'appTitle',
+      'businessName',
       'navBarVisible',
       'messageWindow',
       'profileDrawer',
-      'userID'
+      'userID',
+      'userRole'
     ]),
     defaultAction() {
       if (!this.actions) {
         return;
       }
       return this.actions.filter(x => x['default'])[0];
+    },
+    title() {
+      if (!this.appTitle) {
+        return 'UNO';
+      }
+      if (this.businessName) {
+        return `${this.appTitle}. ${this.businessName}`;
+      }
+      if (this.userRole) {
+        return `${this.appTitle} ${this.userRole}`;
+      }
+      return this.appTitle;
     }
   },
   mounted() {
