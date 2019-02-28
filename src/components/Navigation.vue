@@ -2,6 +2,7 @@
   <VNavigationDrawer
     v-model="visible"
     app
+    dark
     mobile-break-point="1000"
     width="240"
     :mini-variant.sync="mini"
@@ -9,7 +10,10 @@
     class="navigation"
     @input="onInput($event)"
   >
-    <VToolbar flat>
+    <VToolbar
+      flat
+      color="secondary"
+    >
       <VToolbarTitle
         overflow-hidden
         @click="goHome()"
@@ -23,42 +27,9 @@
       />
     </VToolbar>
 
-    <div class="add-menu-list-mini">
-      <div class="items">
-        <div
-          v-for="(item, i) in adds"
-          :key="i"
-        >
-          <a href="#">
-            {{ item }}
-          </a>
-        </div>
-      </div>
-    </div>
-
+    <VCalendar v-if="!isManagerMenu" />
+    <AddMenu v-if="loggedIn && isManagerMenu" />
     <VList>
-      <VCalendar v-if="!isManagerMenu" />
-      <VListGroup
-        v-if="isManagerMenu"
-        no-action
-        sub-group
-        value="false"
-        class="add-menu-list"
-      >
-        <VListTile
-          slot="activator"
-          class="add-menu-button"
-        >
-          <VListTileTitle>Добавить</VListTileTitle>
-        </VListTile>
-        <VListTile
-          v-for="(item, i) in adds"
-          :key="i"
-          @click="doNothing"
-        >
-          <VListTileTitle>{{ item }}</VListTileTitle>
-        </VListTile>
-      </VListGroup>
       <v-hover
         v-for="item in menu"
         v-show="item.show"
@@ -112,19 +83,19 @@
 </template>
 
 <script>
+import AddMenu from '@/components/AddMenu.vue';
 import VCalendar from '@/components/calendar/VCalendar.vue';
 import router from '@/router';
 import { mapActions, mapGetters } from 'vuex';
 import { isBusinessCard } from '@/utils';
 
 export default {
-  components: { VCalendar },
+  components: { AddMenu, VCalendar },
   data() {
     return {
       name: 'Business Name',
       mini: false,
-      isSalon: false,
-      adds: ['Менеджера', 'Компанию', 'Частного мастера']
+      isSalon: false
     };
   },
   computed: {
@@ -347,7 +318,7 @@ export default {
       display: block;
       width: 40px;
       height: 40px;
-      background: #ef4d37 url('../assets/plus-w.svg') no-repeat center center;
+      background: accent url('../assets/plus-w.svg') no-repeat center center;
       background-size: 24px;
       cursor: pointer;
       position: absolute;
@@ -397,67 +368,8 @@ export default {
     }
   }
   &.navigation {
-    background: linear-gradient(180.36deg, #333c54 0.06%, #4a5d6d 85.63%);
-    .add-menu-button {
-      background: #ef4d37;
-      .v-list__tile__title {
-        color: #fff;
-        font-family: Roboto-Slab;
-        font-style: normal;
-        font-weight: normal;
-        line-height: normal;
-        font-size: 18px;
-        &:before {
-          content: '';
-          width: 12px;
-          height: 8px;
-          background: url('../assets/angle-down.svg') no-repeat center center;
-          background-size: 12px;
-          position: absolute;
-          right: 30px;
-          top: 8px;
-        }
-      }
-    }
-    .add-menu-list {
-      margin-bottom: 22px;
-      .v-list__group__header__prepend-icon {
-        display: none;
-      }
-      .v-list__group__items {
-        background: rgba(137, 149, 175, 0.2);
-        padding-top: 13px;
-        height: 144px;
-        .v-list__tile {
-          .v-list__tile__title {
-            width: auto;
-          }
-          &:hover {
-            background: transparent !important;
-            .v-list__tile__title {
-              width: auto;
-              position: relative;
-              &:before {
-                content: '';
-                position: absolute;
-                left: 0;
-                bottom: 4px;
-                height: 1px;
-                width: 100%;
-                background: rgba(255, 255, 255, 0.6);
-              }
-            }
-          }
-        }
-      }
-      &.v-list__group--active {
-        .v-list__tile__title {
-          &:before {
-            transform: rotate(180deg);
-          }
-        }
-      }
-    }
+    background-color: var(--v-secondary-base);
+    // background: linear-gradient(180.36deg, #333c54 0.06%, #4a5d6d 85.63%);
     .invisible {
       display: none;
     }
