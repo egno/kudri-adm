@@ -55,7 +55,7 @@
       />-->
     </VToolbar>
 
-    <VCalendar v-if="!isManagerMenu" />
+    <VCalendar v-if="isCalendarVisible" />
     <AddMenu v-if="loggedIn && isManagerMenu" />
     <VList v-if="!mini">
       <nav-powered-item
@@ -84,9 +84,11 @@ import VCalendar from '@/components/calendar/VCalendar.vue';
 import router from '@/router';
 import { mapActions, mapGetters } from 'vuex';
 import { isBusinessCard } from '@/utils';
+import  Users from '@/mixins/users'
 
 export default {
   components: { AddMenu, NavPoweredItem, VCalendar },
+  mixins: [ Users ],
   data() {
     return {
       //
@@ -136,6 +138,9 @@ export default {
     },
     isBusinessCard() {
       return isBusinessCard(this.$route.name);
+    },
+    isCalendarVisible () {
+      return isBusinessCard && this.isEditorUser;
     },
     isCompany() {
       return this.business && this.userRole === 'business';
