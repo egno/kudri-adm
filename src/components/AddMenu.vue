@@ -1,26 +1,44 @@
 <template>
   <div>
-    <div class="add-menu-list-mini">
-      <div class="items">
-        <div
-          v-for="(item, i) in adds"
-          :key="i"
+    <div v-if="navigationMini">
+      <v-menu
+        offset-x
+        open-on-hover
+      >
+        <template
+          v-slot:activator="{ on }"
+          class="pl-0"
         >
-          <a href="#">
-            {{ item }}
-          </a>
-        </div>
-      </div>
+          <div
+            class="accent add-btn"
+            v-on="on"
+          >
+            <v-icon color="white">
+              add
+            </v-icon>
+          </div>
+        </template>
+
+        <v-list dark>
+          <template v-for="(item, i) in adds">
+            <VListTile
+              :key="i"
+              ripple
+              active-class="accent"
+              @click="onAction"
+            >
+              <v-list-tile-content>
+                <VListTileTitle>
+                  <span class="body-1">
+                    {{ item }}
+                  </span>
+                </VListTileTitle>
+              </v-list-tile-content>
+            </VListTile>
+          </template>
+        </v-list>
+      </v-menu>
     </div>
-    <v-list v-if="navigationMini">
-      <VListTile>
-        <v-list-tile-action>
-          <v-btn icon>
-            <v-icon>add</v-icon>
-          </v-btn>
-        </v-list-tile-action>
-      </VListTile>
-    </v-list>
 
     <v-list v-else>
       <VListGroup
@@ -67,7 +85,7 @@ export default {
   data: () => ({
     adds: ['Менеджера', 'Компанию', 'Частного мастера'],
     expand: false,
-    mini: false
+    showMenu: true
   }),
   computed: {
     ...mapGetters(['navigationMini'])
@@ -78,7 +96,16 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.add-btn {
+  width: 48px;
+  height: 48px;
+  background: #ef4d37;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
 .list-group-item-unshift {
   margin-left: -3em;
 }

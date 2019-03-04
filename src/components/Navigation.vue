@@ -84,11 +84,11 @@ import VCalendar from '@/components/calendar/VCalendar.vue';
 import router from '@/router';
 import { mapActions, mapGetters } from 'vuex';
 import { isBusinessCard } from '@/utils';
-import  Users from '@/mixins/users'
+import Users from '@/mixins/users';
 
 export default {
   components: { AddMenu, NavPoweredItem, VCalendar },
-  mixins: [ Users ],
+  mixins: [Users],
   data() {
     return {
       //
@@ -139,7 +139,7 @@ export default {
     isBusinessCard() {
       return isBusinessCard(this.$route.name);
     },
-    isCalendarVisible () {
+    isCalendarVisible() {
       return isBusinessCard && this.isEditorUser;
     },
     isCompany() {
@@ -320,11 +320,6 @@ export default {
 </script>
 
 <style lang="scss">
-.v-navigation-drawer {
-  .add-menu-list-mini {
-    display: none;
-  }
-}
 .navigation.theme--dark,
 .v-toolbar.theme--dark {
   background-color: var(--v-secondary-base);
