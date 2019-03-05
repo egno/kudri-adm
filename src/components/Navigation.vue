@@ -83,8 +83,8 @@ import NavPoweredItem from '@/components/NavPoweredItem.vue';
 import VCalendar from '@/components/calendar/VCalendar.vue';
 import router from '@/router';
 import { mapActions, mapGetters } from 'vuex';
-import { isBusinessCard } from '@/utils';
-import Users from '@/mixins/users';
+import { isBusinessRoute } from '@/utils';
+import  Users from '@/mixins/users'
 
 export default {
   components: { AddMenu, NavPoweredItem, VCalendar },
@@ -137,10 +137,10 @@ export default {
       );
     },
     isBusinessCard() {
-      return isBusinessCard(this.$route.name);
+      return isBusinessRoute(this.$route.name);
     },
-    isCalendarVisible() {
-      return isBusinessCard && this.isEditorUser;
+    isCalendarVisible () {
+      return this.isBusinessCard && this.isEditorUser;
     },
     isCompany() {
       return this.business && this.userRole === 'business';

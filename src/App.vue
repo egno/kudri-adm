@@ -74,7 +74,6 @@ export default {
     this.loadApiTime();
     this.setActions();
     this.loadFromStorage();
-    this.loadUserInfo();
     this.loadServiceList();
     this.loadServiceGroups();
     this.checkDate();
@@ -89,7 +88,6 @@ export default {
       'loadFromStorage',
       'loadServiceList',
       'loadServiceGroups',
-      'loadUserInfo',
       'setActions',
       'setActualDate',
       'navBar'

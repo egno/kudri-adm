@@ -13,6 +13,6 @@ const businessCards = [
   'employeeGallery'
 ];
 
-export function isBusinessCard(routeName) {
+export function isBusinessRoute(routeName) {
   return businessCards.some(x => x === routeName);
 }
