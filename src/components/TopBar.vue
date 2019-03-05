@@ -63,7 +63,7 @@ import ProfileMenu from '@/components/ProfileMenu.vue';
 import Notifications from '@/components/Notifications.vue';
 import router from '@/router';
 import { mapActions, mapGetters } from 'vuex';
-import { isBusinessCard } from '@/utils';
+import { isBusinessRoute } from '@/utils';
 
 export default {
   components: {
@@ -107,7 +107,7 @@ export default {
       return null;
     },
     isBusinessCard() {
-      return isBusinessCard(this.$route.name);
+      return isBusinessRoute(this.$route.name);
     },
     isManagerCabinet() {
       return !this.isBusinessCard;

@@ -177,7 +177,8 @@ export default {
       ],
       passRepeatRules: [
         v => (!!v && v === this.fpassword) || 'Пароли не совпадают'
-      ]
+      ],
+      userAlreadyInitialized: false
     };
   },
   computed: {
@@ -207,8 +208,12 @@ export default {
   },
   watch: {
     userID: function(newVal, oldVal) {
-      console.log(newVal, oldVal);
-      if (newVal && oldVal !== newVal) {
+      if (!oldVal && newVal && oldVal !== newVal) {
+        this.userAlreadyInitialized = true;
+        return;
+      }
+
+      if (this.userAlreadyInitialized && newVal && oldVal !== newVal) {
         this.goHome();
       }
     },
