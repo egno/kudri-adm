@@ -22,9 +22,7 @@
             overflow-hidden
             @click="goHome()"
           >
-            <span class="title">
-              {{ defaultAppTitle }}
-            </span>
+            <span class="title">{{ defaultAppTitle }}</span>
           </v-list-tile-title>
         </v-list-tile-content>
       </VList>
@@ -84,7 +82,7 @@ import VCalendar from '@/components/calendar/VCalendar.vue';
 import router from '@/router';
 import { mapActions, mapGetters } from 'vuex';
 import { isBusinessRoute } from '@/utils';
-import  Users from '@/mixins/users'
+import Users from '@/mixins/users';
 
 export default {
   components: { AddMenu, NavPoweredItem, VCalendar },
@@ -139,7 +137,7 @@ export default {
     isBusinessCard() {
       return isBusinessRoute(this.$route.name);
     },
-    isCalendarVisible () {
+    isCalendarVisible() {
       return this.isBusinessCard && this.isEditorUser;
     },
     isCompany() {

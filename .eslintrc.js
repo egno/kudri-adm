@@ -20,6 +20,7 @@ module.exports = {
   rules: {
     'import/no-unresolved': 0,
     'import/no-unassigned-import': 0,
-    'no-console': 'off'
+    'no-console': 'off',
+    'vue/html-self-closing': 'off'
   }
 };
