@@ -349,7 +349,7 @@ export default {
       return this.visits
         .filter(
           v =>
-            v.ts_begin.slice(0, 10) === dt &&
+            v.ts_begin && v.ts_begin.slice(0, 10) === dt &&
             (employee
               ? v.business_id === employee
               : v.business_id === this.business)
