@@ -11,7 +11,7 @@ module.exports = {
     },
     sourceType: 'module',
     parser: 'babel-eslint',
-    ecmaVersion: 2017
+    ecmaVersion: 2018
   },
   // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
   extends: ['eslint:recommended', 'plugin:vue/recommended'],
@@ -20,7 +20,6 @@ module.exports = {
   rules: {
     'import/no-unresolved': 0,
     'import/no-unassigned-import': 0,
-    'no-console': 'off',
-    'vue/html-self-closing': 'off'
+    'no-console': 'off'
   }
 };
