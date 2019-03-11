@@ -49,9 +49,7 @@
             class="caption count"
             :class="{ attention: item.count === '!' }"
             flat
-          >
-            {{ item.count }}
-          </span>
+          >{{ item.count }}</span>
         </VListTile>
       </template>
     </VList>
@@ -104,9 +102,7 @@
             />
           </VForm>
           <div>
-            <a @click="goRestorePassword">
-              Забыли пароль?
-            </a>
+            <a @click="goRestorePassword">Забыли пароль?</a>
           </div>
         </VCardText>
         <VCardActions>
@@ -125,7 +121,6 @@ import router from '@/router';
 import UserAvatar from '@/components/avatar/UserAvatar.vue';
 
 import { mapGetters, mapActions } from 'vuex';
-import _ from 'lodash';
 
 export default {
   components: { UserAvatar },
@@ -142,24 +137,7 @@ export default {
     menu: false,
     snack: false,
     snackText: '',
-    snackColor: 'error',
-    menuList: [
-      {
-        title: 'Мой профиль',
-        action: 'drawer',
-        count: '!'
-      },
-      {
-        title: 'Сообщения',
-        route: { name: 'messages' },
-        count: 2
-      },
-      {
-        title: 'Выйти',
-        action: 'logout',
-        url: ''
-      }
-    ]
+    snackColor: 'error'
   }),
   computed: {
     ...mapGetters({
@@ -168,6 +146,30 @@ export default {
       userID: 'userLogin',
       userInfo: 'userInfo'
     }),
+    menuList() {
+      return [
+        {
+          title: 'Мой профиль',
+          action: 'drawer',
+          count: '!'
+        },
+        {
+          title: 'Сообщения',
+          route: { name: 'messages' },
+          count: 2
+        },
+        {
+          title: 'Личный кабинет',
+          route: { name: 'myBusinessList' },
+          hide: this.userInfo.role !== 'manager'
+        },
+        {
+          title: 'Выйти',
+          action: 'logout',
+          url: ''
+        }
+      ];
+    },
     menuWidth() {
       return this.loggedIn ? '154' : '300';
     },
@@ -187,32 +189,6 @@ export default {
     }
   },
   watch: {
-    $route() {
-      if (
-        this.$route.name === 'businessCard' &&
-        _.findIndex(this.menuList, function(o) {
-          return o.title === 'Личный кабинет';
-        }) === -1
-      ) {
-        let obj = {
-          title: 'Личный кабинет',
-          action: '',
-          url: '/'
-        };
-        this.menuList.splice(2, 0, obj);
-      } else if (
-        _.findIndex(this.menuList, function(o) {
-          return o.title === 'Личный кабинет';
-        }) !== -1
-      ) {
-        this.menuList.splice(
-          _.findIndex(this.menuList, function(o) {
-            return o.title === 'Личный кабинет';
-          }),
-          1
-        );
-      }
-    },
     userInfo(newVal, oldVal) {
       if (
         newVal &&
