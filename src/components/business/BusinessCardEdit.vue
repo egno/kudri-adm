@@ -35,6 +35,7 @@
           :rules="[rules.category]"
         />
         <VTextField
+          v-if="!businessIsIndividual"
           v-model="data.j.inn"
           label="ИНН"
           mask="############"
@@ -132,10 +133,10 @@ import BusinessPhonesEdit from '@/components/business/BusinessPhonesEdit.vue';
 import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue';
 import AddressAutocomplete from '@/components/yandex/AddressAutocomplete.vue';
 import Api from '@/api/backend';
-import router from '@/router';
 import { backendMixins } from '@/api/mixins';
 import { businessMixins } from '@/components/business/mixins';
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
+import { makeAlert } from '@/api/utils';
 
 export default {
   components: {
@@ -167,7 +168,8 @@ export default {
   computed: {
     ...mapGetters({
       userInfo: 'userInfo',
-      businessCategories: 'businessCategories'
+      businessCategories: 'businessCategories',
+      businessIsIndividual: 'businessIsIndividual'
     }),
     avatar() {
       if (this.data.j) {
@@ -240,9 +242,9 @@ export default {
     this.fetchData();
   },
   methods: {
+    ...mapActions(['alert']),
     close() {
       this.sendData();
-      this.$emit('onEditClose');
     },
     fetchData() {
       if (this.id === 'new') {
@@ -284,11 +286,24 @@ export default {
             const newId = this.locationId(res.headers);
             console.log(newId);
             if (newId) {
-              router.push({ name: 'businessCard', params: { id: newId } });
+              this.$router.push({
+                name: 'businessCard',
+                params: { id: newId }
+              });
             }
+          })
+          .catch(res => {
+            this.alert(makeAlert(res));
           });
       } else {
-        Api().patch(`business?id=eq.${this.id}`, this.data);
+        Api()
+          .patch(`business?id=eq.${this.id}`, this.data)
+          .then(() => {
+            this.$emit('onEditClose');
+          })
+          .catch(res => {
+            this.alert(makeAlert(res));
+          });
       }
     },
     scheduleEdit(payload) {

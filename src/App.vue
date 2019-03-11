@@ -411,9 +411,7 @@ export default {
     line-height: 24px;
   }
 }
-.v-toolbar {
-  z-index: 10;
-}
+
 .v-navigation-drawer {
   z-index: 11;
 }
