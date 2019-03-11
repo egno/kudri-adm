@@ -1,59 +1,49 @@
 <template>
-  <v-card
-    hover
-    ripple
-    @click="edit=true"
-  >
-    <v-card-title>
-      <v-layout column>
-        <v-flex py-0>
-          <div class="caption grey--text text--darken-1">
-            {{ item.group }}
-          </div>
-        </v-flex>
-        <v-flex py-0>
-          <h4>{{ item.name }}</h4>
-        </v-flex>
-      </v-layout>
-    </v-card-title>
-    <v-divider />
-    <v-card-text>
-      <v-layout column>
-        <v-flex py-0>
-          <div>
-            <span class="caption grey--text text--darken-1">
-              Цена: от
-            </span>
-            <span class="text-value">
-              {{ item.price }}
-            </span>
-            <span>₽</span>
-          </div>
-        </v-flex>
-        <v-flex py-0>
-          <div>
-            <span class="caption grey--text text--darken-1">
-              Продолжительность:
-            </span>
-            <span class="text-value">
-              {{ item.duration }}
-            </span>
-            <span>мин.</span>
-          </div>
-        </v-flex>
-        <v-flex v-if="item.notes">
-          <div>{{ item.notes }}</div>
-        </v-flex>
-        <v-flex v-if="item.employees">
-          <span class="caption grey--text text--darken-1">
-            Сотрудников:
-          </span>
-          <span class="text-value">
-            {{ item.employees }}
-          </span>
-        </v-flex>
-      </v-layout>
-    </v-card-text>
+  <div>
+    <v-card
+      hover
+      ripple
+      @click="edit=true"
+    >
+      <v-card-title>
+        <v-layout column>
+          <v-flex py-0>
+            <div class="caption grey--text text--darken-1">
+              {{ item.group }}
+            </div>
+          </v-flex>
+          <v-flex py-0>
+            <h4>{{ item.name }}</h4>
+          </v-flex>
+        </v-layout>
+      </v-card-title>
+      <v-divider />
+      <v-card-text>
+        <v-layout column>
+          <v-flex py-0>
+            <div>
+              <span class="caption grey--text text--darken-1">Цена: от</span>
+              <span class="text-value">{{ item.price }}</span>
+              <span>₽</span>
+            </div>
+          </v-flex>
+          <v-flex py-0>
+            <div>
+              <span class="caption grey--text text--darken-1">Продолжительность:</span>
+              <span class="text-value">{{ item.duration }}</span>
+              <span>мин.</span>
+            </div>
+          </v-flex>
+          <v-flex v-if="item.notes">
+            <div>{{ item.notes }}</div>
+          </v-flex>
+          <v-flex v-if="item.employees">
+            <span class="caption grey--text text--darken-1">Сотрудников:</span>
+            <span class="text-value">{{ item.employees }}</span>
+          </v-flex>
+        </v-layout>
+      </v-card-text>
+    </v-card>
     <v-navigation-drawer
       v-model="edit"
       right
@@ -70,7 +60,7 @@
         @close="edit=false"
       />
     </v-navigation-drawer>
-  </v-card>
+  </div>
 </template>
 
 <script>
