@@ -76,21 +76,21 @@
 </template>
 
 <script>
-import AddMenu from '@/components/AddMenu.vue';
-import NavPoweredItem from '@/components/NavPoweredItem.vue';
-import VCalendar from '@/components/calendar/VCalendar.vue';
-import router from '@/router';
-import { mapActions, mapGetters } from 'vuex';
-import { isBusinessRoute } from '@/utils';
-import Users from '@/mixins/users';
+import AddMenu from '@/components/AddMenu.vue'
+import NavPoweredItem from '@/components/NavPoweredItem.vue'
+import VCalendar from '@/components/calendar/VCalendar.vue'
+import router from '@/router'
+import { mapActions, mapGetters } from 'vuex'
+import { isBusinessRoute } from '@/utils'
+import Users from '@/mixins/users'
 
 export default {
   components: { AddMenu, NavPoweredItem, VCalendar },
   mixins: [Users],
-  data() {
+  data () {
     return {
       //
-    };
+    }
   },
   computed: {
     ...mapGetters([
@@ -106,50 +106,50 @@ export default {
       'navigationVisible',
       'userRole'
     ]),
-    routeBisinessId() {
-      return this.$route && this.$route.params && this.$route.params.id;
+    routeBisinessId () {
+      return this.$route && this.$route.params && this.$route.params.id
     },
-    businessLink() {
-      return this.business;
+    businessLink () {
+      return this.business
     },
-    clientsCount() {
+    clientsCount () {
       return (
         this.businessInfo && this.businessInfo.j && this.businessInfo.j.clients
-      );
+      )
     },
-    employeesCount() {
+    employeesCount () {
       return (
         this.businessInfo &&
         this.businessInfo.j &&
         this.businessInfo.j.employees
-      );
+      )
     },
-    filialsCount() {
+    filialsCount () {
       return (
         this.businessInfo && this.businessInfo.j && this.businessInfo.j.filials
-      );
+      )
     },
-    galleryCount() {
+    galleryCount () {
       return (
         this.businessInfo && this.businessInfo.j && this.businessInfo.j.gallery
-      );
+      )
     },
-    isBusinessCard() {
-      return isBusinessRoute(this.$route.name);
+    isBusinessCard () {
+      return isBusinessRoute(this.$route.name)
     },
-    isCalendarVisible() {
-      return this.isBusinessCard && this.isEditorUser;
+    isCalendarVisible () {
+      return this.isBusinessCard && this.isEditorUser
     },
-    isCompany() {
-      return this.business && this.userRole === 'business';
+    isCompany () {
+      return this.business && this.userRole === 'business'
     },
-    isManagerMenu() {
+    isManagerMenu () {
       return (
         (this.userRole === 'manager' || this.userRole === 'admin') &&
         !this.isBusinessCard
-      );
+      )
     },
-    menu() {
+    menu () {
       return [
         {
           title: 'Мои компании',
@@ -241,30 +241,30 @@ export default {
           },
           show: this.loggedIn && !this.isManagerMenu
         }
-      ];
+      ]
     },
     mini: {
-      get() {
-        return this.navigationMini;
+      get () {
+        return this.navigationMini
       },
-      set(val) {
-        this.setNavigationMini(val);
+      set (val) {
+        this.setNavigationMini(val)
       }
     },
-    services() {
+    services () {
       return (
         this.business &&
         this.businessInfo &&
         this.businessInfo.j &&
         this.businessInfo.j.services
-      );
+      )
     },
     visible: {
-      get() {
-        return this.navigationVisible;
+      get () {
+        return this.navigationVisible
       },
-      set(val) {
-        this.setNavigationVisible(val);
+      set (val) {
+        this.setNavigationVisible(val)
       }
     }
   },
@@ -273,8 +273,8 @@ export default {
     routeBisinessId: 'loadBusiness',
     actualDate: 'loadBusiness'
   },
-  mounted() {
-    this.loadBusiness();
+  mounted () {
+    this.loadBusiness()
   },
   methods: {
     ...mapActions([
@@ -287,34 +287,34 @@ export default {
       'setBusiness',
       'setNavigationMini'
     ]),
-    doNothing() {
-      console.log('');
+    doNothing () {
+      console.log('')
     },
-    loadBusiness() {
-      this.setBusiness(this.routeBisinessId);
-      if (!this.actualDate) return;
-      const month = this.actualDate.replace(/\d{2}$/, '01');
+    loadBusiness () {
+      this.setBusiness(this.routeBisinessId)
+      if (!this.actualDate) return
+      const month = this.actualDate.replace(/\d{2}$/, '01')
       this.loadDayVisits({
         business: this.routeBisinessId,
         month: month
-      });
+      })
     },
-    goHome() {
-      router.push({ name: 'home' });
+    goHome () {
+      router.push({ name: 'home' })
     },
-    onAction(action) {
-      console.log(action);
+    onAction (action) {
+      console.log(action)
       if (action && action.to) {
-        this.$router.push(action.to);
-        return;
+        this.$router.push(action.to)
+        return
       }
-      this.$emit('onAction', action.action);
+      this.$emit('onAction', action.action)
     },
-    onInput(event) {
-      this.navBar(event);
+    onInput (event) {
+      this.navBar(event)
     }
   }
-};
+}
 </script>
 
 <style lang="scss">

@@ -46,12 +46,12 @@ export default {
   props: {
     item: {
       type: Object,
-      default() {
-        return {};
+      default () {
+        return {}
       }
     }
   }
-};
+}
 </script>
 
 <style scoped>

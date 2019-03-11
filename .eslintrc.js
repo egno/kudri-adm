@@ -20,6 +20,16 @@ module.exports = {
   rules: {
     'import/no-unresolved': 0,
     'import/no-unassigned-import': 0,
-    'no-console': 'off'
+    'semi': ['error', 'never'],
+    'no-console': 'off',
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "always",
+        "named": "always",
+        "asyncArrow": "always"
+      }
+    ],
+    'vue/max-attributes-per-line': 0
   }
-};
+}

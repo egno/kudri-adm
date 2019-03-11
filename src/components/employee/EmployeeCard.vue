@@ -1,8 +1,5 @@
 <template>
-  <VCard
-    :hover="item.access"
-    :to="{name:'employeeFull', params: {employee: item.id}}"
-  >
+  <VCard :hover="item.access" :to="{name:'employeeFull', params: {employee: item.id}}">
     <v-responsive min-height="5em">
       <div
         v-if="photo"
@@ -33,15 +30,13 @@
           <VLayout
             align-left
             row
-            spacer
-            pl-2
+            spacer pl-2
           >
             <VFlex xs12>
               <VLayout
                 column
                 align-space-around
-                fill-height
-                justify-center
+                fill-height justify-center
               >
                 <VFlex pa-0>
                   <div class="caption grey--text text--darken-1">
@@ -53,7 +48,7 @@
                 </VFlex>
                 <VFlex pa-0>
                   <v-rating
-                    :value="item.j.rating"
+                    :value="+item.j.rating"
                     readonly
                     color="amber"
                     background-color="grey"
@@ -72,9 +67,7 @@
     <v-divider />
     <VCardText>
       <div>
-        <span :class="captionClass">
-          Услуги: {{ servicesCount || '-' }}
-        </span>
+        <span :class="captionClass">Услуги: {{ servicesCount || '-' }}</span>
         <div
           v-for="(service, i) in item.j && item.j.services"
           v-show="(i < displayItemsCount)"
@@ -98,10 +91,10 @@
 </template>
 
 <script>
-import BusinessSchedule from '@/components/business/BusinessSchedule.vue';
-import UserAvatar from '@/components/avatar/UserAvatar.vue';
-import { fullName } from '@/components/business/utils';
-import { imagePath } from '@/components/gallery/utils';
+import BusinessSchedule from '@/components/business/BusinessSchedule.vue'
+import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import { fullName } from '@/components/business/utils'
+import { imagePath } from '@/components/gallery/utils'
 
 export default {
   components: { BusinessSchedule, UserAvatar },
@@ -110,47 +103,47 @@ export default {
     item: {
       type: Object,
       default: () => {
-        return {};
+        return {}
       }
     }
   },
-  data() {
+  data () {
     return {
       captionClass:
         'caption font-weight-bold text-no-wrap grey--text text--darken-1'
-    };
+    }
   },
   computed: {
-    avatar() {
-      return this.item && (this.item.j && this.item.j.avatar);
+    avatar () {
+      return this.item && (this.item.j && this.item.j.avatar)
     },
-    photo() {
+    photo () {
       return (
         this.item &&
         imagePath(this.item.j && this.item.j.image, this.item.parent)
-      );
+      )
     },
-    servicesCount() {
+    servicesCount () {
       return (
         this.item &&
         this.item.j &&
         this.item.j.services &&
         this.item.j.services.length
-      );
+      )
     }
   },
   methods: {
-    fullName(emp) {
-      return fullName(emp);
+    fullName (emp) {
+      return fullName(emp)
     },
-    onDelete() {
-      this.$emit('onDelete', this.item);
+    onDelete () {
+      this.$emit('onDelete', this.item)
     },
-    onSave(payload) {
-      this.$emit('onSave', payload);
+    onSave (payload) {
+      this.$emit('onSave', payload)
     }
   }
-};
+}
 </script>
 
 <style scoped>
