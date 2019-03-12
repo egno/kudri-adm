@@ -128,7 +128,6 @@
 </template>
 
 <script>
-import { imagePath } from '@/components/gallery/utils'
 import { mapGetters } from 'vuex'
 import PhoneEdit from '@/components/business/PhoneEdit.vue'
 import ImageLoader from '@/components/gallery/ImageLoader.vue'
@@ -152,7 +151,7 @@ export default {
     ...mapGetters(['employeePositions', 'employeeCategories']),
     imagePath () {
       return (
-        imagePath(this.item.j && this.item.j.image, this.item.parent) ||
+        this.item.imagePath ||
         this.defaultImage
       )
     }

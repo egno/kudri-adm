@@ -203,7 +203,6 @@ export default {
     },
     onImageUpload (payload) {
       this.data.image = payload
-      this.save()
     },
     onServiceSave (payload) {
       this.data.services = payload

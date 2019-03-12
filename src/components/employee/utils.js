@@ -1,6 +1,7 @@
 import Api from '@/api/backend'
 import store from '@/store'
 import { makeAlert, responseGetId } from '@/api/utils'
+import { imagePath } from '@/components/gallery/utils'
 
 class Employee {
   constructor (emp) {
@@ -15,9 +16,8 @@ class Employee {
     this.access = (newVal && newVal.access) || true
     this.parent = (newVal && newVal.parent) || null
     this.j = (newVal && newVal.j) || {}
-    this.services = []
     if (!this.j.services) {
-      this.j.services = []
+      this.services = []
     }
     if (!this.j.schedule) {
       this.j.schedule = {}
@@ -33,17 +33,25 @@ class Employee {
    */
   set image (newVal) {
     if (newVal) {
-      this.j = { ...{ image: newVal }, ...this.j }
+      this.j = { ...this.j, ...{ image: newVal } }
     } else {
       delete this.j.image
     }
+  }
+
+  get image () {
+    return this.j && this.j.image
+  }
+
+  get imagePath () {
+    return this.image && imagePath(this.image, this.parent)
   }
 
   /**
    * @param {Array} newVal
    */
   set services (newVal) {
-    this.j = { ...{ services: newVal || [] }, ...this.j }
+    this.j = { ...this.j, ...{ services: newVal || [] } }
   }
 
   load (id) {
