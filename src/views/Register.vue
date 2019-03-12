@@ -6,20 +6,20 @@
 
 
 <script>
-import RegisterForm from '@/components/register/Register.vue';
-import { mapActions } from 'vuex';
+import RegisterForm from '@/components/register/Register.vue'
+import { mapActions } from 'vuex'
 
 export default {
   components: { RegisterForm },
-  data() {
-    return {};
+  data () {
+    return {}
   },
   computed: {},
-  mounted() {
-    this.setActions(null);
+  mounted () {
+    this.setActions(null)
   },
   methods: {
     ...mapActions(['setActions'])
   }
-};
+}
 </script>

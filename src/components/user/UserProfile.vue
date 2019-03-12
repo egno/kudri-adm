@@ -115,18 +115,18 @@
 </template>
 
 <script>
-import UserAvatar from '@/components/avatar/UserAvatar.vue';
-import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue';
-import { mapGetters, mapActions } from 'vuex';
-import ImageApi from '@/api/images';
-import { canvasToFormData, imagePath } from '@/components/avatar/utils';
+import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue'
+import { mapGetters, mapActions } from 'vuex'
+import ImageApi from '@/api/images'
+import { canvasToFormData, imagePath } from '@/components/avatar/utils'
 
 export default {
   components: {
     UserAvatar,
     VueAvatarEditor
   },
-  data() {
+  data () {
     return {
       data: undefined,
       avatarEdit: false,
@@ -153,10 +153,10 @@ export default {
       specRequired: v =>
         this.isPersonalMaster || this.isManager || !!v || 'Обязательное поле',
       email: value => {
-        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return pattern.test(value) || 'Введите действительный e-mail.';
+        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        return pattern.test(value) || 'Введите действительный e-mail.'
       }
-    };
+    }
   },
   computed: {
     ...mapGetters([
@@ -168,84 +168,84 @@ export default {
       'userInfo',
       'userID'
     ]),
-    avatarPath() {
-      return imagePath(this.userAvatar);
+    avatarPath () {
+      return imagePath(this.userAvatar)
     },
-    initiales() {
-      return this.fname + ' ' + this.flastname;
+    initiales () {
+      return this.fname + ' ' + this.flastname
     },
-    isManager() {
-      return this.userInfo && this.userInfo.role === 'manager';
+    isManager () {
+      return this.userInfo && this.userInfo.role === 'manager'
     },
-    avatar() {
-      return this.userAvatar;
+    avatar () {
+      return this.userAvatar
     },
-    name() {
-      return this.initiales || null;
+    name () {
+      return this.initiales || null
     }
   },
   watch: {
     userID: 'load'
   },
-  mounted() {
-    this.load();
+  mounted () {
+    this.load()
   },
   methods: {
     ...mapActions(['alert', 'setUserAvatar', 'uploadUserInfo']),
-    load() {
-      if (!this.userID) return;
+    load () {
+      if (!this.userID) return
       this.fname =
         (this.userInfo &&
           this.userInfo.data &&
           this.userInfo.data.j &&
           this.userInfo.data.j.name) ||
-        '';
+        ''
       this.flastname =
         (this.userInfo &&
           this.userInfo.data &&
           this.userInfo.data.j &&
           this.userInfo.data.j.surname) ||
-        '';
+        ''
       this.femail =
-        (this.userInfo && this.userInfo.data && this.userInfo.data.email) || '';
+        (this.userInfo && this.userInfo.data && this.userInfo.data.email) || ''
       this.fphone =
-        (this.userInfo && this.userInfo.data && this.userInfo.data.phone) || '';
+        (this.userInfo && this.userInfo.data && this.userInfo.data.phone) || ''
       this.fspecialisation =
         (this.userInfo &&
           this.userInfo.data &&
           this.userInfo.data.j &&
           this.userInfo.data.j.category) ||
-        '';
+        ''
     },
-    saveProfile() {
+    saveProfile () {
       if (this.$refs.FormManagerProfile.validate()) {
         const data = {
           name: this.fname,
           surname: this.flastname,
           category: this.fspecialisation || null
-        };
-        this.uploadUserInfo(data);
-        this.$emit('close');
+        }
+        this.uploadUserInfo(data)
+        this.$emit('close')
       }
     },
-    saveImage(payload) {
-      if (!payload) return;
-      let formData = canvasToFormData(payload);
-      let vm = this;
-      let newFileName = formData.get('file').name;
+    saveImage (payload) {
+      if (!payload) return
+      let formData = canvasToFormData(payload)
+      let vm = this
+      let newFileName = formData.get('file').name
 
       ImageApi()
         .post('/', formData)
         .then(() => {
-          vm.setUserAvatar(newFileName);
-          this.avatarEdit = false;
+          vm.setUserAvatar(newFileName)
+          this.avatarEdit = false
         })
         .catch(err => {
-          this.alert({ message: err });
-        });
+          this.alert({ message: err })
+        })
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

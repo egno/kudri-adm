@@ -99,71 +99,71 @@ export default {
     title: { type: String, default: '' },
     subtitle: { type: String, default: '' }
   },
-  data() {
+  data () {
     return {
       sliderCount: 4,
       show: false,
       selected: 0
-    };
+    }
   },
   computed: {
-    sliderCanScroll() {
-      return this.images && this.images.length > this.sliderCount;
+    sliderCanScroll () {
+      return this.images && this.images.length > this.sliderCount
     },
-    sliderImages() {
-      if (!this.images) return;
-      const cnt = this.images.length;
+    sliderImages () {
+      if (!this.images) return
+      const cnt = this.images.length
       let images = this.images.map((x, n) => {
-        x.n = n;
-        return x;
-      });
-      if (cnt <= this.sliderCount) return images;
-      const pos = ((this.sliderCount - 1) / 2) | 0;
-      let start = this.selected - pos;
-      let end = start + this.sliderCount;
-      let result = [];
+        x.n = n
+        return x
+      })
+      if (cnt <= this.sliderCount) return images
+      const pos = ((this.sliderCount - 1) / 2) | 0
+      let start = this.selected - pos
+      let end = start + this.sliderCount
+      let result = []
       if (start < 0) {
-        result = [...result, ...images.slice(start)];
+        result = [...result, ...images.slice(start)]
       }
       result = [
         ...result,
         ...images.slice(Math.max(start, 0), Math.min(end, cnt))
-      ];
+      ]
       if (end > cnt) {
-        result = [...result, ...images.slice(0, end - cnt)];
+        result = [...result, ...images.slice(0, end - cnt)]
       }
-      return result;
+      return result
     }
   },
   watch: {
     display: 'load',
-    show(newVal) {
+    show (newVal) {
       if (!newVal) {
-        this.$emit('close');
+        this.$emit('close')
       }
     }
   },
-  mounted() {
-    this.load();
+  mounted () {
+    this.load()
   },
   methods: {
-    imagePath(image) {
+    imagePath (image) {
       return (
         image &&
         (image.src ||
           `${process.env.VUE_APP_IMAGES}${image.business_id}/${image.id}`)
-      );
+      )
     },
-    initProps() {
-      this.show = this.display;
-      this.selected = this.select;
+    initProps () {
+      this.show = this.display
+      this.selected = this.select
     },
-    load() {
-      this.initProps();
-      if (!this.show) return;
+    load () {
+      this.initProps()
+      if (!this.show) return
     }
   }
-};
+}
 </script>
 
 <style scoped>

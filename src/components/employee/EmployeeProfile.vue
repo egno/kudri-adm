@@ -128,42 +128,42 @@
 </template>
 
 <script>
-import { imagePath } from '@/components/gallery/utils';
-import { mapGetters } from 'vuex';
-import PhoneEdit from '@/components/business/PhoneEdit.vue';
-import ImageLoader from '@/components/gallery/ImageLoader.vue';
+import { imagePath } from '@/components/gallery/utils'
+import { mapGetters } from 'vuex'
+import PhoneEdit from '@/components/business/PhoneEdit.vue'
+import ImageLoader from '@/components/gallery/ImageLoader.vue'
 
 export default {
   components: { ImageLoader, PhoneEdit },
   props: {
     item: {
       type: Object,
-      default() {
-        return {};
+      default () {
+        return {}
       }
     }
   },
-  data() {
+  data () {
     return {
       defaultImage: require('@/assets/user.svg')
-    };
+    }
   },
   computed: {
     ...mapGetters(['employeePositions', 'employeeCategories']),
-    imagePath() {
+    imagePath () {
       return (
         imagePath(this.item.j && this.item.j.image, this.item.parent) ||
         this.defaultImage
-      );
+      )
     }
   },
   methods: {
-    onFilesUpload(payload) {
+    onFilesUpload (payload) {
       if (payload && payload[0] && payload[0].path) {
-        this.$emit('onImageUpload', payload[0].path);
+        this.$emit('onImageUpload', payload[0].path)
       }
     },
-    onLoadPhotoClick() {}
+    onLoadPhotoClick () {}
   }
-};
+}
 </script>

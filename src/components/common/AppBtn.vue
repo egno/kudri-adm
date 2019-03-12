@@ -16,11 +16,11 @@ export default {
     primary: { type: Boolean, default: false }
   },
   computed: {
-    color() {
-      return this.primary ? 'primary' : '';
+    color () {
+      return this.primary ? 'primary' : ''
     }
   }
-};
+}
 </script>
 
 

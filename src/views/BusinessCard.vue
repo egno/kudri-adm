@@ -14,40 +14,40 @@
 </template>
 
 <script>
-import BusinessCard from '@/components/business/BusinessCard.vue';
-import BusinessCardEdit from '@/components/business/BusinessCardEdit.vue';
-import { mapActions } from 'vuex';
+import BusinessCard from '@/components/business/BusinessCard.vue'
+import BusinessCardEdit from '@/components/business/BusinessCardEdit.vue'
+import { mapActions } from 'vuex'
 
 export default {
   components: {
     BusinessCard: BusinessCard,
     BusinessCardEdit: BusinessCardEdit
   },
-  data() {
+  data () {
     return {
       data: { data: {} },
       edit: true
-    };
+    }
   },
   computed: {
-    id() {
-      return this.$route.params.id;
+    id () {
+      return this.$route.params.id
     }
   },
   watch: {
     id: 'checkId'
   },
-  mounted() {
-    this.checkId();
-    this.setActions(null);
+  mounted () {
+    this.checkId()
+    this.setActions(null)
   },
   methods: {
     ...mapActions(['setActions']),
-    checkId() {
+    checkId () {
       if (this.id === 'new') {
-        this.edit = true;
+        this.edit = true
       }
     }
   }
-};
+}
 </script>

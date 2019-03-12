@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -54,14 +54,14 @@ export default {
   },
   computed: {
     ...mapGetters(['business']),
-    selected() {
+    selected () {
       return (
         this.images &&
         this.images.length &&
         (Math.random() * this.images.length) | 0
-      );
+      )
     },
-    image() {
+    image () {
       return (
         (this.images &&
           this.images.length &&
@@ -70,18 +70,18 @@ export default {
             this.images[this.selected].id
           }`) ||
         this.placeholder
-      );
+      )
     }
   },
   methods: {
-    showSlider(images) {
+    showSlider (images) {
       this.$emit('showSlider', {
         selected: this.selected,
         images,
         title: this.title,
         subtitle: this.subtitle
-      });
+      })
     }
   }
-};
+}
 </script>

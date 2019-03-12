@@ -53,30 +53,30 @@ export default {
     },
     schedule: {
       type: Object,
-      default() {
-        return { type: 'week', data: [] };
+      default () {
+        return { type: 'week', data: [] }
       }
     }
   },
-  data() {
+  data () {
     return {
       dow: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
-    };
+    }
   },
   computed: {
-    scheduleGroup() {
+    scheduleGroup () {
       return (
         this.schedule &&
         this.schedule.data &&
         this.schedule.data
           .reduce((r, x, i) => {
-            let prev = r[r.length - 1] || [['', '']];
+            let prev = r[r.length - 1] || [['', '']]
             if (!(prev[0][0] === x[0] && prev[0][1] === x[1])) {
-              r.push([x, i, i]);
+              r.push([x, i, i])
             } else {
-              prev[2] = i;
+              prev[2] = i
             }
-            return r;
+            return r
           }, [])
           .map(x => {
             return {
@@ -86,12 +86,12 @@ export default {
                   ? this.dow[x[1]]
                   : `${this.dow[x[1]]}-${this.dow[x[2]]}`,
               works: !!x[0][0]
-            };
+            }
           })
-      );
+      )
     }
   }
-};
+}
 </script>
 
 <style>

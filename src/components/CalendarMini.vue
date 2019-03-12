@@ -45,41 +45,41 @@
 </template>
 
 <script>
-import { periodDates } from '@/components/calendar/utils';
-import Api from '@/api/backend';
+import { periodDates } from '@/components/calendar/utils'
+import Api from '@/api/backend'
 
 export default {
   props: {
     date: { type: String, default: '' },
     format: { type: String, default: 'YYYY-MM-DD' }
   },
-  data() {
+  data () {
     return {
       visits: []
-    };
-  },
-  computed: {
-    dates() {
-      return periodDates(2019, 0);
     }
   },
-  mounted() {
-    this.fetchData();
+  computed: {
+    dates () {
+      return periodDates(2019, 0)
+    }
+  },
+  mounted () {
+    this.fetchData()
   },
   methods: {
-    fetchData() {
+    fetchData () {
       Api()
         .get('visit')
         .then(res => res.data)
         .then(res => {
-          this.visits = res;
-        });
+          this.visits = res
+        })
     },
-    visitCount(dt) {
-      return this.visits.filter(v => v.ts_begin.slice(0, 10) === dt).length;
+    visitCount (dt) {
+      return this.visits.filter(v => v.ts_begin.slice(0, 10) === dt).length
     }
   }
-};
+}
 </script>
 
 

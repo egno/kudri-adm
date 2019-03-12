@@ -126,12 +126,12 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import Api from '@/api/backend';
-import GalleryTiles from '@/components/gallery/GalleryTiles.vue';
-import AppBtn from '@/components/common/AppBtn.vue';
-import AppTabs from '@/components/common/AppTabs.vue';
-import AppCardTitle from '@/components/common/AppCardTitle.vue';
+import { mapGetters } from 'vuex'
+import Api from '@/api/backend'
+import GalleryTiles from '@/components/gallery/GalleryTiles.vue'
+import AppBtn from '@/components/common/AppBtn.vue'
+import AppTabs from '@/components/common/AppTabs.vue'
+import AppCardTitle from '@/components/common/AppCardTitle.vue'
 
 export default {
   components: { AppBtn, AppCardTitle, AppTabs, GalleryTiles },
@@ -141,73 +141,73 @@ export default {
     item: {
       type: Object,
       default: () => {
-        return {};
+        return {}
       }
     }
   },
-  data() {
+  data () {
     return {
       activeTab: 0,
       loading: false,
       selectedService: undefined,
       serviceSearch: '',
       services: []
-    };
+    }
   },
   computed: {
     ...mapGetters(['business', 'serviceGroups']),
-    categories() {
-      return this.serviceGroups;
+    categories () {
+      return this.serviceGroups
     }
   },
   watch: {
     serviceSearch: 'loadServices',
     item: 'load'
   },
-  mounted() {
-    this.load();
+  mounted () {
+    this.load()
   },
   methods: {
-    load() {
-      this.selectedService = this.item.name;
+    load () {
+      this.selectedService = this.item.name
     },
-    loadServices() {
-      if (this.loading) return;
-      this.services = [];
-      let conditions = [];
+    loadServices () {
+      if (this.loading) return
+      this.services = []
+      let conditions = []
       if (this.item.group) {
-        conditions.push(`group.eq.${this.item.group}`);
+        conditions.push(`group.eq.${this.item.group}`)
       }
       if (this.serviceSearch) {
-        conditions.push(`name.ilike.*${this.serviceSearch}*`);
+        conditions.push(`name.ilike.*${this.serviceSearch}*`)
       }
-      if (conditions.length === 0) return;
-      this.loading = true;
+      if (conditions.length === 0) return
+      this.loading = true
       Api()
         .get(`service?and=(${conditions.join(',')})`)
         .then(res => res.data)
         .then(res => {
-          this.services = res;
-          this.loading = false;
+          this.services = res
+          this.loading = false
         })
         .catch(() => {
-          this.loading = false;
-        });
+          this.loading = false
+        })
     },
-    onDelete() {
-      this.$emit('onDelete', undefined);
+    onDelete () {
+      this.$emit('onDelete', undefined)
     },
-    onCategoryUpdate() {
-      this.loadServices();
+    onCategoryUpdate () {
+      this.loadServices()
     },
-    onNameUpdate(event) {
-      this.item.group = event && event.group;
+    onNameUpdate (event) {
+      this.item.group = event && event.group
     },
-    onSave() {
-      if (!this.serviceSearch) return;
-      this.item.name = this.serviceSearch;
-      this.$emit('onSave', this.item);
+    onSave () {
+      if (!this.serviceSearch) return
+      this.item.name = this.serviceSearch
+      this.$emit('onSave', this.item)
     }
   }
-};
+}
 </script>

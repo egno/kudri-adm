@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   props: {
@@ -78,12 +78,12 @@ export default {
   },
   methods: {
     ...mapActions(['login', 'logout']),
-    sendLogin() {
-      this.login({ login: this.flogin, pass: this.fpassword });
+    sendLogin () {
+      this.login({ login: this.flogin, pass: this.fpassword })
     },
-    sendLogout() {
-      this.logout();
+    sendLogout () {
+      this.logout()
     }
   }
-};
+}
 </script>

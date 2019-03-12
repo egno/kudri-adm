@@ -106,44 +106,44 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import ServiceCard from '@/components/service/ServiceCard.vue';
-import { serviceInit } from '@/components/business/utils';
-import { fullName } from '@/components/business/utils';
+import { mapGetters } from 'vuex'
+import ServiceCard from '@/components/service/ServiceCard.vue'
+import { serviceInit } from '@/components/business/utils'
+import { fullName } from '@/components/business/utils'
 
 export default {
   components: { ServiceCard },
   props: {
     item: {
       type: Object,
-      default() {
-        return {};
+      default () {
+        return {}
       }
     }
   },
-  data() {
+  data () {
     return {
       newService: undefined,
       searchString: ''
-    };
+    }
   },
   computed: {
     ...mapGetters([]),
-    employeeServices() {
+    employeeServices () {
       return (
         this.item &&
         this.item.j &&
         this.item.j.services.map((x, n) => ({ ...serviceInit(x), ...{ n: n } }))
-      );
+      )
     },
-    employeeServiceGroups() {
+    employeeServiceGroups () {
       return [
         ...new Set(
           this.filteredServices && this.filteredServices.map(x => x.group)
         )
-      ].sort((a, b) => (a < b ? -1 : 1));
+      ].sort((a, b) => (a < b ? -1 : 1))
     },
-    filteredServices() {
+    filteredServices () {
       return this.employeeServices.filter(
         x =>
           !this.searchString ||
@@ -158,40 +158,40 @@ export default {
               -1) ||
           (x.price && x.price == this.searchString) ||
           (x.duration && x.duration == this.searchString)
-      );
+      )
     },
-    fullName() {
-      return fullName(this.item);
+    fullName () {
+      return fullName(this.item)
     }
   },
   methods: {
-    groupServices(group) {
+    groupServices (group) {
       return this.filteredServices.filter(
         x => (!group && !x.group) || group === x.group
-      );
+      )
     },
-    onDelete(n) {
+    onDelete (n) {
       if (n === -1) {
-        this.newService = undefined;
-        return;
+        this.newService = undefined
+        return
       }
-      let services = this.employeeServices;
-      services.splice(n, 1);
-      this.$emit('onSave', services);
+      let services = this.employeeServices
+      services.splice(n, 1)
+      this.$emit('onSave', services)
     },
-    onNew() {
-      this.newService = serviceInit();
+    onNew () {
+      this.newService = serviceInit()
     },
-    onSave(n, payload) {
-      let services = this.employeeServices;
+    onSave (n, payload) {
+      let services = this.employeeServices
       if (n === -1) {
-        services.unshift(this.newService);
-        this.newService = undefined;
+        services.unshift(this.newService)
+        this.newService = undefined
       } else {
-        services.splice(n, 1, payload);
+        services.splice(n, 1, payload)
       }
-      this.$emit('onSave', services);
+      this.$emit('onSave', services)
     }
   }
-};
+}
 </script>

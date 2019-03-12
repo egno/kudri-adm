@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import ServiceCardEdit from '@/components/service/ServiceCardEdit.vue';
+import ServiceCardEdit from '@/components/service/ServiceCardEdit.vue'
 
 export default {
   components: { ServiceCardEdit },
@@ -76,36 +76,36 @@ export default {
     item: {
       type: Object,
       default: () => {
-        return {};
+        return {}
       }
     }
   },
-  data() {
+  data () {
     return {
       edit: false
-    };
+    }
   },
   watch: {
     editMode: 'onInit'
   },
-  mount() {
-    this.onInit();
+  mount () {
+    this.onInit()
   },
   methods: {
-    onInit() {
-      console.log(this.editMode);
-      this.edit = this.editMode;
+    onInit () {
+      console.log(this.editMode)
+      this.edit = this.editMode
     },
-    onDelete() {
-      this.edit = false;
-      this.$emit('onDelete');
+    onDelete () {
+      this.edit = false
+      this.$emit('onDelete')
     },
-    onSave(payload) {
-      this.edit = false;
-      this.$emit('onSave', payload);
+    onSave (payload) {
+      this.edit = false
+      this.$emit('onSave', payload)
     }
   }
-};
+}
 </script>
 
 <style scoped>

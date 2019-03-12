@@ -1,5 +1,5 @@
-import Api from '@/api/backend';
-import { makeAlert } from '@/api/utils';
+import Api from '@/api/backend'
+import { makeAlert } from '@/api/utils'
 
 const state = {
   businessInfo: {},
@@ -13,7 +13,7 @@ const state = {
     'Косметологический кабинет'
   ],
   dayVisits: []
-};
+}
 
 const getters = {
   business: state => state.businessInfo && state.businessInfo.id,
@@ -47,51 +47,51 @@ const getters = {
     state.businessIndividualCategories.includes(getters.businessCategory),
   businessIsSalon: (state, getters) =>
     state.businessCategories.includes(getters.businessCategory)
-};
+}
 
 const mutations = {
-  SET_BUSINESS_INFO(state, payload) {
-    state.businessInfo = payload;
+  SET_BUSINESS_INFO (state, payload) {
+    state.businessInfo = payload
   },
-  SET_DAY_VISITS(state, payload) {
-    state.dayVisits = payload;
+  SET_DAY_VISITS (state, payload) {
+    state.dayVisits = payload
   }
-};
+}
 
 const actions = {
-  loadDayVisits({ commit }, payload) {
-    if (!(payload && payload.month && payload.business)) return;
+  loadDayVisits ({ commit }, payload) {
+    if (!(payload && payload.month && payload.business)) return
     const path = `salon_day_visits?and=(salon_id.eq.${
       payload.business
-    },dt1.eq.${payload.month})`;
+    },dt1.eq.${payload.month})`
     Api()
       .get(path)
       .then(res => res.data)
       .then(res => {
-        commit('SET_DAY_VISITS', res);
+        commit('SET_DAY_VISITS', res)
       })
-      .catch(err => commit('ADD_ALERT', makeAlert(err)));
+      .catch(err => commit('ADD_ALERT', makeAlert(err)))
   },
-  setBusiness({ commit, dispatch }, payload) {
+  setBusiness ({ commit, dispatch }, payload) {
     if (!(payload && payload.length == 36)) {
-      commit('SET_BUSINESS_INFO', {});
-      return;
+      commit('SET_BUSINESS_INFO', {})
+      return
     }
-    const path = `business?id=eq.${payload}`;
+    const path = `business?id=eq.${payload}`
     Api()
       .get(path)
       .then(res => res.data[0])
       .then(res => {
-        commit('SET_BUSINESS_INFO', res);
-        dispatch('loadEmployee', payload);
+        commit('SET_BUSINESS_INFO', res)
+        dispatch('loadEmployee', payload)
       })
-      .catch(err => commit('ADD_ALERT', makeAlert(err)));
+      .catch(err => commit('ADD_ALERT', makeAlert(err)))
   }
-};
+}
 
 export default {
   state,
   getters,
   actions,
   mutations
-};
+}

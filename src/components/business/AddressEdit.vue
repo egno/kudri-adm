@@ -19,7 +19,7 @@
 
 
 <script>
-import AddressMap from '@/components/yandex/AddressMap.vue';
+import AddressMap from '@/components/yandex/AddressMap.vue'
 export default {
   components: { AddressMap },
   props: {
@@ -27,22 +27,22 @@ export default {
     label: { type: String, default: undefined },
     prependIcon: { type: String, default: undefined }
   },
-  data() {
+  data () {
     return {
       address: ''
-    };
+    }
   },
   watch: {
     value: 'fetchValue'
   },
-  mounted() {
-    this.fetchValue();
+  mounted () {
+    this.fetchValue()
   },
-  beforeDestroy() {},
+  beforeDestroy () {},
   methods: {
-    fetchValue() {
-      this.address = this.value;
+    fetchValue () {
+      this.address = this.value
     }
   }
-};
+}
 </script>

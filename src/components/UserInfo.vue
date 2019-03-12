@@ -54,86 +54,86 @@
 </template>
 
 <script>
-import UserAvatar from '@/components/avatar/UserAvatar.vue';
-import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue';
-import Api from '@/api/backend';
-import axios from 'axios';
+import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue'
+import Api from '@/api/backend'
+import axios from 'axios'
 
 export default {
   components: {
     VueAvatarEditor: VueAvatarEditor,
     UserAvatar: UserAvatar
   },
-  data() {
+  data () {
     return {
       avatarEdit: false,
       data: { data: {} }
-    };
-  },
-  computed: {
-    avatar() {
-      return this.data.data.avatar;
-    },
-    id() {
-      return this.$route.params.id;
-    },
-    email() {
-      return this.data.data.email;
     }
   },
-  mounted() {
-    this.fetchData();
+  computed: {
+    avatar () {
+      return this.data.data.avatar
+    },
+    id () {
+      return this.$route.params.id
+    },
+    email () {
+      return this.data.data.email
+    }
+  },
+  mounted () {
+    this.fetchData()
   },
   methods: {
-    fetchData() {
+    fetchData () {
       Api()
         .get(`business?id=eq.${this.id}`)
         .then(res => res.data)
         .then(res => res[0])
         .then(res => {
-          this.data = res;
-        });
+          this.data = res
+        })
     },
-    saveImage(img) {
-      this.avatarEdit = false;
-      var blobBin = atob(img.toDataURL().split(',')[1]);
-      var array = [];
+    saveImage (img) {
+      this.avatarEdit = false
+      var blobBin = atob(img.toDataURL().split(',')[1])
+      var array = []
       for (var i = 0; i < blobBin.length; i++) {
-        array.push(blobBin.charCodeAt(i));
+        array.push(blobBin.charCodeAt(i))
       }
-      var file = new Blob([new Uint8Array(array)], { type: 'image/png' });
-      let formData = new FormData();
-      let newFileName = `${this.uuidv4()}.png`;
-      formData.append('file', file, newFileName);
-      let vm = this;
+      var file = new Blob([new Uint8Array(array)], { type: 'image/png' })
+      let formData = new FormData()
+      let newFileName = `${this.uuidv4()}.png`
+      formData.append('file', file, newFileName)
+      let vm = this
       axios
         .post(process.env.VUE_APP_UPLOAD, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         })
-        .then(function() {
-          vm.data.data.avatar = newFileName;
-          console.log('SUCCESS!!');
+        .then(function () {
+          vm.data.data.avatar = newFileName
+          console.log('SUCCESS!!')
         })
         .then(() => vm.sendData())
-        .catch(function() {
-          console.log('FAILURE!!');
-        });
+        .catch(function () {
+          console.log('FAILURE!!')
+        })
     },
-    sendData() {
+    sendData () {
       //this.saveImage();
-      Api().patch(`business?id=eq.${this.id}`, this.data);
+      Api().patch(`business?id=eq.${this.id}`, this.data)
     },
-    uuidv4() {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(
+    uuidv4 () {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (
         c
       ) {
         var r = (Math.random() * 16) | 0,
-          v = c == 'x' ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-      });
+          v = c == 'x' ? r : (r & 0x3) | 0x8
+        return v.toString(16)
+      })
     }
   }
-};
+}
 </script>

@@ -22,7 +22,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       val: null,
       rules: {
@@ -30,29 +30,29 @@ export default {
           this.checkTime(value) ||
           'Время должно быть в промежутке от 00:00 до 23:59'
       }
-    };
+    }
   },
   watch: {
     time: 'loadVal',
   },
-  mounted() {
-    this.loadVal();
+  mounted () {
+    this.loadVal()
   },
   methods: {
-    checkTime(val) {
+    checkTime (val) {
       if (!val) {
-        return true;
+        return true
       }
-      return val.match(/^([01]?[0-9]|2[0-3]):[0-5][0-9]/) !== null;
+      return val.match(/^([01]?[0-9]|2[0-3]):[0-5][0-9]/) !== null
     },
-    loadVal() {
-      this.val = this.time;
+    loadVal () {
+      this.val = this.time
     },
-    onEdit() {
-      this.$emit('onEdit', this.val);
+    onEdit () {
+      this.$emit('onEdit', this.val)
     }
   }
-};
+}
 </script>
 
 <style scoped>

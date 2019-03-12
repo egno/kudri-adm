@@ -68,91 +68,91 @@
 </template>
 
 <script>
-import Album from '@/components/gallery/Album.vue';
-import AlbumSlider from '@/components/gallery/AlbumSlider.vue';
-import UserAvatar from '@/components/avatar/UserAvatar.vue';
-import Api from '@/api/backend';
-import { mapActions } from 'vuex';
+import Album from '@/components/gallery/Album.vue'
+import AlbumSlider from '@/components/gallery/AlbumSlider.vue'
+import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import Api from '@/api/backend'
+import { mapActions } from 'vuex'
 
 export default {
   components: { Album, AlbumSlider, UserAvatar },
-  data() {
+  data () {
     return {
       data: undefined,
       images: [],
       sliderImages: undefined,
       sliderTitle: '',
       selectedImage: 0
-    };
+    }
   },
   computed: {
-    id() {
-      return this.$route && this.$route.params && this.$route.params.employee;
+    id () {
+      return this.$route && this.$route.params && this.$route.params.employee
     },
-    business() {
-      return this.data && this.data.parent;
+    business () {
+      return this.data && this.data.parent
     },
-    services() {
-      return this.data && this.data.j && this.data.j.services;
+    services () {
+      return this.data && this.data.j && this.data.j.services
     },
-    sliderSubTitle() {
-      return this.data && this.data.j && this.data.j.name;
+    sliderSubTitle () {
+      return this.data && this.data.j && this.data.j.name
     }
   },
   watch: {
     id: 'load',
     business: 'loadBusiness'
   },
-  mounted() {
-    this.load();
+  mounted () {
+    this.load()
   },
   methods: {
     ...mapActions(['setBusiness']),
-    load() {
-      if (!this.id) return;
+    load () {
+      if (!this.id) return
       Api()
         .get(`employee?id=eq.${this.id}`)
         .then(res => res.data[0])
         .then(res => {
-          this.data = res;
-          this.loadBusiness(res.parent);
-        });
+          this.data = res
+          this.loadBusiness(res.parent)
+        })
     },
-    loadBusiness() {
-      if (!this.business) return;
-      this.setBusiness(this.business);
+    loadBusiness () {
+      if (!this.business) return
+      this.setBusiness(this.business)
       Api()
         .get(`gallery?employees=cs.{${this.id}}`)
         .then(res => res.data)
         .then(res => {
-          this.images = res;
-        });
+          this.images = res
+        })
     },
-    serviceImages(service) {
+    serviceImages (service) {
       if (service) {
         return (
           this.images &&
           this.images.filter(x => x.services.some(s => s === service))
-        );
+        )
       } else {
         return (
           this.images &&
           this.images.filter(
             x => !x.services.some(s => this.services.some(ss => ss === s))
           )
-        );
+        )
       }
     },
-    onSliderClose() {
-      this.sliderImages = undefined;
-      this.selectedImage = undefined;
-      this.sliderTitle = undefined;
+    onSliderClose () {
+      this.sliderImages = undefined
+      this.selectedImage = undefined
+      this.sliderTitle = undefined
     },
-    showSlider(payload) {
-      this.sliderImages = payload.images;
-      this.selectedImage = payload.selected;
-      this.sliderTitle = payload.title;
+    showSlider (payload) {
+      this.sliderImages = payload.images
+      this.selectedImage = payload.selected
+      this.sliderTitle = payload.title
     }
   }
-};
+}
 </script>

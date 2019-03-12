@@ -58,12 +58,12 @@
 </template>
 
 <script>
-import Api from '@/api/backend';
-import { mapActions } from 'vuex';
-import { formatDate, formatTime, valueDate } from '@/components/calendar/utils';
+import Api from '@/api/backend'
+import { mapActions } from 'vuex'
+import { formatDate, formatTime, valueDate } from '@/components/calendar/utils'
 
 export default {
-  data() {
+  data () {
     return {
       headers: [
         { text: 'Время', value: 'ts' },
@@ -73,76 +73,76 @@ export default {
       data: [],
       pagination: { rowsPerPage: 10 },
       progressQuery: false
-    };
+    }
   },
   computed: {
-    querySearchString() {
+    querySearchString () {
       if (!this.searchString) {
-        return null;
+        return null
       }
       return `or=(j->>email.ilike.*${this.searchString}*,j->>name.ilike.*${
         this.searchString
       }*,j->>inn.ilike.${this.searchString}*,j->>address.ilike.*${
         this.searchString
-      }*)`;
+      }*)`
     }
   },
   watch: {
     pagination: {
-      handler() {
-        this.fetchData();
+      handler () {
+        this.fetchData()
       },
       deep: true
     },
     table: 'fetchData',
     searchString: 'fetchData'
   },
-  mounted() {
-    this.fetchData();
-    this.setActions();
+  mounted () {
+    this.fetchData()
+    this.setActions()
   },
   methods: {
     ...mapActions(['setActions']),
-    fetchData() {
-      this.progressQuery = true;
-      this.data = [];
-      const { sortBy, descending, page, rowsPerPage } = this.pagination;
-      let params = [this.querySearchString];
+    fetchData () {
+      this.progressQuery = true
+      this.data = []
+      const { sortBy, descending, page, rowsPerPage } = this.pagination
+      let params = [this.querySearchString]
       if (sortBy) {
         params.push(
           `order=${sortBy}${descending ? '.desc.nullsfirst' : '.asc.nullslast'}`
-        );
+        )
       }
       if (rowsPerPage > -1) {
-        params.push(`limit=${rowsPerPage}`);
+        params.push(`limit=${rowsPerPage}`)
       }
       if (page > 1) {
-        params.push(`offset=${(page - 1) * rowsPerPage}`);
+        params.push(`offset=${(page - 1) * rowsPerPage}`)
       }
       Api()
         .get(`message?${params.filter(x => !!x).join('&')}`)
         .then(res => {
           if (res.headers && res.headers['content-range']) {
-            const r = res.headers['content-range'].match(/^\d*-\d*\/(\d*)$/);
+            const r = res.headers['content-range'].match(/^\d*-\d*\/(\d*)$/)
             if (r) {
-              this.totalItems = +r[1];
+              this.totalItems = +r[1]
             }
           }
-          return res.data;
+          return res.data
         })
         .then(res => {
-          this.data = res;
-          this.progressQuery = false;
+          this.data = res
+          this.progressQuery = false
         })
         .catch(() => {
-          this.progressQuery = false;
-        });
+          this.progressQuery = false
+        })
     },
-    formatDate(dt) {
-      if (!dt) return;
-      const d = new Date(valueDate(dt));
-      return `${formatDate(d)} ${formatTime(d)}`;
+    formatDate (dt) {
+      if (!dt) return
+      const d = new Date(valueDate(dt))
+      return `${formatDate(d)} ${formatTime(d)}`
     }
   }
-};
+}
 </script>

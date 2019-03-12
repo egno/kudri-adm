@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import AddressLink from '@/components/yandex/AddressLink.vue';
+import AddressLink from '@/components/yandex/AddressLink.vue'
 export default {
   components: { AddressLink },
   props: {
@@ -28,18 +28,18 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       showDetails: false
-    };
+    }
   },
   computed: {
-    addressName() {
+    addressName () {
       if (typeof this.address === 'object') {
-        return this.address.name;
+        return this.address.name
       }
-      return this.address;
+      return this.address
     }
   }
-};
+}
 </script>

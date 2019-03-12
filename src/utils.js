@@ -11,8 +11,8 @@ const businessCards = [
   'employeeCard',
   'employeeFull',
   'employeeGallery'
-];
+]
 
-export function isBusinessRoute(routeName) {
-  return businessCards.some(x => x === routeName);
+export function isBusinessRoute (routeName) {
+  return businessCards.some(x => x === routeName)
 }

@@ -23,9 +23,9 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { mapGetters } from 'vuex';
-import { uuidv4 } from '@/components/utils';
+import axios from 'axios'
+import { mapGetters } from 'vuex'
+import { uuidv4 } from '@/components/utils'
 
 export default {
   props: {
@@ -35,32 +35,32 @@ export default {
     src: { type: String, default: undefined },
     placeHolder: { type: String, default: undefined }
   },
-  data() {
+  data () {
     return {
       fileCount: undefined,
       status: undefined,
       uploadFieldName: 'file'
-    };
+    }
   },
   computed: {
     ...mapGetters(['business'])
   },
   methods: {
-    filesChange(fieldName, fileList) {
-      const formData = new FormData();
-      let fileNames = [];
-      if (!fileList.length) return;
+    filesChange (fieldName, fileList) {
+      const formData = new FormData()
+      let fileNames = []
+      if (!fileList.length) return
       Array.from(Array(fileList.length).keys()).map(x => {
-        const newFile = { file: fileList[x].name, path: uuidv4() };
-        fileNames.push(newFile);
-        formData.append(fieldName, fileList[x], newFile.path);
-      });
-      this.saveImage(formData, fileNames);
+        const newFile = { file: fileList[x].name, path: uuidv4() }
+        fileNames.push(newFile)
+        formData.append(fieldName, fileList[x], newFile.path)
+      })
+      this.saveImage(formData, fileNames)
     },
-    saveImage(formData, fileNames) {
-      this.status = 'process';
-      let vm = this;
-      if (!this.business) return;
+    saveImage (formData, fileNames) {
+      this.status = 'process'
+      let vm = this
+      if (!this.business) return
       axios
         .post(process.env.VUE_APP_UPLOAD, formData, {
           headers: {
@@ -70,17 +70,17 @@ export default {
         })
         .then(res => {
           if (res.status === 200) {
-            this.$emit('onFilesUpload', fileNames);
+            this.$emit('onFilesUpload', fileNames)
           }
         })
         .then(() => {
-          vm.status = '';
+          vm.status = ''
         })
-        .catch(function() {
-          console.log('FAILURE!!');
-          vm.status = '';
-        });
+        .catch(function () {
+          console.log('FAILURE!!')
+          vm.status = ''
+        })
     }
   }
-};
+}
 </script>

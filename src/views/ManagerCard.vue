@@ -13,23 +13,23 @@
 </template>
 
 <script>
-import UserProfile from '@/components/user/UserProfile.vue';
-import { mapActions } from 'vuex';
+import UserProfile from '@/components/user/UserProfile.vue'
+import { mapActions } from 'vuex'
 
 export default {
   components: {
     UserProfile
   },
-  data() {
+  data () {
     return {
       data: null
-    };
+    }
   },
   computed: {},
   watch: {},
-  mounted() {},
+  mounted () {},
   methods: {
     ...mapActions(['setActions'])
   }
-};
+}
 </script>

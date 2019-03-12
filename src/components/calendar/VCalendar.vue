@@ -160,22 +160,22 @@
 </template>
 
 <script>
-import CalendarDayBtn from '@/components/calendar/CalendarDayBtn.vue';
-import CalendarDayCard from '@/components/calendar/CalendarDayCard.vue';
-import CalendarDayColumn from '@/components/calendar/CalendarDayColumn.vue';
-import VisitEdit from '@/components/calendar/VisitEdit.vue';
-import DayScheduleEdit from '@/components/calendar/DayScheduleEdit.vue';
+import CalendarDayBtn from '@/components/calendar/CalendarDayBtn.vue'
+import CalendarDayCard from '@/components/calendar/CalendarDayCard.vue'
+import CalendarDayColumn from '@/components/calendar/CalendarDayColumn.vue'
+import VisitEdit from '@/components/calendar/VisitEdit.vue'
+import DayScheduleEdit from '@/components/calendar/DayScheduleEdit.vue'
 import {
   formatDate,
   getRESTTime,
   monthDates,
   monthDisplay
-} from '@/components/calendar/utils';
-import { visitInit } from '@/components/calendar/utils';
-import { mapActions, mapGetters } from 'vuex';
-import Api from '@/api/backend';
-import router from '@/router';
-import { makeAlert } from '@/api/utils';
+} from '@/components/calendar/utils'
+import { visitInit } from '@/components/calendar/utils'
+import { mapActions, mapGetters } from 'vuex'
+import Api from '@/api/backend'
+import router from '@/router'
+import { makeAlert } from '@/api/utils'
 
 export default {
   components: {
@@ -188,8 +188,8 @@ export default {
   props: {
     employee: {
       type: Array,
-      default() {
-        return [];
+      default () {
+        return []
       }
     },
     newVisit: { type: Boolean, default: false },
@@ -197,7 +197,7 @@ export default {
     period: { type: String, default: 'month' },
     showHeader: { type: Boolean, default: true }
   },
-  data() {
+  data () {
     return {
       currentDay: { dt: '2019-02-01', j: { holiday: false } },
       currentVisit: visitInit(),
@@ -208,7 +208,7 @@ export default {
       timeEdit: false,
       visits: [],
       dow: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
-    };
+    }
   },
   computed: {
     ...mapGetters([
@@ -218,69 +218,69 @@ export default {
       'businessDayVisits',
       'schedule'
     ]),
-    business() {
-      return this.businessInfo && this.businessInfo.id;
+    business () {
+      return this.businessInfo && this.businessInfo.id
     },
-    dateMonthHeader() {
-      const d = new Date(this.workDate);
-      return monthDisplay(d);
+    dateMonthHeader () {
+      const d = new Date(this.workDate)
+      return monthDisplay(d)
     },
-    currentEmployee() {
-      return this.employee[0] || this.business;
+    currentEmployee () {
+      return this.employee[0] || this.business
     },
-    curSchedule() {
+    curSchedule () {
       if (!(this.schedule && this.minDate && this.maxDate)) {
-        return Array(7);
+        return Array(7)
       }
       return this.schedule.filter(
         d => d.dt >= this.minDate.dateKey && d.dt <= this.maxDate.dateKey
-      );
+      )
     },
-    maxDate() {
-      if (!this.dates) return;
-      return this.dates[this.dates.length - 1][6];
+    maxDate () {
+      if (!this.dates) return
+      return this.dates[this.dates.length - 1][6]
     },
-    minDate() {
-      if (!this.dates) return;
-      return this.dates[0][0];
+    minDate () {
+      if (!this.dates) return
+      return this.dates[0][0]
     },
-    showTimes() {
+    showTimes () {
       if (!this.curSchedule) {
-        return ['', ''];
+        return ['', '']
       }
       const workTimes = this.curSchedule
         .map(d => d.j.schedule || ['', ''])
         .reduce(
           (res, cur) => {
             if (cur[0] && (res[0] || cur[0]) >= cur[0]) {
-              res[0] = cur[0];
+              res[0] = cur[0]
             }
             if (res[1] < cur[1]) {
-              res[1] = cur[1];
+              res[1] = cur[1]
             }
-            return res;
+            return res
           },
           ['', '']
-        );
+        )
       if (!this.visits) {
-        return workTimes;
+        return workTimes
       }
       const visitTimes = this.visits
         .map(x => {
-          return [getRESTTime(x.ts_begin), getRESTTime(x.ts_end)];
+          return [getRESTTime(x.ts_begin), getRESTTime(x.ts_end)]
         })
         .reduce(
           (res, cur) => {
             if (cur[0] && (res[0] || cur[0]) >= cur[0]) {
-              res[0] = cur[0];
+              res[0] = cur[0]
             }
             if (res[1] < cur[1]) {
-              res[1] = cur[1];
+              res[1] = cur[1]
             }
-            return res;
+            return res
           },
           ['', '']
-        );
+        )
       return [
         workTimes[0] > (visitTimes[0] || workTimes[0])
           ? visitTimes[0]
@@ -288,16 +288,16 @@ export default {
         (workTimes[1] || visitTimes[1]) < visitTimes[1]
           ? visitTimes[1]
           : workTimes[1]
-      ];
+      ]
     },
-    workDate() {
-      return this.$route.params.date || this.actualDate;
+    workDate () {
+      return this.$route.params.date || this.actualDate
     },
-    workMonth() {
-      return +this.workDate.slice(5, 7) - 1;
+    workMonth () {
+      return +this.workDate.slice(5, 7) - 1
     },
-    workYear() {
-      return +this.workDate.slice(0, 4);
+    workYear () {
+      return +this.workDate.slice(0, 4)
     }
   },
   watch: {
@@ -305,46 +305,46 @@ export default {
     newVisit: 'onNewVisit',
     edit: 'onCloseEdit'
   },
-  mounted() {
-    this.fetchData();
-    this.setDates(); //это для мока
+  mounted () {
+    this.fetchData()
+    this.setDates() //это для мока
   },
   methods: {
     ...mapActions(['alert', 'loadCalendar', 'setActualDate']),
-    addMonth(i) {
-      let dt = new Date(this.actualDate);
-      dt.setMonth(dt.getMonth() + i);
-      this.goDate(formatDate(dt));
+    addMonth (i) {
+      let dt = new Date(this.actualDate)
+      dt.setMonth(dt.getMonth() + i)
+      this.goDate(formatDate(dt))
     },
-    getBusinessDayVisits(dt) {
+    getBusinessDayVisits (dt) {
       const cnt =
         this.businessDayVisits &&
         this.businessDayVisits.filter(x => x.dt === dt)[0] &&
-        this.businessDayVisits.filter(x => x.dt === dt)[0].count;
-      return cnt;
+        this.businessDayVisits.filter(x => x.dt === dt)[0].count
+      return cnt
     },
-    getDateSchedule(dt) {
-      if (!this.curSchedule) return;
-      const d = this.curSchedule.filter(d => d.dt === dt)[0];
-      return d && d.j && d.j.schedule;
+    getDateSchedule (dt) {
+      if (!this.curSchedule) return
+      const d = this.curSchedule.filter(d => d.dt === dt)[0]
+      return d && d.j && d.j.schedule
     },
-    fetchData() {
-      if (!this.business) return;
+    fetchData () {
+      if (!this.business) return
       if (this.workDate) {
-        this.setActualDate(this.workDate);
+        this.setActualDate(this.workDate)
       }
-      const path = `visit?salon_id=eq.${this.business}`;
+      const path = `visit?salon_id=eq.${this.business}`
       Api()
         .get(path)
         .then(res => res.data)
         .then(res => {
-          this.visits = res;
-          this.setDateVisits();
-        });
+          this.visits = res
+          this.setDateVisits()
+        })
     },
-    dayVisits(dt, employee) {
+    dayVisits (dt, employee) {
       if (!this.visits.length) {
-        return [];
+        return []
       }
       return this.visits
         .filter(
@@ -356,139 +356,139 @@ export default {
         )
         .sort((a, b) => (a.ts_begin < b.ts_begin ? -1 : 1))
         .map(x => {
-          let ts1 = new Date(x.ts_begin);
-          let ts2 = new Date(x.ts_end);
+          let ts1 = new Date(x.ts_begin)
+          let ts2 = new Date(x.ts_end)
           if (!x.client) {
-            x.client = { services: [] };
+            x.client = { services: [] }
           }
-          x.client.duration = (ts2.getTime() - ts1.getTime()) / 60000;
-          return x;
-        });
+          x.client.duration = (ts2.getTime() - ts1.getTime()) / 60000
+          return x
+        })
     },
-    deleteVisit(id) {
+    deleteVisit (id) {
       Api()
         .delete(`visit?id=eq.${id}`)
         .then(() => {
-          this.fetchData();
-        });
+          this.fetchData()
+        })
     },
-    goDate(dt) {
-      this.setActualDate(dt);
+    goDate (dt) {
+      this.setActualDate(dt)
       router.push({
         name: 'businessVisit',
         params: { id: this.business, date: dt }
-      });
+      })
     },
-    isHoliday(dt) {
+    isHoliday (dt) {
       if (!(this.calendar && this.calendar.filter(d => d.dt === dt).length))
-        return;
-      return this.calendar.filter(d => d.dt === dt)[0].j.holiday;
+        return
+      return this.calendar.filter(d => d.dt === dt)[0].j.holiday
     },
-    onCloseEdit() {
+    onCloseEdit () {
       if (!this.edit) {
-        this.$emit('closeEdit');
-        this.currentVisit = visitInit();
+        this.$emit('closeEdit')
+        this.currentVisit = visitInit()
       }
     },
-    onDayEdit(day) {
-      this.currentDay = day;
-      this.timeEdit = true;
+    onDayEdit (day) {
+      this.currentDay = day
+      this.timeEdit = true
     },
-    onDayScheduleEdit(payload) {
+    onDayScheduleEdit (payload) {
       if (!this.currentDay) {
-        return;
+        return
       }
       if (!this.business) {
-        return;
+        return
       }
-      let dt = this.currentDay.dateKey;
+      let dt = this.currentDay.dateKey
       let data = {
         j: { schedule: payload }
-      };
+      }
       Api()
         .patch(
           `business_calendar?and=(business_id.eq.${this.business},dt.eq.${dt})`,
           data
         )
         .then(() => {
-          this.timeEdit = false;
-          this.currentDay = {};
+          this.timeEdit = false
+          this.currentDay = {}
           this.loadCalendar({
             business: this.business,
             dates: [dt, dt]
-          });
-        });
+          })
+        })
     },
-    onDelete() {
-      this.edit = false;
-      this.sendData();
+    onDelete () {
+      this.edit = false
+      this.sendData()
     },
-    onNewVisit() {
+    onNewVisit () {
       if (this.newVisit) {
-        this.currentVisit = visitInit();
-        this.edit = true;
+        this.currentVisit = visitInit()
+        this.edit = true
       }
     },
-    onVisitSave(i, payload) {
-      this.editVisitPage = undefined;
+    onVisitSave (i, payload) {
+      this.editVisitPage = undefined
       this.sendData(payload)
         .then(() => {
-          this.edit = false;
+          this.edit = false
         })
         .catch(err => {
-          this.alert(makeAlert(err));
+          this.alert(makeAlert(err))
           if (
             err.response &&
             err.response.data &&
             err.response.data.code === '23P01'
           ) {
-            this.editVisitPage = 1;
+            this.editVisitPage = 1
           }
-        });
+        })
     },
-    onTimeBlockClick(date) {
-      this.currentVisit = visitInit();
-      this.currentVisit.ts_begin = date.toISOString();
-      this.edit = true;
+    onTimeBlockClick (date) {
+      this.currentVisit = visitInit()
+      this.currentVisit.ts_begin = date.toISOString()
+      this.edit = true
     },
-    onVisitDelete(item) {
-      this.deleteVisit(item);
+    onVisitDelete (item) {
+      this.deleteVisit(item)
     },
-    onVisitEdit(item) {
-      this.currentVisit = item;
-      this.edit = true;
+    onVisitEdit (item) {
+      this.currentVisit = item
+      this.edit = true
     },
-    sendData(data) {
+    sendData (data) {
       if (data.id) {
         return Api()
           .patch(`visit?id=eq.${data.id}`, data)
-          .then(() => this.fetchData());
+          .then(() => this.fetchData())
       } else {
         return Api()
           .post('visit', data)
-          .then(() => this.fetchData());
+          .then(() => this.fetchData())
       }
     },
-    setDates() {
-      this.dates = monthDates(this.workYear, this.workMonth);
+    setDates () {
+      this.dates = monthDates(this.workYear, this.workMonth)
       if (this.period === 'week') {
         this.dates = this.dates.filter(w =>
           w.some(d => d.dateKey === this.workDate)
-        );
+        )
       }
     },
-    setDateVisits() {
-      this.setDates();
+    setDateVisits () {
+      this.setDates()
       this.dates = this.dates.map(w => {
         w = w.map(x => {
-          x.visits = this.dayVisits(x.dateKey, this.business);
-          return x;
-        });
-        return w;
-      });
+          x.visits = this.dayVisits(x.dateKey, this.business)
+          return x
+        })
+        return w
+      })
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .dow {

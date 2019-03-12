@@ -10,15 +10,15 @@
 </template>
 
 <script>
-import { newClient } from '@/components/client/utils';
+import { newClient } from '@/components/client/utils'
 export default {
   props: {
     client: {
       type: Object,
-      default() {
-        return newClient();
+      default () {
+        return newClient()
       }
     }
   }
-};
+}
 </script>

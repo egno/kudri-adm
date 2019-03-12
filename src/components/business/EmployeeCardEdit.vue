@@ -50,11 +50,11 @@
 </template>
 
 <script>
-import UserAvatar from '@/components/avatar/UserAvatar.vue';
-import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue';
-import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue';
-import axios from 'axios';
-import { businessMixins } from '@/components/business/mixins';
+import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue'
+import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue'
+import axios from 'axios'
+import { businessMixins } from '@/components/business/mixins'
 
 export default {
   components: {
@@ -67,72 +67,72 @@ export default {
     id: { type: String, default: '' },
     item: {
       type: Object,
-      default() {
-        return {};
+      default () {
+        return {}
       }
     }
   },
-  data() {
+  data () {
     return {
       avatarEdit: false,
       data: this.dataPrefill()
-    };
-  },
-  computed: {
-    avatar() {
-      if (this.data.j) {
-        return this.data.j.avatar;
-      }
-      return null;
-    },
-    business() {
-      return this.id;
-    },
-    name() {
-      if (this.data.j) {
-        return this.data.j.name;
-      }
-      return null;
     }
   },
-  mounted() {
-    this.fetchData();
+  computed: {
+    avatar () {
+      if (this.data.j) {
+        return this.data.j.avatar
+      }
+      return null
+    },
+    business () {
+      return this.id
+    },
+    name () {
+      if (this.data.j) {
+        return this.data.j.name
+      }
+      return null
+    }
+  },
+  mounted () {
+    this.fetchData()
   },
   methods: {
-    close() {
-      this.$emit('onEditClose', this.data);
+    close () {
+      this.$emit('onEditClose', this.data)
     },
-    fetchData() {
-      this.data = this.dataPrefill(this.item);
+    fetchData () {
+      this.data = this.dataPrefill(this.item)
     },
-    saveImage(img) {
-      this.avatarEdit = false;
-      var blobBin = atob(img.toDataURL().split(',')[1]);
-      var array = [];
+    saveImage (img) {
+      this.avatarEdit = false
+      var blobBin = atob(img.toDataURL().split(',')[1])
+      var array = []
       for (var i = 0; i < blobBin.length; i++) {
-        array.push(blobBin.charCodeAt(i));
+        array.push(blobBin.charCodeAt(i))
       }
-      var file = new Blob([new Uint8Array(array)], { type: 'image/png' });
-      let formData = new FormData();
-      let newFileName = `${this.uuidv4()}.png`;
-      formData.append('file', file, newFileName);
-      let vm = this;
+      var file = new Blob([new Uint8Array(array)], { type: 'image/png' })
+      let formData = new FormData()
+      let newFileName = `${this.uuidv4()}.png`
+      formData.append('file', file, newFileName)
+      let vm = this
       axios
         .post(process.env.VUE_APP_UPLOAD, formData, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`
           }
         })
-        .then(function() {
-          vm.data.j.avatar = newFileName;
+        .then(function () {
+          vm.data.j.avatar = newFileName
         })
-        .catch(function() {
-          console.log('FAILURE!!');
-        });
+        .catch(function () {
+          console.log('FAILURE!!')
+        })
     },
-    scheduleEdit(payload) {
-      this.data.j.schedule = payload;
+    scheduleEdit (payload) {
+      this.data.j.schedule = payload
     }
   }
-};
+}
 </script>

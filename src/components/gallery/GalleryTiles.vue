@@ -87,10 +87,10 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { mapGetters } from 'vuex';
-import Api from '@/api/backend';
-import { uuidv4 } from '@/components/utils';
+import axios from 'axios'
+import { mapGetters } from 'vuex'
+import Api from '@/api/backend'
+import { uuidv4 } from '@/components/utils'
 
 export default {
   props: {
@@ -103,27 +103,27 @@ export default {
     rows: { type: Number, default: 3 },
     to: { type: Object, default: undefined }
   },
-  data() {
+  data () {
     return {
       full: false,
       data: [],
       index: 0,
       isInitial: true,
       uploadFieldName: 'file'
-    };
+    }
   },
   computed: {
     ...mapGetters(['business']),
-    addPlace() {
+    addPlace () {
       return (
         this.employee && this.service && !this.fixed && this.edit && !this.more
-      );
+      )
     },
-    currentCompany() {
-      return this.company || this.business;
+    currentCompany () {
+      return this.company || this.business
     },
-    currentImages() {
-      if (!this.imagesArray) return;
+    currentImages () {
+      if (!this.imagesArray) return
       if (!this.full) {
         return this.imagesArray.slice(
           0,
@@ -132,28 +132,28 @@ export default {
             (this.edit || this.imagesArray.length !== this.maxImages)
               ? 1
               : 0)
-        );
+        )
       }
-      return this.imagesArray;
+      return this.imagesArray
     },
-    imagesArray() {
+    imagesArray () {
       return (
         this.data &&
         this.business &&
         this.data.map(
           x => `${process.env.VUE_APP_IMAGES}${this.business}/${x.id}`
         )
-      );
+      )
     },
-    maxImages() {
-      return this.rows * 3;
+    maxImages () {
+      return this.rows * 3
     },
-    more() {
+    more () {
       return (
         !this.fixed &&
         this.imagesArray &&
         this.imagesArray.length > this.currentImages.length
-      );
+      )
     }
   },
   watch: {
@@ -163,64 +163,64 @@ export default {
     employee: 'load',
     dervice: 'load'
   },
-  mounted() {
-    this.load();
+  mounted () {
+    this.load()
   },
   methods: {
-    filesChange(fieldName, fileList) {
-      const formData = new FormData();
-      let fileNames = [];
-      if (!fileList.length) return;
+    filesChange (fieldName, fileList) {
+      const formData = new FormData()
+      let fileNames = []
+      if (!fileList.length) return
       Array.from(Array(fileList.length).keys()).map(x => {
-        const newFile = { file: fileList[x].name, path: uuidv4() };
-        fileNames.push(newFile);
-        formData.append(fieldName, fileList[x], newFile.path);
-      });
-      this.saveImage(formData, fileNames);
+        const newFile = { file: fileList[x].name, path: uuidv4() }
+        fileNames.push(newFile)
+        formData.append(fieldName, fileList[x], newFile.path)
+      })
+      this.saveImage(formData, fileNames)
     },
-    load() {
+    load () {
       if (this.images) {
-        this.data = this.images;
-        return;
+        this.data = this.images
+        return
       }
-      if (!this.currentCompany) return;
-      let cond = [`business_id.eq.${this.currentCompany}`];
+      if (!this.currentCompany) return
+      let cond = [`business_id.eq.${this.currentCompany}`]
       if (this.service) {
-        cond.push(`services.cs.{${this.service}}`);
+        cond.push(`services.cs.{${this.service}}`)
       }
       if (this.employee) {
-        cond.push(`employees.cs.{${this.employee}}`);
+        cond.push(`employees.cs.{${this.employee}}`)
       }
-      let filterString = `and=(${cond.join(',')})`;
-      if (!filterString) return;
+      let filterString = `and=(${cond.join(',')})`
+      if (!filterString) return
       if (this.fixed) {
-        filterString = `${filterString}&limit=${this.maxImages}`;
+        filterString = `${filterString}&limit=${this.maxImages}`
       }
-      let vm = this;
+      let vm = this
       Api()
         .get(`gallery?${filterString}`)
         .then(res => res.data)
         .then(res => {
           vm.data = res.map(x => {
-            return { id: x.id, j: x.j };
-          });
-        });
+            return { id: x.id, j: x.j }
+          })
+        })
     },
-    onClickMore() {
+    onClickMore () {
       if (this.to) {
-        this.$router.push(this.to);
+        this.$router.push(this.to)
       } else {
-        this.full = true;
+        this.full = true
       }
     },
-    showSlider(payload) {
-      this.$emit('showSlider', payload);
+    showSlider (payload) {
+      this.$emit('showSlider', payload)
     },
 
-    saveImage(formData, fileNames) {
-      this.isInitial = false;
-      let vm = this;
-      if (!this.business) return;
+    saveImage (formData, fileNames) {
+      this.isInitial = false
+      let vm = this
+      if (!this.business) return
       axios
         .post(process.env.VUE_APP_UPLOAD, formData, {
           headers: {
@@ -229,7 +229,7 @@ export default {
           }
         })
         .then(() => {
-          let url = 'gallery';
+          let url = 'gallery'
           let payload = fileNames.map(x => {
             return {
               id: x.path,
@@ -239,22 +239,22 @@ export default {
                 service: [this.service],
                 employee: [this.employee]
               }
-            };
-          });
+            }
+          })
           Api()
             .post(url, payload)
             .then(() => {
-              vm.data = [...payload, ...vm.data];
-            });
+              vm.data = [...payload, ...vm.data]
+            })
         })
         .then(() => {
-          vm.isInitial = true;
+          vm.isInitial = true
         })
-        .catch(function() {
-          console.log('FAILURE!!');
-          vm.isInitial = true;
-        });
+        .catch(function () {
+          console.log('FAILURE!!')
+          vm.isInitial = true
+        })
     }
   }
-};
+}
 </script>

@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -50,41 +50,41 @@ export default {
     weekend: { type: Boolean, default: false },
     day: {
       type: Object,
-      default() {
-        return {};
+      default () {
+        return {}
       }
     }
   },
-  data() {
+  data () {
     return {
       noWorkingDay: false, //для тултипа в нерабочих днях
       tooltip: false,
       x: 0,
       y: 0,
-    };
+    }
   },
   computed: {
     ...mapGetters(['actualDate', 'calendar']),
-    isDayOff() {
-      return this.holiday;
+    isDayOff () {
+      return this.holiday
     },
-    color() {
-      return this.day.outOfRange ? 'grey' : this.isDayOff ? 'red' : '';
+    color () {
+      return this.day.outOfRange ? 'grey' : this.isDayOff ? 'red' : ''
     }
   },
   methods: {
     move (e) {
-        console.log(51651);
-        console.log(e);
-      this.x = e.x + 10;
+        console.log(51651)
+        console.log(e)
+      this.x = e.x + 10
       this.y = e.y + 20
     },
-    onClickDate(dt) {
-      this.tooltip = true;
-      this.$emit('onClickDate', dt);
+    onClickDate (dt) {
+      this.tooltip = true
+      this.$emit('onClickDate', dt)
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
   .calendar-btn {

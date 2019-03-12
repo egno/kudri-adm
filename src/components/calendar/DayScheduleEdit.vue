@@ -49,56 +49,56 @@
 
 
 <script>
-import PeriodEdit from '@/components/PeriodEdit.vue';
+import PeriodEdit from '@/components/PeriodEdit.vue'
 export default {
   components: { PeriodEdit },
   props: {
     day: { type: Date, default: undefined },
     schedule: {
       type: Array,
-      default() {
-        return ['', ''];
+      default () {
+        return ['', '']
       }
     }
   },
-  data() {
+  data () {
     return {
       scheduleArray: undefined
-    };
+    }
   },
   computed: {
-    displayDate() {
-      return this.day.toLocaleDateString('ru-RU');
+    displayDate () {
+      return this.day.toLocaleDateString('ru-RU')
     },
-    workTime() {
+    workTime () {
       return [
         this.scheduleArray[0],
         this.scheduleArray[this.scheduleArray.length - 1]
-      ];
+      ]
     },
-    timeOff() {
+    timeOff () {
       if (this.scheduleArray.length > 2) {
-        return [this.scheduleArray[1], this.scheduleArray[2]];
+        return [this.scheduleArray[1], this.scheduleArray[2]]
       }
-      return ['', ''];
+      return ['', '']
     }
   },
   watch: {
     schedule: 'load'
   },
-  mounted() {
-    this.load();
+  mounted () {
+    this.load()
   },
   methods: {
-    load() {
-      this.scheduleArray = this.schedule;
+    load () {
+      this.scheduleArray = this.schedule
     },
-    onEditTimeOff(payload) {
+    onEditTimeOff (payload) {
       if (!(payload[0] && payload[1]) && this.scheduleArray.length > 2) {
         this.scheduleArray = [
           this.scheduleArray[0],
           this.scheduleArray[this.scheduleArray.length - 1]
-        ];
+        ]
       }
       if (payload[0] && payload[1]) {
         this.scheduleArray = [
@@ -106,16 +106,16 @@ export default {
           payload[0],
           payload[1],
           this.scheduleArray[this.scheduleArray.length - 1]
-        ];
+        ]
       }
     },
-    onEditWorkTime(payload) {
-      this.scheduleArray[0] = payload[0];
-      this.scheduleArray[this.scheduleArray.length - 1] = payload[1];
+    onEditWorkTime (payload) {
+      this.scheduleArray[0] = payload[0]
+      this.scheduleArray[this.scheduleArray.length - 1] = payload[1]
     },
-    onSave() {
-      this.$emit('onEdit', this.scheduleArray);
+    onSave () {
+      this.$emit('onEdit', this.scheduleArray)
     }
   }
-};
+}
 </script>

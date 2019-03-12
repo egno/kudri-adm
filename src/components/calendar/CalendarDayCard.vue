@@ -18,36 +18,36 @@
 </template>
 
 <script>
-import { getRESTTime } from '@/components/calendar/utils';
-import CalendarVisit from '@/components/calendar/CalendarVisit.vue';
+import { getRESTTime } from '@/components/calendar/utils'
+import CalendarVisit from '@/components/calendar/CalendarVisit.vue'
 
 export default {
   components: { CalendarVisit },
   props: {
     day: {
       type: Object,
-      default() {
-        return {};
+      default () {
+        return {}
       }
     },
     visits: {
       type: Array,
-      default() {
-        return [];
+      default () {
+        return []
       }
     }
   },
-  data() {
-    return {};
+  data () {
+    return {}
   },
   methods: {
-    onClickDate(dt) {
-      this.$emit('onClickDate', dt);
+    onClickDate (dt) {
+      this.$emit('onClickDate', dt)
     },
-    timeFmt(ts) {
-      return getRESTTime(ts);
+    timeFmt (ts) {
+      return getRESTTime(ts)
     }
   }
-};
+}
 </script>
 

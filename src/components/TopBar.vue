@@ -59,18 +59,18 @@
 </template>
 
 <script>
-import ProfileMenu from '@/components/ProfileMenu.vue';
-import Notifications from '@/components/Notifications.vue';
-import router from '@/router';
-import { mapActions, mapGetters } from 'vuex';
-import { isBusinessRoute } from '@/utils';
+import ProfileMenu from '@/components/ProfileMenu.vue'
+import Notifications from '@/components/Notifications.vue'
+import router from '@/router'
+import { mapActions, mapGetters } from 'vuex'
+import { isBusinessRoute } from '@/utils'
 
 export default {
   components: {
     ProfileMenu,
     Notifications
   },
-  data() {
+  data () {
     return {
       searchString: '',
       selectedEmployee: null,
@@ -78,7 +78,7 @@ export default {
       type: 'salon',
       logo:
         'http://files.softicons.com/download/internet-icons/adorable-twitter-icons-by-naldz-graphics/png/128/cute_twitter1.png'
-    };
+    }
   },
   computed: {
     ...mapGetters([
@@ -89,48 +89,48 @@ export default {
       'navigationVisible',
       'userID'
     ]),
-    defaultAction() {
+    defaultAction () {
       if (!(this.actions && Array.isArray(this.actions))) {
-        return;
+        return
       }
-      return this.actions.filter(x => x['default'])[0];
+      return this.actions.filter(x => x['default'])[0]
     },
-    employeeList() {
+    employeeList () {
       return this.employee.map(x => {
-        return { id: x.id, name: x.j.name || '<имя не указано>' };
-      });
+        return { id: x.id, name: x.j.name || '<имя не указано>' }
+      })
     },
-    href() {
+    href () {
       if (this.defaultAction) {
-        return this.defaultAction.href;
+        return this.defaultAction.href
       }
-      return null;
+      return null
     },
-    isBusinessCard() {
-      return isBusinessRoute(this.$route.name);
+    isBusinessCard () {
+      return isBusinessRoute(this.$route.name)
     },
-    isManagerCabinet() {
-      return !this.isBusinessCard;
+    isManagerCabinet () {
+      return !this.isBusinessCard
     },
-    routePath() {
-      return this.$route.path;
+    routePath () {
+      return this.$route.path
     },
-    showEmployee() {
-      const list = ['businessVisit'];
-      return list.some(x => x === this.$route.name) && this.employee.length;
+    showEmployee () {
+      const list = ['businessVisit']
+      return list.some(x => x === this.$route.name) && this.employee.length
     },
-    target() {
+    target () {
       if (this.defaultAction) {
-        return this.defaultAction.target;
+        return this.defaultAction.target
       }
-      return null;
+      return null
     }
   },
   watch: {
     searchString: 'setStoreSearchString'
   },
-  mounted() {
-    this.setStoreSearchString();
+  mounted () {
+    this.setStoreSearchString()
   },
   methods: {
     ...mapActions([
@@ -139,20 +139,20 @@ export default {
       'setNavigationVisible',
       'setSearchString'
     ]),
-    goHome() {
-      router.push({ name: 'home' });
+    goHome () {
+      router.push({ name: 'home' })
     },
-    onDefaultAction() {
-      this.$emit('onAction', this.defaultAction.action);
+    onDefaultAction () {
+      this.$emit('onAction', this.defaultAction.action)
     },
-    onSelectEmployee() {
-      this.$root.$emit('onSelectEmployee', [this.selectedEmployee]);
+    onSelectEmployee () {
+      this.$root.$emit('onSelectEmployee', [this.selectedEmployee])
     },
-    setStoreSearchString() {
-      this.setSearchString(this.searchString);
+    setStoreSearchString () {
+      this.setSearchString(this.searchString)
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .display-4 {

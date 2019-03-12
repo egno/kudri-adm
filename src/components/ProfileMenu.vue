@@ -117,10 +117,10 @@
 </template>
 
 <script>
-import router from '@/router';
-import UserAvatar from '@/components/avatar/UserAvatar.vue';
+import router from '@/router'
+import UserAvatar from '@/components/avatar/UserAvatar.vue'
 
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: { UserAvatar },
@@ -146,7 +146,7 @@ export default {
       userID: 'userLogin',
       userInfo: 'userInfo'
     }),
-    menuList() {
+    menuList () {
       return [
         {
           title: 'Мой профиль',
@@ -168,13 +168,13 @@ export default {
           action: 'logout',
           url: ''
         }
-      ];
+      ]
     },
-    menuWidth() {
-      return this.loggedIn ? '154' : '300';
+    menuWidth () {
+      return this.loggedIn ? '154' : '300'
     },
-    displayName() {
-      if (!this.userID) return;
+    displayName () {
+      if (!this.userID) return
 
       return (
         (this.userInfo &&
@@ -185,52 +185,52 @@ export default {
             ' ' +
             (this.userInfo.data.j.surname || '')) ||
         this.userID
-      );
+      )
     }
   },
   watch: {
-    userInfo(newVal, oldVal) {
+    userInfo (newVal, oldVal) {
       if (
         newVal &&
         newVal.role === 'manager' &&
         newVal.role !== (oldVal && oldVal.role) &&
         this.$route.name === 'home'
       ) {
-        this.$router.push({ name: 'myBusinessList' });
+        this.$router.push({ name: 'myBusinessList' })
       }
     }
   },
   methods: {
     ...mapActions(['login', 'logout', 'openProfileDrawer']),
-    goRestorePassword() {
-      this.menu = false;
-      this.$router.push({ name: 'restorePassword' });
+    goRestorePassword () {
+      this.menu = false
+      this.$router.push({ name: 'restorePassword' })
     },
-    menuHandler(action) {
-      this.menu = false;
+    menuHandler (action) {
+      this.menu = false
       switch (action) {
         case 'logout':
-          this.sendLogout();
-          break;
+          this.sendLogout()
+          break
         case 'drawer':
-          this.openDrawer();
-          break;
+          this.openDrawer()
+          break
         default:
       }
     },
-    sendLogin() {
-      this.login({ login: this.flogin, pass: this.fpassword });
-      this.menu = false;
+    sendLogin () {
+      this.login({ login: this.flogin, pass: this.fpassword })
+      this.menu = false
     },
-    openDrawer() {
-      this.openProfileDrawer();
+    openDrawer () {
+      this.openProfileDrawer()
     },
-    sendLogout() {
-      this.logout();
-      router.push({ name: 'home' });
+    sendLogout () {
+      this.logout()
+      router.push({ name: 'home' })
     }
   }
-};
+}
 </script>
 <style lang="scss">
 .v-menu.profile-menu {

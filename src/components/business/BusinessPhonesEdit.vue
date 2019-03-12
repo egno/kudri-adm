@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import PhoneEdit from '@/components/business/PhoneEdit.vue';
+import PhoneEdit from '@/components/business/PhoneEdit.vue'
 export default {
   components: {
     PhoneEdit
@@ -42,36 +42,36 @@ export default {
     },
     phones: {
       type: Array,
-      default() {
-        return [];
+      default () {
+        return []
       }
     }
   },
-  data() {
+  data () {
     return {
       newPhones: []
-    };
+    }
   },
   computed: {
-    hasEmptyPhone() {
-      return this.newPhones.some(x => !x);
+    hasEmptyPhone () {
+      return this.newPhones.some(x => !x)
     }
   },
   watch: { phones: 'update' },
-  mounted() {
-    this.update();
-    this.newPhones.length === 0 ? this.newPhones.push('') : false;
+  mounted () {
+    this.update()
+    this.newPhones.length === 0 ? this.newPhones.push('') : false
   },
   methods: {
-    onEdit(i, payload) {
-      this.$set(this.newPhones, i, payload);
-      this.$emit('onEdit', this.newPhones);
+    onEdit (i, payload) {
+      this.$set(this.newPhones, i, payload)
+      this.$emit('onEdit', this.newPhones)
     },
-    update() {
-      this.newPhones = this.phones;
+    update () {
+      this.newPhones = this.phones
     }
   }
-};
+}
 </script>
 <style lang="scss">
 .phone-input {

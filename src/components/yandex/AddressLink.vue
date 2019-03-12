@@ -10,37 +10,37 @@
 
 
 <script>
-import * as utils from '@/components/yandex/utils';
+import * as utils from '@/components/yandex/utils'
 
 export default {
   props: {
     address: { type: String, default: null }
   },
-  data() {
+  data () {
     return {
       ymapEventBus: utils.emitter
-    };
+    }
   },
-  mounted() {
+  mounted () {
     if (this.ymapEventBus.scriptIsNotAttached) {
-      const yandexMapScript = document.createElement('SCRIPT');
+      const yandexMapScript = document.createElement('SCRIPT')
       const mapLink =
         this.mapLink ||
-        'https://api-maps.yandex.ru/2.1/?lang=ru_RU&load=Geolink';
-      yandexMapScript.setAttribute('src', mapLink);
-      yandexMapScript.setAttribute('async', '');
-      yandexMapScript.setAttribute('defer', '');
-      document.body.appendChild(yandexMapScript);
-      this.ymapEventBus.scriptIsNotAttached = false;
+        'https://api-maps.yandex.ru/2.1/?lang=ru_RU&load=Geolink'
+      yandexMapScript.setAttribute('src', mapLink)
+      yandexMapScript.setAttribute('async', '')
+      yandexMapScript.setAttribute('defer', '')
+      document.body.appendChild(yandexMapScript)
+      this.ymapEventBus.scriptIsNotAttached = false
       yandexMapScript.onload = () => {
-        this.ymapEventBus.ymapReady = true;
-        this.ymapEventBus.$emit('scriptIsLoaded');
-      };
+        this.ymapEventBus.ymapReady = true
+        this.ymapEventBus.$emit('scriptIsLoaded')
+      }
     }
     if (!this.ymapEventBus.ymapReady) {
-      this.ymapEventBus.$on('scriptIsLoaded', () => {});
+      this.ymapEventBus.$on('scriptIsLoaded', () => {})
     }
   },
-  beforeDestroy() {}
-};
+  beforeDestroy () {}
+}
 </script>

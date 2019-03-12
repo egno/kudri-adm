@@ -100,14 +100,14 @@
 </template>
 
 <script>
-import Api from '@/api/backend';
-import router from '@/router';
-import UserAvatar from '@/components/avatar/UserAvatar.vue';
-import { mapActions, mapGetters } from 'vuex';
+import Api from '@/api/backend'
+import router from '@/router'
+import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   components: { UserAvatar },
-  data() {
+  data () {
     return {
       formActions: [
         {
@@ -132,86 +132,86 @@ export default {
       pagination: { rowsPerPage: 10 },
       progressQuery: false,
       totalItems: 0
-    };
+    }
   },
   computed: {
     ...mapGetters(['loggedIn', 'searchString']),
-    table() {
-      return this.$route.name == 'businessList' ? 'business' : 'my_business';
+    table () {
+      return this.$route.name == 'businessList' ? 'business' : 'my_business'
     },
-    querySearchString() {
+    querySearchString () {
       if (!this.searchString) {
-        return null;
+        return null
       }
       return `or=(j->>email.ilike.*${this.searchString}*,j->>name.ilike.*${
         this.searchString
       }*,j->>inn.ilike.${this.searchString}*,j->>address.ilike.*${
         this.searchString
-      }*)`;
+      }*)`
     }
   },
   watch: {
     pagination: {
-      handler() {
-        this.fetchData();
+      handler () {
+        this.fetchData()
       },
       deep: true
     },
     table: 'fetchData',
     searchString: 'fetchData'
   },
-  mounted() {
-    this.fetchData();
-    this.setActions(this.formActions);
+  mounted () {
+    this.fetchData()
+    this.setActions(this.formActions)
   },
-  destroyed() {
-    this.setActions([]);
+  destroyed () {
+    this.setActions([])
   },
   methods: {
     ...mapActions(['setActions']),
-    editItem(item) {
-      router.push({ name: 'businessCard', params: { id: item.id } });
+    editItem (item) {
+      router.push({ name: 'businessCard', params: { id: item.id } })
     },
-    fetchData() {
-      this.progressQuery = true;
-      this.data = [];
-      const { sortBy, descending, page, rowsPerPage } = this.pagination;
-      let params = [this.querySearchString];
+    fetchData () {
+      this.progressQuery = true
+      this.data = []
+      const { sortBy, descending, page, rowsPerPage } = this.pagination
+      let params = [this.querySearchString]
       if (sortBy) {
         params.push(
           `order=${sortBy}${descending ? '.desc.nullsfirst' : '.asc.nullslast'}`
-        );
+        )
       }
       if (rowsPerPage > -1) {
-        params.push(`limit=${rowsPerPage}`);
+        params.push(`limit=${rowsPerPage}`)
       }
       if (page > 1) {
-        params.push(`offset=${(page - 1) * rowsPerPage}`);
+        params.push(`offset=${(page - 1) * rowsPerPage}`)
       }
       if (this.$route.name == 'myBusinessList') {
-        params.push(`manager_id=not.is.null`);
+        params.push(`manager_id=not.is.null`)
       }
       Api()
         .get(`${this.table}?${params.filter(x => !!x).join('&')}`)
         .then(res => {
           if (res.headers && res.headers['content-range']) {
-            const r = res.headers['content-range'].match(/^\d*-\d*\/(\d*)$/);
+            const r = res.headers['content-range'].match(/^\d*-\d*\/(\d*)$/)
             if (r) {
-              this.totalItems = +r[1];
+              this.totalItems = +r[1]
             }
           }
-          return res.data;
+          return res.data
         })
         .then(res => {
-          this.data = res.filter(x => x.j);
-          this.progressQuery = false;
+          this.data = res.filter(x => x.j)
+          this.progressQuery = false
         })
         .catch(() => {
-          this.progressQuery = false;
-        });
+          this.progressQuery = false
+        })
     }
   }
-};
+}
 </script>
 
 <style >

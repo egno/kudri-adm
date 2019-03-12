@@ -123,19 +123,18 @@
 </template>
 
 <script>
-import { businessMixins } from '@/components/business/mixins';
-import { mapGetters, mapActions } from 'vuex';
-import { makeAlert } from '@/api/utils';
-import { fullName } from '@/components/business/utils';
-import { employeeInit } from '@/components/employee/utils';
-import { responseGetId } from '@/api/utils';
-import Api from '@/api/backend';
-import AppBtn from '@/components/common/AppBtn.vue';
-import AppCardTitle from '@/components/common/AppCardTitle.vue';
-import AppTabs from '@/components/common/AppTabs.vue';
-import EmployeeProfile from '@/components/employee/EmployeeProfile.vue';
-import EmployeeServices from '@/components/employee/EmployeeServices.vue';
-import EmployeeSchedule from '@/components/employee/EmployeeSchedule.vue';
+import { businessMixins } from '@/components/business/mixins'
+import { mapGetters, mapActions } from 'vuex'
+import { makeAlert } from '@/api/utils'
+import { fullName } from '@/components/business/utils'
+import Employee from '@/components/employee/utils'
+import Api from '@/api/backend'
+import AppBtn from '@/components/common/AppBtn.vue'
+import AppCardTitle from '@/components/common/AppCardTitle.vue'
+import AppTabs from '@/components/common/AppTabs.vue'
+import EmployeeProfile from '@/components/employee/EmployeeProfile.vue'
+import EmployeeServices from '@/components/employee/EmployeeServices.vue'
+import EmployeeSchedule from '@/components/employee/EmployeeSchedule.vue'
 
 export default {
   components: {
@@ -147,103 +146,82 @@ export default {
     EmployeeSchedule
   },
   mixins: [businessMixins],
-  data() {
+  data () {
     return {
       activeTab: 0,
       data: undefined,
       dialog: false
-    };
+    }
   },
   computed: {
     ...mapGetters(['business']),
-    fullName() {
-      return fullName(this.data);
+    fullName () {
+      return fullName(this.data)
     }
   },
   watch: {
     id: 'loadBusiness',
     employee_id: 'loadEmployee'
   },
-  mounted() {
-    this.load();
+  mounted () {
+    this.load()
   },
   methods: {
     ...mapActions(['alert', 'setBusiness']),
-    deleteItem() {
+    deleteItem () {
       if (this.employee_id && this.employee_id !== 'new') {
         Api()
           .delete(`employee?id=eq.${this.employee_id}`)
           .then(() => {
-            this.exit();
+            this.exit()
           })
           .catch(err => {
-            this.alert(makeAlert(err));
-          });
+            this.alert(makeAlert(err))
+          })
       } else {
-        this.exit();
+        this.exit()
       }
     },
-    exit() {
-      this.$router.back();
+    exit () {
+      this.$router.back()
     },
-    load() {
-      this.loadBusiness();
-      this.loadEmployee();
+    load () {
+      this.loadBusiness()
+      this.loadEmployee()
     },
-    loadBusiness() {
-      if (!this.id) return;
+    loadBusiness () {
+      if (!this.id) return
       if (this.id !== this.business) {
-        this.setBusiness(this.id);
+        this.setBusiness(this.id)
       }
     },
-    loadEmployee() {
-      if (!this.employee_id) return;
-      if (this.employee_id === 'new') {
-        this.data = employeeInit({ parent: this.id });
-        return;
-      }
-      if (this.data && this.data.id === this.employee_id) return;
-      Api()
-        .get(`employee?id=eq.${this.employee_id}`)
-        .then(res => res.data[0])
-        .then(res => {
-          this.data = this.dataPrefill(res);
-        });
+    loadEmployee () {
+      if (!this.employee_id) return
+      this.data = new Employee(((this.employee_id === 'new') ? { parent: this.id } : {}))
+      if (this.data && this.data.id === this.employee_id) return
+      this.data.load(this.employee_id)
     },
-    onImageUpload(payload) {
-      this.$set(this.data, 'j', { ...this.data.j, ...{ image: payload } });
-      this.save();
+    onImageUpload (payload) {
+      this.data.image = payload
+      this.save()
     },
-    onServiceSave(payload) {
-      this.$set(this.data, 'j', { ...this.data.j, ...{ services: payload } });
-      this.save();
+    onServiceSave (payload) {
+      this.data.services = payload
+      this.save()
     },
-    save() {
-      if (!this.employee_id) return;
-      if (this.employee_id === 'new') {
-        Api()
-          .post(`employee?`, this.data)
-          .then(res => responseGetId(res))
-          .then(id => {
-            this.$router.push({
+    save () {
+      if (!this.employee_id) return
+      this.data.save()
+        .then(id => {
+          if (this.employee_id === 'new') {
+          this.$router.replace({
               name: 'employeeFull',
               params: { id: this.id, employee: id }
-            });
-          })
-          .catch(err => {
-            this.alert(makeAlert(err));
-          });
-        return;
-      }
-      Api()
-        .patch(`employee?id=eq.${this.employee_id}`, this.data)
-        .then(() => {
-          this.alert(makeAlert('Успешно'));
+            })
+          }
         })
-        .catch(err => {
-          this.alert(makeAlert(err));
-        });
+      return
     }
   }
-};
+}
 </script>

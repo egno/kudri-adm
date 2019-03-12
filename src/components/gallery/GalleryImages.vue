@@ -100,10 +100,10 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import ImageCard from '@/components/gallery/ImageCard.vue';
-import { imagePath } from '@/components/gallery/utils';
-import { fullName } from '@/components/business/utils';
+import { mapGetters } from 'vuex'
+import ImageCard from '@/components/gallery/ImageCard.vue'
+import { imagePath } from '@/components/gallery/utils'
+import { fullName } from '@/components/business/utils'
 
 export default {
   components: { ImageCard },
@@ -111,16 +111,16 @@ export default {
     images: { type: Array, default: undefined },
     employeeFilter: { type: String, default: undefined }
   },
-  data() {
+  data () {
     return {
       editMode: false,
       selectedEmployee: [],
       selectedService: []
-    };
+    }
   },
   computed: {
     ...mapGetters(['businessInfo', 'employee']),
-    employees() {
+    employees () {
       return [
         ...new Set(
           this.images &&
@@ -130,17 +130,17 @@ export default {
               .filter(x => !!x)
         )
       ].map(x => {
-        const emp = this.getEmployee(x);
+        const emp = this.getEmployee(x)
         return (
           emp && {
             id: emp.id,
             name: fullName(emp) || emp.id,
             category: emp.j && emp.j.category
           }
-        );
-      });
+        )
+      })
     },
-    selectedImages() {
+    selectedImages () {
       return (
         this.images &&
         this.images
@@ -163,9 +163,9 @@ export default {
             ),
             service: x.services && x.services.filter(e => !!e)[0]
           }))
-      );
+      )
     },
-    services() {
+    services () {
       return [
         ...new Set(
           this.images &&
@@ -174,38 +174,38 @@ export default {
               .flat()
               .filter(x => !!x)
         )
-      ];
+      ]
     }
   },
   watch: {
     employeeFilter: 'load'
   },
-  mounted() {
-    this.load();
+  mounted () {
+    this.load()
   },
   methods: {
-    load() {
-      console.log(this.employeeFilter);
+    load () {
+      console.log(this.employeeFilter)
       if (this.employeeFilter) {
-        this.selectedEmployee = [this.employeeFilter];
+        this.selectedEmployee = [this.employeeFilter]
       }
     },
-    deleteImage(image) {
-      if (!(image && image.id)) return;
-      this.$emit('deleteImage', image.id);
+    deleteImage (image) {
+      if (!(image && image.id)) return
+      this.$emit('deleteImage', image.id)
     },
-    fullName(emp) {
-      return fullName(emp);
+    fullName (emp) {
+      return fullName(emp)
     },
-    getEmployee(id) {
-      return this.employee && this.employee.filter(e => e.id === id)[0];
+    getEmployee (id) {
+      return this.employee && this.employee.filter(e => e.id === id)[0]
     },
-    showSlider(n) {
+    showSlider (n) {
       this.$emit('showSlider', {
         selected: n,
         images: this.selectedImages
-      });
+      })
     }
   }
-};
+}
 </script>

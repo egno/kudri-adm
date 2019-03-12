@@ -1,43 +1,43 @@
-function alert(message, info) {
+function alert (message, info) {
   let a = {
     message: message
-  };
-  if (info) {
-    a.info = info;
   }
-  return a;
+  if (info) {
+    a.info = info
+  }
+  return a
 }
 
-export function makeAlert(err) {
-  console.log(err);
+export function makeAlert (err) {
+  console.log(err)
   if (!err) {
-    return alert('Ой! Что-то пошло не так...');
+    return alert('Ой! Что-то пошло не так...')
   }
   if (typeof err === 'string') {
-    return alert(err);
+    return alert(err)
   }
   if (!err.response) {
-    return alert('Сервер недоступен', err.message);
+    return alert('Сервер недоступен', err.message)
   }
   if (err.response.status === 401) {
-    return;
+    return
   }
   if (err.response.status === 403) {
-    return alert('Неправильный логин или пароль', err.response);
+    return alert('Неправильный логин или пароль', err.response)
   }
   if (err.response.status === 400) {
     if (err.response.data.code === '2F002') {
-      return alert('Недостаточно прав для изменения этой записи', err.response);
+      return alert('Недостаточно прав для изменения этой записи', err.response)
     }
     if (err.response.data.code === '23P01') {
-      return alert('Невозможно сохранить. Это время занято', err.response);
+      return alert('Невозможно сохранить. Это время занято', err.response)
     }
-    return alert(err.response.data.message, err.response);
+    return alert(err.response.data.message, err.response)
   }
-  return alert(err.message, err.response);
+  return alert(err.message, err.response)
 }
 
-export function responseGetId(res) {
-  if (!(res && res.headers && res.headers.location)) return;
-  return res.headers.location.split('.')[1];
+export function responseGetId (res) {
+  if (!(res && res.headers && res.headers.location)) return
+  return res.headers.location.split('.')[1]
 }

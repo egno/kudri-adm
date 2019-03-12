@@ -21,12 +21,12 @@
 <script>
 export default {
   filters: {
-    phone(value) {
-      if (!value) return '';
+    phone (value) {
+      if (!value) return ''
       return value.replace(
         /(\d?)(\d{1,3})(\d{1,3})(\d{1,4})$/g,
         '+$1($2)$3-$4'
-      );
+      )
     }
   },
   props: {
@@ -36,20 +36,20 @@ export default {
     },
     phones: {
       type: Array,
-      default() {
-        return [];
+      default () {
+        return []
       }
     },
     title: { type: String, default: 'Тел.' },
     light: { type: Boolean, default: false }
   },
   methods: {
-    phoneLink(value) {
-      if (!value) return '';
-      return `tel:+7${value}`;
+    phoneLink (value) {
+      if (!value) return ''
+      return `tel:+7${value}`
     }
   }
-};
+}
 </script>
 
 <style scoped>

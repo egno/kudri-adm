@@ -12,19 +12,19 @@
 </template>
 
 <script>
-import UserProfileModal from '@/components/user/UserProfileModal.vue';
-import Navigation from '@/components/Navigation.vue';
-import TopBar from '@/components/TopBar.vue';
-import Alerts from '@/components/Alerts.vue';
-import SendMessage from '@/components/SendMessage.vue';
-import router from '@/router';
-import { mapActions, mapGetters } from 'vuex';
+import UserProfileModal from '@/components/user/UserProfileModal.vue'
+import Navigation from '@/components/Navigation.vue'
+import TopBar from '@/components/TopBar.vue'
+import Alerts from '@/components/Alerts.vue'
+import SendMessage from '@/components/SendMessage.vue'
+import router from '@/router'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  metaInfo() {
+  metaInfo () {
     return {
       title: this.title
-    };
+    }
   },
   name: 'App',
   components: {
@@ -34,10 +34,10 @@ export default {
     TopBar,
     UserProfileModal
   },
-  data() {
+  data () {
     return {
       //
-    };
+    }
   },
   computed: {
     ...mapGetters([
@@ -51,34 +51,34 @@ export default {
       'userID',
       'userRole'
     ]),
-    defaultAction() {
+    defaultAction () {
       if (!this.actions) {
-        return;
+        return
       }
-      return this.actions.filter(x => x['default'])[0];
+      return this.actions.filter(x => x['default'])[0]
     },
-    title() {
+    title () {
       if (!this.appTitle) {
-        return 'UNO';
+        return 'UNO'
       }
       if (this.businessName) {
-        return `${this.appTitle}. ${this.businessName}`;
+        return `${this.appTitle}. ${this.businessName}`
       }
       if (this.userRole) {
-        return `${this.appTitle} ${this.userRole}`;
+        return `${this.appTitle} ${this.userRole}`
       }
-      return this.appTitle;
+      return this.appTitle
     }
   },
-  mounted() {
-    this.loadApiTime();
-    this.setActions();
-    this.loadFromStorage();
-    this.loadServiceList();
-    this.loadServiceGroups();
-    this.checkDate();
-    this.loadEmployeeCategories();
-    this.loadEmployeePositions();
+  mounted () {
+    this.loadApiTime()
+    this.setActions()
+    this.loadFromStorage()
+    this.loadServiceList()
+    this.loadServiceGroups()
+    this.checkDate()
+    this.loadEmployeeCategories()
+    this.loadEmployeePositions()
   },
   methods: {
     ...mapActions([
@@ -92,17 +92,17 @@ export default {
       'setActualDate',
       'navBar'
     ]),
-    checkDate() {
-      this.setActualDate();
+    checkDate () {
+      this.setActualDate()
     },
-    goHome() {
-      router.push({ name: 'home' });
+    goHome () {
+      router.push({ name: 'home' })
     },
-    onAction(payload) {
-      this.$root.$emit('onAction', payload);
+    onAction (payload) {
+      this.$root.$emit('onAction', payload)
     }
   }
-};
+}
 </script>
 
 <style lang="scss">

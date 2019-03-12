@@ -95,9 +95,9 @@
 </template>
 
 <script>
-import BusinessPhones from '@/components/business/BusinessPhones.vue';
-import { hashColor } from '@/components/utils';
-import { mapActions, mapGetters } from 'vuex';
+import BusinessPhones from '@/components/business/BusinessPhones.vue'
+import { hashColor } from '@/components/utils'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   components: { BusinessPhones },
@@ -115,53 +115,53 @@ export default {
     selected: { type: Boolean, default: false },
     services: {
       type: Array,
-      default() {
-        return [];
+      default () {
+        return []
       }
     },
     visitor: {
       type: Object,
-      default() {
-        return {};
+      default () {
+        return {}
       }
     }
   },
-  data() {
-    return {};
+  data () {
+    return {}
   },
   computed: {
     ...mapGetters(['selectedVisit']),
-    bgColor() {
+    bgColor () {
       return (
         this.color ||
         (this.name || this.phone || this.email
           ? hashColor(`${this.name}${this.phone}${this.email}`, 30, 40)
           : 'grey')
-      );
+      )
     },
-    actualContainerHight() {
-      return this.isSelected ? '20em' : this.containerHeight || 'em';
+    actualContainerHight () {
+      return this.isSelected ? '20em' : this.containerHeight || 'em'
     },
-    isSelected() {
-      return this.id && this.id === this.selectedVisit;
+    isSelected () {
+      return this.id && this.id === this.selectedVisit
     }
   },
   methods: {
     ...mapActions(['selectVisit']),
-    load() {
-      this.isSelected = this.selected;
+    load () {
+      this.isSelected = this.selected
     },
-    onDelete() {
-      this.$emit('onDelete');
+    onDelete () {
+      this.$emit('onDelete')
     },
-    onEdit() {
-      this.$emit('onEdit');
+    onEdit () {
+      this.$emit('onEdit')
     },
-    onSelect() {
-      this.$emit('unselectOthers');
+    onSelect () {
+      this.$emit('unselectOthers')
     }
   }
-};
+}
 </script>
 
 <style scoped>

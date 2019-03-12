@@ -100,11 +100,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import Api from '@/api/backend';
+import { mapGetters } from 'vuex'
+import Api from '@/api/backend'
 
 export default {
-  data() {
+  data () {
     return {
       email: '',
       repeatEmail: '',
@@ -112,8 +112,8 @@ export default {
       rules: {
         required: value => !!value || 'Обязательно для заполнения.',
         email: value => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          return pattern.test(value) || 'Некорректный e-mail.';
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          return pattern.test(value) || 'Некорректный e-mail.'
         },
         oldMatches: value =>
           !this.oldEmail ||
@@ -125,73 +125,73 @@ export default {
       },
       status: '',
       timeToRepeat: undefined
-    };
+    }
   },
   computed: {
     ...mapGetters(['userID', 'userInfo']),
-    emailRules() {
-      return [this.rules.required, this.rules.email, this.rules.oldMatches];
+    emailRules () {
+      return [this.rules.required, this.rules.email, this.rules.oldMatches]
     },
-    oldEmail() {
+    oldEmail () {
       return (
         this.userInfo && this.userInfo.data && this.userInfo.data.email.trim()
-      );
+      )
     },
-    repeatEmailRules() {
-      return [this.rules.required, this.rules.email, this.rules.repeatMatches];
+    repeatEmailRules () {
+      return [this.rules.required, this.rules.email, this.rules.repeatMatches]
     },
-    success() {
+    success () {
       return (
         !!this.email &&
         !this.emailRules.some(r => r(this.email) !== true) &&
         !!this.repeatEmail &&
         !this.repeatEmailRules.some(r => r(this.repeatEmail) !== true)
-      );
+      )
     },
-    timeDisplay() {
-      if (!this.timeToRepeat) return;
-      return `${this.timeToRepeat} мин`;
+    timeDisplay () {
+      if (!this.timeToRepeat) return
+      return `${this.timeToRepeat} мин`
     }
   },
   watch: {
     response: 'processResponse'
   },
   methods: {
-    clear() {
-      this.status = undefined;
-      this.timeToRepeat = undefined;
+    clear () {
+      this.status = undefined
+      this.timeToRepeat = undefined
     },
-    processResponse() {
-      if (!this.response) return;
-      this.status = this.response.status;
+    processResponse () {
+      if (!this.response) return
+      this.status = this.response.status
       if (this.response.error_code === '22U12') {
-        this.setTime(+this.response.seconds.split(':')[1] + 1);
-        return;
+        this.setTime(+this.response.seconds.split(':')[1] + 1)
+        return
       }
     },
-    save() {
-      if (!this.success) return;
+    save () {
+      if (!this.success) return
       const data = {
         login: this.email.trim(),
         code: null
-      };
+      }
       Api()
         .post('rpc/check_email', data)
         .then(res => res.data)
         .then(res => {
-          this.response = res;
-        });
+          this.response = res
+        })
     },
-    setTime(minutes) {
+    setTime (minutes) {
       if (!minutes) {
-        this.timeToRepeat = undefined;
-        return;
+        this.timeToRepeat = undefined
+        return
       }
-      this.timeToRepeat = minutes;
+      this.timeToRepeat = minutes
       setTimeout(() => {
-        this.setTime(minutes - 1);
-      }, 60 * 1000);
+        this.setTime(minutes - 1)
+      }, 60 * 1000)
     }
   }
-};
+}
 </script>

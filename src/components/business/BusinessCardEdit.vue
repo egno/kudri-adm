@@ -127,16 +127,16 @@
 </template>
 
 <script>
-import UserAvatar from '@/components/avatar/UserAvatar.vue';
-import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue';
-import BusinessPhonesEdit from '@/components/business/BusinessPhonesEdit.vue';
-import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue';
-import AddressAutocomplete from '@/components/yandex/AddressAutocomplete.vue';
-import Api from '@/api/backend';
-import { backendMixins } from '@/api/mixins';
-import { businessMixins } from '@/components/business/mixins';
-import { mapActions, mapGetters } from 'vuex';
-import { makeAlert } from '@/api/utils';
+import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue'
+import BusinessPhonesEdit from '@/components/business/BusinessPhonesEdit.vue'
+import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue'
+import AddressAutocomplete from '@/components/yandex/AddressAutocomplete.vue'
+import Api from '@/api/backend'
+import { backendMixins } from '@/api/mixins'
+import { businessMixins } from '@/components/business/mixins'
+import { mapActions, mapGetters } from 'vuex'
+import { makeAlert } from '@/api/utils'
 
 export default {
   components: {
@@ -147,7 +147,7 @@ export default {
     VueAvatarEditor
   },
   mixins: [backendMixins, businessMixins],
-  data() {
+  data () {
     return {
       avatarEdit: false,
       categoryDisabled: false,
@@ -163,7 +163,7 @@ export default {
           true
       },
       valid: true
-    };
+    }
   },
   computed: {
     ...mapGetters({
@@ -171,42 +171,42 @@ export default {
       businessCategories: 'businessCategories',
       businessIsIndividual: 'businessIsIndividual'
     }),
-    avatar() {
+    avatar () {
       if (this.data.j) {
-        return this.data.j.avatar;
+        return this.data.j.avatar
       }
-      return null;
+      return null
     },
-    business() {
-      return this.id;
+    business () {
+      return this.id
     },
-    hasAddress() {
+    hasAddress () {
       return !!(
         this.data &&
         this.data.j &&
         this.data.j.address &&
         this.data.j.address.name
-      );
+      )
     },
-    hasName() {
-      return !!(this.data && this.data.j && this.data.j.name);
+    hasName () {
+      return !!(this.data && this.data.j && this.data.j.name)
     },
-    hasPhone() {
+    hasPhone () {
       return !!(
         this.data &&
         this.data.j &&
         this.data.j.phones &&
         this.data.j.phones[0]
-      );
+      )
     },
-    hasINN() {
+    hasINN () {
       return !!(
         this.data &&
         this.data.j &&
         (this.data.j.category === 'Частный мастер' || this.data.j.inn)
-      );
+      )
     },
-    hasSchedule() {
+    hasSchedule () {
       return !!(
         this.data &&
         this.data.j &&
@@ -216,9 +216,9 @@ export default {
           (acc, cur) => acc || (cur && cur.length > 1 && cur[0] && cur[1]),
           false
         )
-      );
+      )
     },
-    hasErrors() {
+    hasErrors () {
       return !(
         this.hasAddress &&
         this.hasName &&
@@ -226,30 +226,30 @@ export default {
         this.hasINN &&
         this.hasSchedule &&
         this.valid
-      );
+      )
     },
-    id() {
-      return this.$route.params.id;
+    id () {
+      return this.$route.params.id
     },
-    name() {
+    name () {
       if (this.data.j) {
-        return this.data.j.name;
+        return this.data.j.name
       }
-      return null;
+      return null
     }
   },
-  mounted() {
-    this.fetchData();
+  mounted () {
+    this.fetchData()
   },
   methods: {
     ...mapActions(['alert']),
-    close() {
-      this.sendData();
+    close () {
+      this.sendData()
     },
-    fetchData() {
+    fetchData () {
       if (this.id === 'new') {
-        this.data = this.dataPrefill();
-        return;
+        this.data = this.dataPrefill()
+        return
       }
       Api()
         .get(`business?id=eq.${this.id}`)
@@ -257,9 +257,9 @@ export default {
         .then(res => res[0])
         .then(res => {
           if (res && !res.access) {
-            this.$emit('onEditClose');
+            this.$emit('onEditClose')
           }
-          this.data = this.dataPrefill(res);
+          this.data = this.dataPrefill(res)
           if (
             !(this.data.j && this.data.j.category) &&
             this.userInfo &&
@@ -267,50 +267,50 @@ export default {
             this.userInfo.data.j &&
             this.userInfo.data.j.category
           ) {
-            this.data.j.category = this.userInfo.data.j.category;
+            this.data.j.category = this.userInfo.data.j.category
           }
           if (this.data.j.category) {
-            this.categoryDisabled = true;
+            this.categoryDisabled = true
           }
-        });
+        })
     },
-    phonesEdit(payload) {
-      this.data.j.phones = payload;
+    phonesEdit (payload) {
+      this.data.j.phones = payload
     },
-    sendData() {
-      this.data.j.phones = this.data.j.phones.filter(x => x > '');
+    sendData () {
+      this.data.j.phones = this.data.j.phones.filter(x => x > '')
       if (this.id === 'new') {
         Api()
           .post(`business`, this.data)
           .then(res => {
-            const newId = this.locationId(res.headers);
-            console.log(newId);
+            const newId = this.locationId(res.headers)
+            console.log(newId)
             if (newId) {
               this.$router.push({
                 name: 'businessCard',
                 params: { id: newId }
-              });
+              })
             }
           })
           .catch(res => {
-            this.alert(makeAlert(res));
-          });
+            this.alert(makeAlert(res))
+          })
       } else {
         Api()
           .patch(`business?id=eq.${this.id}`, this.data)
           .then(() => {
-            this.$emit('onEditClose');
+            this.$emit('onEditClose')
           })
           .catch(res => {
-            this.alert(makeAlert(res));
-          });
+            this.alert(makeAlert(res))
+          })
       }
     },
-    scheduleEdit(payload) {
-      this.data.j.schedule = payload;
+    scheduleEdit (payload) {
+      this.data.j.schedule = payload
     }
   }
-};
+}
 </script>
 <style lang="scss">
 .workmode {

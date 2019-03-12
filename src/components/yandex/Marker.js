@@ -1,4 +1,4 @@
-import { compareValues, emitter } from '@/components/yandex/utils';
+import { compareValues, emitter } from '@/components/yandex/utils'
 
 export default {
   data: () => ({
@@ -21,8 +21,8 @@ export default {
     markerStroke: Object,
     clusterName: String,
     circleRadius: {
-      validator(val) {
-        return !isNaN(val);
+      validator (val) {
+        return !isNaN(val)
       },
       default: 1000
     },
@@ -35,17 +35,17 @@ export default {
     properties: Object,
     options: Object
   },
-  render() {},
-  mounted() {
+  render () {},
+  mounted () {
     for (let prop in this.$props) {
       this.unwatchArr.push(
         this.$watch(prop, (newVal, oldVal) =>
           compareValues(newVal, oldVal, this.ymapEventBus)
         )
-      );
+      )
     }
   },
-  beforeDestroy() {
-    this.unwatchArr.forEach(f => f());
+  beforeDestroy () {
+    this.unwatchArr.forEach(f => f())
   }
-};
+}

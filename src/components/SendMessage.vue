@@ -44,8 +44,8 @@
 </template>
 
 <script>
-import PhoneEdit from '@/components/business/PhoneEdit.vue';
-import { mapActions, mapGetters } from 'vuex';
+import PhoneEdit from '@/components/business/PhoneEdit.vue'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -54,12 +54,12 @@ export default {
   props: {
     edit: { type: Boolean, default: false }
   },
-  data() {
+  data () {
     return {
       active: false,
       message: '',
       contact: ''
-    };
+    }
   },
   computed: {
     ...mapGetters(['userPhone'])
@@ -70,29 +70,29 @@ export default {
   },
   methods: {
     ...mapActions(['closeMessageWindow']),
-    loadData() {
+    loadData () {
       if (this.userPhone) {
-        this.contact = this.userPhone;
+        this.contact = this.userPhone
       }
     },
-    onInput(send) {
-      let payload;
+    onInput (send) {
+      let payload
       if (send && this.message) {
         payload = {
           message: this.message,
           contact: this.contact,
           j: { route: this.$route.fullPath }
-        };
+        }
       }
-      this.closeMessageWindow(payload);
-      this.message = '';
+      this.closeMessageWindow(payload)
+      this.message = ''
     },
-    setActive(val) {
-      this.active = !!val;
+    setActive (val) {
+      this.active = !!val
     }
   },
-  mount() {
-    this.userLogin();
+  mount () {
+    this.userLogin()
   }
-};
+}
 </script>

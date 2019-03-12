@@ -76,11 +76,11 @@
 </template>
 
 <script>
-import BusinessAddress from '@/components/business/BusinessAddress.vue';
-import BusinessPhones from '@/components/business/BusinessPhones.vue';
-import BusinessSchedule from '@/components/business/BusinessSchedule.vue';
-import FilialCardEdit from '@/components/business/FilialCardEdit.vue';
-import UserAvatar from '@/components/avatar/UserAvatar.vue';
+import BusinessAddress from '@/components/business/BusinessAddress.vue'
+import BusinessPhones from '@/components/business/BusinessPhones.vue'
+import BusinessSchedule from '@/components/business/BusinessSchedule.vue'
+import FilialCardEdit from '@/components/business/FilialCardEdit.vue'
+import UserAvatar from '@/components/avatar/UserAvatar.vue'
 
 export default {
   components: {
@@ -94,26 +94,26 @@ export default {
     item: {
       type: Object,
       default: () => {
-        return {};
+        return {}
       }
     }
   },
-  data() {
+  data () {
     return {
       captionClass:
         'caption font-weight-bold text-no-wrap grey--text text--darken-1',
       edit: false
-    };
+    }
   },
   methods: {
-    onDelete() {
-      this.edit = false;
-      this.$emit('onDelete', this.item);
+    onDelete () {
+      this.edit = false
+      this.$emit('onDelete', this.item)
     },
-    onSave(payload) {
-      this.edit = false;
-      this.$emit('onSave', payload);
+    onSave (payload) {
+      this.edit = false
+      this.$emit('onSave', payload)
     }
   }
-};
+}
 </script>

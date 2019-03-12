@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import GalleryTiles from '@/components/gallery/GalleryTiles.vue';
+import GalleryTiles from '@/components/gallery/GalleryTiles.vue'
 export default {
   components: { GalleryTiles },
   props: {
@@ -38,18 +38,18 @@ export default {
     images: { type: Array, default: undefined },
     to: { type: Object, default: undefined }
   },
-  data() {
-    return {};
+  data () {
+    return {}
   },
   methods: {
-    showSlider(payload) {
+    showSlider (payload) {
       this.$emit('showSlider', {
         selected: payload,
         images: this.images,
         title: this.title,
         subtitle: this.subtitle
-      });
+      })
     }
   }
-};
+}
 </script>

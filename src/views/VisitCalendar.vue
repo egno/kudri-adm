@@ -13,13 +13,13 @@
 </template>
 
 <script>
-import VCalendar from '@/components/calendar/VCalendar.vue';
-import { mapActions } from 'vuex';
-import Api from '@/api/backend';
+import VCalendar from '@/components/calendar/VCalendar.vue'
+import { mapActions } from 'vuex'
+import Api from '@/api/backend'
 
 export default {
   components: { VCalendar },
-  data() {
+  data () {
     return {
       businessInfo: {},
       selectedEmployee: [],
@@ -27,46 +27,46 @@ export default {
       formActions: [
         { label: 'Добавить запись', action: 'newVisit', default: true }
       ]
-    };
+    }
   },
   computed: {
-    business() {
-      return this.$route.params.id;
+    business () {
+      return this.$route.params.id
     }
   },
   watch: {
     business: 'fetchData'
   },
-  mounted() {
+  mounted () {
     // TODO проверить, не утекает ли память
-    this.$root.$on('onAction', this.onAction);
-    this.$root.$on('onSelectEmployee', this.onSelectEmployee);
-    this.fetchData();
+    this.$root.$on('onAction', this.onAction)
+    this.$root.$on('onSelectEmployee', this.onSelectEmployee)
+    this.fetchData()
   },
-  beforeDestroy() {
-    this.$root.$off('onAction', this.onAction);
-    this.$root.$off('onSelectEmployee', this.onSelectEmployee);
+  beforeDestroy () {
+    this.$root.$off('onAction', this.onAction)
+    this.$root.$off('onSelectEmployee', this.onSelectEmployee)
   },
   methods: {
     ...mapActions(['setActions', 'setBusiness']),
-    fetchData() {
-      this.setActions(this.formActions);
-      this.setBusiness(this.business);
+    fetchData () {
+      this.setActions(this.formActions)
+      this.setBusiness(this.business)
       Api()
         .get(`business?id=eq.${this.business}`)
         .then(res => res.data)
         .then(res => {
-          this.businessInfo = res[0];
-        });
+          this.businessInfo = res[0]
+        })
     },
-    onAction(payload) {
+    onAction (payload) {
       if (payload === this.formActions[0].action) {
-        this.newVisit = true;
+        this.newVisit = true
       }
     },
-    onSelectEmployee(payload) {
-      this.selectedEmployee = payload;
+    onSelectEmployee (payload) {
+      this.selectedEmployee = payload
     }
   }
-};
+}
 </script>

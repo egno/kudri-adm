@@ -19,32 +19,32 @@ export default {
     label: { type: String, default: 'Телефон' },
     phone: {
       type: String,
-      default() {
-        return '';
+      default () {
+        return ''
       }
     }
   },
-  data() {
+  data () {
     return {
       newPhone: '',
       rules: {
         counter: value => value.length === 10 || 'В номере должно быть 10 цифр'
       }
-    };
+    }
   },
   watch: { phone: 'update' },
-  mounted() {
-    this.update();
+  mounted () {
+    this.update()
   },
   methods: {
-    onEdit() {
-      this.$emit('onEdit', this.newPhone);
+    onEdit () {
+      this.$emit('onEdit', this.newPhone)
     },
-    update() {
-      this.newPhone = this.phone.replace(/(\+?\d?)(\d{10})$/g, '$2');
+    update () {
+      this.newPhone = this.phone.replace(/(\+?\d?)(\d{10})$/g, '$2')
     }
   }
-};
+}
 </script>
 <style lang="scss">
 .select-code {

@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import SocialLink from '@/components/business/SocialLink.vue';
+import SocialLink from '@/components/business/SocialLink.vue'
 
 export default {
   components: {
@@ -19,7 +19,7 @@ export default {
   props: {
     links: { type: Object, default: null }
   },
-  data() {
+  data () {
     return {
       socials: {
         vk: {
@@ -31,7 +31,7 @@ export default {
           icon: 'fa-instagram'
         }
       }
-    };
+    }
   }
-};
+}
 </script>

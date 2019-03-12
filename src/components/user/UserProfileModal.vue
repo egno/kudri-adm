@@ -25,29 +25,29 @@
 </template>
 
 <script>
-import UserProfile from '@/components/user/UserProfile.vue';
-import { mapActions } from 'vuex';
+import UserProfile from '@/components/user/UserProfile.vue'
+import { mapActions } from 'vuex'
 
 export default {
   components: { UserProfile },
   props: {
     show: { type: Boolean, default: false }
   },
-  data() {
+  data () {
     return {
       drawer: false
-    };
+    }
   },
   watch: {
     show: 'setDrawer'
   },
   methods: {
     ...mapActions(['closeProfileDrawer']),
-    setDrawer(val) {
-      this.drawer = !!val;
+    setDrawer (val) {
+      this.drawer = !!val
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

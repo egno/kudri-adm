@@ -74,11 +74,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import Api from '@/api/backend';
+import { mapGetters } from 'vuex'
+import Api from '@/api/backend'
 
 export default {
-  data() {
+  data () {
     return {
       password: '',
       repeatPassword: '',
@@ -92,49 +92,49 @@ export default {
       show1: false,
       show2: false,
       status: ''
-    };
+    }
   },
   computed: {
     ...mapGetters(['userID']),
-    passwordRules() {
-      return [this.rules.required, this.rules.password];
+    passwordRules () {
+      return [this.rules.required, this.rules.password]
     },
-    repeatPasswordRules() {
+    repeatPasswordRules () {
       return [
         this.rules.required,
         this.rules.password,
         this.rules.repeatMatches
-      ];
+      ]
     },
-    success() {
+    success () {
       return (
         !!this.password &&
         !this.passwordRules.some(r => r(this.password) !== true) &&
         !!this.repeatPassword &&
         !this.repeatPasswordRules.some(r => r(this.repeatPassword) !== true)
-      );
+      )
     }
   },
   watch: {
     response: 'processResponse'
   },
   methods: {
-    processResponse() {
-      if (!this.response) return;
-      this.status = this.response.status;
+    processResponse () {
+      if (!this.response) return
+      this.status = this.response.status
     },
-    save() {
-      if (!this.success) return;
+    save () {
+      if (!this.success) return
       const data = {
         pass: this.password
-      };
+      }
       Api()
         .post('rpc/passwd', data)
         .then(res => res.data)
         .then(res => {
-          this.response = res;
-        });
+          this.response = res
+        })
     }
   }
-};
+}
 </script>

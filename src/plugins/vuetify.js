@@ -1,7 +1,7 @@
-import Vue from 'vue';
-import Vuetify from 'vuetify/lib';
-import '../assets/stylus/main.styl';
-import ru from 'vuetify/es5/locale/ru';
+import Vue from 'vue'
+import Vuetify from 'vuetify/lib'
+import '../assets/stylus/main.styl'
+import ru from 'vuetify/es5/locale/ru'
 
 Vue.use(Vuetify, {
   options: {
@@ -17,4 +17,4 @@ Vue.use(Vuetify, {
     secondary: '#343e55',
     accent: '#ef4d37'
   }
-});
+})

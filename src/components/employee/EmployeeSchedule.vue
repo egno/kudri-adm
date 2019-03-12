@@ -8,19 +8,19 @@
 </template>
 
 <script>
-import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue';
+import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue'
 export default {
   components: { BusinessScheduleEdit },
   props: {
     item: {
       type: Object,
-      default() {
-        return {};
+      default () {
+        return {}
       }
     }
   },
   methods: {
-    scheduleEdit() {}
+    scheduleEdit () {}
   }
-};
+}
 </script>

@@ -57,11 +57,11 @@ export default {
     src: { type: String, default: undefined }
   },
   methods: {
-    deleteImage() {
-      this.$emit('deleteImage');
+    deleteImage () {
+      this.$emit('deleteImage')
     }
   }
-};
+}
 </script>
 
 <style scoped>

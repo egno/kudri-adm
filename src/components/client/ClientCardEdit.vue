@@ -105,29 +105,29 @@
 </template>
 
 <script>
-import { newClient } from '@/components/client/utils';
-import AppTabs from '@/components/common/AppTabs.vue';
+import { newClient } from '@/components/client/utils'
+import AppTabs from '@/components/common/AppTabs.vue'
 
 export default {
   components: { AppTabs },
   props: {
     client: {
       type: Object,
-      default() {
-        return newClient();
+      default () {
+        return newClient()
       }
     }
   },
-  data() {
+  data () {
     return {
       active: 0
-    };
+    }
   },
   methods: {
-    onSave() {
-      this.$emit('onSave', this.client);
+    onSave () {
+      this.$emit('onSave', this.client)
     }
   }
-};
+}
 </script>
 

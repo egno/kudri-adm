@@ -91,13 +91,13 @@
 </template>
 
 <script>
-import BusinessAddress from '@/components/business/BusinessAddress.vue';
-import BusinessPhones from '@/components/business/BusinessPhones.vue';
-import BusinessSchedule from '@/components/business/BusinessSchedule.vue';
-import SocialLinks from '@/components/business/SocialLinks.vue';
-import UserAvatar from '@/components/avatar/UserAvatar.vue';
-import Api from '@/api/backend';
-import { businessMixins } from '@/components/business/mixins';
+import BusinessAddress from '@/components/business/BusinessAddress.vue'
+import BusinessPhones from '@/components/business/BusinessPhones.vue'
+import BusinessSchedule from '@/components/business/BusinessSchedule.vue'
+import SocialLinks from '@/components/business/SocialLinks.vue'
+import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import Api from '@/api/backend'
+import { businessMixins } from '@/components/business/mixins'
 
 export default {
   components: {
@@ -111,75 +111,75 @@ export default {
   props: {
     business: {
       type: Object,
-      default() {
-        return {};
+      default () {
+        return {}
       }
     },
     edit: { type: Boolean, default: false }
   },
-  data() {
+  data () {
     return {
       data: {},
       captionClass:
         'caption font-weight-bold text-no-wrap grey--text text--lighten-1'
-    };
+    }
   },
   computed: {
-    address() {
+    address () {
       if (!(this.data && this.data.j)) {
-        return;
+        return
       }
-      return this.data.j.address;
+      return this.data.j.address
     },
-    avatar() {
+    avatar () {
       if (!(this.data && this.data.j)) {
-        return;
+        return
       }
-      return this.data.j.avatar;
+      return this.data.j.avatar
     },
-    category() {
+    category () {
       if (!(this.data && this.data.j)) {
-        return;
+        return
       }
-      return this.data.j.category;
+      return this.data.j.category
     },
-    siteLink() {
+    siteLink () {
       if (!this.data.j.site) {
-        return;
+        return
       }
-      return this.prependHttpToUrl(this.data.j.site);
+      return this.prependHttpToUrl(this.data.j.site)
     },
-    title() {
+    title () {
       if (!(this.data && this.data.j)) {
-        return;
+        return
       }
-      return this.data.j.name;
+      return this.data.j.name
     }
   },
   watch: {
     id: 'fetchData'
   },
-  mounted() {
-    this.fetchData();
+  mounted () {
+    this.fetchData()
   },
   methods: {
-    onEditClick() {
-      this.$emit('onEditClick');
+    onEditClick () {
+      this.$emit('onEditClick')
     },
-    fetchData() {
+    fetchData () {
       if (this.id === 'new') {
-        return;
+        return
       }
       Api()
         .get(`business?id=eq.${this.id}`)
         .then(res => res.data)
         .then(res => res[0])
         .then(res => {
-          this.data = res;
-        });
+          this.data = res
+        })
     }
   }
-};
+}
 </script>
 
 <style>

@@ -21,7 +21,7 @@ export default {
   data: () => ({
     count: 3,
   }),
-};
+}
 </script>
 <style lang="scss">
   .notif {

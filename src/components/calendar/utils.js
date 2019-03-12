@@ -1,113 +1,113 @@
-export function dateInTimeZone(date, tz) {
+export function dateInTimeZone (date, tz) {
   if (!tz) {
-    return date;
+    return date
   }
-  const d = new Date(date);
-  const utc = d.getTime() + d.getTimezoneOffset() * 60000;
-  return new Date(utc + 60000 * tz);
+  const d = new Date(date)
+  const utc = d.getTime() + d.getTimezoneOffset() * 60000
+  return new Date(utc + 60000 * tz)
 }
 
-export function dateInLocalTimeZone(date) {
-  const d = new Date(date);
-  const l = d.getTime() - d.getTimezoneOffset() * 60000;
-  return new Date(l);
+export function dateInLocalTimeZone (date) {
+  const d = new Date(date)
+  const l = d.getTime() - d.getTimezoneOffset() * 60000
+  return new Date(l)
 }
 
-export function fixLocalTimeZone(date, tz) {
+export function fixLocalTimeZone (date, tz) {
   if (!tz) {
-    return date;
+    return date
   }
-  const d = new Date(date);
-  const utc = d.getTime() - d.getTimezoneOffset() * 60000;
-  return new Date(utc - 60000 * tz);
+  const d = new Date(date)
+  const utc = d.getTime() - d.getTimezoneOffset() * 60000
+  return new Date(utc - 60000 * tz)
 }
 
-export function getISOTimeZoneOffset(s) {
-  let t = s.slice(-6);
-  return +(t.slice(0, 1) + '1') * (+t.slice(1, 3) * 60 + +t.slice(-2));
+export function getISOTimeZoneOffset (s) {
+  let t = s.slice(-6)
+  return +(t.slice(0, 1) + '1') * (+t.slice(1, 3) * 60 + +t.slice(-2))
 }
 
-export function valueDate(value) {
-  return value ? Date.parse(value) : undefined;
+export function valueDate (value) {
+  return value ? Date.parse(value) : undefined
 }
 
-export function formatDate(date) {
-  if (!date) return;
-  let d = date;
+export function formatDate (date) {
+  if (!date) return
+  let d = date
   return [
     d.getFullYear(),
     ('0' + (d.getMonth() + 1)).slice(-2),
     ('0' + d.getDate()).slice(-2)
-  ].join('-');
+  ].join('-')
 }
 
-export function formatTime(date) {
-  if (!date) return;
-  let d = date;
+export function formatTime (date) {
+  if (!date) return
+  let d = date
   // console.log(date, d);
   return [
     ('0' + d.getHours()).slice(-2),
     ('0' + d.getMinutes()).slice(-2)
-  ].join(':');
+  ].join(':')
 }
 
-export function areSameDates(date1, date2) {
+export function areSameDates (date1, date2) {
   return (
     date1.getDate() === date2.getDate() &&
     date1.getMonth() === date2.getMonth() &&
     date1.getFullYear() === date2.getFullYear()
-  );
+  )
 }
 
-function chunkArray(inputArray, chunkSize) {
-  const results = [];
+function chunkArray (inputArray, chunkSize) {
+  const results = []
   while (inputArray.length) {
-    results.push(inputArray.splice(0, chunkSize));
+    results.push(inputArray.splice(0, chunkSize))
   }
-  return results;
+  return results
 }
 
-export function getRESTTime(s) {
+export function getRESTTime (s) {
   if (!s) {
-    return;
+    return
   }
-  return s.slice(11, 16);
+  return s.slice(11, 16)
 }
 
-export function monthDates(year, month) {
-  const days = [];
-  const date = new Date(year, month, 1);
-  const today = new Date();
+export function monthDates (year, month) {
+  const days = []
+  const date = new Date(year, month, 1)
+  const today = new Date()
   // append prev month dates
-  const startDay = date.getDay() || 7;
+  const startDay = date.getDay() || 7
   if (startDay > 1) {
     for (let i = startDay - 2; i >= 0; i--) {
-      const prevDate = new Date(date);
-      prevDate.setDate(-i);
-      days.push({ outOfRange: true, date: prevDate });
+      const prevDate = new Date(date)
+      prevDate.setDate(-i)
+      days.push({ outOfRange: true, date: prevDate })
     }
   }
   while (date.getMonth() === month) {
-    days.push({ date: new Date(date) });
-    date.setDate(date.getDate() + 1);
+    days.push({ date: new Date(date) })
+    date.setDate(date.getDate() + 1)
   }
   // append next month dates
-  const daysLeft = 7 - (days.length % 7);
+  const daysLeft = 7 - (days.length % 7)
   for (let i = 1; i <= daysLeft; i++) {
-    const nextDate = new Date(date);
-    nextDate.setDate(i);
-    days.push({ outOfRange: true, date: nextDate });
+    const nextDate = new Date(date)
+    nextDate.setDate(i)
+    days.push({ outOfRange: true, date: nextDate })
   }
   // define day states
   days.forEach(day => {
-    day.today = areSameDates(day.date, today);
-    day.display = day.date.getDate();
-    day.dateKey = formatDate(day.date);
-  });
-  return chunkArray(days, 7);
+    day.today = areSameDates(day.date, today)
+    day.display = day.date.getDate()
+    day.dateKey = formatDate(day.date)
+  })
+  return chunkArray(days, 7)
 }
 
-export function visitInit(visit) {
+export function visitInit (visit) {
   return {
     ...{
       business_id: null,
@@ -120,10 +120,10 @@ export function visitInit(visit) {
       ts_end: null
     },
     ...visit
-  };
+  }
 }
 
-export function dowDisplay(dt, format = 0) {
+export function dowDisplay (dt, format = 0) {
   const dow = [
     ['воскресенье', 'вс'],
     ['понедельник', 'пн'],
@@ -132,10 +132,10 @@ export function dowDisplay(dt, format = 0) {
     ['четверг', 'чт'],
     ['пятница', 'пт'],
     ['суббота', 'сб']
-  ];
-  return dow[dt.getDay()][format];
+  ]
+  return dow[dt.getDay()][format]
 }
 
-export function monthDisplay(dt) {
-  return dt.toLocaleString('ru-RU', { month: 'long' }) + ' ' + dt.getFullYear();
+export function monthDisplay (dt) {
+  return dt.toLocaleString('ru-RU', { month: 'long' }) + ' ' + dt.getFullYear()
 }

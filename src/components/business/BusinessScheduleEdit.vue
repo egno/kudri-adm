@@ -33,15 +33,15 @@
 </template>
 
 <script>
-import PeriodEdit from '@/components/PeriodEdit.vue';
-import _ from 'lodash';
+import PeriodEdit from '@/components/PeriodEdit.vue'
+import _ from 'lodash'
 
 export default {
   components: { PeriodEdit },
   props: {
     schedule: {
       type: Object,
-      default() {
+      default () {
         return {
           type: 'week',
           data: [
@@ -53,11 +53,11 @@ export default {
             ['', ''],
             ['', '']
           ]
-        };
+        }
       }
     }
   },
-  data() {
+  data () {
     return {
       dow: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
       modes: [],
@@ -70,72 +70,72 @@ export default {
         ['', ''],
         ['', '']
       ]
-    };
+    }
   },
   computed: {
-    addButton() {
-      if (_.findIndex(this.modes, function(o) { return o[0] === '' && o[1] === '' || o[0] === null || o[1] === null }) === -1) {
+    addButton () {
+      if (_.findIndex(this.modes, function (o) { return o[0] === '' && o[1] === '' || o[0] === null || o[1] === null }) === -1) {
         return true
       } else {
         return false
       }
     },
-    modesIndexes() {
-      let indexes = [];
+    modesIndexes () {
+      let indexes = []
       for (let i = 0; i < this.modes.length; i++) {
-        let item = this.modes[i].join('');
-        let index = this.getAllIndexes(this.schedule.data, item);
-        indexes.push(index);
+        let item = this.modes[i].join('')
+        let index = this.getAllIndexes(this.schedule.data, item)
+        indexes.push(index)
       }
-      return indexes;
+      return indexes
     }
   },
-  mounted() {
-    this.modes = _.uniqBy(this.schedule.data, function(e) {
-      return [e[0], e[1]].join();
-    });
-    this.modes = _.remove(this.modes, function(n) {
-      return n[0] !== '';
-    });
+  mounted () {
+    this.modes = _.uniqBy(this.schedule.data, function (e) {
+      return [e[0], e[1]].join()
+    })
+    this.modes = _.remove(this.modes, function (n) {
+      return n[0] !== ''
+    })
   },
   methods: {
-    addMode() {
-      if (_.findIndex(this.modes, function(o) { return o[0] === '' && o[1] === '' || o[0] === null || o[1] === null }) === -1) {
-        this.modes.push([null, null]);
+    addMode () {
+      if (_.findIndex(this.modes, function (o) { return o[0] === '' && o[1] === '' || o[0] === null || o[1] === null }) === -1) {
+        this.modes.push([null, null])
       }
     },
-    getAllIndexes(arr, val) {
-      let arrString = [];
-      arr.forEach(function(element) {
-        arrString.push(element.join(''));
-      });
+    getAllIndexes (arr, val) {
+      let arrString = []
+      arr.forEach(function (element) {
+        arrString.push(element.join(''))
+      })
       let indexes = [],
-        i = -1;
+        i = -1
       while ((i = arrString.indexOf(val, i + 1)) !== -1) {
-        indexes.push(i);
+        indexes.push(i)
       }
-      return indexes;
+      return indexes
     },
-    selectDay(i, payload) {
-      let p = payload[0];
-      this.$set(this.schedule.data, p, [payload[1], payload[2]]);
-      this.$emit('onEdit', this.schedule);
+    selectDay (i, payload) {
+      let p = payload[0]
+      this.$set(this.schedule.data, p, [payload[1], payload[2]])
+      this.$emit('onEdit', this.schedule)
     },
-    onEdit(i, payload) {
-      let indexes = this.modesIndexes[i];
+    onEdit (i, payload) {
+      let indexes = this.modesIndexes[i]
       indexes.forEach(el => {
-        this.$set(this.schedule.data, el, payload);
-      });
-      this.$emit('onEdit', this.schedule);
-      this.modes = _.uniqBy(this.schedule.data, function(e) {
-        return [e[0], e[1]].join();
-      });
-      this.modes = _.remove(this.modes, function(n) {
-        return n[0] !== '';
-      });
+        this.$set(this.schedule.data, el, payload)
+      })
+      this.$emit('onEdit', this.schedule)
+      this.modes = _.uniqBy(this.schedule.data, function (e) {
+        return [e[0], e[1]].join()
+      })
+      this.modes = _.remove(this.modes, function (n) {
+        return n[0] !== ''
+      })
     }
   }
-};
+}
 </script>
 <style lang="scss">
   .add-workmode {

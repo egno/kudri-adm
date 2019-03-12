@@ -161,11 +161,11 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
-import Api from '@/api/backend';
+import { mapGetters, mapActions } from 'vuex'
+import Api from '@/api/backend'
 
 export default {
-  data() {
+  data () {
     return {
       code: null,
       counter: undefined,
@@ -174,13 +174,13 @@ export default {
       response: undefined,
       rules: {
         code: value => {
-          const pattern = /^\d{4}$/;
-          return pattern.test(value) || 'Некорректный код подтверждения.';
+          const pattern = /^\d{4}$/
+          return pattern.test(value) || 'Некорректный код подтверждения.'
         },
         required: value => !!value || 'Обязательно для заполнения.',
         phone: value => {
-          const pattern = /^\d{10}$/;
-          return pattern.test(value) || 'Некорректный номер телефона.';
+          const pattern = /^\d{10}$/
+          return pattern.test(value) || 'Некорректный номер телефона.'
         },
         oldMatches: value =>
           !this.oldPhone ||
@@ -189,30 +189,30 @@ export default {
       },
       status: '',
       timeToRepeat: undefined
-    };
+    }
   },
   computed: {
     ...mapGetters(['userID', 'userInfo']),
-    codeRules() {
-      return [this.rules.required, this.rules.code];
+    codeRules () {
+      return [this.rules.required, this.rules.code]
     },
-    phoneRules() {
-      return [this.rules.required, this.rules.phone, this.rules.oldMatches];
+    phoneRules () {
+      return [this.rules.required, this.rules.phone, this.rules.oldMatches]
     },
-    oldPhone() {
+    oldPhone () {
       return (
         this.userInfo && this.userInfo.data && this.userInfo.data.phone.trim()
-      );
+      )
     },
-    success() {
-      return !!this.phone && !this.phoneRules.some(r => r(this.phone) !== true);
+    success () {
+      return !!this.phone && !this.phoneRules.some(r => r(this.phone) !== true)
     },
-    successCode() {
-      return !!this.code && !this.codeRules.some(r => r(this.code) !== true);
+    successCode () {
+      return !!this.code && !this.codeRules.some(r => r(this.code) !== true)
     },
-    timeDisplay() {
-      if (!this.timeToRepeat) return;
-      return `${this.timeToRepeat} мин`;
+    timeDisplay () {
+      if (!this.timeToRepeat) return
+      return `${this.timeToRepeat} мин`
     }
   },
   watch: {
@@ -220,57 +220,57 @@ export default {
   },
   methods: {
     ...mapActions(['loadUserInfo', 'openMessageWindow']),
-    clear() {
-      this.status = undefined;
-      this.timeToRepeat = undefined;
-      this.counter = undefined;
-      this.phone = '';
+    clear () {
+      this.status = undefined
+      this.timeToRepeat = undefined
+      this.counter = undefined
+      this.phone = ''
     },
-    processResponse() {
-      if (!this.response) return;
-      this.status = this.response.status;
+    processResponse () {
+      if (!this.response) return
+      this.status = this.response.status
       if (this.response.error_code === '22U12') {
-        this.setTime(+this.response.seconds.split(':')[1] + 1);
-        return;
+        this.setTime(+this.response.seconds.split(':')[1] + 1)
+        return
       }
       if (this.response.error_code === '22U10') {
-        this.counter = this.response.attempts;
-        return;
+        this.counter = this.response.attempts
+        return
       }
       if (this.response.error_code === '22U11') {
-        this.counter = this.response.attempts;
-        return;
+        this.counter = this.response.attempts
+        return
       }
       if (this.response.error_code === '22U13') {
-        return;
+        return
       }
       if (this.response.status === 'success') {
-        this.loadUserInfo();
+        this.loadUserInfo()
       }
     },
-    save() {
-      if (!this.success) return;
+    save () {
+      if (!this.success) return
       const data = {
         login: this.phone.trim(),
         code: this.code
-      };
+      }
       Api()
         .post('rpc/check_phone', data)
         .then(res => res.data)
         .then(res => {
-          this.response = res;
-        });
+          this.response = res
+        })
     },
-    setTime(minutes) {
+    setTime (minutes) {
       if (!minutes) {
-        this.timeToRepeat = undefined;
-        return;
+        this.timeToRepeat = undefined
+        return
       }
-      this.timeToRepeat = minutes;
+      this.timeToRepeat = minutes
       setTimeout(() => {
-        this.setTime(minutes - 1);
-      }, 60 * 1000);
+        this.setTime(minutes - 1)
+      }, 60 * 1000)
     }
   }
-};
+}
 </script>

@@ -153,15 +153,15 @@
 </template>
 
 <script>
-import PhoneEdit from '@/components/business/PhoneEdit.vue';
-import AppTabs from '@/components/common/AppTabs.vue';
+import PhoneEdit from '@/components/business/PhoneEdit.vue'
+import AppTabs from '@/components/common/AppTabs.vue'
 import {
   dateInLocalTimeZone,
   formatDate,
   formatTime,
   visitInit
-} from '@/components/calendar/utils';
-import { mapGetters } from 'vuex';
+} from '@/components/calendar/utils'
+import { mapGetters } from 'vuex'
 
 export default {
   components: { AppTabs, PhoneEdit },
@@ -169,20 +169,20 @@ export default {
     id: { type: String, default: '' },
     businessInfo: {
       type: Object,
-      default() {
-        return {};
+      default () {
+        return {}
       }
     },
     employee: { type: String, default: '' },
     item: {
       type: Object,
-      default() {
-        return visitInit();
+      default () {
+        return visitInit()
       }
     },
     page: { type: Number, default: null }
   },
-  data() {
+  data () {
     return {
       active: 0,
       buttonCaptions: {
@@ -201,28 +201,28 @@ export default {
         { text: 'Продолжительность', value: 'duration' },
         { text: 'Стоимость', value: 'price' }
       ]
-    };
+    }
   },
   computed: {
     ...mapGetters(['apiTimeZone']),
-    isLastTab() {
-      return this.active === this.tabsLength - 1;
+    isLastTab () {
+      return this.active === this.tabsLength - 1
     },
-    categories() {
-      return [...new Set(this.services.map(x => x.category))];
+    categories () {
+      return [...new Set(this.services.map(x => x.category))]
     },
-    displayClient() {
-      return this.item.client.name || this.item.client.phone;
+    displayClient () {
+      return this.item.client.name || this.item.client.phone
     },
-    displaySelectedTime() {
+    displaySelectedTime () {
       if (!this.selectedDate) {
-        return null;
+        return null
       }
       return `${this.selectedDate} ${
         this.selectedTime ? this.selectedTime : ''
-      }`;
+      }`
     },
-    duration() {
+    duration () {
       return (
         this.item &&
         this.item.client &&
@@ -231,89 +231,89 @@ export default {
           (acc, val) => parseInt(val.duration) || 60,
           0
         )
-      );
+      )
     },
-    filteredServices() {
+    filteredServices () {
       return this.services.filter(
         x =>
           (!this.selectedCategory || x.category === this.selectedCategory) &&
           (!this.serviceFilter ||
             x.name.toUpperCase().indexOf(this.serviceFilter.toUpperCase()) + 1)
-      );
+      )
     },
-    services() {
+    services () {
       if (!(this.businessInfo && this.businessInfo.j)) {
-        return [];
+        return []
       }
       return this.businessInfo.j.services.map(x => {
-        x.category = x.category || this.categoryOthersName;
-        return x;
-      });
+        x.category = x.category || this.categoryOthersName
+        return x
+      })
     },
-    tabButtonCaption() {
+    tabButtonCaption () {
       return this.isLastTab
         ? this.buttonCaptions.save
-        : this.buttonCaptions.next;
+        : this.buttonCaptions.next
     },
-    tz() {
-      return this.apiTimeZone;
+    tz () {
+      return this.apiTimeZone
     }
   },
   watch: {
     item: 'setSelectedValues',
     page: 'setPage'
   },
-  mounted() {
-    this.setSelectedValues();
+  mounted () {
+    this.setSelectedValues()
   },
   methods: {
-    nextTab() {
-      const active = parseInt(this.active);
-      this.active = (active + 1) % this.tabsLength;
+    nextTab () {
+      const active = parseInt(this.active)
+      this.active = (active + 1) % this.tabsLength
     },
-    onNextButton() {
+    onNextButton () {
       if (this.isLastTab) {
-        this.onSave();
+        this.onSave()
       } else {
-        this.nextTab();
+        this.nextTab()
       }
     },
-    onPhoneEdit(payload) {
-      this.item.client.phone = payload;
+    onPhoneEdit (payload) {
+      this.item.client.phone = payload
     },
-    onSave() {
-      const duration = this.duration;
+    onSave () {
+      const duration = this.duration
       const ts1 = dateInLocalTimeZone(
         new Date(`${this.selectedDate} ${this.selectedTime}`)
-      );
-      let ts2 = new Date();
-      ts2.setTime(ts1.getTime() + 60000 * duration);
-      this.item.business_id = this.employee || this.businessInfo.id;
-      this.item.client.duration = duration;
-      this.item.ts_begin = ts1.toJSON().slice(0, -1);
-      this.item.ts_end = ts2.toJSON().slice(0, -1);
-      this.$emit('onSave', this.item);
+      )
+      let ts2 = new Date()
+      ts2.setTime(ts1.getTime() + 60000 * duration)
+      this.item.business_id = this.employee || this.businessInfo.id
+      this.item.client.duration = duration
+      this.item.ts_begin = ts1.toJSON().slice(0, -1)
+      this.item.ts_end = ts2.toJSON().slice(0, -1)
+      this.$emit('onSave', this.item)
     },
-    setPage() {
+    setPage () {
       if (this.page !== undefined) {
-        this.active = this.page;
-        this.message = 'На это время записаться нельзя. Выберите другое время';
+        this.active = this.page
+        this.message = 'На это время записаться нельзя. Выберите другое время'
       }
     },
-    setSelectedValues() {
+    setSelectedValues () {
       // console.log(this.tz);
       if (this.item.ts_begin) {
-        let ts1 = new Date(this.item.ts_begin);
-        this.selectedDate = formatDate(ts1);
-        this.selectedTime = formatTime(ts1);
+        let ts1 = new Date(this.item.ts_begin)
+        this.selectedDate = formatDate(ts1)
+        this.selectedTime = formatTime(ts1)
       } else {
-        this.selectedDate = '';
-        this.selectedTime = '';
+        this.selectedDate = ''
+        this.selectedTime = ''
       }
-      this.active = 0;
+      this.active = 0
     }
   }
-};
+}
 </script>
 
 <style>

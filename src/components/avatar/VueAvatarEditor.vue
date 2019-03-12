@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import VueAvatar from './VueAvatar.vue';
+import VueAvatar from './VueAvatar.vue'
 
 export default {
   components: {
@@ -121,23 +121,23 @@ export default {
       default: () => [0, 0, 0, 0.5]
     }
   },
-  data() {
+  data () {
     return {
       rotation: 0,
       scale: 0
-    };
+    }
   },
   methods: {
-    onSelectFile(files) {
-      this.$emit('select-file', files);
+    onSelectFile (files) {
+      this.$emit('select-file', files)
     },
-    onImageReady() {
-      this.scale = 1;
-      this.rotation = 0;
+    onImageReady () {
+      this.scale = 1
+      this.rotation = 0
     },
-    finished() {
-      return this.$emit('finished', this.$refs.vueavatar.getImageScaled());
+    finished () {
+      return this.$emit('finished', this.$refs.vueavatar.getImageScaled())
     }
   }
-};
+}
 </script>

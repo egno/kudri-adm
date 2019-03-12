@@ -23,9 +23,9 @@
 </template>
 
 <script>
-import Api from '@/api/backend';
-import FilialCard from '@/components/business/FilialCard.vue';
-import { mapActions } from 'vuex';
+import Api from '@/api/backend'
+import FilialCard from '@/components/business/FilialCard.vue'
+import { mapActions } from 'vuex'
 
 export default {
   params: {
@@ -33,7 +33,7 @@ export default {
     search: { type: String, default: '' }
   },
   components: { FilialCard },
-  data() {
+  data () {
     return {
       formActions: [
         {
@@ -44,44 +44,44 @@ export default {
       ],
       edit: false,
       data: {}
-    };
-  },
-  computed: {
-    id() {
-      return this.$route.params.id;
     }
   },
-  mounted() {
-    this.fetchData();
-    this.setActions(this.formActions);
-    this.$root.$on('onAction', this.onAction);
+  computed: {
+    id () {
+      return this.$route.params.id
+    }
   },
-  beforeDestroy() {
-    this.$root.$off('onAction', this.onAction);
+  mounted () {
+    this.fetchData()
+    this.setActions(this.formActions)
+    this.$root.$on('onAction', this.onAction)
+  },
+  beforeDestroy () {
+    this.$root.$off('onAction', this.onAction)
   },
   methods: {
     ...mapActions(['setActions']),
-    fetchData() {
+    fetchData () {
       Api()
         .get(`filial?parent=eq.${this.id}`)
         .then(res => res.data)
         .then(res => {
-          this.data = res;
-        });
+          this.data = res
+        })
     },
-    onAction(payload) {
+    onAction (payload) {
       if (payload === this.formActions[0].action) {
-        this.data.push({ access: true, j: {} });
+        this.data.push({ access: true, j: {} })
       }
     },
-    onSave(payload) {
-      this.sendData(payload);
+    onSave (payload) {
+      this.sendData(payload)
     },
-    sendData(data) {
-      data.j.phones = data.j.phones.filter(x => x > '');
-      data.parent = this.id;
+    sendData (data) {
+      data.j.phones = data.j.phones.filter(x => x > '')
+      data.parent = this.id
       if (!data.id) {
-        Api().post(`filial`, data);
+        Api().post(`filial`, data)
         // .then(res => {
         //   const newId = this.locationId(res.headers);
         //   if (newId) {
@@ -89,10 +89,10 @@ export default {
         //   }
         // });
       } else {
-        Api().patch(`filial?id=eq.${data.id}`, data);
+        Api().patch(`filial?id=eq.${data.id}`, data)
       }
     }
   }
-};
+}
 </script>
 

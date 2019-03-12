@@ -39,14 +39,14 @@
 </template>
 
 <script>
-import TimeEdit from '@/components/TimeEdit.vue';
+import TimeEdit from '@/components/TimeEdit.vue'
 export default {
   components: { TimeEdit },
   props: {
     selected: {
       type: Array,
-      default() {
-        return [];
+      default () {
+        return []
       }
     },
     periodStart: {
@@ -61,32 +61,32 @@ export default {
     switch: { type: Boolean, default: false },
     itemindex: { type: Number, default: null }
   },
-  data() {
+  data () {
     return {
       dow: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
       switchValue: undefined,
       startVal: undefined,
       endVal: undefined,
       focus: false,
-    };
+    }
   },
   computed: {
-    days() {
-      let days = [];
+    days () {
+      let days = []
       this.dow.forEach((el, i) => {
         let obj = {
           name: '',
           select: false
-        };
-        obj.name = el;
-        if (this.selected.length !== 0 && this.selected.includes(i)) {
-          obj.select = true;
-        } else {
-          obj.select = false;
         }
-        days.push(obj);
-      });
-      return days;
+        obj.name = el
+        if (this.selected.length !== 0 && this.selected.includes(i)) {
+          obj.select = true
+        } else {
+          obj.select = false
+        }
+        days.push(obj)
+      })
+      return days
     }
   },
   watch: {
@@ -94,37 +94,37 @@ export default {
     periodStart: 'loadValues',
     periodEnd: 'loadValues'
   },
-  mounted() {
-    this.loadValues();
+  mounted () {
+    this.loadValues()
   },
   methods: {
-    deletePeriod() {
-      this.startVal = '';
-      this.endVal = '';
-      this.$emit('onEdit', [this.startVal, this.endVal]);
+    deletePeriod () {
+      this.startVal = ''
+      this.endVal = ''
+      this.$emit('onEdit', [this.startVal, this.endVal])
     },
-    onEditStart(payload) {
-      this.startVal = payload;
-      this.$emit('onEdit', [this.startVal, this.endVal]);
+    onEditStart (payload) {
+      this.startVal = payload
+      this.$emit('onEdit', [this.startVal, this.endVal])
     },
-    onEditEnd(payload) {
-      this.endVal = payload;
-      this.$emit('onEdit', [this.startVal, this.endVal]);
+    onEditEnd (payload) {
+      this.endVal = payload
+      this.$emit('onEdit', [this.startVal, this.endVal])
     },
-    selectDay(index) {
+    selectDay (index) {
       if (!this.days[index].select || this.startVal !== null && this.endVal !== null) {
-        this.$emit('selectDay', [index, this.startVal, this.endVal]);
+        this.$emit('selectDay', [index, this.startVal, this.endVal])
       } else {
-        this.$emit('selectDay', [index, null, null]);
+        this.$emit('selectDay', [index, null, null])
       }
     },
-    loadValues() {
-      this.switchValue = this.switch;
-      this.startVal = this.periodStart;
-      this.endVal = this.periodEnd;
+    loadValues () {
+      this.switchValue = this.switch
+      this.startVal = this.periodStart
+      this.endVal = this.periodEnd
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

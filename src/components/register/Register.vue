@@ -133,22 +133,22 @@
 </template>  
 
 <script>
-import Api from '@/api/backend';
-import { makeAlert } from '@/api/utils';
-import { mapGetters, mapActions } from 'vuex';
+import Api from '@/api/backend'
+import { makeAlert } from '@/api/utils'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   props: {
     frole: { type: String, default: 'business' }
   },
-  data() {
+  data () {
     return {
       rules: {
         email: value => {
-          const pattern = /^[+]*([0-9]){11}$/;
+          const pattern = /^[+]*([0-9]){11}$/
           return (
             pattern.test(value) || 'Введите действительный номер телефона.'
-          );
+          )
         }
       },
       fpasswordRepeat: '',
@@ -179,7 +179,7 @@ export default {
         v => (!!v && v === this.fpassword) || 'Пароли не совпадают'
       ],
       userAlreadyInitialized: false
-    };
+    }
   },
   computed: {
     ...mapGetters({
@@ -189,38 +189,38 @@ export default {
       userID: 'userID',
       userInfo: 'userInfo'
     }),
-    keyCode() {
-      return this.$route.params.code;
+    keyCode () {
+      return this.$route.params.code
     },
-    url() {
-      return this.flogin.includes('@') ? 'rpc/check_email' : 'rpc/check_phone';
+    url () {
+      return this.flogin.includes('@') ? 'rpc/check_email' : 'rpc/check_phone'
     },
-    loginIsEmail() {
+    loginIsEmail () {
       if (this.sended === true) {
-        return this.flogin.includes('@') ? true : false;
+        return this.flogin.includes('@') ? true : false
       } else {
-        return undefined;
+        return undefined
       }
     },
-    restoreMode() {
-      return this.$route && this.$route.name === 'restorePassword';
+    restoreMode () {
+      return this.$route && this.$route.name === 'restorePassword'
     }
   },
   watch: {
-    userID: function(newVal, oldVal) {
+    userID: function (newVal, oldVal) {
       if (!oldVal && newVal && oldVal !== newVal) {
-        this.userAlreadyInitialized = true;
-        return;
+        this.userAlreadyInitialized = true
+        return
       }
 
       if (this.userAlreadyInitialized && newVal && oldVal !== newVal) {
-        this.goHome();
+        this.goHome()
       }
     },
     keyCode: 'checkKeyCode'
   },
-  mounted() {
-    this.checkKeyCode();
+  mounted () {
+    this.checkKeyCode()
   },
   methods: {
     ...mapActions([
@@ -230,27 +230,27 @@ export default {
       'openMessageWindow',
       'register'
     ]),
-    checkKeyCode() {
+    checkKeyCode () {
       if (!this.keyCode) {
-        return;
+        return
       }
-      this.sendKeyCode(this.keyCode);
+      this.sendKeyCode(this.keyCode)
     },
-    goHome() {
+    goHome () {
       this.$router.push({
         name: 'home'
-      });
+      })
     },
-    registerAndLogin() {
+    registerAndLogin () {
       if (this.$refs.passwords.validate()) {
         this.register({
           role: this.frole,
           login: this.flogin,
           pass: this.fpassword
-        });
+        })
       }
     },
-    sendLogin() {
+    sendLogin () {
       if (this.loginIsEmail === false || this.$refs.formLogin.validate()) {
         Api()
           .post(this.url, {
@@ -259,29 +259,29 @@ export default {
             j: { business_category: this.ftype }
           })
           .then(res => {
-            this.sended = true;
-            this.$nextTick(function() {
-              this.$refs.formCode.resetValidation();
-            });
-            this.fcode = '';
-            this.badCode = '';
-            this.$refs.formCode.resetValidation();
-            this.codeTries = res.data.attempts;
+            this.sended = true
+            this.$nextTick(function () {
+              this.$refs.formCode.resetValidation()
+            })
+            this.fcode = ''
+            this.badCode = ''
+            this.$refs.formCode.resetValidation()
+            this.codeTries = res.data.attempts
             if (res.data.seconds) {
               this.alert({
                 message:
                   'Новый код можно будет отправить через ' + res.data.seconds
-              });
+              })
             }
           })
-          .catch(function() {
-            console.log('FAILURE!!');
-          });
+          .catch(function () {
+            console.log('FAILURE!!')
+          })
       }
     },
-    sendCode() {
+    sendCode () {
       if (this.$refs.formCode.validate()) {
-        this.badCode = '';
+        this.badCode = ''
         Api()
           .post(this.url, {
             login: this.flogin,
@@ -292,27 +292,27 @@ export default {
               res.data.status === 'confirmed' ||
               res.data.status === 'success'
             ) {
-              this.showPasswordInputs = true;
-              this.$nextTick(function() {
-                this.$refs.passwords.resetValidation();
-              });
+              this.showPasswordInputs = true
+              this.$nextTick(function () {
+                this.$refs.passwords.resetValidation()
+              })
             }
             if (res.data.status == 'waiting') {
-              this.badCode = 'Код введен неверно';
+              this.badCode = 'Код введен неверно'
             }
             if (res.data.status == 'fail') {
-              this.badCode = 'Код недействителен. Нужно послать новый код';
+              this.badCode = 'Код недействителен. Нужно послать новый код'
             }
-            this.codeTries = res.data.attempts;
+            this.codeTries = res.data.attempts
           })
           .catch(err => {
-            console.log(err);
-            this.alert(makeAlert(err));
-          });
+            console.log(err)
+            this.alert(makeAlert(err))
+          })
       }
     },
-    sendKeyCode(code) {
-      if (!code) return;
+    sendKeyCode (code) {
+      if (!code) return
 
       Api()
         .post('rpc/check_email', {
@@ -321,23 +321,23 @@ export default {
         })
         .then(res => {
           if (res.data.status === 'confirmed') {
-            this.showPasswordInputs = true;
-            this.flogin = res.data.login;
-            this.$nextTick(function() {
-              this.$refs.passwords.resetValidation();
-            });
+            this.showPasswordInputs = true
+            this.flogin = res.data.login
+            this.$nextTick(function () {
+              this.$refs.passwords.resetValidation()
+            })
           }
           if (res.data.status === 'fail') {
-            this.badCode = 'Ссылка устарела';
+            this.badCode = 'Ссылка устарела'
           }
         })
         .catch(err => {
-          console.log(err);
-          this.alert(makeAlert(err));
-        });
+          console.log(err)
+          this.alert(makeAlert(err))
+        })
     }
   }
-};
+}
 </script>
 
 <style>

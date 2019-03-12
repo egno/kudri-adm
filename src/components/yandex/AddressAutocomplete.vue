@@ -46,8 +46,8 @@
 
 
 <script>
-import axios from 'axios';
-import { mapActions } from 'vuex';
+import axios from 'axios'
+import { mapActions } from 'vuex'
 
 export default {
   props: {
@@ -55,7 +55,7 @@ export default {
     label: { type: String, default: undefined },
     prependIcon: { type: String, default: undefined }
   },
-  data() {
+  data () {
     return {
       address: undefined,
       edited: false,
@@ -63,62 +63,62 @@ export default {
       loading: false,
       search: undefined,
       success: false
-    };
+    }
   },
   computed: {
-    point() {
+    point () {
       if (!(this.success && this.items && this.items[0] && this.items[0].point))
-        return;
-      return this.items[0].point.replace(' ', ',');
+        return
+      return this.items[0].point.replace(' ', ',')
     },
-    rules() {
+    rules () {
       return {
         found: () => {
           return (
             this.success ||
             `Адрес не найден. Проверьте правильность введенных данных`
-          );
+          )
         }
-      };
+      }
     }
   },
   watch: {
-    address(val) {
-      this.$emit('input', val);
-      this.search = (val && val.name) || '';
+    address (val) {
+      this.$emit('input', val)
+      this.search = (val && val.name) || ''
       this.success =
         !this.edited ||
         (this.items &&
-          this.items.map(x => x.name).some(x => x === this.search));
+          this.items.map(x => x.name).some(x => x === this.search))
     },
     value: 'fetchValue',
-    search(val) {
-      val && val !== this.address.name && this.geocode(val);
+    search (val) {
+      val && val !== this.address.name && this.geocode(val)
     }
   },
-  mounted() {
-    this.fetchValue();
+  mounted () {
+    this.fetchValue()
   },
   methods: {
     ...mapActions(['openMessageWindow']),
-    fetchValue() {
+    fetchValue () {
       if (typeof this.value === 'string') {
-        this.address = { name: this.value };
+        this.address = { name: this.value }
       } else if (typeof this.value === 'object') {
-        this.address = this.value;
-        this.address.name = this.address.name || null;
+        this.address = this.value
+        this.address.name = this.address.name || null
       } else {
-        this.address = { name: null };
+        this.address = { name: null }
       }
-      this.search = this.address.name || null;
+      this.search = this.address.name || null
     },
-    geocode(val) {
-      this.loading = true;
-      this.edited = true;
+    geocode (val) {
+      this.loading = true
+      this.edited = true
       if (!(val && val.length > 6)) {
-        this.items = undefined;
-        this.loading = false;
-        return;
+        this.items = undefined
+        this.loading = false
+        return
       }
       axios
         .get(
@@ -134,15 +134,15 @@ export default {
               name:
                 x.GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted,
               point: x.GeoObject && x.GeoObject.Point && x.GeoObject.Point.pos
-            }));
-          this.loading = false;
+            }))
+          this.loading = false
         })
         .catch(() => {
-          this.loading = false;
-        });
+          this.loading = false
+        })
     }
   }
-};
+}
 </script>
 
 <style>

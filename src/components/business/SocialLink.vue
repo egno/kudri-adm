@@ -17,14 +17,14 @@ export default {
     profile: { type: String, default: null }
   },
   computed: {
-    link() {
-      if (!this.social) return;
-      return this.social.href(this.profile);
+    link () {
+      if (!this.social) return
+      return this.social.href(this.profile)
     },
-    icon() {
-      if (!this.social) return;
-      return this.social.icon;
+    icon () {
+      if (!this.social) return
+      return this.social.icon
     }
   }
-};
+}
 </script>

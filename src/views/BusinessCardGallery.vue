@@ -107,28 +107,28 @@
 </template>
 
 <script>
-import Album from '@/components/gallery/Album.vue';
-import AlbumSlider from '@/components/gallery/AlbumSlider.vue';
-import GalleryImages from '@/components/gallery/GalleryImages.vue';
-import { mapGetters } from 'vuex';
-import Api from '@/api/backend';
-import { deleteImage } from '@/components/gallery/utils';
-import { fullName } from '@/components/business/utils';
+import Album from '@/components/gallery/Album.vue'
+import AlbumSlider from '@/components/gallery/AlbumSlider.vue'
+import GalleryImages from '@/components/gallery/GalleryImages.vue'
+import { mapGetters } from 'vuex'
+import Api from '@/api/backend'
+import { deleteImage } from '@/components/gallery/utils'
+import { fullName } from '@/components/business/utils'
 
 export default {
   components: { Album, AlbumSlider, GalleryImages },
-  data() {
+  data () {
     return {
       data: [],
       defaultEmployeeImage: require('@/assets/user.svg'),
       sliderImages: undefined,
       sliderTitle: '',
       selectedImage: 0
-    };
+    }
   },
   computed: {
     ...mapGetters(['business', 'employee']),
-    empList() {
+    empList () {
       return (
         this.employee &&
         this.employee
@@ -140,82 +140,82 @@ export default {
             images: x.j.image ? [{ id: x.j.image }] : undefined
           }))
           .sort((a, b) => (a.subtitle < b.subtitle ? -1 : 1))
-      );
+      )
     },
-    empImages() {
+    empImages () {
       return [
         ...new Set(this.empList && this.empList.map(x => x.images).flat())
-      ];
+      ]
     },
-    employee_id() {
-      return this.$route && this.$route.query && this.$route.query.employee;
+    employee_id () {
+      return this.$route && this.$route.query && this.$route.query.employee
     },
-    id() {
-      return this.$route.params.id;
+    id () {
+      return this.$route.params.id
     },
-    imagesBusiness() {
-      return this.data && this.data.filter(x => x.j && x.j.business);
+    imagesBusiness () {
+      return this.data && this.data.filter(x => x.j && x.j.business)
     },
-    imagesEmployees() {
+    imagesEmployees () {
       return (
         this.data &&
         this.data.filter(x => x.employees && x.employees.some(e => !!e))
-      );
+      )
     },
-    serviceImages() {
+    serviceImages () {
       return (
         this.data &&
         this.data.filter(x => x.services && x.services.some(e => !!e))
-      );
+      )
     }
   },
   watch: {
     business: 'load'
   },
-  mounted() {
-    this.load();
+  mounted () {
+    this.load()
   },
   methods: {
-    deleteImage(image) {
-      console.log(image);
-      if (!image) return;
-      const idx = this.data.findIndex(x => x.id === image);
-      if (!idx === -1) return;
+    deleteImage (image) {
+      console.log(image)
+      if (!image) return
+      const idx = this.data.findIndex(x => x.id === image)
+      if (!idx === -1) return
       deleteImage(image)
         .then(() => {
-          this.data.splice(idx, 1);
+          this.data.splice(idx, 1)
         })
         .catch(err => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
-    load() {
-      if (!this.business) return;
+    load () {
+      if (!this.business) return
       Api()
         .get(`gallery?business_id=eq.${this.business}`)
         .then(res => res.data)
         .then(res => {
-          this.data = res;
-        });
+          this.data = res
+        })
     },
-    employeeImages(id) {
+    employeeImages (id) {
       return (
         id &&
         this.business &&
         this.data &&
         this.data.filter(x => x.employees && x.employees.some(e => e === id))
-      );
+      )
     },
-    onSliderClose() {
-      this.sliderImages = undefined;
-      this.selectedImage = undefined;
-      this.sliderTitle = undefined;
+    onSliderClose () {
+      this.sliderImages = undefined
+      this.selectedImage = undefined
+      this.sliderTitle = undefined
     },
-    showSlider(payload) {
-      this.sliderImages = payload.images;
-      this.selectedImage = payload.selected;
-      this.sliderTitle = payload.title;
+    showSlider (payload) {
+      this.sliderImages = payload.images
+      this.selectedImage = payload.selected
+      this.sliderTitle = payload.title
     }
   }
-};
+}
 </script>

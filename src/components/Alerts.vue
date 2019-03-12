@@ -13,22 +13,22 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex'
 export default {
-  data() {
-    return {};
+  data () {
+    return {}
   },
   computed: {
     ...mapGetters(['alerts']),
-    alert() {
-      return this.alerts.slice(-1)[0];
+    alert () {
+      return this.alerts.slice(-1)[0]
     }
   },
   methods: {
     ...mapActions(['delAlert']),
-    onClose() {
-      this.delAlert();
+    onClose () {
+      this.delAlert()
     }
   }
-};
+}
 </script>
