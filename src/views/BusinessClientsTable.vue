@@ -40,16 +40,27 @@
                 :src="props.item.j.avatar"
               />
             </v-btn>
-            <v-flex
-              align-self-center
-              justify-start
-            >
-              {{ props.item.name.fullName }}
-            </v-flex>
+            <v-layout column>
+              <v-flex
+                align-self-center
+                justify-start
+              >
+                {{ props.item.name.fullName }}
+              </v-flex>
+              <v-flex
+                align-self-center
+                justify-start
+              >
+                <BusinessPhones
+                  title=""
+                  :phones="[props.item.phone]"
+                />
+              </v-flex>
+            </v-layout>
           </v-layout>
         </td>
         <td>
-          {{ props.item.phone }}
+          {{ props.item.visits }}
         </td>
         <td>
           -
@@ -86,14 +97,15 @@
 import Api from '@/api/backend'
 import { mapActions, mapGetters } from 'vuex'
 import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import BusinessPhones from '@/components/business/BusinessPhones.vue'
 import Client from '@/components/client/client'
 
 export default {
-  components: { UserAvatar },
+  components: { BusinessPhones, UserAvatar },
   data () {
     return {
       headers: [
-        { text: 'Имя и фамилия', value: 'j->>name' },
+        { text: 'Имя и фамилия', value: 'j->name->>fullname' },
         { text: 'Визиты', value: '' },
         { text: 'Статус', value: '' },
         { text: 'Средний чек', value: '' },

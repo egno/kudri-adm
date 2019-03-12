@@ -10,9 +10,7 @@
       >
         <v-layout column>
           <v-flex>Услуга</v-flex>
-          <v-flex
-            class="caption text-none grey--text"
-          >
+          <v-flex class="caption text-none grey--text">
             {{ item.client.services && item.client.services[0] && item.client.services[0].name }}
           </v-flex>
         </v-layout>
@@ -209,6 +207,7 @@ export default {
       return this.active === this.tabsLength - 1
     },
     categories () {
+      if (!this.services) return
       return [...new Set(this.services.map(x => x.category))]
     },
     displayClient () {
@@ -234,7 +233,7 @@ export default {
       )
     },
     filteredServices () {
-      return this.services.filter(
+      return this.services && this.services.filter(
         x =>
           (!this.selectedCategory || x.category === this.selectedCategory) &&
           (!this.serviceFilter ||
@@ -245,10 +244,15 @@ export default {
       if (!(this.businessInfo && this.businessInfo.j)) {
         return []
       }
-      return this.businessInfo.j.services.map(x => {
-        x.category = x.category || this.categoryOthersName
-        return x
-      })
+      return (
+        this.businessInfo &&
+        this.businessInfo.j &&
+        this.businessInfo.j.services &&
+        this.businessInfo.j.services.map(x => {
+          x.category = x.category || this.categoryOthersName
+          return x
+        })
+      )
     },
     tabButtonCaption () {
       return this.isLastTab
