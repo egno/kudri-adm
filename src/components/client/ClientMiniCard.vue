@@ -1,24 +1,29 @@
 <template>
   <v-card>
     <v-card-title>
-      {{ client.name.forename }}
-      {{ client.name.surname }}
-      {{ client.name.fullname }}
+      {{ item.name.fullName || '' }}
     </v-card-title>
-    <v-card-text>{{ client.phone }}</v-card-text>
+    <v-card-text>{{ client.phone || '' }}</v-card-text>
   </v-card>
 </template>
 
 <script>
-import { newClient } from '@/components/client/utils'
+import Client from '@/components/client/client'
+
 export default {
   props: {
     client: {
       type: Object,
       default () {
-        return newClient()
+        return new Client()
       }
     }
+  },
+  data () {
+    return {
+      item: new Client(this.client)
+    }
   }
+
 }
 </script>
