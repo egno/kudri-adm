@@ -8,6 +8,8 @@ class Employee {
     this.object = emp
   }
 
+  // Main object
+
   /**
    * @param {{ id: String; access: Boolean; parent: String; j: Object; }} newVal
    */
@@ -27,6 +29,8 @@ class Employee {
   get object () {
     return this
   }
+
+  // Properties
 
   /**
    * @param {String} newVal
@@ -53,6 +57,8 @@ class Employee {
   set services (newVal) {
     this.j = { ...this.j, ...{ services: newVal || [] } }
   }
+
+  // API methods
 
   load (id) {
     if (!id || id === 'new') return
