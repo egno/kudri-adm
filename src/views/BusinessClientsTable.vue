@@ -132,7 +132,7 @@ export default {
     this.fetchData()
   },
   methods: {
-    ...mapActions([]),
+    ...mapActions(['addClientsCounter']),
     fetchData () {
       if (!this.business) return
       this.progressQuery = true
@@ -178,6 +178,7 @@ export default {
       Api()
         .delete(`client?id=eq.${payload}`)
         .then(() => {
+          this.addClientsCounter(-1)
           this.fetchData()
         })
     }

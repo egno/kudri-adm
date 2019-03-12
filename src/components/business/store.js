@@ -23,6 +23,8 @@ const getters = {
   ],
   businessCategory: state =>
     state.businessInfo && state.businessInfo.j && state.businessInfo.j.category,
+  businessClientCount: state =>
+    state.businessInfo && state.businessInfo.j && state.businessInfo.j.clients,
   businessInfo: state => ({
     ...state.businessInfo,
     ...{
@@ -50,6 +52,14 @@ const getters = {
 }
 
 const mutations = {
+  ADD_CLIENTS_COUNTER (state, payload) {
+    let counter =
+      state.businessInfo &&
+      state.businessInfo.j &&
+      state.businessInfo.j.clients
+    counter = counter + +payload
+    state.businessInfo.j.clients = counter
+  },
   SET_BUSINESS_INFO (state, payload) {
     state.businessInfo = payload
   },
@@ -71,6 +81,9 @@ const actions = {
         commit('SET_DAY_VISITS', res)
       })
       .catch(err => commit('ADD_ALERT', makeAlert(err)))
+  },
+  addClientsCounter ({ commit }, payload) {
+    commit('ADD_CLIENTS_COUNTER', payload)
   },
   setBusiness ({ commit, dispatch }, payload) {
     if (!(payload && payload.length == 36)) {
