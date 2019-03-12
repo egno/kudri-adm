@@ -15,6 +15,7 @@ class Employee {
     this.access = (newVal && newVal.access) || true
     this.parent = (newVal && newVal.parent) || null
     this.j = (newVal && newVal.j) || {}
+    this.services = []
     if (!this.j.services) {
       this.j.services = []
     }
@@ -27,12 +28,22 @@ class Employee {
     return this
   }
 
+  /**
+   * @param {String} newVal
+   */
   set image (newVal) {
-    this.j = {...{image: newVal}, ...this.j}
+    if (newVal) {
+      this.j = { ...{ image: newVal }, ...this.j }
+    } else {
+      delete this.j.image
+    }
   }
 
+  /**
+   * @param {Array} newVal
+   */
   set services (newVal) {
-    this.j = { ...{ services: newVal }, ...this.j }
+    this.j = { ...{ services: newVal || [] }, ...this.j }
   }
 
   load (id) {
