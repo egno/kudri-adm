@@ -55,7 +55,7 @@ class Employee {
    * @param {Array} newVal
    */
   set services (newVal) {
-    this.j = { ...this.j, ...{ services: newVal || [] } }
+    this.j = { ...this.j, ...{ services: (newVal || []) } }
   }
 
   // API methods
