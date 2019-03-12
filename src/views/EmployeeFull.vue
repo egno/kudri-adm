@@ -213,7 +213,7 @@ export default {
       this.data.save()
         .then(id => {
           if (this.employee_id === 'new') {
-          this.$router.replace({
+            this.$router.replace({
               name: 'employeeFull',
               params: { id: this.id, employee: id }
             })
