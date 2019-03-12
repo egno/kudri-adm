@@ -40,12 +40,41 @@
                 :src="props.item.j.avatar"
               />
             </v-btn>
-            <VFlex
+            <v-flex
               align-self-center
               justify-start
             >
               {{ props.item.name.fullName }}
-            </VFlex>
+            </v-flex>
+          </v-layout>
+        </td>
+        <td>
+          {{ props.item.phone }}
+        </td>
+        <td>
+          -
+        </td>
+        <td>
+          -
+        </td>
+        <td>
+          <v-layout
+            row
+            align-center
+            fill-height
+            justify-start
+          >
+            <v-btn
+              flat
+              icon
+              small
+              color="grey"
+              @click="onItemDelete(props.item.id)"
+            >
+              <v-icon>
+                delete
+              </v-icon>
+            </v-btn>
           </v-layout>
         </td>
       </template>
@@ -142,6 +171,14 @@ export default {
         })
         .catch(() => {
           this.progressQuery = false
+        })
+    },
+    onItemDelete (payload) {
+      if (!payload) return
+      Api()
+        .delete(`client?id=eq.${payload}`)
+        .then(() => {
+          this.fetchData()
         })
     }
   }

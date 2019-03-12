@@ -6,7 +6,6 @@ import Name from '@/components/common/classes/name'
 class Client {
   constructor (emp) {
     this.object = emp
-    console.log(this.object)
   }
 
   // Main object
