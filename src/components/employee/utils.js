@@ -55,7 +55,7 @@ class Employee {
    * @param {Array} newVal
    */
   set services (newVal) {
-    this.j = { ...this.j, ...{ services: (newVal || []) } }
+    this.j = { ...this.j, ...{ services: newVal || [] } }
   }
 
   // API methods
@@ -67,6 +67,7 @@ class Employee {
       .then(res => res.data[0])
       .then(res => {
         this.object = res
+        store.dispatch('setEmployeeItem', res)
       })
   }
 
@@ -81,6 +82,9 @@ class Employee {
     } else {
       return Api()
         .patch(`employee?id=eq.${this.id}`, this.object)
+        .then(() => {
+          store.dispatch('setEmployeeItem', this.object)
+        })
         .catch(err => {
           store.dispatch('alert', makeAlert(err))
         })

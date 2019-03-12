@@ -9,6 +9,7 @@ const state = {
 
 const getters = {
   employee: state => state.employee,
+  employeeCount: state => state.employee.length,
   employeeCategories: state => state.employeeCategories,
   employeePositions: state => state.employeePositions,
   employeeServices: state =>
@@ -32,8 +33,24 @@ const mutations = {
   LOAD_EMPLOYEE (state, payload) {
     state.employee = payload || []
   },
+  DELETE_EMPLOYEE_ITEM (state, payload) {
+    if (!payload) return
+    let idx = state.employee.findIndex(x => x.id === payload)
+    if (idx !== -1) {
+      state.employee.splice(idx, 1)
+    }
+  },
   SET_CATEGORIES (state, payload) {
     state.employeeCategories = payload
+  },
+  SET_EMPLOYEE_ITEM (state, payload) {
+    if (!(payload && payload.id)) return
+    let idx = state.employee.findIndex(x => x.id === payload.id)
+    if (idx !== -1) {
+      state.employee.splice(idx, 1, payload)
+    } else {
+      state.employee.push(payload)
+    }
   },
   SET_POSITIONS (state, payload) {
     state.employeePositions = payload
@@ -46,6 +63,17 @@ const actions = {
   },
   addPosition ({ commit }, payload) {
     commit('ADD_POSITION', payload)
+  },
+  deleteEmployee ({ commit }, payload) {
+    if (!payload) return
+    Api()
+      .delete(`employee?id=eq.${payload}`)
+      .then(() => {
+        commit('DELETE_EMPLOYEE_ITEM', payload)
+      })
+      .catch(err => {
+        this.alert(makeAlert(err))
+      })
   },
   loadEmployee ({ commit }, payload) {
     commit('LOAD_EMPLOYEE', null)
@@ -80,6 +108,9 @@ const actions = {
         commit('SET_POSITIONS', res.map(x => x.name))
       })
       .catch(err => commit('ADD_ALERT', makeAlert(err)))
+  },
+  setEmployeeItem ({ commit }, payload) {
+    commit('SET_EMPLOYEE_ITEM', payload)
   }
 }
 

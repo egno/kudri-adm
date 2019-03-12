@@ -125,10 +125,8 @@
 <script>
 import { businessMixins } from '@/components/business/mixins'
 import { mapGetters, mapActions } from 'vuex'
-import { makeAlert } from '@/api/utils'
 import { fullName } from '@/components/business/utils'
 import Employee from '@/components/employee/utils'
-import Api from '@/api/backend'
 import AppBtn from '@/components/common/AppBtn.vue'
 import AppCardTitle from '@/components/common/AppCardTitle.vue'
 import AppTabs from '@/components/common/AppTabs.vue'
@@ -167,17 +165,11 @@ export default {
     this.load()
   },
   methods: {
-    ...mapActions(['alert', 'setBusiness']),
+    ...mapActions(['alert', 'deleteEmployee', 'setBusiness']),
     deleteItem () {
       if (this.employee_id && this.employee_id !== 'new') {
-        Api()
-          .delete(`employee?id=eq.${this.employee_id}`)
-          .then(() => {
-            this.exit()
-          })
-          .catch(err => {
-            this.alert(makeAlert(err))
-          })
+        this.deleteEmployee(this.employee_id)
+        this.exit()
       } else {
         this.exit()
       }
