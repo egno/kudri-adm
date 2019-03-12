@@ -39,7 +39,6 @@ import ClientMiniCard from '@/components/client/ClientMiniCard.vue'
 import Api from '@/api/backend'
 import { mapActions, mapGetters } from 'vuex'
 import {
-  clientFromAPI,
   clientToAPI,
   newClient
 } from '@/components/client/utils'
@@ -92,7 +91,7 @@ export default {
         .get(`client?business_id=eq.${this.id}${this.querySearchString}`)
         .then(res => res.data)
         .then(res => {
-          this.data = res.map(x => clientFromAPI(x))
+          this.data = res
         })
     },
     onAction (payload) {

@@ -98,6 +98,7 @@ export default {
       'business',
       'businessInfo',
       'businessIsSalon',
+      'businessClientCount',
       'businessServiceCount',
       'defaultAppTitle',
       'employeeCount',
@@ -114,14 +115,10 @@ export default {
       return this.business
     },
     clientsCount () {
-      return (
-        this.businessInfo && this.businessInfo.j && this.businessInfo.j.clients
-      )
+      return this.businessClientCount
     },
     employeesCount () {
-      return (
-        this.employeeCount
-      )
+      return this.employeeCount
     },
     filialsCount () {
       return (

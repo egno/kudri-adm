@@ -73,6 +73,7 @@ class Employee {
 
   save () {
     if (!this.id) {
+      delete this.id
       return Api()
         .post(`employee?`, this.object)
         .then(res => responseGetId(res))
