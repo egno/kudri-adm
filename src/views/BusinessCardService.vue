@@ -44,7 +44,7 @@
                 <ServiceCard
                   :item="item"
                   @onSave="onSave(i)"
-                  @onDelete="onDelete(i)"
+                  @onDelete="onDelete(item.i)"
                 />
               </VFlex>
               <VDialog v-model="edit">
@@ -104,7 +104,11 @@ export default {
         this.data &&
         this.data.j &&
         this.data.j['services'] &&
-        this.data.j['services'].filter(
+        this.data.j['services'].map((x, i) => {
+          x.i = i
+          return x
+        })
+        .filter(
           x =>
             !this.searchString ||
             x.name.toUpperCase().indexOf(this.searchString.toUpperCase()) > -1
