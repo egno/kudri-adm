@@ -27,6 +27,11 @@ export function getISOTimeZoneOffset (s) {
   return +(t.slice(0, 1) + '1') * (+t.slice(1, 3) * 60 + +t.slice(-2))
 }
 
+export function getISODate (s) {
+  let t = s.slice(-6)
+  return +(t.slice(0, 1) + '1') * (+t.slice(1, 3) * 60 + +t.slice(-2))
+}
+
 export function valueDate (value) {
   return value ? Date.parse(value) : undefined
 }
@@ -138,4 +143,14 @@ export function dowDisplay (dt, format = 0) {
 
 export function monthDisplay (dt) {
   return dt.toLocaleString('ru-RU', { month: 'long' }) + ' ' + dt.getFullYear()
+}
+
+export function visitStatus (status, time) {
+  const s = {
+    unvisited: 'Не пришел'
+  }
+  const now = new Date()
+  const t = new Date(Date.parse(time))
+
+  return s[status] || ((t - now) > 0) ? 'Запись': 'Завершен'
 }
