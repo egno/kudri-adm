@@ -141,7 +141,7 @@ export default {
         { text: 'Визиты', value: 'visit->visits->>total' },
         { text: 'Статус', value: 'visit->last->time->>from' },
         { text: 'Средний чек', value: 'visit->>check' },
-        { text: 'Действия', value: '' }
+        { text: '', value: '' }
       ],
       items: [],
       pagination: { rowsPerPage: 10 },
