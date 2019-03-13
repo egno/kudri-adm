@@ -60,7 +60,19 @@
           </v-layout>
         </td>
         <td>
-          {{ props.item.visits }}
+          <div v-if="props.item.visit.visits.total">
+            <span>
+              {{ props.item.visit.visits.total }}
+            </span>
+            <span
+              v-if="props.item.visit.visits.unvisited"
+              class="badge-inline red"
+            >
+              <span>
+                {{ props.item.visit.visits.unvisited }}
+              </span>
+            </span>
+          </div>
         </td>
         <td>
           -
@@ -106,7 +118,7 @@ export default {
     return {
       headers: [
         { text: 'Имя и фамилия', value: 'j->name->>fullname' },
-        { text: 'Визиты', value: '' },
+        { text: 'Визиты', value: 'visit->visits->>total' },
         { text: 'Статус', value: '' },
         { text: 'Средний чек', value: '' },
         { text: 'Действия', value: '' }
@@ -157,7 +169,7 @@ export default {
       let params = [filterString]
       if (sortBy) {
         params.push(
-          `order=${sortBy}${descending ? '.desc.nullsfirst' : '.asc.nullslast'}`
+          `order=${sortBy}${descending ? '.desc.nullslast' : '.asc.nullsfirst'}`
         )
       }
       if (rowsPerPage > -1) {
@@ -197,3 +209,23 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.badge-inline {
+  display: inline-block;
+  line-height: 0px;
+
+  border-radius: 50%;
+  border: 0px solid;
+}
+.badge-inline span {
+  color: white;
+  display: inline-block;
+
+  padding-top: 50%;
+  padding-bottom: 50%;
+
+  margin-left: 4px;
+  margin-right: 4px;
+}
+</style>

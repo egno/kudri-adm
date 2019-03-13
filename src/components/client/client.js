@@ -18,6 +18,7 @@ class Client {
     this.business_id = (newVal && newVal.business_id) || null
     this.user_id = (newVal && newVal.user_id) || null
     this.j = (newVal && newVal.j) || {}
+    this.visit = (newVal && newVal.visit) || {}
 
     // set calculated properties
     this.birth_date = newVal && newVal.j && newVal.j.birth_date
