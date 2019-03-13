@@ -45,7 +45,10 @@
                 align-self-center
                 justify-start
               >
-                <span class="hidden-button" @click="clientEdit(props.item)">
+                <span
+                  class="hidden-button"
+                  @click="clientEdit(props.item)"
+                >
                   {{ props.item.name.fullName }}
                 </span>
               </v-flex>
@@ -175,6 +178,9 @@ export default {
   },
   computed: {
     ...mapGetters(['business']),
+    client_id () {
+      return this.$route && this.$route.params && this.$route.params.client
+    },
     querySearchString () {
       if (!this.searchString) {
         return ''
@@ -194,16 +200,29 @@ export default {
       deep: true
     },
     searchString: 'fetchData',
-    business: 'fetchData'
+    business: 'fetchData',
+    client_id: 'onClientChange',
+    edit: 'closeNewEditor'
   },
   mounted () {
     this.fetchData()
+    if (this.client_id) {
+      this.onClientChange()
+    }
   },
   methods: {
     ...mapActions(['addClientsCounter']),
     clientEdit (item) {
       this.item = new Client(item)
       this.edit = true
+    },
+    closeNewEditor () {
+      if (!this.edit && this.client_id === 'new') {
+        this.$router.push({
+          name: 'businessCardClients',
+          params: { id: this.business }
+        })
+      }
     },
     fetchData () {
       if (!this.business) return
@@ -245,6 +264,12 @@ export default {
           this.progressQuery = false
         })
     },
+    onClientChange () {
+      if (!this.client_id || !this.business) return
+      this.item = new Client({ business_id: this.business })
+      this.item.load(this.client_id)
+      this.edit = true
+    },
     onDelete () {
       if (!this.item.id) {
         this.edit = false
@@ -264,7 +289,8 @@ export default {
     },
     onSave (item) {
       const newItem = new Client(item)
-      newItem.save().then(() => {
+      newItem.save().then(res => {
+        if (!res) return
         this.edit = false
         let idx = this.items.findIndex(x => x.id === item.id)
         if (idx > -1) {

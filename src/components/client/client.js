@@ -184,12 +184,14 @@ class Client {
         .then(res => responseGetId(res))
         .catch(err => {
           store.dispatch('alert', makeAlert(err))
+          return false
         })
     } else {
       return Api()
         .patch(`client?id=eq.${this.id}`, this.object)
         .catch(err => {
           store.dispatch('alert', makeAlert(err))
+          return false
         })
     }
   }

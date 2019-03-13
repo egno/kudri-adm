@@ -1,5 +1,6 @@
 const businessCards = [
   'businessCard',
+  'businessCardClient',
   'businessCardClients',
   'businessCardEmployee',
   'businessCardFilal',

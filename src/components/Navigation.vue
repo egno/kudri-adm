@@ -202,6 +202,10 @@ export default {
           action: {
             label: 'Добавить клиента',
             action: 'newClient',
+            to: {
+              name: 'businessCardClient',
+              params: { id: this.businessLink, client: 'new' }
+            },
             default: true
           }
         },

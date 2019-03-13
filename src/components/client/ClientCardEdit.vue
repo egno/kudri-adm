@@ -20,7 +20,7 @@
           />
         </v-flex>
         <v-flex>
-          <PhoneEdit :phone="client.phone" />
+          <PhoneEdit :phone="client.phone" @onEdit="client.phone=$event" />
         </v-flex>
         <v-flex>
           <v-select
