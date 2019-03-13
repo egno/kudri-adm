@@ -1,115 +1,109 @@
 <template>
   <v-card flat>
-    <AppTabs
-      v-model="active"
-      fixed-tabs
-    >
-      <v-tab
-        key="t-0"
-        ripple
-      >
-        <v-layout column>
-          <v-flex>Профиль клиента</v-flex>
-          <v-flex class="caption text-none grey--text">
-            {{ client.name.forename }}
-            {{ client.name.surname }}
-          </v-flex>
-        </v-layout>
-      </v-tab>
-      <v-tab
-        key="t-1"
-        ripple
-      >
-        <v-layout column>
-          <v-flex>История записей</v-flex>
-          <v-flex class="caption text-none grey--text" />
-        </v-layout>
-      </v-tab>
-      <v-tab-item key="ti-0">
-        <v-card flat>
-          <VCardText>
-            <v-layout column>
-              <v-flex>
-                <v-layout row>
-                  <VTextField
-                    v-model="client.name.forename"
-                    label="Имя"
-                    :rules="[() => !!client.name.forename || 'Это поле обязательно для заполнения']"
-                    required
-                  />
-                  <VTextField
-                    v-model="client.name.surname"
-                    label="Фамилия"
-                  />
-                </v-layout>
-              </v-flex>
-              <v-flex>
-                <v-layout row>
-                  <VTextField
-                    v-model="client.phone"
-                    label="Телефон"
-                    required
-                  />
-                  <VTextField
-                    v-model="client.email"
-                    label="E-mail"
-                    name="email"
-                  />
-                </v-layout>
-              </v-flex>
-              <v-flex>
-                <v-layout row>
-                  <VTextField
-                    v-model="client.birthdate"
-                    label="Дата рождения"
-                    required
-                  />
-                  <VTextField
-                    v-model="client.discount"
-                    label="Скидка, %"
-                  />
-                </v-layout>
-              </v-flex>
-              <v-flex>
-                <VTextField
-                  v-model="client.sex"
-                  label="Пол"
-                />
-              </v-flex>
-              <v-flex>
-                <VTextField
-                  v-model="client.notes"
-                  label="Комментарий"
-                />
-              </v-flex>
-            </v-layout>
-          </VCardText>
-        </v-card>
-      </v-tab-item>
-      <v-tab-item key="ti-1">
-        <v-card flat>
-          <VCardText />
-        </v-card>
-      </v-tab-item>
-    </AppTabs>
+    <AppCardTitle @close="$emit('close')">
+      <v-layout column>
+        <v-flex>
+          <span class="title">
+            Информация о клиенте
+          </span>
+        </v-flex>
+      </v-layout>
+    </AppCardTitle>
+    <v-card-text>
+      <v-layout column>
+        <v-flex>
+          <v-text-field
+            v-model="client.fullName"
+            label="Имя и фамилия клиента"
+            :rules="[() => !!client.name.fullName || 'Это поле обязательно для заполнения']"
+            required
+          />
+        </v-flex>
+        <v-flex>
+          <PhoneEdit :phone="client.phone" />
+        </v-flex>
+        <v-flex>
+          <v-select
+            v-model="client.filial"
+            label="Филиал"
+          />
+        </v-flex>
+        <v-flex>
+          <v-text-field
+            v-model="client.birth_date"
+            label="Дата рождения"
+            mask="##.##.####"
+            placeholder="ДД.ММ.ГГГГ"
+          />
+        </v-flex>
+        <v-flex>
+          <div>
+            Пол
+          </div>
+          <v-btn-toggle v-model="client.sex">
+            <v-btn
+              v-for="(sex, n) in client.sexList"
+              :key="n"
+              flat
+            >
+              {{ sex.display }}
+            </v-btn>
+          </v-btn-toggle>
+        </v-flex>
+        <v-flex>
+          <v-text-field
+            v-model="client.discount"
+            label="Персональная скидка"
+          />
+        </v-flex>
+        <v-flex>
+          <v-textarea
+            v-model="client.notes"
+            label="Комментарий"
+          />
+        </v-flex>
+      </v-layout>
+    </v-card-text>
     <VCardActions>
-      <VSpacer />
-      <VBtn
-        color="primary"
-        @click="onSave"
-      >
-        Сохранить
-      </VBtn>
+      <v-layout column="">
+        <v-flex px-5>
+          <v-btn
+            block
+            ripple
+            color="primary"
+            @click="onSave"
+          >
+            Сохранить
+          </v-btn>
+        </v-flex>
+        <v-flex pt-3>
+          <v-btn
+            block
+            flat
+            round
+            ripple
+            color="grey"
+            @click="onDelete"
+          >
+            <v-icon>delete</v-icon>
+            Удалить
+          </v-btn>
+        </v-flex>
+      </v-layout>
     </VCardActions>
+    <v-spacer />
   </v-card>
 </template>
 
 <script>
 import { newClient } from '@/components/client/utils'
-import AppTabs from '@/components/common/AppTabs.vue'
+// import AppBtn from '@/components/common/AppBtn.vue'
+// import AppTabs from '@/components/common/AppTabs.vue'
+import AppCardTitle from '@/components/common/AppCardTitle.vue'
+import PhoneEdit from '@/components/business/PhoneEdit.vue'
 
 export default {
-  components: { AppTabs },
+  components: { AppCardTitle, PhoneEdit },
   props: {
     client: {
       type: Object,
@@ -124,6 +118,9 @@ export default {
     }
   },
   methods: {
+    onDelete () {
+      this.$emit('onDelete', this.client)
+    },
     onSave () {
       this.$emit('onSave', this.client)
     }

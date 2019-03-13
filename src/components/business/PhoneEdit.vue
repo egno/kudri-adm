@@ -46,22 +46,3 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-.select-code {
-  width: 16px;
-  height: 14px;
-  position: absolute;
-  left: 12px;
-  top: 18px;
-  background: url('../../assets/ru.svg') no-repeat center center;
-  &:before {
-    content: '';
-    background: url('../../assets/arr-down.svg') no-repeat center center;
-    width: 10px;
-    height: 5px;
-    position: absolute;
-    right: -16px;
-    top: 6px;
-  }
-}
-</style>

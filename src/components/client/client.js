@@ -34,6 +34,14 @@ class Client {
     return this
   }
 
+  get sexList () {
+    return [
+      { code: 'M', display: 'Муж' },
+      { code: 'F', display: 'Жен' },
+      { code: 'C', display: 'Дети' }
+    ]
+  }
+
   // Properties
 
   /**
@@ -82,6 +90,19 @@ class Client {
   }
 
   /**
+   * @param {String} newVal
+   */
+  set fullName (newVal) {
+    if (!newVal) return
+    let name = new Name(newVal)
+    this.j = { ...this.j, ...{ name: name } }
+  }
+
+  get fullName () {
+    const n = new Name(this.j.name)
+    return n.fullName
+  }
+  /**
    * @param {any} newVal
    */
   set name (newVal) {
@@ -110,18 +131,22 @@ class Client {
   }
 
   /**
-   * @param {String} newVal
+   * @param {any} newVal
    */
   set sex (newVal) {
-    if (newVal) {
-      this.j = { ...this.j, ...{ sex: newVal } }
+    let val = newVal
+    if (newVal || newVal === 0) {
+      if (typeof newVal === 'number') {
+        val = this.sexList[newVal].code
+      }
+      this.j = { ...this.j, ...{ sex: val } }
     } else {
       delete this.j.sex
     }
   }
 
   get sex () {
-    return this.j && this.j.sex
+    return this.j && this.sexList.findIndex(x => x.code === this.j.sex)
   }
 
   /**

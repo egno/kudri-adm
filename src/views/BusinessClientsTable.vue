@@ -31,7 +31,7 @@
               flat
               right
               small
-              :href="'businessCard/'+props.item.id"
+              @click="clientEdit(props.item)"
             >
               <UserAvatar
                 class="ma-1"
@@ -120,6 +120,21 @@
         </td>
       </template>
     </v-data-table>
+    <v-navigation-drawer
+      v-model="edit"
+      right
+      temporary
+      fixed
+      width="400"
+    >
+      <ClientCardEdit
+        v-if="edit"
+        :client="item"
+        @onDelete="onDelete()"
+        @onSave="onSave($event)"
+        @close="edit=false"
+      />
+    </v-navigation-drawer>
   </div>
 </template>
 
@@ -128,6 +143,7 @@ import Api from '@/api/backend'
 import { mapActions, mapGetters } from 'vuex'
 import UserAvatar from '@/components/avatar/UserAvatar.vue'
 import BusinessPhones from '@/components/business/BusinessPhones.vue'
+import ClientCardEdit from '@/components/client/ClientCardEdit.vue'
 import Client from '@/components/client/client'
 import {
   formatDate,
@@ -136,9 +152,10 @@ import {
 } from '@/components/calendar/utils'
 
 export default {
-  components: { BusinessPhones, UserAvatar },
+  components: { BusinessPhones, ClientCardEdit, UserAvatar },
   data () {
     return {
+      edit: false,
       headers: [
         { text: 'Имя и фамилия', value: 'j->name->>fullname' },
         { text: 'Визиты', value: 'visit->visits->>total' },
@@ -147,6 +164,7 @@ export default {
         { text: 'Филиал', value: '' },
         { text: '', value: '', sortable: false, width: '1' }
       ],
+      item: {},
       items: [],
       pagination: { rowsPerPage: 10 },
       progressQuery: false,
@@ -181,6 +199,10 @@ export default {
   },
   methods: {
     ...mapActions(['addClientsCounter']),
+    clientEdit (item) {
+        this.item = new Client(item)
+        this.edit=true
+    },
     fetchData () {
       if (!this.business) return
       this.progressQuery = true
@@ -221,6 +243,13 @@ export default {
           this.progressQuery = false
         })
     },
+    onDelete () {
+        if (!this.item.id) {
+            this.edit = false
+            return
+        }
+        this.onItemDelete(this.item.id)
+    },
     onItemDelete (payload) {
       if (!payload) return
       Api()
@@ -228,6 +257,19 @@ export default {
         .then(() => {
           this.addClientsCounter(-1)
           this.fetchData()
+          this.edit=false
+        })
+    },
+    onSave (item) {
+        const newItem = new Client(item)
+        newItem.save()
+        .then(() => {
+            this.edit=false
+            let idx = this.items.findIndex(x => x.id === item.id)
+            if (idx > -1) {
+                this.items.splice(idx,1,item)
+            }
+            this.item = {}
         })
     },
     visitStatus (item) {
