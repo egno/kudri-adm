@@ -96,6 +96,9 @@
           {{ props.item.visit.check }}
         </td>
         <td>
+          -
+        </td>
+        <td>
           <v-layout
             row
             align-center
@@ -141,7 +144,8 @@ export default {
         { text: 'Визиты', value: 'visit->visits->>total' },
         { text: 'Статус', value: 'visit->last->time->>from' },
         { text: 'Средний чек', value: 'visit->>check' },
-        { text: '', value: '',  sortable: false, width: '1'}
+        { text: 'Филиал', value: '' },
+        { text: '', value: '', sortable: false, width: '1' }
       ],
       items: [],
       pagination: { rowsPerPage: 10 },
@@ -267,7 +271,7 @@ export default {
   margin-right: 4px;
 }
 .second-row {
-    color: grey;
-    font-size: 0.8em;
+  color: grey;
+  font-size: 0.8em;
 }
 </style>
