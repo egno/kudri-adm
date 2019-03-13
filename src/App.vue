@@ -425,4 +425,8 @@ export default {
 .fill-height .flex > .v-card {
   flex: 1 1 auto;
 }
+.hidden-button:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
 </style>

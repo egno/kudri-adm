@@ -45,7 +45,9 @@
                 align-self-center
                 justify-start
               >
-                {{ props.item.name.fullName }}
+                <span class="hidden-button" @click="clientEdit(props.item)">
+                  {{ props.item.name.fullName }}
+                </span>
               </v-flex>
               <v-flex
                 align-self-center
@@ -200,8 +202,8 @@ export default {
   methods: {
     ...mapActions(['addClientsCounter']),
     clientEdit (item) {
-        this.item = new Client(item)
-        this.edit=true
+      this.item = new Client(item)
+      this.edit = true
     },
     fetchData () {
       if (!this.business) return
@@ -244,11 +246,11 @@ export default {
         })
     },
     onDelete () {
-        if (!this.item.id) {
-            this.edit = false
-            return
-        }
-        this.onItemDelete(this.item.id)
+      if (!this.item.id) {
+        this.edit = false
+        return
+      }
+      this.onItemDelete(this.item.id)
     },
     onItemDelete (payload) {
       if (!payload) return
@@ -257,20 +259,19 @@ export default {
         .then(() => {
           this.addClientsCounter(-1)
           this.fetchData()
-          this.edit=false
+          this.edit = false
         })
     },
     onSave (item) {
-        const newItem = new Client(item)
-        newItem.save()
-        .then(() => {
-            this.edit=false
-            let idx = this.items.findIndex(x => x.id === item.id)
-            if (idx > -1) {
-                this.items.splice(idx,1,item)
-            }
-            this.item = {}
-        })
+      const newItem = new Client(item)
+      newItem.save().then(() => {
+        this.edit = false
+        let idx = this.items.findIndex(x => x.id === item.id)
+        if (idx > -1) {
+          this.items.splice(idx, 1, item)
+        }
+        this.item = {}
+      })
     },
     visitStatus (item) {
       return (
