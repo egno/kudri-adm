@@ -60,13 +60,40 @@
           </v-layout>
         </td>
         <td>
-          {{ props.item.visits }}
+          <div v-if="props.item.visit.visits.total">
+            <span>
+              {{ props.item.visit.visits.total }}
+            </span>
+            <span
+              v-if="props.item.visit.visits.unvisited"
+              class="badge-inline red"
+            >
+              <span>
+                {{ props.item.visit.visits.unvisited }}
+              </span>
+            </span>
+          </div>
         </td>
         <td>
-          -
+          <v-layout column="">
+            <v-flex>
+              <span>
+                {{ visitDisplayDate(props.item) }}
+              </span>
+              <span> - </span>
+              <span>
+                {{ visitStatus(props.item) }}
+              </span>
+            </v-flex>
+            <v-flex>
+              <span class="second-row">
+                {{ visitDisplayTime(props.item) }}
+              </span>
+            </v-flex>
+          </v-layout>
         </td>
         <td>
-          -
+          {{ props.item.visit.check }}
         </td>
         <td>
           <v-layout
@@ -99,6 +126,11 @@ import { mapActions, mapGetters } from 'vuex'
 import UserAvatar from '@/components/avatar/UserAvatar.vue'
 import BusinessPhones from '@/components/business/BusinessPhones.vue'
 import Client from '@/components/client/client'
+import {
+  formatDate,
+  formatTime,
+  visitStatus
+} from '@/components/calendar/utils'
 
 export default {
   components: { BusinessPhones, UserAvatar },
@@ -106,9 +138,9 @@ export default {
     return {
       headers: [
         { text: 'Имя и фамилия', value: 'j->name->>fullname' },
-        { text: 'Визиты', value: '' },
-        { text: 'Статус', value: '' },
-        { text: 'Средний чек', value: '' },
+        { text: 'Визиты', value: 'visit->visits->>total' },
+        { text: 'Статус', value: 'visit->last->time->>from' },
+        { text: 'Средний чек', value: 'visit->>check' },
         { text: 'Действия', value: '' }
       ],
       items: [],
@@ -157,7 +189,7 @@ export default {
       let params = [filterString]
       if (sortBy) {
         params.push(
-          `order=${sortBy}${descending ? '.desc.nullsfirst' : '.asc.nullslast'}`
+          `order=${sortBy}${descending ? '.desc.nullslast' : '.asc.nullsfirst'}`
         )
       }
       if (rowsPerPage > -1) {
@@ -193,7 +225,49 @@ export default {
           this.addClientsCounter(-1)
           this.fetchData()
         })
+    },
+    visitStatus (item) {
+      return (
+        item.visit.last.time.from &&
+        visitStatus(item.visit.last.status, item.visit.last.time.from)
+      )
+    },
+    visitDisplayDate (item) {
+      if (!item.visit.last.time.from) return
+      const d = new Date(Date.parse(item.visit.last.time.from))
+      return formatDate(d)
+    },
+    visitDisplayTime (item) {
+      if (!item.visit.last.time.from) return
+      if (!item.visit.last.time.to) return
+      const d1 = new Date(Date.parse(item.visit.last.time.from))
+      const d2 = new Date(Date.parse(item.visit.last.time.to))
+      return `${formatTime(d1)} - ${formatTime(d2)}`
     }
   }
 }
 </script>
+
+<style scoped>
+.badge-inline {
+  display: inline-block;
+  line-height: 0px;
+
+  border-radius: 50%;
+  border: 0px solid;
+}
+.badge-inline span {
+  color: white;
+  display: inline-block;
+
+  padding-top: 50%;
+  padding-bottom: 50%;
+
+  margin-left: 4px;
+  margin-right: 4px;
+}
+.second-row {
+    color: grey;
+    font-size: 0.8em;
+}
+</style>

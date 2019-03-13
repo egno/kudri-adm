@@ -179,7 +179,7 @@ export default {
       let params = [this.querySearchString]
       if (sortBy) {
         params.push(
-          `order=${sortBy}${descending ? '.desc.nullsfirst' : '.asc.nullslast'}`
+          `order=${sortBy}${descending ? '.desc.nullslast' : '.asc.nullsfirst'}`
         )
       }
       if (rowsPerPage > -1) {
