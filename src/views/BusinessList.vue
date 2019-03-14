@@ -33,7 +33,7 @@
               small
               :outline="props.item.access"
               color="green"
-              :href="'businessCard/'+props.item.id+'/i'"
+              :to="{name: 'businessCard', params: {id: props.item.id}}"
               target="_blank"
             >
               <UserAvatar
@@ -51,7 +51,7 @@
             </VFlex>
           </VLayout>
           <a
-            :href="'businessCard/'+props.item.id"
+            :to="{name: 'businessCard', params: {id: props.item.id}}"
             target="_blank"
           />
         </td>
@@ -77,7 +77,7 @@
         <td class="justify-center layout px-0">
           <a
             v-if="props.item.access"
-            :href="'businessCard/'+props.item.id"
+            :to="{name: 'businessCard', params: {id: props.item.id}}"
             target="_blank"
           >
             <VIcon
