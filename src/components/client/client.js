@@ -28,6 +28,7 @@ class Client {
     this.phone = newVal && newVal.j && newVal.j.phone
     this.sex = newVal && newVal.j && newVal.j.sex
     this.notes = newVal && newVal.j && newVal.j.notes
+    this.message_agreement = newVal && newVal.j && newVal.j.message_agreement
   }
 
   get object () {
