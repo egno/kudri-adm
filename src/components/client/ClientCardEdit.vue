@@ -10,7 +10,7 @@
       </v-layout>
     </AppCardTitle>
     <v-card-text>
-      <v-layout column>
+      <v-layout column align-space-around justify-start>
         <v-flex>
           <v-text-field
             v-model="client.fullName"
@@ -65,7 +65,7 @@
       </v-layout>
     </v-card-text>
     <VCardActions>
-      <v-layout column="">
+      <v-layout column align-center justify-start>
         <v-flex px-5>
           <AppBtn
             primary
