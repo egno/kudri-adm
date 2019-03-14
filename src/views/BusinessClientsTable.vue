@@ -115,7 +115,7 @@
               icon
               small
               color="grey"
-              @click="onItemDelete(props.item.id)"
+              @click="onDelete(props.item)"
             >
               <v-icon>
                 delete
@@ -135,11 +135,54 @@
       <ClientCardEdit
         v-if="edit"
         :client="item"
-        @onDelete="onDelete()"
+        @onDelete="onDelete(item)"
         @onSave="onSave($event)"
         @close="edit=false"
       />
     </v-navigation-drawer>
+    <v-dialog
+      v-model="deleteConfirm"
+      width="300"
+    >
+      <v-card>
+        <AppCardTitle @close="deleteConfirm = false" />
+        <v-card-text>
+          <v-layout
+            column
+            align-center
+            justify-center
+          >
+            <v-flex>
+              Удалить клиента
+              <span class="font-weight-bold">{{ item.fullName }}</span>
+              ?
+            </v-flex>
+            <v-flex>
+              <span>Все данные будут удалены.</span>
+            </v-flex>
+          </v-layout>
+        </v-card-text>
+        <v-card-actions>
+          <v-layout
+            row
+            align-center
+            justify-center
+            pb-3
+          >
+            <v-flex shrink align-self-center px-1>
+              <AppBtn @click="deleteConfirm = false">
+                Отмена
+              </AppBtn>
+            </v-flex>
+            <v-flex shrink align-self-center px-1>
+              <AppBtn primary @click="deleteItem()">
+                Удалить
+              </AppBtn>
+            </v-flex>
+          </v-layout>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -147,6 +190,8 @@
 import Api from '@/api/backend'
 import { mapActions, mapGetters } from 'vuex'
 import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import AppBtn from '@/components/common/AppBtn.vue'
+import AppCardTitle from '@/components/common/AppCardTitle.vue'
 import BusinessPhones from '@/components/business/BusinessPhones.vue'
 import ClientCardEdit from '@/components/client/ClientCardEdit.vue'
 import Client from '@/components/client/client'
@@ -157,9 +202,16 @@ import {
 } from '@/components/calendar/utils'
 
 export default {
-  components: { BusinessPhones, ClientCardEdit, UserAvatar },
+  components: {
+    AppBtn,
+    AppCardTitle,
+    BusinessPhones,
+    ClientCardEdit,
+    UserAvatar
+  },
   data () {
     return {
+      deleteConfirm: false,
       edit: false,
       headers: [
         { text: 'Имя и фамилия', value: 'j->name->>fullname' },
@@ -270,7 +322,14 @@ export default {
       this.item.load(this.client_id)
       this.edit = true
     },
-    onDelete () {
+    onDelete (item) {
+      if (item) {
+        this.item = item
+      }
+      this.deleteConfirm = true
+    },
+    deleteItem () {
+      this.deleteConfirm = false
       if (!this.item.id) {
         this.edit = false
         return

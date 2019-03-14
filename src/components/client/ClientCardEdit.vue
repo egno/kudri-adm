@@ -67,14 +67,12 @@
     <VCardActions>
       <v-layout column="">
         <v-flex px-5>
-          <v-btn
-            block
-            ripple
-            color="primary"
+          <AppBtn
+            primary
             @click="onSave"
           >
             Сохранить
-          </v-btn>
+          </AppBtn>
         </v-flex>
         <v-flex pt-3>
           <v-btn
@@ -97,13 +95,13 @@
 
 <script>
 import { newClient } from '@/components/client/utils'
-// import AppBtn from '@/components/common/AppBtn.vue'
+import AppBtn from '@/components/common/AppBtn.vue'
 // import AppTabs from '@/components/common/AppTabs.vue'
 import AppCardTitle from '@/components/common/AppCardTitle.vue'
 import PhoneEdit from '@/components/business/PhoneEdit.vue'
 
 export default {
-  components: { AppCardTitle, PhoneEdit },
+  components: { AppBtn, AppCardTitle, PhoneEdit },
   props: {
     client: {
       type: Object,
