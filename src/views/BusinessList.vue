@@ -33,7 +33,7 @@
               small
               :outline="props.item.access"
               color="green"
-              :href="'businessCard/'+props.item.id"
+              :href="'businessCard/'+props.item.id+'/i'"
               target="_blank"
             >
               <UserAvatar
