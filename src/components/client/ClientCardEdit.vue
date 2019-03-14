@@ -10,7 +10,11 @@
       </v-layout>
     </AppCardTitle>
     <v-card-text>
-      <v-layout column align-space-around justify-start>
+      <v-layout
+        column
+        align-space-around
+        justify-start
+      >
         <v-flex>
           <v-text-field
             v-model="client.fullName"
@@ -20,7 +24,10 @@
           />
         </v-flex>
         <v-flex>
-          <PhoneEdit :phone="client.phone" @onEdit="client.phone=$event" />
+          <PhoneEdit
+            :phone="client.phone"
+            @onEdit="client.phone=$event"
+          />
         </v-flex>
         <v-flex>
           <v-select
@@ -36,19 +43,32 @@
             placeholder="ДД.ММ.ГГГГ"
           />
         </v-flex>
-        <v-flex>
-          <div>
-            Пол
-          </div>
-          <v-btn-toggle v-model="client.sex">
-            <v-btn
-              v-for="(sex, n) in client.sexList"
-              :key="n"
-              flat
-            >
-              {{ sex.display }}
-            </v-btn>
-          </v-btn-toggle>
+        <v-flex
+          align-self-center
+          pb-2
+        >
+          <v-layout
+            column
+            aalign-center
+            justify-start
+          >
+            <v-flex align-self-center>
+              <div>
+                Пол
+              </div>
+            </v-flex>
+            <v-flex align-self-center>
+              <v-btn-toggle v-model="client.sex">
+                <v-btn
+                  v-for="(sex, n) in client.sexList"
+                  :key="n"
+                  flat
+                >
+                  {{ sex.display }}
+                </v-btn>
+              </v-btn-toggle>
+            </v-flex>
+          </v-layout>
         </v-flex>
         <v-flex>
           <v-text-field
@@ -65,7 +85,11 @@
       </v-layout>
     </v-card-text>
     <VCardActions>
-      <v-layout column align-center justify-start>
+      <v-layout
+        column
+        align-center
+        justify-start
+      >
         <v-flex px-5>
           <AppBtn
             primary
