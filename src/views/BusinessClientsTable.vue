@@ -142,7 +142,7 @@
     </v-navigation-drawer>
     <v-dialog
       v-model="deleteConfirm"
-      width="300"
+      width="400"
     >
       <v-card>
         <AppCardTitle @close="deleteConfirm = false" />
