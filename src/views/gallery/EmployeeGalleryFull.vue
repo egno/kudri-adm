@@ -119,8 +119,8 @@ export default {
         })
     },
     loadBusiness () {
-      if (!this.business) return
-      this.setBusiness(this.business)
+      if (!this.businessId) return
+      this.setBusiness(this.businessId)
       Api()
         .get(`gallery?employees=cs.{${this.id}}`)
         .then(res => res.data)

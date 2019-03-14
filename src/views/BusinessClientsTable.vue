@@ -255,7 +255,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['business']),
+    ...mapGetters(['businessId']),
     client_id () {
       return this.$route && this.$route.params && this.$route.params.client
     },
@@ -302,16 +302,16 @@ export default {
       if (!this.edit && this.client_id === 'new') {
         this.$router.push({
           name: 'businessCardClients',
-          params: { id: this.business }
+          params: { id: this.businessId }
         })
       }
     },
     fetchData () {
-      if (!this.business) return
+      if (!this.businessId) return
       this.progressQuery = true
       this.items = []
       const { sortBy, descending, page, rowsPerPage } = this.pagination
-      let filter = [`business_id.eq.${this.business}`, this.querySearchString]
+      let filter = [`business_id.eq.${this.businessId}`, this.querySearchString]
         .filter(x => !!x)
         .join(',')
       let filterString = `and=(${filter})`
@@ -347,8 +347,8 @@ export default {
         })
     },
     onClientChange () {
-      if (!this.client_id || !this.business) return
-      this.item = new Client({ business_id: this.business })
+      if (!this.client_id || !this.businessId) return
+      this.item = new Client({ business_id: this.businessId })
       this.item.load(this.client_id)
       this.edit = true
     },

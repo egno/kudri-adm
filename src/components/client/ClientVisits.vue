@@ -52,7 +52,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['business']),
+    ...mapGetters(['businessId']),
     client_id () {
         return this.client && this.client.id
     }
@@ -68,11 +68,11 @@ export default {
       ...mapActions(['alert']),
     load () {
       if (!this.client_id || this.client_id === 'new') return
-      if (!this.business) return
+      if (!this.businessId) return
       Api()
         .get(
           `visit?and=(client_id.eq.${this.client_id},salon_id.eq.${
-            this.business
+            this.businessId
           })&order=ts_begin.desc`
         )
         .then(res => res.data)

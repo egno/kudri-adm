@@ -113,14 +113,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['business']),
+    ...mapGetters(['businessId']),
     addPlace () {
       return (
         this.employee && this.service && !this.fixed && this.edit && !this.more
       )
     },
     currentCompany () {
-      return this.company || this.business
+      return this.company || this.businessId
     },
     currentImages () {
       if (!this.imagesArray) return
@@ -139,9 +139,9 @@ export default {
     imagesArray () {
       return (
         this.data &&
-        this.business &&
+        this.businessId &&
         this.data.map(
-          x => `${process.env.VUE_APP_IMAGES}${this.business}/${x.id}`
+          x => `${process.env.VUE_APP_IMAGES}${this.businessId}/${x.id}`
         )
       )
     },
@@ -220,12 +220,12 @@ export default {
     saveImage (formData, fileNames) {
       this.isInitial = false
       let vm = this
-      if (!this.business) return
+      if (!this.businessId) return
       axios
         .post(process.env.VUE_APP_UPLOAD, formData, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-            businessid: this.business
+            businessid: this.businessId
           }
         })
         .then(() => {
@@ -233,7 +233,7 @@ export default {
           let payload = fileNames.map(x => {
             return {
               id: x.path,
-              business_id: this.business,
+              business_id: this.businessId,
               j: {
                 file_name: x.file,
                 service: [this.service],

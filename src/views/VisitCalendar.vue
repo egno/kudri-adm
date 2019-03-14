@@ -51,9 +51,9 @@ export default {
     ...mapActions(['setActions', 'setBusiness']),
     fetchData () {
       this.setActions(this.formActions)
-      this.setBusiness(this.business)
+      this.setBusiness(this.businessId)
       Api()
-        .get(`business?id=eq.${this.business}`)
+        .get(`business?id=eq.${this.businessId}`)
         .then(res => res.data)
         .then(res => {
           this.businessInfo = res[0]
