@@ -16,7 +16,7 @@ const state = {
 }
 
 const getters = {
-  business: state => state.businessInfo && state.businessInfo.id,
+  businessId: state => state.businessInfo && state.businessInfo.id,
   businessCategories: state => [
     ...state.businessCategories,
     ...state.businessIndividualCategories

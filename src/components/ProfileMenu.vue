@@ -49,7 +49,9 @@
             class="caption count"
             :class="{ attention: item.count === '!' }"
             flat
-          >{{ item.count }}</span>
+          >
+            {{ item.count }}
+          </span>
         </VListTile>
       </template>
     </VList>
@@ -102,7 +104,9 @@
             />
           </VForm>
           <div>
-            <a @click="goRestorePassword">Забыли пароль?</a>
+            <a @click="goRestorePassword">
+              Забыли пароль?
+            </a>
           </div>
         </VCardText>
         <VCardActions>

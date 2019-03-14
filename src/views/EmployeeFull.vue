@@ -152,7 +152,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['business']),
+    ...mapGetters(['businessId']),
     fullName () {
       return fullName(this.data)
     }
@@ -183,7 +183,7 @@ export default {
     },
     loadBusiness () {
       if (!this.id) return
-      if (this.id !== this.business) {
+      if (this.id !== this.businessId) {
         this.setBusiness(this.id)
       }
     },

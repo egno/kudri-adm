@@ -22,15 +22,23 @@
         <v-layout column>
           <v-flex py-0>
             <div>
-              <span class="caption grey--text text--darken-1">Цена: от</span>
-              <span class="text-value">{{ item.price }}</span>
+              <span class="caption grey--text text--darken-1">
+                Цена: от
+              </span>
+              <span class="text-value">
+                {{ item.price }}
+              </span>
               <span>₽</span>
             </div>
           </v-flex>
           <v-flex py-0>
             <div>
-              <span class="caption grey--text text--darken-1">Продолжительность:</span>
-              <span class="text-value">{{ item.duration }}</span>
+              <span class="caption grey--text text--darken-1">
+                Продолжительность:
+              </span>
+              <span class="text-value">
+                {{ item.duration }}
+              </span>
               <span>мин.</span>
             </div>
           </v-flex>
@@ -38,8 +46,12 @@
             <div>{{ item.notes }}</div>
           </v-flex>
           <v-flex v-if="item.employees">
-            <span class="caption grey--text text--darken-1">Сотрудников:</span>
-            <span class="text-value">{{ item.employees }}</span>
+            <span class="caption grey--text text--darken-1">
+              Сотрудников:
+            </span>
+            <span class="text-value">
+              {{ item.employees }}
+            </span>
           </v-flex>
         </v-layout>
       </v-card-text>

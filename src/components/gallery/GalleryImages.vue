@@ -1,101 +1,19 @@
 <template>
-  <v-layout>
-    <v-flex xs12>
-      <v-card
-        xs12
-        flat
-      >
-        <v-card-title>
-          <v-layout row>
-            <v-flex
-              v-if="!editMode"
-              xs12
-              sm6
-            >
-              <v-select
-                v-model="selectedService"
-                :items="services"
-                label="Услуга"
-                multiple
-                chips
-                deletable-chips
-                clearable
-              />
-            </v-flex>
-            <v-flex
-              v-if="!editMode"
-              xs12
-              sm6
-            >
-              <v-select
-                v-model="selectedEmployee"
-                :items="employees"
-                item-value="id"
-                item-text="name"
-                label="Мастер"
-                multiple
-                chips
-                deletable-chips
-                clearable
-              />
-            </v-flex>
-            <v-spacer />
-            <v-flex v-if="!editMode && businessInfo && businessInfo.access">
-              <v-btn
-                icon
-                fab
-                flat
-                ripple
-                @click="editMode = true"
-              >
-                <v-icon>edit</v-icon>
-              </v-btn>
-            </v-flex>
-            <v-flex v-if="editMode">
-              <v-layout row>
-                <v-flex>
-                  <v-btn
-                    flat
-                    color="primary"
-                    ripple
-                    @click="editMode = false"
-                  >
-                    Закрыть режим редактирования
-                  </v-btn>
-                </v-flex>
-              </v-layout>
-            </v-flex>
-          </v-layout>
-        </v-card-title>
-        <v-responsive>
-          <v-layout
-            row
-            wrap
-            fill-height
-            pa-1
-          >
-            <v-flex
-              v-for="(image,n) in selectedImages"
-              :key="image.id"
-              xs6
-              sm4
-              md3
-              lg2
-              xl1
-              @click="!editMode && showSlider(n)"
-            >
-              <image-card
-                :src="image.src"
-                :title="image.service"
-                :edit-mode="editMode"
-                :subtitle="image.employee && fullName(image.employee)"
-                @deleteImage="deleteImage(image)"
-              />
-            </v-flex>
-          </v-layout>
-        </v-responsive>
-      </v-card>
-    </v-flex>
+  <v-layout wrap>
+    <image-loader
+      class="add-photo image-card"
+      :place-text="''"
+      @onFilesUpload="$emit('filesUploaded', $event)"
+    />
+    <image-card
+      v-for="(image,index) in images"
+      :key="image.id"
+      :src="imagePath(image.id)"
+      :title="image.service"
+      :edit-mode="editMode"
+      @deleteImage="deleteImage(image)"
+      @click="!editMode && showSlider(index)"
+    />
   </v-layout>
 </template>
 
@@ -104,91 +22,20 @@ import { mapGetters } from 'vuex'
 import ImageCard from '@/components/gallery/ImageCard.vue'
 import { imagePath } from '@/components/gallery/utils'
 import { fullName } from '@/components/business/utils'
+import ImageLoader from '@/components/common/ImageLoader.vue'
 
 export default {
-  components: { ImageCard },
+  components: { ImageCard, ImageLoader },
   props: {
     images: { type: Array, default: undefined },
-    employeeFilter: { type: String, default: undefined }
-  },
-  data () {
-    return {
-      editMode: false,
-      selectedEmployee: [],
-      selectedService: []
-    }
+    editMode: { type: Boolean, default: false }
   },
   computed: {
-    ...mapGetters(['businessInfo', 'employee']),
-    employees () {
-      return [
-        ...new Set(
-          this.images &&
-            this.images
-              .map(x => x.employees)
-              .flat()
-              .filter(x => !!x)
-        )
-      ].map(x => {
-        const emp = this.getEmployee(x)
-        return (
-          emp && {
-            id: emp.id,
-            name: fullName(emp) || emp.id,
-            category: emp.j && emp.j.category
-          }
-        )
-      })
-    },
-    selectedImages () {
-      return (
-        this.images &&
-        this.images
-          .filter(
-            x =>
-              (this.selectedService.length === 0 ||
-                this.selectedService.some(s =>
-                  x.services.some(ss => ss === s)
-                )) &&
-              (this.selectedEmployee.length === 0 ||
-                this.selectedEmployee.some(s =>
-                  x.employees.some(ss => ss === s)
-                ))
-          )
-          .map(x => ({
-            id: x.id,
-            src: imagePath(x.id, x.business_id),
-            employee: this.getEmployee(
-              x.employees && x.employees.filter(e => !!e)[0]
-            ),
-            service: x.services && x.services.filter(e => !!e)[0]
-          }))
-      )
-    },
-    services () {
-      return [
-        ...new Set(
-          this.images &&
-            this.images
-              .map(x => x.services)
-              .flat()
-              .filter(x => !!x)
-        )
-      ]
-    }
-  },
-  watch: {
-    employeeFilter: 'load'
-  },
-  mounted () {
-    this.load()
+    ...mapGetters(['businessId']),
   },
   methods: {
-    load () {
-      console.log(this.employeeFilter)
-      if (this.employeeFilter) {
-        this.selectedEmployee = [this.employeeFilter]
-      }
+    imagePath (imageId) {
+      return imagePath(imageId, this.businessId)
     },
     deleteImage (image) {
       if (!(image && image.id)) return
@@ -197,15 +44,38 @@ export default {
     fullName (emp) {
       return fullName(emp)
     },
-    getEmployee (id) {
-      return this.employee && this.employee.filter(e => e.id === id)[0]
-    },
-    showSlider (n) {
+    showSlider (index) {
       this.$emit('showSlider', {
-        selected: n,
-        images: this.selectedImages
+        selected: index
       })
-    }
+    },
   }
 }
 </script>
+
+
+<style lang="scss" scoped>
+  @import '../../assets/styles/common';
+
+  .add-photo {
+    background: url('../../assets/images/svg/plus.svg') no-repeat center ;
+    border: 1px solid rgba(137, 149, 175, 0.2);
+
+    &__button {
+      display: flex;
+      height: 100%;
+      justify-content: stretch;
+    }
+  }
+
+  .image-card {
+    width: 130px;
+    height: 130px;
+    margin: 0 20px 20px 0;
+    @media only screen and (min-width : $desktop) {
+      width: 150px;
+      height: 150px;
+      margin: 0 12px 18px 0;
+    }
+  }
+</style>

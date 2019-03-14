@@ -1,179 +1,221 @@
 <template>
-  <v-dialog v-model="show">
-    <v-card
-      v-if="images"
-      class="grey--text"
-    >
-      <v-card-actions>
-        <v-layout column>
-          <v-flex class="title">
-            {{ title }}
+  <v-dialog v-model="show" :fullscreen="fullScreen" max-width="944px" content-class="gallery-slider">
+    <v-layout justify-space-between>
+      <v-flex class="gallery-slider__left">
+        <v-layout class="gallery-slider__header" align-center justify-space-between>
+          <v-flex>
+            <div class="gallery-slider__title">
+              {{ title }}
+            </div>
+            <div class="gallery-slider__subtitle">
+              {{ subtitle }}
+            </div>
           </v-flex>
-          <v-flex>{{ subtitle }}</v-flex>
-        </v-layout>
-        <v-spacer />
-        <v-card-title>{{ selected+1 }}/{{ images.length }}</v-card-title>
-        <v-btn
-          flat
-          icon
-          color="grey"
-          @click="show=false"
-        >
-          <v-icon>close</v-icon>
-        </v-btn>
-      </v-card-actions>
-      <v-responsive class="grey">
-        <v-layout
-          v-if="images && images.length > 1"
-          row
-        >
-          <v-flex
-            d-flex
-            xs11
-          >
-            <v-carousel
-              hide-controls
-              hide-delimiters
-              flat
-            >
-              <v-carousel-item :src="imagePath(images[selected])" />
-            </v-carousel>
-          </v-flex>
-          <v-flex xs1>
-            <v-layout
-              column
-              ma-1
-            >
-              <v-flex v-if="sliderCanScroll">
-                <v-btn
-                  small
-                  flat
-                  block
-                  class="white--text"
-                  @click="selected=(selected + images.length - 1) % images.length"
-                >
-                  <v-icon>keyboard_arrow_up</v-icon>
-                </v-btn>
-              </v-flex>
-              <v-flex
-                v-for="(image) in sliderImages"
-                :key="'image'+image.n"
-                ma-0
-                :class="[selected===image.n ? 'selected':'', 'slider-image']"
-                @click="selected=image.n"
+          <v-flex shrink>
+            <v-layout align-center justify-space-between>
+              <div> {{ selected + 1 }} / {{ images.length }}</div>
+              <v-btn
+                flat
+                icon
+                @click="deleteImage"
               >
-                <v-img
-                  :src="imagePath(image)"
-                  aspect-ratio="1"
-                />
-              </v-flex>
-              <v-flex v-if="sliderCanScroll">
-                <v-btn
-                  small
-                  flat
-                  block
-                  class="white--text"
-                  @click="selected=(selected + 1) % images.length"
-                >
-                  <v-icon>keyboard_arrow_down</v-icon>
-                </v-btn>
-              </v-flex>
+                <!--todo-->
+                <v-icon>delete</v-icon>
+              </v-btn>
             </v-layout>
           </v-flex>
         </v-layout>
-        <v-img
-          v-else
-          :src="imagePath(images[0])"
-        />
-      </v-responsive>
-    </v-card>
+        <v-container class="gallery-slider__img">
+          <v-img
+            :src="imagePath(images[selected])"
+            aspect-ratio="16/9"
+            max-width="800"
+            min-height="450"
+            :contain="true"
+          />
+        </v-container>
+        <!--<v-layout>
+          <v-btn
+            flat
+            icon
+            @click="$emit('fullscreenOn')"
+          >
+            &lt;!&ndash;todo&ndash;&gt;
+            <v-icon>expand</v-icon>
+          </v-btn>
+        </v-layout>-->
+      </v-flex>
+      <div class="gallery-slider__thumbs">
+        <v-flex v-if="sliderCanScroll">
+          <v-btn
+            small
+            flat
+            block
+            class="white--text"
+            @click="onPrevClick"
+          >
+            <v-icon>keyboard_arrow_up</v-icon>
+          </v-btn>
+        </v-flex>
+        <div v-show="!fullScreen" class="gallery-slider__previews">
+          <div
+            v-for="(image, i) in images"
+            :key="i"
+            :class="[selected===i? '_selected':'', 'gallery-slider__preview']"
+            @click.stop="onPreviewSelect($event, i)"
+          >
+            <v-img
+              :src="imagePath(image)"
+              :aspect-ratio="120/80"
+            />
+          </div>
+        </div>
+        <v-flex v-if="sliderCanScroll">
+          <v-btn
+            small
+            flat
+            block
+            class="white--text"
+            @click="onNextClick"
+          >
+            <v-icon>keyboard_arrow_down</v-icon>
+          </v-btn>
+        </v-flex>
+      </div>
+    </v-layout>
   </v-dialog>
 </template>
 
 <script>
-export default {
+  import { mapGetters } from 'vuex'
+  import { imagePath } from '@/components/gallery/utils'
+
+  export default {
+  model: {
+    prop: 'display',
+    event: 'input'
+  },
   props: {
     display: { type: Boolean, default: false },
+    fullScreen: { type: Boolean, default: false },
     images: { type: Array, default: undefined },
-    select: { type: Number, default: 0 },
+    current: { type: Number, default: 0 },
     title: { type: String, default: '' },
     subtitle: { type: String, default: '' }
   },
   data () {
     return {
       sliderCount: 4,
-      show: false,
-      selected: 0
+      selected: 0,
+      previewsParentEl: null
     }
   },
   computed: {
+    ...mapGetters(['businessId']),
     sliderCanScroll () {
       return this.images && this.images.length > this.sliderCount
     },
-    sliderImages () {
-      if (!this.images) return
-      const cnt = this.images.length
-      let images = this.images.map((x, n) => {
-        x.n = n
-        return x
-      })
-      if (cnt <= this.sliderCount) return images
-      const pos = ((this.sliderCount - 1) / 2) | 0
-      let start = this.selected - pos
-      let end = start + this.sliderCount
-      let result = []
-      if (start < 0) {
-        result = [...result, ...images.slice(start)]
-      }
-      result = [
-        ...result,
-        ...images.slice(Math.max(start, 0), Math.min(end, cnt))
-      ]
-      if (end > cnt) {
-        result = [...result, ...images.slice(0, end - cnt)]
-      }
-      return result
-    }
-  },
-  watch: {
-    display: 'load',
-    show (newVal) {
-      if (!newVal) {
+    show: {
+      get () {
+        return this.display
+      },
+      set () {
         this.$emit('close')
       }
     }
   },
-  mounted () {
-    this.load()
+  watch: {
+    'display' (visible) {
+      if (visible) {
+        this.selected = this.current
+        this.scrollToSelected()
+      }
+    }
   },
   methods: {
     imagePath (image) {
-      return (
-        image &&
-        (image.src ||
-          `${process.env.VUE_APP_IMAGES}${image.business_id}/${image.id}`)
-      )
+      if (!image) {
+        return
+      }
+      return imagePath(image.id, this.businessId)
     },
-    initProps () {
-      this.show = this.display
-      this.selected = this.select
+    deleteImage () {
+      this.$emit('deleteImage', this.images[this.selected].id)
     },
-    load () {
-      this.initProps()
-      if (!this.show) return
+    onPreviewSelect (event, index) {
+      this.selected = index
+      event.currentTarget.scrollIntoView({ behavior: 'smooth' })
+    },
+    onPrevClick () {
+      this.selected = (this.selected + this.images.length - 1) % this.images.length
+      this.scrollToSelected()
+    },
+    onNextClick () {
+      this.selected = (this.selected + 1) % this.images.length
+      this.scrollToSelected()
+    },
+    scrollToSelected () {
+      if(!this.previewsParentEl) {
+        this.previewsParentEl = document.querySelector('.gallery-slider__previews')
+      }
+      this.$nextTick(() => {
+        this.previewsParentEl.querySelector('._selected').scrollIntoView({ behavior: 'smooth' })
+      })
     }
   }
 }
 </script>
 
-<style scoped>
-.slider-image {
-  border: medium solid;
-  border-radius: 2px;
-  transition: all 0.5s;
-}
-.selected {
-  border-color: #eee;
-}
+<style lang="scss">
+  @import '../../assets/styles/common';
+  .gallery-slider {
+    box-shadow: none;
+
+    &>div {
+      height: 100%;
+    }
+    &__left {
+      max-width: 800px;
+    }
+
+    &__header {
+      max-height: 56px;
+      padding: 8px 0 8px 16px;
+      background-color: #fff;
+    }
+
+    &__thumbs {
+      //display: none;
+      @media only screen and (min-width : $desktop) {
+        display: block;
+        width: 120px;
+      }
+    }
+
+    &__previews {
+      height: 432px;
+      overflow-y: auto;
+    }
+
+    &__preview {
+      margin: 4px 0;
+      border: 1px solid transparent;
+      &._selected {
+        border: 1px solid rgba(255, 255, 255, 0.65);
+      }
+    }
+
+    &__img {
+      max-width: 800px;
+      padding: 0;
+      background: #757575;
+    }
+
+    &.fullscreen {
+      .gallery-slider__previews {
+        display: none;
+      }
+    }
+  }
 </style>
 

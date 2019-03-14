@@ -4,14 +4,18 @@ const businessCards = [
   'businessCardClients',
   'businessCardEmployee',
   'businessCardFilal',
-  'businessCardGallery',
   'businessCardServiceGallery',
   'businessCardEmployeeGallery',
   'businessCardService',
   'businessVisit',
   'employeeCard',
   'employeeFull',
-  'employeeGallery'
+  'companyGallery',
+  'companyAlbum',
+  'companyServicesGallery',
+  'companyEmployeesGallery',
+  'employeeGallery',
+  'serviceAlbum'
 ]
 
 export function isBusinessRoute (routeName) {

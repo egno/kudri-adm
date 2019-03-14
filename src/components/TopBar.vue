@@ -9,12 +9,13 @@
       @click="setNavigationVisible(true)"
     />
     <VLayout
+      v-if="!$route.path.includes('gallery')"
       row
       align-center
       justify-start
     >
       <VFlex
-        v-if="business"
+        v-if="businessId"
         flex
         row
         align-center
@@ -52,7 +53,7 @@
 
     <VSpacer />
     <VToolbarItems>
-      <Notifications />
+      <!--<Notifications />-->
       <ProfileMenu />
     </VToolbarItems>
   </VToolbar>
@@ -60,7 +61,6 @@
 
 <script>
 import ProfileMenu from '@/components/ProfileMenu.vue'
-import Notifications from '@/components/Notifications.vue'
 import router from '@/router'
 import { mapActions, mapGetters } from 'vuex'
 import { isBusinessRoute } from '@/utils'
@@ -68,7 +68,6 @@ import { isBusinessRoute } from '@/utils'
 export default {
   components: {
     ProfileMenu,
-    Notifications
   },
   data () {
     return {
@@ -83,9 +82,9 @@ export default {
   computed: {
     ...mapGetters([
       'actions',
-      'business',
+      'businessId',
       'businessInfo',
-      'employee',
+      'employees',
       'navigationVisible',
       'userID'
     ]),
@@ -96,7 +95,7 @@ export default {
       return this.actions.filter(x => x['default'])[0]
     },
     employeeList () {
-      return this.employee.map(x => {
+      return this.employees.map(x => {
         return { id: x.id, name: x.j.name || '<имя не указано>' }
       })
     },
@@ -117,7 +116,7 @@ export default {
     },
     showEmployee () {
       const list = ['businessVisit']
-      return list.some(x => x === this.$route.name) && this.employee.length
+      return list.some(x => x === this.$route.name) && this.employees.length
     },
     target () {
       if (this.defaultAction) {

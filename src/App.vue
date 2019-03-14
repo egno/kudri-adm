@@ -118,7 +118,7 @@ export default {
   }
   .topsearch {
     padding-left: 24px;
-    background: url('assets/search.svg') no-repeat left 0px center;
+    background: url('assets/images/svg/search.svg') no-repeat left 0px center;
     background-size: 24px;
     font-family: Lato;
     font-style: normal;
@@ -159,7 +159,7 @@ export default {
   .topbar {
     z-index: 5;
     box-shadow: none;
-    border-bottom: 1px solid rgba(137, 149, 175, 0.1);
+    border-bottom: 1px solid #f4f5f7; // rgba(137, 149, 175, 0.1);
     .v-toolbar__content {
       background: #fff;
     }
@@ -360,8 +360,7 @@ export default {
       }
     }
   }
-}
-#app {
+
   .title {
     font-size: 18px !important;
   }
@@ -429,4 +428,25 @@ export default {
   text-decoration: underline;
   cursor: pointer;
 }
+  .v-breadcrumbs {
+    padding-left: 0;
+  }
+  .v-breadcrumbs__item {
+    font-family: Lato;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: normal;
+    color: #07101C;
+  }
+  .v-breadcrumbs .v-breadcrumbs__divider {
+    border: 1px solid #8995AF;
+    border-radius: 50%;
+    background: #8995AF;
+    padding: 0 !important;
+    margin: 0 8px;
+  }
+  .v-breadcrumbs__item--disabled {
+    color: #8995AF;
+  }
 </style>

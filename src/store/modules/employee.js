@@ -2,19 +2,19 @@ import Api from '@/api/backend'
 import { makeAlert } from '@/api/utils'
 
 const state = {
-  employee: [],
+  employees: [],
   employeeCategories: [],
   employeePositions: []
 }
 
 const getters = {
-  employee: state => state.employee,
-  employeeCount: state => state.employee.length,
+  employees: state => state.employees,
+  employeeCount: state => state.employees.length,
   employeeCategories: state => state.employeeCategories,
   employeePositions: state => state.employeePositions,
-  employeeServices: state =>
-    state.employee &&
-    state.employee
+  allEmployeesServices: state =>
+    state.employees &&
+    state.employees
       .map(x => x.j && x.j.services.map(s => ({ employee: x.id, service: s })))
       .flat()
 }
@@ -30,14 +30,14 @@ const mutations = {
     if (state.employeePositions.some(x => x.name === payload)) return
     state.employeePositions.unshift({ name: payload })
   },
-  LOAD_EMPLOYEE (state, payload) {
-    state.employee = payload || []
+  LOAD_EMPLOYEES (state, payload) {
+    state.employees = payload || []
   },
   DELETE_EMPLOYEE_ITEM (state, payload) {
     if (!payload) return
-    let idx = state.employee.findIndex(x => x.id === payload)
+    let idx = state.employees.findIndex(x => x.id === payload)
     if (idx !== -1) {
-      state.employee.splice(idx, 1)
+      state.employees.splice(idx, 1)
     }
   },
   SET_CATEGORIES (state, payload) {
@@ -45,11 +45,11 @@ const mutations = {
   },
   SET_EMPLOYEE_ITEM (state, payload) {
     if (!(payload && payload.id)) return
-    let idx = state.employee.findIndex(x => x.id === payload.id)
+    let idx = state.employees.findIndex(x => x.id === payload.id)
     if (idx !== -1) {
-      state.employee.splice(idx, 1, payload)
+      state.employees.splice(idx, 1, payload)
     } else {
-      state.employee.push(payload)
+      state.employees.push(payload)
     }
   },
   SET_POSITIONS (state, payload) {
@@ -76,7 +76,7 @@ const actions = {
       })
   },
   loadEmployee ({ commit }, payload) {
-    commit('LOAD_EMPLOYEE', null)
+    commit('LOAD_EMPLOYEES', null)
     if (!payload) {
       return
     }
@@ -85,7 +85,7 @@ const actions = {
       .get(path)
       .then(res => res.data)
       .then(res => {
-        commit('LOAD_EMPLOYEE', res)
+        commit('LOAD_EMPLOYEES', res)
       })
       .catch(err => commit('ADD_ALERT', makeAlert(err)))
   },

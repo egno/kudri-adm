@@ -19,14 +19,14 @@ export default {
     source: { type: String, default: () => '' }
   },
   data: () => ({
-    count: 3,
+    count: 0,
   }),
 }
 </script>
 <style lang="scss">
   .notif {
     width: 60px;
-    border-left: 1px solid rgba(137, 149, 175, 0.1);
+    border-left: 1px solid #f4f5f7; // rgba(137, 149, 175, 0.1);
     background: url('../assets/bellh.svg') no-repeat center center;
     background-size: 14px;
     cursor: pointer;
