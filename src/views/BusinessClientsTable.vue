@@ -102,7 +102,7 @@
           </v-layout>
         </td>
         <td>
-          {{ props.item.visit.check }}
+          {{ props.item.visit.visits.check }}
         </td>
         <td>
           -
@@ -241,8 +241,8 @@ export default {
       headers: [
         { text: 'Имя и фамилия', value: 'j->name->>fullname' },
         { text: 'Визиты', value: 'visit->visits->>total' },
-        { text: 'Статус', value: 'visit->last->time->>from' },
-        { text: 'Средний чек', value: 'visit->>check' },
+        { text: 'Статус', value: 'visit->last->>ts_begin' },
+        { text: 'Средний чек', value: 'visit->visits->>check' },
         { text: 'Филиал', value: '' },
         { text: '', value: '', sortable: false, width: '1' }
       ],
