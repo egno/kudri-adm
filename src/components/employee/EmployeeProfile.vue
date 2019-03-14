@@ -130,7 +130,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import PhoneEdit from '@/components/business/PhoneEdit.vue'
-import ImageLoader from '@/components/gallery/ImageLoader.vue'
+import ImageLoader from '@/components/common/ImageLoader.vue'
 
 export default {
   components: { ImageLoader, PhoneEdit },

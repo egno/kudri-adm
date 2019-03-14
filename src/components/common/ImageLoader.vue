@@ -4,20 +4,19 @@
       enctype="multipart/form-data"
       novalidate
     >
-      <div class="dropbox">
-        <input
-          type="file"
-          :multiple="multiple"
-          :name="uploadFieldName"
-          :disabled="!!status"
-          accept="image/*"
-          class="input-file"
-          @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
-        >
-        <p v-if="!status">
-          {{ placeText }}
-        </p>
-      </div>
+      <input
+        type="file"
+        :multiple="multiple"
+        :name="uploadFieldName"
+        :disabled="!!status"
+        accept="image/*"
+        class="input-file"
+        @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
+      >
+      <p v-if="placeText && !hasSlot && !status">
+        {{ placeText }}
+      </p>
+      <slot v-else name="add-photo-button" />
     </form>
   </div>
 </template>
@@ -31,9 +30,10 @@ export default {
   props: {
     aspectRatio: { type: Number, default: 1 },
     multiple: { type: Boolean, default: false },
-    placeText: { type: String, default: 'Перетащите фалы сюда' },
+    placeText: { type: String, default: 'Перетащите файлы сюда' },
     src: { type: String, default: undefined },
-    placeHolder: { type: String, default: undefined }
+    placeHolder: { type: String, default: undefined },
+    hasSlot:  { type: Boolean, default: false },
   },
   data () {
     return {
@@ -43,7 +43,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['business'])
+    ...mapGetters(['businessId'])
   },
   methods: {
     filesChange (fieldName, fileList) {
@@ -60,17 +60,17 @@ export default {
     saveImage (formData, fileNames) {
       this.status = 'process'
       let vm = this
-      if (!this.business) return
+      if (!this.businessId) return
       axios
         .post(process.env.VUE_APP_UPLOAD, formData, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-            businessid: this.business
+            businessid: this.businessId
           }
         })
         .then(res => {
           if (res.status === 200) {
-            this.$emit('onFilesUpload', fileNames)
+            this.$emit('onFilesUpload', { formData, fileNames })
           }
         })
         .then(() => {
@@ -84,3 +84,23 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  form {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  input[type="file"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+</style>

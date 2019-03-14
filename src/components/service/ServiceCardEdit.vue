@@ -20,9 +20,9 @@
         </v-flex>
         <v-flex v-else>
           <router-link
-            v-if="business && selectedService && item.employees"
+            v-if="businessId && selectedService && item.employees"
             :to="{name: 'businessCardEmployee', 
-                  params:{id: business}, 
+                  params:{id: businessId},
                   query:{service: (selectedService.name || selectedService)}}"
           >
             Сотрудников: {{ item.employees }}
@@ -155,7 +155,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['business', 'serviceGroups']),
+    ...mapGetters(['businessId', 'serviceGroups']),
     categories () {
       return this.serviceGroups
     }

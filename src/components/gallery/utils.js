@@ -1,11 +1,11 @@
 import Api from '@/api/backend'
 
-export function imagePath (src, business) {
+export function imagePath (imgId, businessId) {
   return (
-    src &&
-    src !== '' &&
-    src !== null &&
-    `${process.env.VUE_APP_IMAGES}${business}/${src}`
+    imgId &&
+    imgId !== '' &&
+    imgId !== null &&
+    `${process.env.VUE_APP_IMAGES}${businessId}/${imgId}`
   )
 }
 
@@ -15,4 +15,8 @@ export function deleteImage (id) {
       reject('no ID')
     })
   return Api().delete(`gallery?id=eq.${id}`)
+}
+
+export function isMobile () {
+  return window.innerWidth < 1160
 }

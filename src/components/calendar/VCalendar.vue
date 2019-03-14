@@ -214,19 +214,17 @@ export default {
     ...mapGetters([
       'actualDate',
       'businessInfo',
+      'businessId',
       'calendar',
       'businessDayVisits',
       'schedule'
     ]),
-    business () {
-      return this.businessInfo && this.businessInfo.id
-    },
     dateMonthHeader () {
       const d = new Date(this.workDate)
       return monthDisplay(d)
     },
     currentEmployee () {
-      return this.employee[0] || this.business
+      return this.employee[0] || this.businessId
     },
     curSchedule () {
       if (!(this.schedule && this.minDate && this.maxDate)) {
@@ -329,11 +327,11 @@ export default {
       return d && d.j && d.j.schedule
     },
     fetchData () {
-      if (!this.business) return
+      if (!this.businessId) return
       if (this.workDate) {
         this.setActualDate(this.workDate)
       }
-      const path = `visit?salon_id=eq.${this.business}`
+      const path = `visit?salon_id=eq.${this.businessId}`
       Api()
         .get(path)
         .then(res => res.data)
@@ -352,7 +350,7 @@ export default {
             v.ts_begin && v.ts_begin.slice(0, 10) === dt &&
             (employee
               ? v.business_id === employee
-              : v.business_id === this.business)
+              : v.business_id === this.businessId)
         )
         .sort((a, b) => (a.ts_begin < b.ts_begin ? -1 : 1))
         .map(x => {
@@ -376,7 +374,7 @@ export default {
       this.setActualDate(dt)
       router.push({
         name: 'businessVisit',
-        params: { id: this.business, date: dt }
+        params: { id: this.businessId, date: dt }
       })
     },
     isHoliday (dt) {
@@ -398,7 +396,7 @@ export default {
       if (!this.currentDay) {
         return
       }
-      if (!this.business) {
+      if (!this.businessId) {
         return
       }
       let dt = this.currentDay.dateKey
@@ -407,14 +405,14 @@ export default {
       }
       Api()
         .patch(
-          `business_calendar?and=(business_id.eq.${this.business},dt.eq.${dt})`,
+          `business_calendar?and=(business_id.eq.${this.businessId},dt.eq.${dt})`,
           data
         )
         .then(() => {
           this.timeEdit = false
           this.currentDay = {}
           this.loadCalendar({
-            business: this.business,
+            business: this.businessId,
             dates: [dt, dt]
           })
         })
@@ -481,7 +479,7 @@ export default {
       this.setDates()
       this.dates = this.dates.map(w => {
         w = w.map(x => {
-          x.visits = this.dayVisits(x.dateKey, this.business)
+          x.visits = this.dayVisits(x.dateKey, this.businessId)
           return x
         })
         return w

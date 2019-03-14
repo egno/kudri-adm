@@ -88,29 +88,44 @@ export default new Router({
       component: () => import('./views/FilialList.vue')
     },
     {
-      path: '/businessCardGallery/:id',
-      name: 'businessCardGallery',
-      component: () => import('./views/BusinessCardGallery.vue')
+      path: '/gallery/:id',
+      name: 'companyGallery',
+      component: () => import('./views/gallery/_id/index.vue')
     },
     {
-      path: '/businessCardGallery/s/:id',
-      name: 'businessCardServiceGallery',
-      component: () => import('./views/BusinessCardGallery.vue')
+      path: '/gallery/:id/companyAlbum',
+      name: 'companyAlbum',
+      component: () => import('./views/gallery/_id/CompanyAlbum.vue')
     },
     {
-      path: '/businessCardGallery/e/:id',
-      name: 'businessCardEmployeeGallery',
-      component: () => import('./views/BusinessCardGallery.vue')
+      path: '/gallery/:id/services', // todo подумать над структурой
+      name: 'companyServicesGallery',
+      component: () => import('./views/gallery/Album.vue')
     },
+    {
+      path: '/gallery/:id/employees',
+      name: 'companyEmployeesGallery',
+      component: () => import('./views/gallery/_id/employees/index.vue')
+    },
+    {
+      path: '/gallery/:id/employees/:personalId',
+      name: 'employeeGallery',
+      component: () => import('./views/gallery/_id/employees/_personalId/index.vue')
+    },
+    {
+      path: '/gallery/:id/employees/:personalId/album', // todo подумать над структурой
+      name: 'serviceAlbum',
+      component: () => import('./views/gallery/Album.vue')
+    },
+    /*{
+      path: '/gallery/personal/:personalId',
+      name: 'personalGallery',
+      component: () => import('./views/gallery/PersonalGallery.vue')
+    },*/
     {
       path: '/businessCard/:id/e/:employee',
       name: 'employeeFull',
       component: () => import('./views/EmployeeFull.vue')
-    },
-    {
-      path: '/employeeGallery/:employee',
-      name: 'employeeGallery',
-      component: () => import('./views/EmployeeGalleryFull.vue')
     },
     {
       path: '/businessCard/s/:id',

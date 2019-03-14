@@ -67,7 +67,9 @@
     <v-divider />
     <VCardText>
       <div>
-        <span :class="captionClass">Услуги: {{ servicesCount || '-' }}</span>
+        <span :class="captionClass">
+          Услуги: {{ servicesCount || '-' }}
+        </span>
         <div
           v-for="(service, i) in item.j && item.j.services"
           v-show="(i < displayItemsCount)"

@@ -171,9 +171,9 @@ const actions = {
       d1.setDate(1)
       d1.setYear(payload.slice(0, 4))
       d1.setMonth(payload.slice(5, 7))
-      if (getters.business) {
+      if (getters.businessId) {
         dispatch('loadCalendar', {
-          business: getters.business,
+          business: getters.businessId,
           dates: [from, formatDate(d1)]
         })
       } else {
