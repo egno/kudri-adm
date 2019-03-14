@@ -65,7 +65,11 @@
           </v-layout>
         </td>
         <td>
-          <div v-if="props.item.visit.visits.total">
+          <div
+            v-if="props.item.visit.visits.total"
+            class="hidden-button"
+            @click="clientVisits(props.item)"
+          >
             <span>
               {{ props.item.visit.visits.total }}
             </span>
@@ -80,19 +84,19 @@
           </div>
         </td>
         <td>
-          <v-layout column="">
+          <v-layout v-if="props.item.lastVisit.ts_begin" column="">
             <v-flex>
               <span>
-                {{ visitDisplayDate(props.item) }}
+                {{ props.item.lastVisit.date }}
               </span>
               <span> - </span>
               <span>
-                {{ visitStatus(props.item) }}
+                {{ props.item.lastVisit.displayStatus }}
               </span>
             </v-flex>
             <v-flex>
               <span class="second-row">
-                {{ visitDisplayTime(props.item) }}
+                {{ props.item.lastVisit.timeInterval }}
               </span>
             </v-flex>
           </v-layout>
@@ -140,6 +144,19 @@
         @close="edit=false"
       />
     </v-navigation-drawer>
+    <v-navigation-drawer
+      v-model="visitsPanel"
+      right
+      temporary
+      fixed
+      width="400"
+    >
+      <ClientVisits
+        v-if="visitsPanel"
+        :client="item"
+        @close="visitsPanel=false"
+      />
+    </v-navigation-drawer>
     <v-dialog
       v-model="deleteConfirm"
       width="400"
@@ -169,13 +186,24 @@
             justify-center
             pb-3
           >
-            <v-flex shrink align-self-center px-1>
+            <v-flex
+              shrink
+              align-self-center
+              px-1
+            >
               <AppBtn @click="deleteConfirm = false">
                 Отмена
               </AppBtn>
             </v-flex>
-            <v-flex shrink align-self-center px-1>
-              <AppBtn primary @click="deleteItem()">
+            <v-flex
+              shrink
+              align-self-center
+              px-1
+            >
+              <AppBtn
+                primary
+                @click="deleteItem()"
+              >
                 Удалить
               </AppBtn>
             </v-flex>
@@ -194,12 +222,8 @@ import AppBtn from '@/components/common/AppBtn.vue'
 import AppCardTitle from '@/components/common/AppCardTitle.vue'
 import BusinessPhones from '@/components/business/BusinessPhones.vue'
 import ClientCardEdit from '@/components/client/ClientCardEdit.vue'
-import Client from '@/components/client/client'
-import {
-  formatDate,
-  formatTime,
-  visitStatus
-} from '@/components/calendar/utils'
+import ClientVisits from '@/components/client/ClientVisits.vue'
+import Client from '@/classes/client'
 
 export default {
   components: {
@@ -207,6 +231,7 @@ export default {
     AppCardTitle,
     BusinessPhones,
     ClientCardEdit,
+    ClientVisits,
     UserAvatar
   },
   data () {
@@ -225,7 +250,8 @@ export default {
       items: [],
       pagination: { rowsPerPage: 10 },
       progressQuery: false,
-      totalItems: 0
+      totalItems: 0,
+      visitsPanel: false
     }
   },
   computed: {
@@ -267,6 +293,10 @@ export default {
     clientEdit (item) {
       this.item = new Client(item)
       this.edit = true
+    },
+    clientVisits (item) {
+      this.item = new Client(item)
+      this.visitsPanel = true
     },
     closeNewEditor () {
       if (!this.edit && this.client_id === 'new') {
@@ -357,24 +387,6 @@ export default {
         }
         this.item = {}
       })
-    },
-    visitStatus (item) {
-      return (
-        item.visit.last.time.from &&
-        visitStatus(item.visit.last.status, item.visit.last.time.from)
-      )
-    },
-    visitDisplayDate (item) {
-      if (!item.visit.last.time.from) return
-      const d = new Date(Date.parse(item.visit.last.time.from))
-      return formatDate(d)
-    },
-    visitDisplayTime (item) {
-      if (!item.visit.last.time.from) return
-      if (!item.visit.last.time.to) return
-      const d1 = new Date(Date.parse(item.visit.last.time.from))
-      const d2 = new Date(Date.parse(item.visit.last.time.to))
-      return `${formatTime(d1)} - ${formatTime(d2)}`
     }
   }
 }

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import Client from '@/components/client/client'
+import Client from '@/classes/client'
 
 export default {
   props: {

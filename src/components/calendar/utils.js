@@ -46,6 +46,16 @@ export function formatDate (date) {
   ].join('-')
 }
 
+function displayDate (date) {
+  if (!date) return
+  let d = date
+  return [
+    ('0' + d.getDate()).slice(-2),
+    ('0' + (d.getMonth() + 1)).slice(-2),
+    d.getFullYear()
+  ].join('.')
+}
+
 export function formatTime (date) {
   if (!date) return
   let d = date
@@ -77,6 +87,16 @@ export function getRESTTime (s) {
     return
   }
   return s.slice(11, 16)
+}
+
+export function displayRESTDate (s) {
+  const d = new Date(Date.parse(s))
+  return displayDate(d)
+}
+
+export function displayRESTTime (s) {
+  const d = new Date(Date.parse(s))
+  return formatTime(d)
 }
 
 export function monthDates (year, month) {
@@ -152,5 +172,5 @@ export function visitStatus (status, time) {
   const now = new Date()
   const t = new Date(Date.parse(time))
 
-  return s[status] || ((t - now) > 0) ? 'Запись': 'Завершен'
+  return s[status] || t - now > 0 ? 'Запись' : 'Завершен'
 }

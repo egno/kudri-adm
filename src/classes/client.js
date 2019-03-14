@@ -1,7 +1,8 @@
 import Api from '@/api/backend'
 import store from '@/store'
 import { makeAlert, responseGetId } from '@/api/utils'
-import Name from '@/components/common/classes/name'
+import Name from '@/classes/name'
+import Visit from '@/classes/visit'
 
 class Client {
   constructor (emp) {
@@ -29,10 +30,16 @@ class Client {
     this.sex = newVal && newVal.j && newVal.j.sex
     this.notes = newVal && newVal.j && newVal.j.notes
     this.message_agreement = newVal && newVal.j && newVal.j.message_agreement
+    this.lastVisit = newVal && newVal.visit && newVal.visit.last
   }
 
   get object () {
-    return this
+    return Object.keys(this)
+    .filter(key => key[0]!=='_')
+    .reduce((obj, key) => {
+      obj[key] = this[key]
+      return obj
+    }, {})
   }
 
   get sexList () {
@@ -129,6 +136,18 @@ class Client {
 
   get phone () {
     return this.j && this.j.phone
+  }
+
+  /**
+   * @param {any} newVal
+   */
+  set lastVisit (newVal) {
+    if (!newVal) return
+    this._lastVisit = new Visit(newVal)
+  }
+
+  get lastVisit () {
+    return this._lastVisit
   }
 
   /**
