@@ -1,5 +1,20 @@
 <template>
-  <VLayout
+  <div class="schedule">
+    <div class="schedule__header" :class="{_expanded: expanded }">
+      Режим работы
+    </div>
+    <div class="schedule__container">
+      <div v-for="(item, index) in groups" :key="index">
+        <div v-for="(dayName, j) in daysGrouped[index]" :key="j">
+          {{ dayName }}
+        </div>
+        <div v-if="item">
+          {{ item.start }} - {{ item.end }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--<VLayout
     v-if="schedule"
     column
   >
@@ -41,10 +56,21 @@
         </VFlex>
       </VLayout>
     </VContainer>
-  </VLayout>
+  </VLayout>-->
 </template>
 
 <script>
+  function areDaysSame (day, nextDay) {
+    return day.start === nextDay.start && day.lunchStart === nextDay.lunchStart &&
+    day.end === nextDay.end && day.lunchEnd !== nextDay.lunchEnd
+  }
+  function isInGroups (groups, day) {
+    if (!groups.length) {
+      return false
+    }
+    return groups.some(d => areDaysSame(d, day))
+  }
+
 export default {
   props: {
     captionClass: {
@@ -56,7 +82,8 @@ export default {
       default () {
         return { type: 'week', data: [] }
       }
-    }
+    },
+    expanded: { type: Boolean, default: false }
   },
   data () {
     return {
@@ -89,6 +116,37 @@ export default {
             }
           })
       )
+    },
+    groups () {
+      const days = this.schedule && this.schedule.data
+      const groups = []
+
+      days.forEach(day => {
+        if (!isInGroups(groups, day)) {
+          groups.push(day)
+        }
+      })
+
+      return groups
+    },
+    daysGrouped () {
+      const days = this.schedule && this.schedule.data
+      const arr = []
+
+      this.dow.forEach((dayName, i) => {
+        let index = this.groups.findIndex((dayFromGroups) => {
+          return areDaysSame(days[i], dayFromGroups)
+        })
+
+        if (index !== -1) {
+          if (!arr[index]) {
+            arr[index] = []
+          }
+          arr[index].push(dayName)
+        }
+      })
+
+      return arr
     }
   }
 }

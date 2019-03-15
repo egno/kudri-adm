@@ -1,56 +1,59 @@
 <template>
-  <VCard>
-    <VLayout
-      justify-start
-      row
-      wrap
-    >
-      <VFlex
-        xs12
-        sm4
-        md3
+  <div class="card">
+    <div class="card__content">
+      <VLayout
+        align-center justify-center column
       >
-        <VCardTitle>
+        <div>
           <UserAvatar
             size="12em"
             :src="avatar"
           />
-        </VCardTitle>
-      </VFlex>
-      <VFlex
-        xs12
-        sm8
-        md9
-      >
+        </div>
         <VLayout column>
-          <VFlex>
-            <VCardTitle primary-title>
-              <div>
-                <div>
-                  <span class="headline">
-                    {{ title }}
-                  </span>
-                  <br>
-                  <span class="font-weight-medium grey--text">
-                    {{ category }}
-                  </span>
-                </div>
-              </div>
-            </VCardTitle>
-          </VFlex>
-          <VFlex v-if="address">
-            <BusinessAddress
+          <div>
+            <div class="field-title">
+              Название
+            </div>
+            <div class="field-value">
+              {{ title }}
+            </div>
+            <div class="field-title">
+              ИНН
+            </div>
+            <div class="field-value">
+              {{ }}
+            </div>
+          </div>
+          <div v-if="address" class="bottom-bordered">
+            <div class="field-title">
+              Адрес
+            </div>
+            <div class="field-value">
+              {{ address && address.name }}
+            </div>
+          </div>
+
+          <div v-if="phones.length">
+            <div
+              v-for="(item, i) in phones"
+              :key="i"
+            >
+              <span>
+                {{ item | phone }}
+              </span>
+            </div>
+          </div>
+          <div v-if="businessInfo.j && businessInfo.j.schedule">
+            <BusinessSchedule
               :caption-class="captionClass"
-              :address="address"
+              :schedule="businessInfo.j.schedule"
             />
-          </VFlex>
-          <VFlex v-if="phones.length">
-            <BusinessPhones
-              :caption-class="captionClass"
-              :phones="phones"
-            />
-          </VFlex>
-          <VFlex v-if="data.j && data.j.site">
+          </div>
+          <div v-if="businessInfo.j && businessInfo.j.links">
+            <SocialLinks :links="businessInfo.j.links" />
+          </div>
+          <div v-if="businessInfo.j && businessInfo.j.site">
             <div>
               <span :class="captionClass">
                 Сайт
@@ -59,25 +62,25 @@
                 <a
                   :href="siteLink"
                   target="_blank"
+                  class
                 >
-                  {{ data.j.site }}
+                  {{ businessInfo.j.site }}
                 </a>
               </span>
             </div>
-          </VFlex>
-          <VFlex v-if="data.j && data.j.links">
-            <SocialLinks :links="data.j.links" />
-          </VFlex>
-          <VFlex v-if="data.j && data.j.schedule">
-            <BusinessSchedule
-              :caption-class="captionClass"
-              :schedule="data.j.schedule"
-            />
-          </VFlex>
+          </div>
+          <div>
+            <div class="field-title">
+              Описание
+            </div>
+            <div class="">
+              {{ }}
+            </div> <!--description-->
+          </div>
         </VLayout>
-      </VFlex>
-    </VLayout>
-    <VCardActions>
+      </VLayout>
+    </div>
+    <!--<VCardActions>
       <VSpacer />
       <VBtn
         v-if="data.access"
@@ -86,14 +89,12 @@
       >
         Редактировать
       </VBtn>
-    </VCardActions>
-  </VCard>
+    </VCardActions>-->
+  </div>
 </template>
 
 <script>
 import Business from '@/classes/business'
-import BusinessAddress from '@/components/business/BusinessAddress.vue'
-import BusinessPhones from '@/components/business/BusinessPhones.vue'
 import BusinessSchedule from '@/components/business/BusinessSchedule.vue'
 import SocialLinks from '@/components/business/SocialLinks.vue'
 import UserAvatar from '@/components/avatar/UserAvatar.vue'
@@ -102,15 +103,22 @@ import { makeAlert } from '@/api/utils'
 
 export default {
   components: {
-    BusinessAddress,
-    BusinessPhones,
     BusinessSchedule,
     SocialLinks,
     UserAvatar
   },
+  filters: {
+    phone (value) {
+      if (!value) return ''
+      return value.replace(
+        /(\d?)(\d{1,3})(\d{1,3})(\d{1,4})$/g,
+        '+$1($2)$3-$4'
+      )
+    }
+  },
   mixins: [businessMixins],
   props: {
-    business: {
+    businessInfo: {
       type: Object,
       default () {
         return {}
@@ -127,41 +135,35 @@ export default {
   },
   computed: {
     address () {
-      if (!(this.data && this.data.j)) {
+      if (!(this.businessInfo && this.businessInfo.j)) {
         return
       }
-      return this.data.j.address
+      return this.businessInfo.j.address
     },
     avatar () {
-      if (!(this.data && this.data.j)) {
+      if (!(this.businessInfo && this.businessInfo.j)) {
         return
       }
-      return this.data.j.avatar
+      return this.businessInfo.j.avatar
     },
     category () {
-      if (!(this.data && this.data.j)) {
+      if (!(this.businessInfo && this.businessInfo.j)) {
         return
       }
-      return this.data.j.category
+      return this.businessInfo.j.category
     },
     siteLink () {
-      if (!this.data.j.site) {
+      if (!this.businessInfo.j.site) {
         return
       }
-      return this.prependHttpToUrl(this.data.j.site)
+      return this.prependHttpToUrl(this.businessInfo.j.site)
     },
     title () {
-      if (!(this.data && this.data.j)) {
+      if (!(this.businessInfo && this.businessInfo.j)) {
         return
       }
-      return this.data.j.name
+      return this.businessInfo.j.name
     }
-  },
-  watch: {
-    id: 'fetchData'
-  },
-  mounted () {
-    this.fetchData()
   },
   methods: {
     onEditClick () {
@@ -183,8 +185,45 @@ export default {
 }
 </script>
 
-<style>
-a {
-  text-decoration: none;
-}
+<style lang="scss" scoped>
+  @import '../../assets/styles/common';
+
+  a {
+    text-decoration: none;
+  }
+
+  .card {
+    &__content {
+      padding: 30px 45px 60px;
+      @media only screen and (min-width : $desktop) {
+        width: 524px;
+        padding: 40px 120px 60px;
+        box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12);
+      }
+    }
+  }
+
+  .field-title {
+    padding-top: 20px;
+    font-family: $lato;
+    font-style: normal;
+    font-size: 12px;
+    line-height: normal;
+    color: rgba(7, 16, 28, 0.35);
+  }
+
+  .field-value {
+    padding-top: 8px;
+    font-family: $lato;
+    font-style: normal;
+    font-size: 14px;
+    line-height: normal;
+    color: #07101C;
+  }
+
+  .bottom-bordered {
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid  rgba(137, 149, 175, 0.1);
+  }
 </style>
