@@ -21,6 +21,7 @@
         align-center
         justify-start
         display-4
+        hidden-xs-only
       >
         {{ businessInfo.category }} {{ businessInfo.name }}
       </VFlex>
