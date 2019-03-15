@@ -1,64 +1,68 @@
 <template>
-  <v-layout
-    row
-  >
-    <v-flex
-      xs3
-      class="grey--text text-xs-right timeline-date"
-      pr-1
-      py-2
-    >
-      {{ visit.date }}
-    </v-flex>
-    <v-flex xs9 pl-3 py-2>
-      <v-layout column>
-        <v-flex class="grey--text">
-          {{ visit.time }}
-        </v-flex>
-        <v-flex v-if="services">
-          <v-layout column>
-            <v-flex
-              v-for="(service, si) in services"
-              :key="'s'+si"
+  <v-hover>
+    <v-layout slot-scope="{ hover }" row fluid :class="{'row-hover': hover}">
+      <v-flex
+        xs3
+        class="grey--text text-xs-right timeline-date "
+        pr-1
+        py-2
+      >
+        {{ visit.date }}
+      </v-flex>
+      <v-flex
+        xs9
+        pl-3
+        py-2
+      >
+        <v-layout column>
+          <v-flex class="grey--text">
+            {{ visit.time }}
+          </v-flex>
+          <v-flex v-if="services">
+            <v-layout column>
+              <v-flex
+                v-for="(service, si) in services"
+                :key="'s'+si"
+              >
+                <v-layout row>
+                  <v-flex xs8>
+                    {{ service.name }}
+                  </v-flex>
+                  <v-flex
+                    v-if="service.price"
+                    xs4
+                    class="text-xs-right"
+                  >
+                    <div class="grey badge-inline">
+                      <span>{{ service.price }} ₽</span>
+                    </div>
+                  </v-flex>
+                </v-layout>
+              </v-flex>
+            </v-layout>
+          </v-flex>
+          <v-flex v-if="master">
+            <v-layout
+              column
+              py-1
             >
-              <v-layout row>
-                <v-flex xs8>
-                  {{ service.name }}
-                </v-flex>
-                <v-flex
-                  v-if="service.price"
-                  xs4
-                  class="text-xs-right"
-                >
-                  <div class="grey badge-inline">
-                    <span>{{ service.price }} ₽</span>
-                  </div>
-                </v-flex>
-              </v-layout>
-            </v-flex>
-          </v-layout>
-        </v-flex>
-        <v-flex v-if="master">
-          <v-layout
-            column
-            py-1
-          >
-            <v-flex>
-              <span class="font-weight-bold">Мастер</span>
-            </v-flex>
-            <v-flex>
-              {{ master }}
-            </v-flex>
-          </v-layout>
-        </v-flex>
-        <v-flex>
-          <span :style="{color: statusColor}">
-            {{ visit.displayStatus }}
-          </span>
-        </v-flex>
-      </v-layout>
-    </v-flex>
-  </v-layout>
+              <v-flex>
+                <span class="font-weight-bold">Мастер</span>
+              </v-flex>
+              <v-flex>
+                {{ master }}
+              </v-flex>
+            </v-layout>
+          </v-flex>
+          <v-flex>
+            <span :style="{color: statusColor}">
+              {{ visit.displayStatus }}
+            </span>
+          </v-flex>
+        </v-layout>
+      </v-flex>
+    </v-layout>
+  </v-hover>
 </template>
 
 <script>
@@ -92,8 +96,8 @@ export default {
 
 <style scoped>
 .timeline-date {
-    border-right: solid 2px;
-    border-color: rgba(0.5, 0.5, 0.5, 0.1);
+  border-right: solid 2px;
+  border-color: rgba(0.5, 0.5, 0.5, 0.1);
 }
 .badge-inline {
   display: inline-block;
@@ -106,6 +110,9 @@ export default {
   display: inline-block;
   margin-left: 0.75em;
   margin-right: 0.75em;
+}
+.row-hover {
+  background-color: #eee;
 }
 </style>
 

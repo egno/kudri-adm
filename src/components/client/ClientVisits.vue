@@ -17,7 +17,7 @@
         </v-layout>
       </AppCardTitle>
     </div>
-    <v-card-text class="scrollable">
+    <div class="scrollable">
       <v-layout column>
         <v-flex
           v-for="(visit) in visits"
@@ -26,7 +26,7 @@
           <VisitTimeLineRow :visit="visit" />
         </v-flex>
       </v-layout>
-    </v-card-text>
+    </div>
   </v-card>
 </template>
 
