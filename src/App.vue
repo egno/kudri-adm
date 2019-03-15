@@ -421,7 +421,7 @@ export default {
 .fill-height .flex {
   display: flex;
 }
-.fill-height .flex > .v-card {
+.fill-height .flex .v-card {
   flex: 1 1 auto;
 }
 .hidden-button:hover {

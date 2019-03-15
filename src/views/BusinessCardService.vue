@@ -29,7 +29,6 @@
             <VLayout
               row
               wrap
-              align-space-around
               fill-height
             >
               <VFlex
