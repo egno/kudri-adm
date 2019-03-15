@@ -3,116 +3,112 @@
     v-if="data"
     flat
   >
-    <div class="main-cont">
-      <VForm
-        v-model="valid"
-        lazy-validation
-        class="business-edit"
-      >
-        <div
-          class="d-inline-block mb-20"
-          :name="name"
-          @click="avatarEdit = !avatarEdit"
+    <div v-if="!tab">
+      <div class="main-cont">
+        <VForm
+          v-model="valid"
+          lazy-validation
+          class="business-edit"
         >
-          <UserAvatar
-            size="4em"
-            :src="avatar"
-            :type="'square'"
+          <div
+            class="d-inline-block mb-20"
+            :name="name"
+            @click="avatarEdit = !avatarEdit"
+          >
+            <UserAvatar
+              size="4em"
+              :src="avatar"
+              :type="'square'"
+            />
+          </div>
+
+          <VTextField
+            v-model="data.j.name"
+            label="Название"
+            :rules="[() => !!data.j.name || 'Это поле обязательно для заполнения']"
+            required
+            class="businesscard__field"
           />
-        </div>
+          <!--<VCombobox
+            v-model="data.j.category"
+            :disabled="categoryDisabled"
+            :items="businessCategories"
+            label="Тип"
+            :rules="[rules.category]"
+          />-->
+          <VTextField
+            v-if="!businessIsIndividual"
+            v-model="data.j.inn"
+            label="ИНН"
+            mask="############"
+            :rules="[rules.INN_counter]"
+            class="businesscard__field"
+          />
+          <v-layout row>
+            <v-flex xs9>
+              <AddressAutocomplete
+                v-model="data.j.address"
+                label="Адрес"
+              />
+            </v-flex>
+            <v-flex xs3>
+              <VTextField
+                v-model="data.j.office"
+                label="Офис"
+                class="businesscard__field"
+              />
+            </v-flex>
+          </v-layout>
 
-        <VTextField
-          v-model="data.j.name"
-          label="Название"
-          :rules="[() => !!data.j.name || 'Это поле обязательно для заполнения']"
-          required
-        />
-        <VCombobox
-          v-model="data.j.category"
-          :disabled="categoryDisabled"
-          :items="businessCategories"
-          label="Тип"
-          :rules="[rules.category]"
-        />
-        <VTextField
-          v-if="!businessIsIndividual"
-          v-model="data.j.inn"
-          label="ИНН"
-          mask="############"
-          :rules="[rules.INN_counter]"
-        />
-        <v-layout row>
-          <v-flex xs9>
-            <AddressAutocomplete
-              v-model="data.j.address"
-              label="Адрес"
-            />
+          <BusinessPhonesEdit
+            :phones="phones"
+            @onEdit="phonesEdit"
+          />
+          <!--<div
+            class="form-caption"
+            :class="captionClass"
+          >
+            Режим работы
+          </div>
+
+          <BusinessScheduleEdit
+            :schedule="data.j.schedule"
+            class="workmode"
+            @onEdit="scheduleEdit"
+          />-->
+
+          <v-flex class="soc-input">
+            <div class="soc-input-ic" />
+            <VTextField v-model="data.j.links.instagram" class="businesscard__field" />
           </v-flex>
-          <v-flex xs3>
-            <VTextField
-              v-model="data.j.office"
-              label="Офис"
-            />
-          </v-flex>
-        </v-layout>
+          <VBtn class="businesscard__add-field">
+            Добавить ссылку
+          </VBtn>
 
-        <BusinessPhonesEdit
-          :phones="phones"
-          @onEdit="phonesEdit"
-        />
-        <div
-          class="form-caption"
-          :class="captionClass"
-        >
-          Режим работы
-        </div>
 
-        <BusinessScheduleEdit
-          :schedule="data.j.schedule"
-          class="workmode"
-          @onEdit="scheduleEdit"
-        />
-
-        <div
-          class="form-caption"
-          :class="captionClass"
-        >
-          Ссылки
-        </div>
-
-        <v-flex class="soc-input">
-          <div class="soc-input-ic" />
-          <VTextField v-model="data.j.links.instagram" />
-        </v-flex>
-        <VBtn class="transparent add">
-          Добавить ссылку
-        </VBtn>
-
-        <div
-          class="form-caption"
-          :class="captionClass"
-        >
-          Описание
-        </div>
-
-        <v-textarea
-          counter="400"
-          value
-          height="auto"
-          auto-grow
-          rows="1"
-          placeholder="Введите текст описания"
-          maxlength="400"
-        />
-        <VBtn
-          :disabled="hasErrors"
-          color="success"
-          @click="close"
-        >
-          Сохранить
-        </VBtn>
-      </VForm>
+          <v-textarea
+            counter="400"
+            value
+            height="auto"
+            auto-grow
+            rows="1"
+            placeholder="Описание"
+            maxlength="400"
+            class="businesscard__field"
+          />
+          <MainButton
+            :disabled="hasErrors"
+            color="success"
+            class="businesscard__next"
+            @click="tab = true"
+          >
+            Далее
+          </MainButton>
+        </VForm>
+      </div>
     </div>
+    <div v-else />
+
 
     <VDialog
       v-model="avatarEdit"
@@ -130,21 +126,23 @@
 import UserAvatar from '@/components/avatar/UserAvatar.vue'
 import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue'
 import BusinessPhonesEdit from '@/components/business/BusinessPhonesEdit.vue'
-import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue'
+// import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue'
 import AddressAutocomplete from '@/components/yandex/AddressAutocomplete.vue'
 import Api from '@/api/backend'
 import { backendMixins } from '@/api/mixins'
 import { businessMixins } from '@/components/business/mixins'
 import { mapActions, mapGetters } from 'vuex'
 import { makeAlert } from '@/api/utils'
+import MainButton from '@/components/common/MainButton.vue'
 
 export default {
   components: {
     AddressAutocomplete,
     BusinessPhonesEdit,
-    BusinessScheduleEdit,
+    /*BusinessScheduleEdit,*/
     UserAvatar,
-    VueAvatarEditor
+    VueAvatarEditor,
+    MainButton
   },
   mixins: [backendMixins, businessMixins],
   data () {
@@ -162,7 +160,8 @@ export default {
               'В ИНН должно быть 10 или 12 цифр')) ||
           true
       },
-      valid: true
+      valid: true,
+      tab: false
     }
   },
   computed: {

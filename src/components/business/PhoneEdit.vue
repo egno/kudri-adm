@@ -7,6 +7,7 @@
       mask="phone"
       prefix="+7"
       :rules="[rules.counter]"
+      class="businesscard__field _phone"
       @input="onEdit"
     />
   </div>

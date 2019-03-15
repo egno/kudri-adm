@@ -12,24 +12,24 @@
         </div>
         <VLayout column>
           <div>
-            <div class="field-title">
+            <div class="businesscard__field-title">
               Название
             </div>
-            <div class="field-value">
+            <div class="businesscard__field-value">
               {{ title }}
             </div>
-            <div class="field-title">
+            <div class="businesscard__field-title">
               ИНН
             </div>
-            <div class="field-value">
+            <div class="businesscard__field-value">
               {{ }}
             </div>
           </div>
           <div v-if="address" class="bottom-bordered">
-            <div class="field-title">
+            <div class="businesscard__field-title">
               Адрес
             </div>
-            <div class="field-value">
+            <div class="businesscard__field-value">
               {{ address && address.name }}
             </div>
           </div>
@@ -70,7 +70,7 @@
             </div>
           </div>
           <div>
-            <div class="field-title">
+            <div class="businesscard__field-title">
               Описание
             </div>
             <div class="">
@@ -186,7 +186,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import '../../assets/styles/common';
+  @import '../../assets/styles/businesscard-form';
 
   a {
     text-decoration: none;
@@ -203,27 +203,4 @@ export default {
     }
   }
 
-  .field-title {
-    padding-top: 20px;
-    font-family: $lato;
-    font-style: normal;
-    font-size: 12px;
-    line-height: normal;
-    color: rgba(7, 16, 28, 0.35);
-  }
-
-  .field-value {
-    padding-top: 8px;
-    font-family: $lato;
-    font-style: normal;
-    font-size: 14px;
-    line-height: normal;
-    color: #07101C;
-  }
-
-  .bottom-bordered {
-    padding-bottom: 15px;
-    margin-bottom: 15px;
-    border-bottom: 1px solid  rgba(137, 149, 175, 0.1);
-  }
 </style>

@@ -9,17 +9,17 @@
         :phone="phone"
         @onEdit="onEdit(i, $event)"
       />
-      <VBtn
+      <!--<VBtn
         v-if="newPhones.length > 1"
         depressed
         flat
         small
         class="phone-delete"
         @click="newPhones.splice(i, 1)"
-      />
+      />-->
     </div>
     <VBtn
-      class="transparent add mt-4"
+      class="businesscard__add-field"
       :disabled="hasEmptyPhone"
       @click="newPhones.push('')"
     >
@@ -74,7 +74,8 @@ export default {
 }
 </script>
 <style lang="scss">
-.phone-input {
+
+  .phone-input {
   position: relative;
   .v-text-field__slot {
     padding-left: 56px;

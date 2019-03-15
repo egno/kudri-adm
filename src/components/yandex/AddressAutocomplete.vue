@@ -17,6 +17,7 @@
         :prepend-icon="prependIcon"
         :rules="[rules.found]"
         :search-input.sync="search"
+        class="businesscard__field"
       />
     </v-flex>
     <v-img
@@ -145,8 +146,10 @@ export default {
 }
 </script>
 
-<style>
-.href {
+<style lang="scss">
+  @import '../../assets/styles/businesscard-form';
+
+  .href {
   text-decoration: underline;
   color: rgb(158, 0, 0);
 }
