@@ -119,7 +119,7 @@ export default {
         })
     },
     loadBusiness () {
-      if (!this.businessId) return
+      if (!this.business) return
       this.setBusiness(this.businessId)
       Api()
         .get(`gallery?employees=cs.{${this.id}}`)

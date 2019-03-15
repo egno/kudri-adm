@@ -278,7 +278,7 @@ export default {
       deep: true
     },
     searchString: 'fetchData',
-    business: 'fetchData',
+    businessId: 'fetchData',
     client_id: 'onClientChange',
     edit: 'closeNewEditor'
   },

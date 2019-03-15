@@ -1,6 +1,6 @@
 <template>
   <v-card flat style="height: 100vh">
-    <AppCardTitle @close="$emit('close')">
+    <AppCardTitle style="heght: 30px" @close="$emit('close')">
       <v-layout column>
         <v-flex>
           <span class="title">
@@ -59,7 +59,7 @@ export default {
   },
   watch: {
       client_id: 'load',
-      business: 'load'
+      businessId: 'load'
   },
   mounted () {
     this.load()
@@ -95,7 +95,7 @@ export default {
 
 <style scoped>
 .scrollable {
-    height: 80vh;
+    height: calc(100vh - 80px);
     overflow: auto;
 }
 </style>

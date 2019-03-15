@@ -47,7 +47,9 @@
               align-self-center
               justify-start
             >
-              {{ props.item.j.name }}
+              <span>
+                {{ props.item.j && props.item.j.name || '-' }}
+              </span>
             </VFlex>
           </VLayout>
           <a
