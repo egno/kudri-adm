@@ -11,7 +11,7 @@
       </v-flex>
       <v-flex
         xs9
-        pl-3
+        px-3
         py-2
       >
         <v-layout column>
@@ -33,7 +33,7 @@
                     xs4
                     class="text-xs-right"
                   >
-                    <div class="grey badge-inline">
+                    <div :class="{'service-undone': isUndone}" class="badge-inline">
                       <span>{{ service.price }} ₽</span>
                     </div>
                   </v-flex>
@@ -81,6 +81,9 @@ export default {
     return {}
   },
   computed: {
+    isUndone () {
+      return !this.visit.currentStatus.done
+    },
     statusColor () {
       return this.visit.currentStatus.color || 'grey'
     },
@@ -104,6 +107,7 @@ export default {
   border-radius: 1em;
   padding: 0;
   height: 1.5em;
+  background-color: grey
 }
 .badge-inline span {
   color: white;
@@ -113,6 +117,9 @@ export default {
 }
 .row-hover {
   background-color: #eee;
+}
+.service-undone {
+  background-color: #ccc;
 }
 </style>
 

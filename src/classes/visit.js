@@ -37,11 +37,11 @@ class Visit {
 
   get statuses () {
     return [
-      { display: 'Не пришел', code: 'unvisited', color: 'red' },
+      { display: 'Не пришел', code: 'unvisited', color: '#ef4d37' },
       { display: 'Отмена', code: 'canceled', color: 'grey' },
-      { display: 'Завершен' },
+      { display: 'Завершен', done: true },
       { display: 'В процессе' },
-      { display: 'Запись', color: '#55f' }
+      { display: 'Запись', color: '#5699ff' }
     ]
   }
 
@@ -66,11 +66,14 @@ class Visit {
     const t1 = new Date(Date.parse(this.ts_begin))
     const t2 = new Date(Date.parse(this.ts_end))
 
-    return this.statuses.filter(x => x.code === this.status)[0] || (now > t2
-      ? this.statuses[2]
-      : now > t1
-      ? this.statuses[3]
-      : this.statuses[4])
+    return (
+      this.statuses.filter(x => x.code === this.status)[0] ||
+      (now > t2
+        ? this.statuses[2]
+        : now > t1
+        ? this.statuses[3]
+        : this.statuses[4])
+    )
   }
 
   get displayStatus () {
