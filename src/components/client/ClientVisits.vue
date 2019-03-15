@@ -1,22 +1,28 @@
 <template>
-  <v-card flat style="height: 100vh">
-    <AppCardTitle style="heght: 30px" @close="$emit('close')">
-      <v-layout column>
-        <v-flex>
-          <span class="title">
-            История записей
-          </span>
-        </v-flex>
-        <v-flex>
-          {{ client.fullName }}
-        </v-flex>
-      </v-layout>
-    </AppCardTitle>
+  <v-card
+    flat
+    style="height: 100vh"
+  >
+    <div class="fixed-title">
+      <AppCardTitle @close="$emit('close')">
+        <v-layout column>
+          <v-flex>
+            <span class="title">
+              История записей
+            </span>
+          </v-flex>
+          <v-flex>
+            {{ client.fullName }}
+          </v-flex>
+        </v-layout>
+      </AppCardTitle>
+    </div>
     <v-card-text class="scrollable">
-      <v-layout
-        column
-      >
-        <v-flex v-for="(visit) in visits" :key="visit.id">
+      <v-layout column>
+        <v-flex
+          v-for="(visit) in visits"
+          :key="visit.id"
+        >
           <VisitTimeLineRow :visit="visit" />
         </v-flex>
       </v-layout>
@@ -54,18 +60,18 @@ export default {
   computed: {
     ...mapGetters(['businessId']),
     client_id () {
-        return this.client && this.client.id
+      return this.client && this.client.id
     }
   },
   watch: {
-      client_id: 'load',
-      businessId: 'load'
+    client_id: 'load',
+    businessId: 'load'
   },
   mounted () {
     this.load()
   },
   methods: {
-      ...mapActions(['alert']),
+    ...mapActions(['alert']),
     load () {
       if (!this.client_id || this.client_id === 'new') return
       if (!this.businessId) return
@@ -79,8 +85,8 @@ export default {
         .then(res => {
           this.visits = res.map(x => new Visit(x))
         })
-        .catch(res=> {
-            this.alert(makeAlert(res))
+        .catch(res => {
+          this.alert(makeAlert(res))
         })
     },
     onDelete () {
@@ -94,9 +100,13 @@ export default {
 </script>
 
 <style scoped>
+.fixed-title {
+  height: 80px;
+  overflow: hidden;
+}
 .scrollable {
-    height: calc(100vh - 80px);
-    overflow: auto;
+  height: calc(100vh - 80px);
+  overflow: auto;
 }
 </style>
 
