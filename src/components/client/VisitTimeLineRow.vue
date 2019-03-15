@@ -1,13 +1,19 @@
 <template>
   <v-hover>
-    <v-layout slot-scope="{ hover }" row fluid :class="{'row-hover': hover}">
+    <v-layout
+      slot-scope="{ hover }"
+      row
+      fluid
+      :class="{'row-hover': hover}"
+    >
       <v-flex
         xs3
         class="grey--text text-xs-right timeline-date "
-        pr-1
+        pr-2
         py-2
       >
         {{ visit.date }}
+        <div class="circle" :style="{color: statusColor}" />
       </v-flex>
       <v-flex
         xs9
@@ -33,7 +39,10 @@
                     xs4
                     class="text-xs-right"
                   >
-                    <div :class="{'service-undone': isUndone}" class="badge-inline">
+                    <div
+                      :class="{'service-undone': isUndone}"
+                      class="badge-inline"
+                    >
                       <span>{{ service.price }} ₽</span>
                     </div>
                   </v-flex>
@@ -98,6 +107,16 @@ export default {
 </script>
 
 <style scoped>
+.circle {
+  position: relative;
+  left: 94px;
+  top: -15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 5px solid ;
+  text-align: center;
+}
 .timeline-date {
   border-right: solid 2px;
   border-color: rgba(0.5, 0.5, 0.5, 0.1);
@@ -107,7 +126,7 @@ export default {
   border-radius: 1em;
   padding: 0;
   height: 1.5em;
-  background-color: grey
+  background-color: grey;
 }
 .badge-inline span {
   color: white;
