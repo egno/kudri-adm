@@ -16,9 +16,10 @@
             @click="avatarEdit = !avatarEdit"
           >
             <UserAvatar
-              size="4em"
+              size=""
               :src="avatar"
-              :type="'square'"
+              :is-editing="true"
+              :avatar-class="'business-avatar'"
             />
           </div>
 
@@ -85,7 +86,6 @@
             Добавить ссылку
           </VBtn>
 
-
           <v-textarea
             counter="400"
             value
@@ -108,8 +108,6 @@
       </div>
     </div>
     <div v-else />
-
-
     <VDialog
       v-model="avatarEdit"
       max-width="350px"
@@ -311,6 +309,7 @@ export default {
   }
 }
 </script>
+
 <style lang="scss">
 .workmode {
   margin-top: 35px;

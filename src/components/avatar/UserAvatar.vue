@@ -4,13 +4,13 @@
     :size="size"
     :color="color.bg"
     :tile="tile"
-    :class="{ square: type === 'square' }"
+    :class="{ [avatarClass]: avatarClass }"
     @mouseover="tooltip = true"
     @mouseout="tooltip = false"
     @mousemove="move"
   >
     <v-tooltip
-      v-if="type === 'square'"
+      v-if="isEditing"
       v-model="tooltip"
       right
       :position-x="x"
@@ -24,7 +24,7 @@
       </span>
     </v-tooltip>
     <span
-      v-if="type === 'square'"
+      v-if="isEditing"
       class="load-text"
     >
       Загрузить фотографию
@@ -72,7 +72,8 @@ export default {
   props: {
     newMessage: { type: Boolean, default: false },
     size: { type: String, default: '3em' },
-    type: { type: String, default: '' },
+    isEditing: { type: Boolean, default: false },
+    avatarClass: { type: String, default: '' },
     name: { type: String, default: '' },
     src: { type: String, default: '' },
     tile: { type: Boolean, default: false },
@@ -177,6 +178,8 @@ export default {
 
 
 <style lang="scss">
+  @import '../../assets/styles/common';
+
   .v-avatar {
     margin: 0 !important;
     .new-message {
@@ -213,6 +216,12 @@ export default {
       img {
         border-radius: 0;
       }
+    }
+  }
+  .business-avatar {
+    width: 140px;
+    @media only screen and (min-width : $desktop) {
+      width: 170px;
     }
   }
 </style>
