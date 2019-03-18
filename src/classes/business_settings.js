@@ -34,7 +34,11 @@ class Event extends ApiObject {
     }
   }
   get jsonObject () {
-    return super.object
+    let res = super.jsonObject
+    if (this._phone) {
+      res.phone = this._phone
+    }
+    return res
   }
 
   set title (newVal) {
@@ -42,6 +46,13 @@ class Event extends ApiObject {
   }
   get title () {
     return this._title
+  }
+
+  set phone (newVal) {
+    this._phone = !newVal ? null : newVal
+  }
+  get phone () {
+    return this._phone
   }
 }
 
@@ -80,7 +91,7 @@ class Events extends ApiObject {
     })
   }
   get jsonObject () {
-    return super.object
+    return super.jsonObject
   }
 }
 
@@ -92,7 +103,7 @@ class Provider extends ApiObject {
     this.password = newVal && newVal.password
   }
   get jsonObject () {
-    return super.object
+    return super.jsonObject
   }
 }
 
@@ -102,7 +113,7 @@ class Notifications extends ApiObject {
     this.provider = new Provider(newVal && newVal.provider)
   }
   get jsonObject () {
-    return super.object
+    return super.jsonObject
   }
 }
 
@@ -111,7 +122,7 @@ class Settings extends ApiObject {
     this.notifications = new Notifications(newVal && newVal.notifications)
   }
   get jsonObject () {
-    return super.object
+    return super.jsonObject
   }
 }
 
@@ -127,7 +138,7 @@ class BusinessSettings extends ApiObject {
   }
 
   get jsonObject () {
-    return super.object
+    return super.jsonObject
   }
 
   // Properties
@@ -152,10 +163,9 @@ class BusinessSettings extends ApiObject {
   }
 
   save () {
-    console.log(this.object)
     if (!this.id) {
       return Api()
-        .post(`business_settings?`, this.object)
+        .post(`business_settings?`, this.jsonObject)
         .then(res => responseGetId(res))
         .catch(err => {
           store.dispatch('alert', makeAlert(err))
@@ -163,7 +173,7 @@ class BusinessSettings extends ApiObject {
         })
     } else {
       return Api()
-        .patch(`business_settings?id=eq.${this.id}`, this.object)
+        .patch(`business_settings?id=eq.${this.id}`, this.jsonObject)
         .catch(err => {
           store.dispatch('alert', makeAlert(err))
           return false
