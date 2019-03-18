@@ -61,7 +61,7 @@
       },
       empProfilePhotos () {
         return [
-          ...new Set(this.empList && this.empList.map(x => x.images).flat())
+          ...new Set(this.empList.length && this.empList.map(x => x.images).flat())
         ]
       },
       companyImages () {
