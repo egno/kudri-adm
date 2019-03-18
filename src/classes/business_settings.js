@@ -88,6 +88,8 @@ class Provider extends ApiObject {
   set jsonObject (newVal) {
     this.key = newVal && newVal.key
     this.name = newVal && newVal.name
+    this.login = newVal && newVal.login
+    this.password = newVal && newVal.password
   }
   get jsonObject () {
     return super.object
