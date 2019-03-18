@@ -26,14 +26,14 @@ settings = {
 */
 
 class Event extends ApiObject {
-  set object (newVal) {
+  set jsonObject (newVal) {
     this._title = newVal && newVal.title
     this.enabled = (newVal && newVal.enabled) || false
     if (newVal && newVal.phone !== 'undefined') {
       this.phone = newVal && newVal.phone
     }
   }
-  get object () {
+  get jsonObject () {
     return super.object
   }
 
@@ -46,7 +46,7 @@ class Event extends ApiObject {
 }
 
 class Events extends ApiObject {
-  set object (newVal) {
+  set jsonObject (newVal) {
     this.promotion = new Event({
       ...{ title: 'Реклама' },
       ...(newVal && newVal.promotion)
@@ -79,36 +79,36 @@ class Events extends ApiObject {
       ...(newVal && newVal.new_visit_manager)
     })
   }
-  get object () {
+  get jsonObject () {
     return super.object
   }
 }
 
 class Provider extends ApiObject {
-  set object (newVal) {
+  set jsonObject (newVal) {
     this.key = newVal && newVal.key
     this.name = newVal && newVal.name
   }
-  get object () {
+  get jsonObject () {
     return super.object
   }
 }
 
 class Notifications extends ApiObject {
-  set object (newVal) {
+  set jsonObject (newVal) {
     this.events = new Events(newVal && newVal.events)
     this.provider = new Provider(newVal && newVal.provider)
   }
-  get object () {
+  get jsonObject () {
     return super.object
   }
 }
 
 class Settings extends ApiObject {
-  set object (newVal) {
+  set jsonObject (newVal) {
     this.notifications = new Notifications(newVal && newVal.notifications)
   }
-  get object () {
+  get jsonObject () {
     return super.object
   }
 }
@@ -119,12 +119,12 @@ class BusinessSettings extends ApiObject {
   /**
    * @param {{ id: String; access: Boolean; parent: String; j: Object; }} newVal
    */
-  set object (newVal) {
+  set jsonObject (newVal) {
     this.id = (newVal && newVal.id) || null
     this.settings = new Settings(newVal && newVal.settings)
   }
 
-  get object () {
+  get jsonObject () {
     return super.object
   }
 
@@ -145,7 +145,7 @@ class BusinessSettings extends ApiObject {
       .get(`business_settings?id=eq.${id}`)
       .then(res => res.data[0])
       .then(res => {
-        this.object = res
+        this.jsonObject = res
       })
   }
 

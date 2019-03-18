@@ -12,7 +12,7 @@ class Client extends ApiObject {
   /**
    * @param {{ id: String; access: Boolean; parent: String; j: Object; }} newVal
    */
-  set object (newVal) {
+  set jsonObject (newVal) {
     this.id = (newVal && newVal.id) || null
     this.business_id = (newVal && newVal.business_id) || null
     this.user_id = (newVal && newVal.user_id) || null
@@ -182,7 +182,7 @@ class Client extends ApiObject {
       .get(`client?id=eq.${id}`)
       .then(res => res.data[0])
       .then(res => {
-        this.object = res
+        this.jsonObject = res
       })
   }
 

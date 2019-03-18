@@ -2,7 +2,7 @@ import { displayRESTDate, displayRESTTime } from '@/components/calendar/utils'
 
 class Visit {
   constructor (val) {
-    this.object = val
+    this.jsonObject = val
   }
 
   // Main object
@@ -10,7 +10,7 @@ class Visit {
   /**
    * @param {{ id: String; access: Boolean; business_id: String; client: Object; ts_begin: String; ts_end: String}} newVal
    */
-  set object (newVal) {
+  set jsonObject (newVal) {
     this.id = (newVal && newVal.id) || null
     this.business_id = (newVal && newVal.business_id) || null
     this.client_id = (newVal && newVal.client_id) || null
@@ -25,7 +25,7 @@ class Visit {
     // set calculated properties
   }
 
-  get object () {
+  get jsonObject () {
     return this
   }
 

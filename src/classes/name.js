@@ -3,7 +3,7 @@ class Name {
     this.fullName = val
   }
 
-  get object () {
+  get jsonObject () {
     return this
   }
 

@@ -9,7 +9,7 @@ class Business extends ApiObject {
   /**
    * @param {{ id: String; access: Boolean; parent: String; j: Object; }} newVal
    */
-  set object (newVal) {
+  set jsonObject (newVal) {
     this.id = (newVal && newVal.id) || null
     this.access = (newVal && newVal.access) || true
     this.parent = (newVal && newVal.parent) || null
@@ -17,7 +17,7 @@ class Business extends ApiObject {
     this.j = (newVal && newVal.j) || {}
   }
 
-  get object () {
+  get jsonObject () {
     const exported = ['id', 'access', 'parent', 'type', 'j']
     return Object.keys(this)
       .filter(key => exported.some(x => x === key))
@@ -232,7 +232,7 @@ class Business extends ApiObject {
       .get(`business?id=eq.${id}`)
       .then(res => res.data[0])
       .then(res => {
-        this.object = res
+        this.jsonObject = res
       })
   }
 

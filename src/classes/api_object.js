@@ -1,16 +1,16 @@
 class ApiObject {
   constructor (val) {
-    this.object = val
+    this.jsonObject = val
   }
 
-  set object (newVal) {}
+  set jsonObject (newVal) {}
 
-  get object () {
+  get jsonObject () {
     return Object.keys(this)
       .filter(key => key[0] !== '_')
       .reduce((obj, key) => {
         obj[key] =
-          this[key] instanceof ApiObject ? this[key].object : this[key]
+          this[key] instanceof ApiObject ? this[key].jsonObject : this[key]
         return obj
       }, {})
   }
