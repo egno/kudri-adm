@@ -41,7 +41,7 @@ export default {
       this.$emit('onEdit', this.newPhone)
     },
     update () {
-      this.newPhone = this.phone.replace(/(\+?\d?)(\d{10})$/g, '$2')
+      this.newPhone = (this.phone || '').replace(/(\+?\d?)(\d{10})$/g, '$2')
     }
   }
 }
