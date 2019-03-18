@@ -75,31 +75,19 @@
             </div>
             <div class="">
               {{ }}
-            </div> <!--description-->
+            </div> <!--todo add description-->
           </div>
         </VLayout>
       </VLayout>
     </div>
-    <!--<VCardActions>
-      <VSpacer />
-      <VBtn
-        v-if="data.access"
-        color="primary"
-        @click="onEditClick"
-      >
-        Редактировать
-      </VBtn>
-    </VCardActions>-->
   </div>
 </template>
 
 <script>
-import Business from '@/classes/business'
 import BusinessSchedule from '@/components/business/BusinessSchedule.vue'
 import SocialLinks from '@/components/business/SocialLinks.vue'
 import UserAvatar from '@/components/avatar/UserAvatar.vue'
 import { businessMixins } from '@/components/business/mixins'
-import { makeAlert } from '@/api/utils'
 
 export default {
   components: {
@@ -124,11 +112,9 @@ export default {
         return {}
       }
     },
-    edit: { type: Boolean, default: false }
   },
   data () {
     return {
-      data: new Business(this.business),
       captionClass:
         'caption font-weight-bold text-no-wrap grey--text text--lighten-1'
     }
@@ -166,21 +152,6 @@ export default {
     }
   },
   methods: {
-    onEditClick () {
-      this.$emit('onEditClick')
-    },
-    fetchData () {
-      if (this.id === 'new') {
-        return
-      }
-      this.data.load(this.id)
-      .then(res => {
-        console.log(res)
-      })
-      .catch(err => {
-        this.alert(makeAlert(err))
-      })
-    }
   }
 }
 </script>
