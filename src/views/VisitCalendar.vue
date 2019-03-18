@@ -14,7 +14,7 @@
 
 <script>
 import VCalendar from '@/components/calendar/VCalendar.vue'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import Api from '@/api/backend'
 
 export default {
@@ -30,6 +30,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['businessId']),
     business () {
       return this.$route.params.id
     }
@@ -50,10 +51,11 @@ export default {
   methods: {
     ...mapActions(['setActions', 'setBusiness']),
     fetchData () {
+      if(!this.business) return
       this.setActions(this.formActions)
-      this.setBusiness(this.businessId)
+      this.setBusiness(this.business)
       Api()
-        .get(`business?id=eq.${this.businessId}`)
+        .get(`business?id=eq.${this.business}`)
         .then(res => res.data)
         .then(res => {
           this.businessInfo = res[0]

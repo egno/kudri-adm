@@ -117,11 +117,6 @@ export default new Router({
       name: 'serviceAlbum',
       component: () => import('./views/gallery/Album.vue')
     },
-    /*{
-      path: '/gallery/personal/:personalId',
-      name: 'personalGallery',
-      component: () => import('./views/gallery/PersonalGallery.vue')
-    },*/
     {
       path: '/businessCard/:id/e/:employee',
       name: 'employeeFull',

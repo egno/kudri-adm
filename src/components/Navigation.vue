@@ -47,12 +47,6 @@
           </v-icon>
         </v-btn>
       </v-list-tile-action>
-      <!-- <VBtn
-        :class="{ back: !mini, equal: mini, invisible: !isManagerMenu}"
-        :dark="!mini"
-        icon
-        @click.stop="(isManagerMenu) ? mini = !mini : visible = !visible"
-      />-->
     </VToolbar>
 
     <VCalendar v-if="isCalendarVisible" />
@@ -84,6 +78,7 @@ import VCalendar from '@/components/calendar/VCalendar.vue'
 import router from '@/router'
 import { mapActions, mapGetters } from 'vuex'
 import { isBusinessRoute } from '@/utils'
+import { formatDate } from '@/components/calendar/utils'
 import Users from '@/mixins/users'
 
 export default {
@@ -110,6 +105,10 @@ export default {
       'navigationVisible',
       'userRole'
     ]),
+    date () {
+      const dt = new Date()
+      return formatDate(dt)
+    },
     routeBisinessId () {
       return this.$route && this.$route.params && this.$route.params.id
     },
@@ -160,6 +159,19 @@ export default {
           icon: 'business',
           route: { name: 'businessList' },
           show: !this.loggedIn || this.isManagerMenu
+        },
+        {
+          title: 'Журнал записи',
+          route: {
+            name: 'businessVisit',
+            params: { id: this.businessId, date: this.date }
+          },
+          show: this.loggedIn && !this.isManagerMenu,
+          action: {
+            label: 'Добавить запись',
+            action: 'newVisit',
+            default: true
+          }
         },
         {
           title: 'Сотрудники',
