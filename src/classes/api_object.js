@@ -9,10 +9,8 @@ class ApiObject {
     return Object.keys(this)
       .filter(key => key[0] !== '_')
       .reduce((obj, key) => {
-        obj[key] = this[key]
-        if (obj instanceof ApiObject) {
-            return obj.object
-        }
+        obj[key] =
+          this[key] instanceof ApiObject ? this[key].object : this[key]
         return obj
       }, {})
   }

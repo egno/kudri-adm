@@ -27,11 +27,21 @@ settings = {
 
 class Event extends ApiObject {
   set object (newVal) {
-    this.title = newVal && newVal.title
+    this._title = newVal && newVal.title
     this.enabled = (newVal && newVal.enabled) || false
     if (newVal && newVal.phone !== 'undefined') {
       this.phone = newVal && newVal.phone
     }
+  }
+  get object () {
+    return super.object
+  }
+
+  set title (newVal) {
+    this._title = newVal
+  }
+  get title () {
+    return this._title
   }
 }
 
@@ -69,6 +79,9 @@ class Events extends ApiObject {
       ...(newVal && newVal.new_visit_manager)
     })
   }
+  get object () {
+    return super.object
+  }
 }
 
 class Provider extends ApiObject {
@@ -76,12 +89,27 @@ class Provider extends ApiObject {
     this.key = newVal && newVal.key
     this.name = newVal && newVal.name
   }
+  get object () {
+    return super.object
+  }
 }
 
 class Notifications extends ApiObject {
   set object (newVal) {
-    this.events = new Events(newVal && newVal.id)
-    this.provider = new Provider(newVal && newVal.settings)
+    this.events = new Events(newVal && newVal.events)
+    this.provider = new Provider(newVal && newVal.provider)
+  }
+  get object () {
+    return super.object
+  }
+}
+
+class Settings extends ApiObject {
+  set object (newVal) {
+    this.notifications = new Notifications(newVal && newVal.notifications)
+  }
+  get object () {
+    return super.object
   }
 }
 
@@ -93,21 +121,20 @@ class BusinessSettings extends ApiObject {
    */
   set object (newVal) {
     this.id = (newVal && newVal.id) || null
-    this.settings = (newVal && newVal.settings) || {}
+    this.settings = new Settings(newVal && newVal.settings)
+  }
 
-    this._notifications = new Notifications(
-      this.settings && this.settings.notifications
-    )
+  get object () {
+    return super.object
   }
 
   // Properties
   set notifications (newVal) {
-    this._notifications = new Notifications(newVal)
-    this.settings.notifications = this._notifications.object
+    this.settings.notifications = newVal
   }
 
   get notifications () {
-    return this._notifications
+    return this.settings.notifications
   }
 
   // API methods
@@ -123,6 +150,7 @@ class BusinessSettings extends ApiObject {
   }
 
   save () {
+    console.log(this.object)
     if (!this.id) {
       return Api()
         .post(`business_settings?`, this.object)
