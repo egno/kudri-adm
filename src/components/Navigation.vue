@@ -254,6 +254,15 @@ export default {
             params: { id: this.businessLink }
           },
           show: this.loggedIn && !this.isManagerMenu
+        },
+        {
+          title: 'Настройки',
+          count: undefined,
+          route: {
+            name: 'businessSettings',
+            params: { id: this.businessLink }
+          },
+          show: this.loggedIn && !this.isManagerMenu
         }
       ]
     },

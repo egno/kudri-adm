@@ -7,6 +7,7 @@ const businessCards = [
   'businessCardServiceGallery',
   'businessCardEmployeeGallery',
   'businessCardService',
+  'businessSettings',
   'businessVisit',
   'employeeCard',
   'employeeFull',

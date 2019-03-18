@@ -110,7 +110,8 @@ export default new Router({
     {
       path: '/gallery/:id/employees/:personalId',
       name: 'employeeGallery',
-      component: () => import('./views/gallery/_id/employees/_personalId/index.vue')
+      component: () =>
+        import('./views/gallery/_id/employees/_personalId/index.vue')
     },
     {
       path: '/gallery/:id/employees/:personalId/album', // todo подумать над структурой
@@ -131,6 +132,11 @@ export default new Router({
       path: '/businessCard/v/:id/:date',
       name: 'businessVisit',
       component: () => import('./views/VisitCalendar.vue')
+    },
+    {
+      path: '/businessCard/o/:id',
+      name: 'businessSettings',
+      component: () => import('./views/BusinessSettings.vue')
     },
     {
       path: '/managerCard',
