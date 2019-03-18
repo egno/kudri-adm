@@ -1,13 +1,11 @@
+import ApiObject from '@/classes/api_object'
 import Api from '@/api/backend'
 import store from '@/store'
 import { makeAlert, responseGetId } from '@/api/utils'
 import Name from '@/classes/name'
 import Visit from '@/classes/visit'
 
-class Client {
-  constructor (emp) {
-    this.object = emp
-  }
+class Client extends ApiObject {
 
   // Main object
 
@@ -33,14 +31,6 @@ class Client {
     this.lastVisit = newVal && newVal.visit && newVal.visit.last
   }
 
-  get object () {
-    return Object.keys(this)
-    .filter(key => key[0]!=='_')
-    .reduce((obj, key) => {
-      obj[key] = this[key]
-      return obj
-    }, {})
-  }
 
   get sexList () {
     return [

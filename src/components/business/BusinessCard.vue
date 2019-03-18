@@ -91,13 +91,14 @@
 </template>
 
 <script>
+import Business from '@/classes/business'
 import BusinessAddress from '@/components/business/BusinessAddress.vue'
 import BusinessPhones from '@/components/business/BusinessPhones.vue'
 import BusinessSchedule from '@/components/business/BusinessSchedule.vue'
 import SocialLinks from '@/components/business/SocialLinks.vue'
 import UserAvatar from '@/components/avatar/UserAvatar.vue'
-import Api from '@/api/backend'
 import { businessMixins } from '@/components/business/mixins'
+import { makeAlert } from '@/api/utils'
 
 export default {
   components: {
@@ -119,7 +120,7 @@ export default {
   },
   data () {
     return {
-      data: {},
+      data: new Business(this.business),
       captionClass:
         'caption font-weight-bold text-no-wrap grey--text text--lighten-1'
     }
@@ -170,13 +171,13 @@ export default {
       if (this.id === 'new') {
         return
       }
-      Api()
-        .get(`business?id=eq.${this.id}`)
-        .then(res => res.data)
-        .then(res => res[0])
-        .then(res => {
-          this.data = res
-        })
+      this.data.load(this.id)
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        this.alert(makeAlert(err))
+      })
     }
   }
 }
