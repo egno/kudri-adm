@@ -8,3 +8,21 @@ export function serviceInit (service) {
     ...(typeof service !== 'object' ? { name: service } : service)
   }
 }
+
+/* for check if 2 days in schedule are same  */
+export function areDaysSame (day, nextDay) {
+  if (Object.keys(day).length !== Object.keys(nextDay).length) {
+    return false
+  }
+
+  return day.start === nextDay.start && day.end === nextDay.end
+}
+
+/* for check if the day is already in one of the groups of schedule.
+ * Group - is an array of days with same schedule */
+export function isInGroups (groups, day) {
+  if (!groups.length) {
+    return false
+  }
+  return groups.some(d => areDaysSame(d, day))
+}

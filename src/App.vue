@@ -162,6 +162,7 @@ export default {
     border-bottom: 1px solid #f4f5f7; // rgba(137, 149, 175, 0.1);
     .v-toolbar__content {
       background: #fff;
+      padding-right: 0;
     }
   }
   .v-btn {

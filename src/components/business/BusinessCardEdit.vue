@@ -1,113 +1,95 @@
 <template>
-  <VCard
+  <div
     v-if="data"
+    class="infocard _edit"
     flat
   >
-    <div v-if="!tab">
-      <div class="main-cont">
-        <VForm
-          v-model="valid"
-          lazy-validation
-          class="business-edit"
+    <div class="infocard__content">
+      <VForm
+        v-if="currentTab==='infoTab'"
+        v-model="valid"
+        lazy-validation
+      >
+        <v-layout
+          justify-center
+          :name="name"
+          @click="avatarEdit = !avatarEdit"
         >
-          <div
-            class="d-inline-block mb-20"
-            :name="name"
-            @click="avatarEdit = !avatarEdit"
-          >
-            <UserAvatar
-              size=""
-              :src="avatar"
-              :is-editing="true"
-              :avatar-class="'business-avatar'"
+          <UserAvatar
+            size=""
+            :src="avatar"
+            :is-editing="true"
+            :avatar-class="'business-avatar'"
+          />
+        </v-layout>
+
+        <VTextField
+          v-model="data.j.name"
+          label="Название"
+          :rules="[() => !!data.j.name || 'Это поле обязательно для заполнения']"
+          required
+          class="businesscard__field"
+        />
+        <VTextField
+          v-if="!businessIsIndividual"
+          v-model="data.j.inn"
+          label="ИНН"
+          mask="############"
+          :rules="[rules.INN_counter]"
+          class="businesscard__field"
+        />
+        <v-layout row>
+          <v-flex xs9>
+            <AddressAutocomplete
+              v-model="data.j.address"
+              label="Адрес"
             />
-          </div>
-
-          <VTextField
-            v-model="data.j.name"
-            label="Название"
-            :rules="[() => !!data.j.name || 'Это поле обязательно для заполнения']"
-            required
-            class="businesscard__field"
-          />
-          <!--<VCombobox
-            v-model="data.j.category"
-            :disabled="categoryDisabled"
-            :items="businessCategories"
-            label="Тип"
-            :rules="[rules.category]"
-          />-->
-          <VTextField
-            v-if="!businessIsIndividual"
-            v-model="data.j.inn"
-            label="ИНН"
-            mask="############"
-            :rules="[rules.INN_counter]"
-            class="businesscard__field"
-          />
-          <v-layout row>
-            <v-flex xs9>
-              <AddressAutocomplete
-                v-model="data.j.address"
-                label="Адрес"
-              />
-            </v-flex>
-            <v-flex xs3>
-              <VTextField
-                v-model="data.j.office"
-                label="Офис"
-                class="businesscard__field"
-              />
-            </v-flex>
-          </v-layout>
-
-          <BusinessPhonesEdit
-            :phones="phones"
-            @onEdit="phonesEdit"
-          />
-          <!--<div
-            class="form-caption"
-            :class="captionClass"
-          >
-            Режим работы
-          </div>
-
-          <BusinessScheduleEdit
-            :schedule="data.j.schedule"
-            class="workmode"
-            @onEdit="scheduleEdit"
-          />-->
-
-          <v-flex class="soc-input">
-            <div class="soc-input-ic" />
-            <VTextField v-model="data.j.links.instagram" class="businesscard__field" />
           </v-flex>
-          <VBtn class="businesscard__add-field">
-            Добавить ссылку
-          </VBtn>
-
-          <v-textarea
-            counter="400"
-            value
-            height="auto"
-            auto-grow
-            rows="1"
-            placeholder="Описание"
-            maxlength="400"
-            class="businesscard__field"
-          />
-          <MainButton
-            :disabled="hasErrors"
-            color="success"
-            class="businesscard__next"
-            @click="tab = true"
-          >
-            Далее
-          </MainButton>
-        </VForm>
-      </div>
+          <v-flex xs3>
+            <VTextField
+              v-model="data.j.office"
+              label="Офис"
+              class="businesscard__field"
+            />
+          </v-flex>
+        </v-layout>
+        <BusinessPhonesEdit
+          :phones="phones"
+          @onEdit="phonesEdit"
+        />
+        <v-flex class="soc-input">
+          <div class="soc-input-ic" />
+          <VTextField v-model="data.j.links.instagram" class="businesscard__field" />
+        </v-flex>
+        <VBtn class="businesscard__add-field">
+          Добавить ссылку
+        </VBtn>
+        <v-textarea
+          counter="400"
+          value
+          height="auto"
+          auto-grow
+          rows="1"
+          placeholder="Описание"
+          maxlength="400"
+          class="businesscard__field"
+        />
+        <MainButton
+          :disabled="hasErrors"
+          color="success"
+          class="businesscard__next"
+          @click="$emit('tabChanged')"
+        >
+          Далее
+        </MainButton>
+      </VForm>
+      <BusinessScheduleEdit
+        v-else
+        :week-schedule="schedule"
+        @editWeek="scheduleEdit"
+        @delete="scheduleEdit()"
+      />
     </div>
-    <div v-else />
     <VDialog
       v-model="avatarEdit"
       max-width="350px"
@@ -117,14 +99,14 @@
         @finished="saveImage"
       />
     </VDialog>
-  </VCard>
+  </div>
 </template>
 
 <script>
 import UserAvatar from '@/components/avatar/UserAvatar.vue'
 import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue'
 import BusinessPhonesEdit from '@/components/business/BusinessPhonesEdit.vue'
-// import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue'
+import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue'
 import AddressAutocomplete from '@/components/yandex/AddressAutocomplete.vue'
 import Api from '@/api/backend'
 import { backendMixins } from '@/api/mixins'
@@ -137,12 +119,24 @@ export default {
   components: {
     AddressAutocomplete,
     BusinessPhonesEdit,
-    /*BusinessScheduleEdit,*/
+    BusinessScheduleEdit,
     UserAvatar,
     VueAvatarEditor,
     MainButton
   },
   mixins: [backendMixins, businessMixins],
+  props: {
+    businessInfo: {
+      type: Object,
+      default () {
+        return {}
+      }
+    },
+    currentTab: {
+      type: String,
+      default: 'infoTab'
+    },
+  },
   data () {
     return {
       avatarEdit: false,
@@ -159,7 +153,7 @@ export default {
           true
       },
       valid: true,
-      tab: false
+      schedule: undefined
     }
   },
   computed: {
@@ -269,6 +263,9 @@ export default {
           if (this.data.j.category) {
             this.categoryDisabled = true
           }
+          if (this.data.j.schedule) {
+            this.schedule = this.data.j.schedule
+          }
         })
     },
     phonesEdit (payload) {
@@ -303,17 +300,18 @@ export default {
           })
       }
     },
-    scheduleEdit (payload) {
-      this.data.j.schedule = payload
+    scheduleEdit (newWeek) {
+      this.data.j.schedule = newWeek
+      this.schedule = newWeek
+      // this.data.save(); // todo add debounce
     }
   }
 }
 </script>
 
 <style lang="scss">
-.workmode {
-  margin-top: 35px;
-}
+  @import '../../assets/styles/infocard';
+
 .form-caption {
   padding-top: 50px;
 }

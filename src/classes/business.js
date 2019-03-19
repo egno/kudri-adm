@@ -249,7 +249,7 @@ class Business extends ApiObject {
   save () {
     if (!this.id) {
       return Api()
-        .post(`business?`, this.object)
+        .post(`business?`, this.jsonObject)
         .then(res => responseGetId(res))
         .catch(err => {
           store.dispatch('alert', makeAlert(err))
@@ -257,7 +257,7 @@ class Business extends ApiObject {
         })
     } else {
       return Api()
-        .patch(`business?id=eq.${this.id}`, this.object)
+        .patch(`business?id=eq.${this.id}`, this.jsonObject)
         .catch(err => {
           store.dispatch('alert', makeAlert(err))
           return false

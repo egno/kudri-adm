@@ -1,6 +1,6 @@
 <template>
-  <div class="card">
-    <div class="card__content">
+  <div class="infocard">
+    <div class="infocard__content">
       <VLayout
         align-center justify-center column
       >
@@ -10,26 +10,26 @@
             :src="avatar"
           />
         </div>
-        <VLayout column>
+        <VLayout column class="businesscard-form">
           <div>
-            <div class="businesscard__field-title">
+            <div class="businesscard-form__field-title">
               Название
             </div>
-            <div class="businesscard__field-value">
+            <div class="businesscard-form__field-value">
               {{ title }}
             </div>
-            <div class="businesscard__field-title">
+            <div class="businesscard-form__field-title">
               ИНН
             </div>
-            <div class="businesscard__field-value">
-              {{ }}
+            <div class="businesscard-form__field-value">
+              {{ INN }}
             </div>
           </div>
           <div v-if="address" class="bottom-bordered">
-            <div class="businesscard__field-title">
+            <div class="businesscard-form__field-title">
               Адрес
             </div>
-            <div class="businesscard__field-value">
+            <div class="businesscard-form__field-value">
               {{ address && address.name }}
             </div>
           </div>
@@ -47,7 +47,9 @@
           <div v-if="businessInfo.j && businessInfo.j.schedule">
             <BusinessSchedule
               :caption-class="captionClass"
-              :schedule="businessInfo.j.schedule"
+              :week-schedule="businessInfo.j.schedule"
+              :expanded="expanded"
+              @toggleSchedule="expanded = !expanded"
             />
           </div>
           <div v-if="businessInfo.j && businessInfo.j.links">
@@ -70,7 +72,7 @@
             </div>
           </div>
           <div>
-            <div class="businesscard__field-title">
+            <div class="businesscard-form__field-title">
               Описание
             </div>
             <div class="">
@@ -116,7 +118,8 @@ export default {
   data () {
     return {
       captionClass:
-        'caption font-weight-bold text-no-wrap grey--text text--lighten-1'
+        'caption font-weight-bold text-no-wrap grey--text text--lighten-1',
+      expanded: false
     }
   },
   computed: {
@@ -149,7 +152,10 @@ export default {
         return
       }
       return this.businessInfo.j.name
-    }
+    },
+    INN () {
+      return this.businessInfo && this.businessInfo.j && this.businessInfo.j.inn
+    },
   },
   methods: {
   }
@@ -158,20 +164,10 @@ export default {
 
 <style lang="scss" scoped>
   @import '../../assets/styles/businesscard-form';
+  @import '../../assets/styles/infocard';
 
   a {
     text-decoration: none;
-  }
-
-  .card {
-    &__content {
-      padding: 30px 45px 60px;
-      @media only screen and (min-width : $desktop) {
-        width: 524px;
-        padding: 40px 120px 60px;
-        box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12);
-      }
-    }
   }
 
 </style>

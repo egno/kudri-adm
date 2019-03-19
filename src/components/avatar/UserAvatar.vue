@@ -23,12 +23,12 @@
         Может быть логотип или любое <br> другое привлекательное фото <br> компании
       </span>
     </v-tooltip>
-    <span
+    <!-- todo <span
       v-if="isEditing"
       class="load-text"
     >
       Загрузить фотографию
-    </span>
+    </span>-->
   
   
     <div

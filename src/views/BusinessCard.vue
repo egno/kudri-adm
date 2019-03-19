@@ -20,15 +20,26 @@
         </div>
       </VFlex>
     </VLayout>
+    <div v-if="editMode" class="businesscard__tab-wrapper">
+      <div class="businesscard__tab">
+        <div class="businesscard__tab-header" :class="{_active: infoTab}" @click="infoTab = !infoTab">
+          Информация
+        </div>
+        <div class="businesscard__tab-header" :class="{_active: !infoTab}" @click="infoTab = !infoTab">
+          Режим работы
+        </div>
+      </div>
+    </div>
     <VLayout class="businesscard__content">
       <BusinessCardEdit
         v-if="editMode"
-        :id="id"
+        :business-info="businessInfo"
+        :current-tab="infoTab? 'infoTab' : 'scheduleTab'"
         @onEditClose="editMode=false"
+        @tabChange="infoTab=!infoTab"
       />
       <BusinessCard
         v-else
-        :id="id"
         :business-info="businessInfo"
         @onEditClick="editMode=true"
       />
@@ -48,8 +59,8 @@ export default {
   },
   data () {
     return {
-      data: { data: {} },
-      editMode: false
+      editMode: false,
+      infoTab: true
     }
   },
   computed: {
@@ -90,6 +101,7 @@ export default {
     &__header {
       flex-grow: 0;
       padding: 44px 0 44px 48px;
+      background: #fff;
       @media only screen and (min-width : $desktop) {
         padding-left: 127px;
       }
@@ -104,12 +116,55 @@ export default {
       color: #07101C;
     }
 
-    &__content {
-      flex-grow: 1;
-      background: #f4f5f7;
-      padding-left: 48px;
+    &__tab-wrapper {
+      padding:0 37px;
+      font-family: $lato;
+      font-style: normal;
+      font-size: 16px;
+      line-height: 32px;
+      background: #fff;
+      border-bottom: 1px solid rgba(137, 149, 175, 0.1);
       @media only screen and (min-width : $desktop) {
         padding-left: 127px;
+      }
+    }
+
+    &__tab {
+      display: flex;
+      justify-content: space-around;
+
+      @media only screen and (min-width: $desktop) {
+        max-width: 524px;
+      }
+    }
+
+    &__tab-header {
+      position: relative;
+      flex-grow: 1;
+      text-align: center;
+      color: #8995AF;
+      cursor: pointer;
+      &._active {
+        color: #07101C;
+        font-weight: bold;
+        &:after {
+          content: '';
+          width: 100%;
+          height: 2px;
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          background: linear-gradient(90.49deg, #C9A15D 0%, #BA9462 101.44%);
+        }
+      }
+    }
+
+    &__content {
+      flex-grow: 1;
+      background: #fff;
+      @media only screen and (min-width: $desktop) {
+        padding-left: 127px;
+        background: #f4f5f7;
       }
     }
   }

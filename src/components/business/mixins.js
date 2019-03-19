@@ -1,3 +1,5 @@
+import BusinessSchedule from '@/classes/businessSchedule'
+
 export const businessMixins = {
   computed: {
     id () {
@@ -46,14 +48,14 @@ export const businessMixins = {
       if (!data.j.services) {
         data.j.services = []
       }
-      if (!data.j.schedule) {
-        data.j.schedule = {}
+      if (!data.j.weekSchedule) {
+        data.j.weekSchedule = {}
       }
-      if (Array.isArray(data.j.schedule)) {
-        data.j.schedule = { data: data.j.schedule }
+      if (Array.isArray(data.j.weekSchedule)) {
+        data.j.weekSchedule = { data: data.j.weekSchedule }
       }
-      if (!data.j.schedule.data) {
-        data.j.schedule.data = [
+      if (!data.j.weekSchedule.data) {
+        data.j.weekSchedule.data = [
           ['', ''],
           ['', ''],
           ['', ''],
@@ -73,6 +75,47 @@ export const businessMixins = {
           v = c == 'x' ? r : (r & 0x3) | 0x8
         return v.toString(16)
       })
+    }
+  }
+}
+
+export const scheduleMixin = {
+  props: {
+    weekSchedule: {
+      type: Object,
+      default () {
+        return {}
+      }
+    }
+  },
+  watch: {
+    'weekSchedule': 'setDays'
+  },
+  data () {
+    return {
+      dow: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
+      newWeekSchedule: undefined,
+      days: undefined
+    }
+  },
+  mounted () {
+    this.newWeekSchedule = this.weekSchedule && new BusinessSchedule(this.weekSchedule)
+    this.setDays()
+  },
+  methods: {
+    setDays () {
+      let weekSchedule = this.weekSchedule && this.weekSchedule.data
+      let days = []
+
+      this.dow.map((dayName, dayIndex) => {
+        days.push({
+          dayName,
+          dayIndex,
+          value: weekSchedule[dayIndex]
+        })
+      })
+
+      this.days = days
     }
   }
 }
