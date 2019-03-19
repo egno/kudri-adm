@@ -29,7 +29,7 @@ class Event extends ApiObject {
   set jsonObject (newVal) {
     this._title = newVal && newVal.title
     this.enabled = (newVal && newVal.enabled) || false
-    if (newVal && newVal.phone !== 'undefined') {
+    if (newVal && newVal.phone !== null) {
       this.phone = newVal && newVal.phone
     }
   }
@@ -49,7 +49,7 @@ class Event extends ApiObject {
   }
 
   set phone (newVal) {
-    this._phone = !newVal ? null : newVal
+    this._phone = (newVal) ? newVal : null
   }
   get phone () {
     return this._phone
