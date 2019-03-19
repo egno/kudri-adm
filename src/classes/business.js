@@ -3,6 +3,21 @@ import Api from '@/api/backend'
 import store from '@/store'
 import { makeAlert, responseGetId } from '@/api/utils'
 
+class Address extends ApiObject {
+  set jsonObject (newVal) {
+    if (typeof newVal === 'string') {
+      this.name = newVal
+      return
+    }
+    this.name = newVal && newVal.name
+    this.point = newVal && newVal.point
+  }
+
+  get jsonObject () {
+    return super.jsonObject
+  }
+}
+
 class Business extends ApiObject {
   // Main object
 
@@ -15,19 +30,88 @@ class Business extends ApiObject {
     this.parent = (newVal && newVal.parent) || null
     this.type = (newVal && newVal.type) || null
     this.j = (newVal && newVal.j) || {}
+
+    this.address = new Address(newVal && newVal.j && newVal.j.address)
   }
 
   get jsonObject () {
-    const exported = ['id', 'access', 'parent', 'type', 'j']
-    return Object.keys(this)
-      .filter(key => exported.some(x => x === key))
-      .reduce((obj, key) => {
-        obj[key] = this[key]
-        return obj
-      }, {})
+    return super.jsonObject
   }
 
   // Properties
+
+  // objects
+
+  set address (newVal) {
+    this.j.address = new Address(newVal)
+  }
+
+  get address () {
+    return this.j && this.j.address
+  }
+
+  set links (newVal) {
+    if (newVal) {
+      this.j.links = newVal
+    } else {
+      delete this.j.links
+    }
+  }
+
+  get links () {
+    return this.j && this.j.links
+  }
+
+  set manager (newVal) {
+    if (newVal) {
+      this.j.manager = newVal
+    } else {
+      delete this.j.manager
+    }
+  }
+
+  get manager () {
+    return this.j && this.j.manager
+  }
+
+  set phones (newVal) {
+    if (newVal) {
+      this.j.phones = newVal
+    } else {
+      delete this.j.phones
+    }
+  }
+
+  get phones () {
+    return this.j && this.j.phones
+  }
+
+  set schedule (newVal) {
+    if (newVal) {
+      this.j.schedule = newVal
+    } else {
+      delete this.j.schedule
+    }
+  }
+
+  get schedule () {
+    return this.j && this.j.schedule
+  }
+
+  set services (newVal) {
+    if (newVal) {
+      this.j.services = newVal
+    } else {
+      delete this.j.services
+    }
+  }
+
+  get services () {
+    return this.j && this.j.services
+  }
+
+  // other
+
   set avatar (newVal) {
     if (newVal) {
       this.j.avatar = newVal
@@ -148,80 +232,6 @@ class Business extends ApiObject {
 
   get gallery () {
     return this.j && this.j.gallery
-  }
-
-  // objects
-
-  set address (newVal) {
-    if (newVal) {
-      this.j.address = newVal
-    } else {
-      delete this.j.address
-    }
-  }
-
-  get address () {
-    return this.j && this.j.address
-  }
-
-  set links (newVal) {
-    if (newVal) {
-      this.j.links = newVal
-    } else {
-      delete this.j.links
-    }
-  }
-
-  get links () {
-    return this.j && this.j.links
-  }
-
-  set manager (newVal) {
-    if (newVal) {
-      this.j.manager = newVal
-    } else {
-      delete this.j.manager
-    }
-  }
-
-  get manager () {
-    return this.j && this.j.manager
-  }
-
-  set phones (newVal) {
-    if (newVal) {
-      this.j.phones = newVal
-    } else {
-      delete this.j.phones
-    }
-  }
-
-  get phones () {
-    return this.j && this.j.phones
-  }
-
-  set schedule (newVal) {
-    if (newVal) {
-      this.j.schedule = newVal
-    } else {
-      delete this.j.schedule
-    }
-  }
-
-  get schedule () {
-    return this.j && this.j.schedule
-  }
-
-  set services (newVal) {
-    if (newVal) {
-      this.j.services = newVal
-    } else {
-      delete this.j.services
-    }
-  }
-
-  get services () {
-    return this.j && this.j.services
   }
 
   // API methods
