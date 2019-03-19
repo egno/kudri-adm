@@ -17,7 +17,7 @@ export function makeAlert (err) {
     return alert(err)
   }
   if (!err.response) {
-    return alert('Сервер недоступен', err.message)
+    return alert('Ошибка в запросе к серверу', err.message || err)
   }
   if (err.response.status === 401) {
     return

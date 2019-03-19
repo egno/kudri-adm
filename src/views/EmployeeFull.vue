@@ -126,7 +126,7 @@
 import { businessMixins } from '@/components/business/mixins'
 import { mapGetters, mapActions } from 'vuex'
 import { fullName } from '@/components/business/utils'
-import Employee from '@/components/employee/utils'
+import Employee from '@/classes/employee'
 import AppBtn from '@/components/common/AppBtn.vue'
 import AppCardTitle from '@/components/common/AppCardTitle.vue'
 import AppTabs from '@/components/common/AppTabs.vue'
