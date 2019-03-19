@@ -29,7 +29,7 @@ class Event extends ApiObject {
   set jsonObject (newVal) {
     this._title = newVal && newVal.title
     this.enabled = (newVal && newVal.enabled) || false
-    if (newVal && newVal.phone !== null) {
+    if (newVal && (newVal.phone || newVal.phone === null)) {
       this.phone = newVal && newVal.phone
     }
   }
@@ -49,7 +49,7 @@ class Event extends ApiObject {
   }
 
   set phone (newVal) {
-    this._phone = (newVal) ? newVal : null
+    this._phone = newVal ? newVal : null
   }
   get phone () {
     return this._phone
@@ -67,8 +67,8 @@ class Events extends ApiObject {
       ...(newVal && newVal.time_visit)
     })
     this.cancel_visit = new Event({
-      ...{ title: 'Об отмене онлайн-записи', phone: null },
-      ...(newVal && newVal.cancel_visit)
+      ...(newVal && newVal.cancel_visit),
+      ...{ title: 'Об отмене онлайн-записи', phone: null }
     })
     this.account_state = new Event({
       ...{
