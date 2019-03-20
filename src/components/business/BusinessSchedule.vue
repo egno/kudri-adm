@@ -47,11 +47,35 @@ export default {
 }
   .schedule {
     &__header {
-      width: 284px;
+      position: relative;
       padding: 11px 17px 10px 36px;
       border-radius: 20px;
       cursor: pointer;
       background: rgba(137, 149, 175, 0.1);
+      font-family: Lato, sans-serif;
+      font-weight: bold;
+      font-size: 14px;
+      border-bottom: 1px solid transparent;
+
+      &:before {
+        position: absolute;
+        top: 13px;
+        left: 12px;
+        content: '';
+        width: 14px;
+        height: 14px;
+        background: url('../../assets/images/svg/clock.svg') center no-repeat;
+      }
+
+      &:after {
+        position: absolute;
+        top: 18px;
+        right: 20px;
+        content: '';
+        width: 10px;
+        height: 6px;
+        background: url('../../assets/images/svg/down.svg') center no-repeat;
+      }
     }
 
     &__container {
@@ -65,6 +89,11 @@ export default {
       .schedule__header {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
+        border-bottom-color: #fff;
+
+        &:after {
+          transform: rotate(180deg);
+        }
       }
     }
 

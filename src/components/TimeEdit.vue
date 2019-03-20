@@ -1,15 +1,13 @@
 <template>
-  <div>
-    <VTextField
-      v-model="val"
-      mask="time"
-      class="workmode"
-      placeholder="00:00"
-      return-masked-value
-      :rules="[rules.time]"
-      @blur="onEdit"
-    />
-  </div>
+  <VTextField
+    v-model="val"
+    mask="time"
+    class="time-edit"
+    placeholder="00:00"
+    return-masked-value
+    :rules="[rules.time]"
+    @blur="onEdit"
+  />
 </template>
 
 <script>
@@ -54,8 +52,19 @@ export default {
 }
 </script>
 
-<style scoped>
-.v-text-field {
-  max-width: 4em;
+<style lang="scss">
+.time-edit {
+  margin-top: 0;
+  padding: 0;
+  & .v-input__slot:before {
+    display: none;
+  }
+  & .v-text-field__details {
+    display: none;
+  }
+  & .v-text-field input {
+    padding: 0;
+  }
 }
+
 </style>

@@ -53,31 +53,33 @@
             />
           </div>
           <div v-if="businessInfo.j && businessInfo.j.links">
-            <SocialLinks :links="businessInfo.j.links" />
-          </div>
-          <div v-if="businessInfo.j && businessInfo.j.site">
-            <div>
-              <span :class="captionClass">
-                Сайт
-              </span>&nbsp;
-              <span>
-                <a
-                  :href="siteLink"
-                  target="_blank"
-                  class
+            <div v-if="businessInfo.j.links.instagram" class="soc _ig">
+              {{ businessInfo.j.links.instagram }}
+            </div>
+            <div v-if="businessInfo.j.links.vk" class="soc _vk">
+              {{ businessInfo.j.links.vk }}
+            </div>
+            <div v-if="businessInfo.j.links.others && businessInfo.j.links.others.length">
+              <div
+                v-for="(site, ind) in businessInfo.j.links.others"
+                :key="ind"
+              >
+                <div
+                  v-if="site.uri"
+                  class="soc"
                 >
-                  {{ businessInfo.j.site }}
-                </a>
-              </span>
+                  {{ site.uri }}
+                </div>
+              </div>
             </div>
           </div>
-          <div>
+          <div v-if="businessInfo.j && businessInfo.j.description">
             <div class="businesscard-form__field-title">
               Описание
             </div>
             <div class="">
-              {{ }}
-            </div> <!--todo add description-->
+              {{ businessInfo.j.description }}
+            </div>
           </div>
         </VLayout>
       </VLayout>
@@ -87,14 +89,12 @@
 
 <script>
 import BusinessSchedule from '@/components/business/BusinessSchedule.vue'
-import SocialLinks from '@/components/business/SocialLinks.vue'
 import UserAvatar from '@/components/avatar/UserAvatar.vue'
 import { businessMixins } from '@/components/business/mixins'
 
 export default {
   components: {
     BusinessSchedule,
-    SocialLinks,
     UserAvatar
   },
   filters: {
@@ -170,4 +170,28 @@ export default {
     text-decoration: none;
   }
 
+  .soc {
+    position: relative;
+    padding: 22px 0 0 30px;
+    &:before {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      top: 22px;
+      left: 0;
+      content: '';
+      background: url('../../assets/sllink.svg') no-repeat center center;
+      background-size: 18px;
+    }
+    &._ig {
+      &:before {
+        background: url('../../assets/images/svg/igg.svg') no-repeat center center;
+      }
+    }
+    &._vk {
+      &:before {
+        background: url('../../assets/images/svg/vkk.svg') no-repeat center center;
+      }
+    }
+  }
 </style>

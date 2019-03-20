@@ -6,7 +6,7 @@
   >
     <div class="infocard__content">
       <VForm
-        v-if="currentTab==='infoTab'"
+        v-show="currentTab==='infoTab'"
         v-model="valid"
         lazy-validation
       >
@@ -28,7 +28,7 @@
           label="Название"
           :rules="[() => !!data.j.name || 'Это поле обязательно для заполнения']"
           required
-          class="businesscard__field"
+          class="businesscard-form__field"
         />
         <VTextField
           v-if="!businessIsIndividual"
@@ -36,59 +36,80 @@
           label="ИНН"
           mask="############"
           :rules="[rules.INN_counter]"
-          class="businesscard__field"
+          class="businesscard-form__field"
         />
-        <v-layout row>
-          <v-flex xs9>
+        <v-layout row justify-space-between>
+          <v-flex>
             <AddressAutocomplete
               v-model="data.j.address"
               label="Адрес"
             />
           </v-flex>
-          <v-flex xs3>
+          <div class="businesscard-form__field _office">
             <VTextField
               v-model="data.j.office"
               label="Офис"
-              class="businesscard__field"
+              class="businesscard-form__field"
             />
-          </v-flex>
+          </div>
         </v-layout>
         <BusinessPhonesEdit
           :phones="phones"
           @onEdit="phonesEdit"
         />
-        <v-flex class="soc-input">
-          <div class="soc-input-ic" />
-          <VTextField v-model="data.j.links.instagram" class="businesscard__field" />
-        </v-flex>
-        <VBtn class="businesscard__add-field">
+        <div class="soc">
+          <div class="soc__input _ig">
+            <VTextField v-model="data.j.links.instagram" class="businesscard-form__field" />
+          </div>
+          <div class="soc__input _vk">
+            <VTextField v-model="data.j.links.vk" class="businesscard-form__field" />
+          </div>
+          <div v-for="(site, i) in data.j.links.others" :key="i" class="soc__input">
+            <VTextField v-model="site.uri" class="businesscard-form__field" @input="debouncedCheckAddLink" />
+          </div>
+        </div>
+        <VBtn class="businesscard-form__add-field" :disabled="addLinkDisabled" @click="addLink">
           Добавить ссылку
         </VBtn>
         <v-textarea
+          v-if="data && data.j"
+          v-model="data.j.description"
           counter="400"
-          value
           height="auto"
           auto-grow
           rows="1"
           placeholder="Описание"
           maxlength="400"
-          class="businesscard__field"
+          class="businesscard-form__field"
         />
+
+        <div v-show="hasErrors" class="businesscard-form__errors">
+          Необходимо заполнить все обязательные поля
+        </div>
         <MainButton
-          :disabled="hasErrors"
           color="success"
-          class="businesscard__next"
-          @click="$emit('tabChanged')"
+          class="button businesscard-form__next"
+          :class="{ button_disabled: hasErrors }"
+          @click.native.prevent="emitTabChange"
         >
           Далее
         </MainButton>
       </VForm>
-      <BusinessScheduleEdit
-        v-else
-        :week-schedule="schedule"
-        @editWeek="scheduleEdit"
-        @delete="scheduleEdit()"
-      />
+      <div v-show="currentTab !== 'infoTab'">
+        <BusinessScheduleEdit
+          :week-schedule="schedule"
+          @editWeek="scheduleEdit"
+          @delete="scheduleEdit()"
+        />
+        <MainButton
+          :disabled="!hasSchedule"
+          class="button save-info"
+          :class="{ button_disabled: hasErrors }"
+          @click="debouncedSave"
+        >
+          Сохранить
+        </MainButton>
+      </div>
     </div>
     <VDialog
       v-model="avatarEdit"
@@ -108,12 +129,13 @@ import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue'
 import BusinessPhonesEdit from '@/components/business/BusinessPhonesEdit.vue'
 import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue'
 import AddressAutocomplete from '@/components/yandex/AddressAutocomplete.vue'
-import Api from '@/api/backend'
 import { backendMixins } from '@/api/mixins'
 import { businessMixins } from '@/components/business/mixins'
 import { mapActions, mapGetters } from 'vuex'
 import { makeAlert } from '@/api/utils'
 import MainButton from '@/components/common/MainButton.vue'
+import Business from '@/classes/business'
+import { debounce } from 'lodash'
 
 export default {
   components: {
@@ -142,7 +164,7 @@ export default {
       avatarEdit: false,
       categoryDisabled: false,
       captionClass: '',
-      data: undefined,
+      data: new Business(this.businessInfo),
       rules: {
         category: value => !value || value.length > 2 || 'Выберите тип',
         INN_counter: value =>
@@ -153,7 +175,8 @@ export default {
           true
       },
       valid: true,
-      schedule: undefined
+      schedule: undefined,
+      addLinkDisabled: false
     }
   },
   computed: {
@@ -203,10 +226,8 @@ export default {
         this.data.j &&
         this.data.j.schedule &&
         this.data.j.schedule.data &&
-        this.data.j.schedule.data.reduce(
-          (acc, cur) => acc || (cur && cur.length > 1 && cur[0] && cur[1]),
-          false
-        )
+        this.data.j.schedule.data.length &&
+        !this.data.j.schedule.data.some(day => !day.start || !day.end)
       )
     },
     hasErrors () {
@@ -215,7 +236,7 @@ export default {
         this.hasName &&
         this.hasPhone &&
         this.hasINN &&
-        this.hasSchedule &&
+        this.data.j.office &&
         this.valid
       )
     },
@@ -227,30 +248,55 @@ export default {
         return this.data.j.name
       }
       return null
-    }
+    },
   },
-  mounted () {
+  watch: {
+    'data.j.links': 'checkAddLink'
+  },
+  created () {
     this.fetchData()
+    this.debouncedCheckAddLink = debounce(this.checkAddLink, 200)
+    this.debouncedSave = debounce(this.saveData)
   },
   methods: {
     ...mapActions(['alert']),
-    close () {
-      this.sendData()
+    addLink () {
+      if (!this.data.j.links) {
+        this.data.j.links = {
+          vk: '',
+          instagram: '',
+          others: [{ uri: '' }]
+        }
+      }
+      if (!this.data.j.links.others || !this.data.j.links.others.length) {
+        this.data.j.links.others = [{ uri: '' }]
+      }
+
+      this.checkAddLink()
+      if (!this.addLinkDisabled) {
+        this.data.j.links.others.push({ uri: '' })
+        this.$forceUpdate()
+      }
+    },
+    checkAddLink () {
+      let sites = this.data.j.links && this.data.j.links.others
+
+      if (!sites || !sites.length) {
+        this.addLinkDisabled = false
+        return
+      }
+
+      this.addLinkDisabled = sites.some(site => !site.uri)
+    },
+    emitTabChange () {
+      this.$emit('tabChange')
     },
     fetchData () {
       if (this.id === 'new') {
-        this.data = this.dataPrefill()
         return
       }
-      Api()
-        .get(`business?id=eq.${this.id}`)
-        .then(res => res.data)
-        .then(res => res[0])
-        .then(res => {
-          if (res && !res.access) {
-            this.$emit('onEditClose')
-          }
-          this.data = this.dataPrefill(res)
+      this.data.load(this.id)
+        .then(() => {
           if (
             !(this.data.j && this.data.j.category) &&
             this.userInfo &&
@@ -263,15 +309,27 @@ export default {
           if (this.data.j.category) {
             this.categoryDisabled = true
           }
+          if (!this.data.j.links || !this.data.j.links.others || this.data.j.links.others.length) {
+            this.addLink()
+          }
           if (this.data.j.schedule) {
             this.schedule = this.data.j.schedule
           }
+        })
+        .catch(err => {
+          this.alert(makeAlert(err))
         })
     },
     phonesEdit (payload) {
       this.data.j.phones = payload
     },
-    sendData () {
+    saveData () {
+      this.data.save()
+        .then(() => {
+          this.$emit('saved')
+        })
+    },
+    /*sendData () {
       this.data.j.phones = this.data.j.phones.filter(x => x > '')
       if (this.id === 'new') {
         Api()
@@ -299,11 +357,10 @@ export default {
             this.alert(makeAlert(res))
           })
       }
-    },
+    },*/
     scheduleEdit (newWeek) {
       this.data.j.schedule = newWeek
       this.schedule = newWeek
-      // this.data.save(); // todo add debounce
     }
   }
 }
@@ -311,6 +368,7 @@ export default {
 
 <style lang="scss">
   @import '../../assets/styles/infocard';
+  @import '../../assets/styles/businesscard-form';
 
 .form-caption {
   padding-top: 50px;
@@ -327,19 +385,48 @@ export default {
     margin-top: 50px;
   }
 }
-.soc-input {
-  position: relative;
+.soc {
   .v-input__slot {
     padding-left: 30px;
   }
-  .soc-input-ic {
-    width: 20px;
-    height: 20px;
-    position: absolute;
-    left: 0px;
-    top: 14px;
-    background: url('../../assets/sllink.svg') no-repeat center center;
-    background-size: 18px;
+  &__input {
+    position: relative;
+    &:before {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      top: 14px;
+      left: 0px;
+      content: '';
+      background: url('../../assets/sllink.svg') no-repeat center center;
+      background-size: 18px;
+    }
+    &._ig {
+      &:before {
+        background: url('../../assets/images/svg/igg.svg') no-repeat center center;
+      }
+    }
+    &._vk {
+      &:before {
+        background: url('../../assets/images/svg/vkk.svg') no-repeat center center;
+      }
+    }
+  }
+}
+.save-info {
+  display: block;
+  width: 240px!important;
+  height: 56px!important;
+  border-radius: 0!important;
+  margin: 28px auto 0;
+  font-family: $roboto;
+  font-weight: bold;
+  font-size: 18px;
+  text-align: center;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  &:hover {
+    background-color: #07101C;
   }
 }
 </style>

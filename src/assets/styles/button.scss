@@ -6,8 +6,9 @@
   border-radius: 50%;
   box-sizing: border-box;
   color: #fff;
-  background-color: linear-gradient(270deg, #C9A15D -9.86%, #BA9462 103.49%);
+  background-color: #b69768;
   outline: none;
+  transition: background-color 0.4s;
   @media only screen and (min-width : 1160px) {
     width: 240px;
     height: 56px;
@@ -15,7 +16,7 @@
   }
 
   &_disabled {
-    background-color: rgba(137, 149, 175, 0.2);
+    background-color: rgba(137, 149, 175, 0.2) !important;
   }
 
   &_attractive {

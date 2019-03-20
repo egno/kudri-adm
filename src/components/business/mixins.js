@@ -40,7 +40,11 @@ export const businessMixins = {
         data.j.phones = []
       }
       if (!data.j.links) {
-        data.j.links = {}
+        data.j.links = {
+          vk: '',
+          instagram: '',
+          others: [{ uri: '' }]
+        }
       }
       if (!data.j.address) {
         data.j.address = {}
@@ -106,6 +110,10 @@ export const scheduleMixin = {
     setDays () {
       let weekSchedule = this.weekSchedule && this.weekSchedule.data
       let days = []
+
+      if (!weekSchedule) {
+        return
+      }
 
       this.dow.map((dayName, dayIndex) => {
         days.push({

@@ -19,7 +19,7 @@
       />-->
     </div>
     <VBtn
-      class="businesscard__add-field"
+      class="businesscard-form__add-field"
       :disabled="hasEmptyPhone"
       @click="newPhones.push('')"
     >
@@ -74,7 +74,6 @@ export default {
 }
 </script>
 <style lang="scss">
-
   .phone-input {
   position: relative;
   .v-text-field__slot {

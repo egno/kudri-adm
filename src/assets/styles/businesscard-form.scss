@@ -16,6 +16,7 @@
 
     input, textarea {
       padding-left: 20px;
+      font-weight: 400;
     }
 
     &._phone {
@@ -24,7 +25,13 @@
       }
       .v-text-field__prefix {
         padding-left: 20px;
+        font-weight: 400;
       }
+    }
+
+    &._office {
+      width: 79px;
+      padding-left: 12px;
     }
   }
 
@@ -52,6 +59,8 @@
     height: 40px;
     border-radius: 20px;
     border: 1px solid rgba(137, 149, 175, 0.1);
+    margin: 20px 0;
+    background-color: #fff!important;
 
     .v-btn__content {
       font-family: $roboto;
@@ -70,8 +79,34 @@
     border-bottom: 1px solid  rgba(137, 149, 175, 0.1);
   }
 
+  &__errors {
+    width: 260px;
+    margin: 0 auto;
+    padding-top: 14px;
+    text-align: center;
+    font-family: $lato;
+    font-size: 14px;
+    color: #EF4D37;
+    line-height: 18px;
+  }
+
   &__next {
-    background-color: #5699FF !important;
+    display: block;
+    width: 240px !important;
+    height: 56px !important;
+    margin: 28px auto 0;
+    color: #fff;
+    background-color: #5699FF ;
+    border-radius: 0 !important;
+    cursor: pointer;
+    font-family: $roboto;
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: background-color 0.4s;
+
     &:hover {
       background: #07101C;
     }

@@ -17,7 +17,7 @@
         :prepend-icon="prependIcon"
         :rules="[rules.found]"
         :search-input.sync="search"
-        class="businesscard__field"
+        class="businesscard-form__field"
       />
     </v-flex>
     <v-img
@@ -141,6 +141,11 @@ export default {
         .catch(() => {
           this.loading = false
         })
+    },
+    cutCountryOff (str) {
+      const index = str.indexOf(',')
+
+      return str.substr(index+1).trim()
     }
   }
 }

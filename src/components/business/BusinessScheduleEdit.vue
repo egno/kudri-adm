@@ -34,6 +34,9 @@ export default {
   },
   methods: {
     onEditDay (dayIndex, newDay) {
+      if (!this.newWeekSchedule || !this.newWeekSchedule.data) {
+        return
+      }
       if (!this.forAllDays) {
         this.newWeekSchedule.data[dayIndex] = newDay
       } else {

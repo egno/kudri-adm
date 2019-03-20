@@ -51,7 +51,6 @@
     height: 12px;
     border-radius: 13px;
     background: #CDD1DA;
-    box-shadow: inset 0 2px 3px rgba(0,0,0,.2);
     transition: .2s;
   }
   .checkbox + label:after {

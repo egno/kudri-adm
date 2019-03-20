@@ -1,13 +1,13 @@
 <template>
   <div class="businesscard">
     <VLayout xs12 align-center justify-start row class="businesscard__header">
-      <VFlex>
+      <VFlex xs6>
         <h1 class="businesscard__h1">
           {{ businessInfo && businessInfo.category }}
         </h1>
       </VFlex>
       <VFlex>
-        <div v-if="!editMode && businessInfo && businessInfo.access">
+        <div v-if="!editMode && businessInfo && businessInfo.access" class="businesscard__edit">
           <v-btn
             icon
             fab
@@ -35,8 +35,8 @@
         v-if="editMode"
         :business-info="businessInfo"
         :current-tab="infoTab? 'infoTab' : 'scheduleTab'"
-        @onEditClose="editMode=false"
         @tabChange="infoTab=!infoTab"
+        @saved="editMode=false"
       />
       <BusinessCard
         v-else
@@ -116,12 +116,23 @@ export default {
       color: #07101C;
     }
 
+    &__edit {
+      button {
+        width: 40px;
+        height: 40px;
+        margin: 0;
+        border: 1px solid rgba(137, 149, 175, 0.1);
+        border-radius: 50%;
+        color:   #C4C4C4;
+      }
+    }
+
     &__tab-wrapper {
       padding:0 37px;
       font-family: $lato;
       font-style: normal;
       font-size: 16px;
-      line-height: 32px;
+      line-height: 40px;
       background: #fff;
       border-bottom: 1px solid rgba(137, 149, 175, 0.1);
       @media only screen and (min-width : $desktop) {
@@ -133,8 +144,12 @@ export default {
       display: flex;
       justify-content: space-around;
 
-      @media only screen and (min-width: $desktop) {
+      @media only screen and (min-width: $tablet) {
         max-width: 524px;
+        margin: 0 auto;
+      }
+      @media only screen and (min-width: $desktop) {
+        margin: 0;
       }
     }
 
@@ -162,9 +177,11 @@ export default {
     &__content {
       flex-grow: 1;
       background: #fff;
+      @media only screen and (min-width: $tablet) {
+        background: #f4f5f7;
+      }
       @media only screen and (min-width: $desktop) {
         padding-left: 127px;
-        background: #f4f5f7;
       }
     }
   }

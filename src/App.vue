@@ -272,95 +272,6 @@ export default {
       height: 22px;
     }
   }
-  .v-text-field {
-    .v-input--is-focused {
-      border-bottom: 1px solid #5699ff !important;
-    }
-    textarea {
-      font-family: Lato;
-      font-style: normal;
-      font-weight: 300;
-      line-height: normal;
-      font-size: 13px;
-      color: #07101c;
-      &::placeholder {
-        color: rgba(7, 16, 28, 0.35) !important;
-        font-size: 13px;
-      }
-    }
-    .v-text-field__prefix {
-      padding-top: 5px;
-      font-size: 13px;
-      font-family: Lato;
-      font-style: normal;
-      font-weight: 300;
-      line-height: normal;
-    }
-    input,
-    label {
-      padding-bottom: 2px;
-      max-width: 100%;
-      width: 100%;
-      font-size: 13px;
-      font-family: Lato;
-      font-style: normal;
-      font-weight: 300;
-      line-height: normal;
-      &.v-label--active {
-        opacity: 1;
-        font-size: 11px;
-        color: rgba(7, 16, 28, 0.35) !important;
-        transform: scale(1) translateY(-18px);
-      }
-    }
-    input {
-      color: #07101c;
-    }
-    &.centered-input {
-      text-transform: uppercase !important;
-      input,
-      label {
-        text-align: center;
-        &.v-label--active {
-          text-align: center;
-          font-size: 11px;
-        }
-      }
-    }
-    label {
-      color: #07101c;
-      opacity: 0.35;
-      letter-spacing: 25%;
-    }
-    input {
-      color: #07101c;
-    }
-    .v-input__slot {
-      margin-bottom: 3px;
-      &:before {
-        border-color: #8995af;
-      }
-    }
-    &.workmode {
-      width: 34px;
-      height: 24px;
-      padding: 0;
-      margin: 0;
-      overflow: hidden;
-      margin-top: -1px;
-      &.error--text {
-        input {
-          color: #ef4d37;
-        }
-      }
-      .v-input__slot {
-        &:before,
-        &:after {
-          display: none;
-        }
-      }
-    }
-  }
 
   .title {
     font-size: 18px !important;
@@ -399,6 +310,97 @@ export default {
     }
   }
 }
+
+.v-text-field {
+  .v-input--is-focused {
+    border-bottom: 1px solid #5699ff !important;
+  }
+  textarea {
+    font-family: Lato;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    font-size: 13px;
+    color: #07101c;
+    &::placeholder {
+      color: rgba(7, 16, 28, 0.35) !important;
+      font-size: 13px;
+    }
+  }
+  .v-text-field__prefix {
+    padding-top: 5px;
+    font-size: 13px;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+  }
+  input,
+  label {
+    padding-bottom: 2px;
+    max-width: 100%;
+    width: 100%;
+    font-size: 14px;
+    font-family: Lato;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    &.v-label--active {
+      opacity: 1;
+      font-size: 11px;
+      color: rgba(7, 16, 28, 0.35) !important;
+      transform: scale(1) translateY(-18px);
+    }
+  }
+  input {
+    color: #07101c;
+  }
+  &.centered-input {
+    text-transform: uppercase !important;
+    input,
+    label {
+      text-align: center;
+      &.v-label--active {
+        text-align: center;
+        font-size: 11px;
+      }
+    }
+  }
+  label {
+    color: #07101c;
+    opacity: 0.35;
+    letter-spacing: 25%;
+  }
+  input {
+    color: #07101c;
+  }
+  .v-input__slot {
+    margin-bottom: 3px;
+    &:before {
+      border-color: #8995af;
+    }
+  }
+  &.workmode {
+    width: 34px;
+    height: 24px;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    margin-top: -1px;
+    &.error--text {
+      input {
+        color: #ef4d37;
+      }
+    }
+    .v-input__slot {
+      &:before,
+      &:after {
+        display: none;
+      }
+    }
+  }
+}
+
 .v-tooltip__content {
   background: linear-gradient(142.11deg, #536976 -29.81%, #292e49 136.3%);
   box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.04);

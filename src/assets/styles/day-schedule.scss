@@ -8,10 +8,11 @@
     font-family: Lato, sans-serif;
     font-style: normal;
     font-weight: normal;
-    font-size: 14px;
+    font-size: 16px;
     line-height: normal;
-    color: rgba(137, 149, 175, 0.35);
+    color: #07101C;
     text-align: center;
+    text-transform: capitalize;
   }
 
   &__for-all {
@@ -27,5 +28,10 @@
     line-height: normal;
     color: #07101C;
     border-right: 1px solid #8995AF;
+
+    input {
+      text-align: center;
+      font-weight: 400;
+    }
   }
 }
