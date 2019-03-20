@@ -1,0 +1,37 @@
+.day-schedule {
+  padding: 0 2px;
+  &:first-child .day-schedule__times {
+    border-left: 1px solid #8995AF;
+  }
+
+  &__dayname {
+    font-family: Lato, sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: normal;
+    color: #07101C;
+    text-align: center;
+    text-transform: capitalize;
+  }
+
+  &__for-all {
+    padding-top: 32px;
+  }
+
+  &__times {
+    padding: 5px 2px 0;
+    font-family: Lato,  sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: normal;
+    color: #07101C;
+    border-right: 1px solid #8995AF;
+
+    input {
+      text-align: center;
+      font-weight: 400;
+    }
+  }
+}

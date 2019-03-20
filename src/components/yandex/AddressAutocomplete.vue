@@ -17,6 +17,7 @@
         :prepend-icon="prependIcon"
         :rules="[rules.found]"
         :search-input.sync="search"
+        class="businesscard-form__field"
       />
     </v-flex>
     <v-img
@@ -140,13 +141,20 @@ export default {
         .catch(() => {
           this.loading = false
         })
+    },
+    cutCountryOff (str) {
+      const index = str.indexOf(',')
+
+      return str.substr(index+1).trim()
     }
   }
 }
 </script>
 
-<style>
-.href {
+<style lang="scss">
+  @import '../../assets/styles/businesscard-form';
+
+  .href {
   text-decoration: underline;
   color: rgb(158, 0, 0);
 }

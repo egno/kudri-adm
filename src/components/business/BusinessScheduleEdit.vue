@@ -1,143 +1,56 @@
 <template>
-  <VLayout
-    column
-    d-flex
-  >
-    <VFlex
-      justify-space-around
-      row
-      wrap
-    >
-      <VFlex>
-        <PeriodEdit
-          v-for="(item, i) in modes"
-          :key="i"
-          :itemindex="i"
-          :selected="modesIndexes[i]"
-          :period-start="item[0]"
-          :period-end="item[1]"
-          :class="{last: i === modes.length - 1 }"
-          @onEdit="onEdit(i,$event)"
-          @selectDay="selectDay(i, $event)"
+  <div>
+    <VLayout v-if="weekSchedule && weekSchedule.data">
+      <VFlex v-for="(day, index) in days" :key="index" class="day-schedule">
+        <div class="day-schedule__dayname">
+          {{ day.dayName }}
+        </div>
+        <DaySchedule
+          :day-schedule="day.value"
+          @editDay="onEditDay(index, $event)"
         />
       </VFlex>
-      <VBtn
-        v-if="addButton"
-        class="transparent add add-workmode"
-        @click="addMode"
-      >
-        Добавить режим работы
-      </VBtn>
-    </VFlex>
-  </VLayout>
+    </VLayout>
+    <VLayout>
+      <VFlex xs12>
+        <Checkbox v-model="forAllDays" label="Выбрать все дни недели" class="day-schedule__for-all" />
+      </VFlex>
+    </VLayout>
+  </div>
 </template>
 
 <script>
-import PeriodEdit from '@/components/PeriodEdit.vue'
-import _ from 'lodash'
+import DaySchedule from '@/components/business/DaySchedule.vue'
+import Checkbox from '@/components/common/Checkbox.vue'
+import { scheduleMixin} from './mixins'
 
 export default {
-  components: { PeriodEdit },
-  props: {
-    schedule: {
-      type: Object,
-      default () {
-        return {
-          type: 'week',
-          data: [
-            ['11', '22'],
-            ['11', '22'],
-            ['121', '12'],
-            ['121', '12'],
-            ['', ''],
-            ['', ''],
-            ['', '']
-          ]
-        }
-      }
-    }
-  },
+  components: { DaySchedule, Checkbox },
+  mixins: [ scheduleMixin ],
   data () {
     return {
-      dow: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
-      modes: [],
-      qwe: [
-        ['', ''],
-        ['', ''],
-        ['', ''],
-        ['', ''],
-        ['', ''],
-        ['', ''],
-        ['', '']
-      ]
+      forAllDays: false
     }
-  },
-  computed: {
-    addButton () {
-      if (_.findIndex(this.modes, function (o) { return o[0] === '' && o[1] === '' || o[0] === null || o[1] === null }) === -1) {
-        return true
-      } else {
-        return false
-      }
-    },
-    modesIndexes () {
-      let indexes = []
-      for (let i = 0; i < this.modes.length; i++) {
-        let item = this.modes[i].join('')
-        let index = this.getAllIndexes(this.schedule.data, item)
-        indexes.push(index)
-      }
-      return indexes
-    }
-  },
-  mounted () {
-    this.modes = _.uniqBy(this.schedule.data, function (e) {
-      return [e[0], e[1]].join()
-    })
-    this.modes = _.remove(this.modes, function (n) {
-      return n[0] !== ''
-    })
   },
   methods: {
-    addMode () {
-      if (_.findIndex(this.modes, function (o) { return o[0] === '' && o[1] === '' || o[0] === null || o[1] === null }) === -1) {
-        this.modes.push([null, null])
+    onEditDay (dayIndex, newDay) {
+      if (!this.newWeekSchedule || !this.newWeekSchedule.data) {
+        return
       }
-    },
-    getAllIndexes (arr, val) {
-      let arrString = []
-      arr.forEach(function (element) {
-        arrString.push(element.join(''))
-      })
-      let indexes = [],
-        i = -1
-      while ((i = arrString.indexOf(val, i + 1)) !== -1) {
-        indexes.push(i)
+      if (!this.forAllDays) {
+        this.newWeekSchedule.data[dayIndex] = newDay
+      } else {
+        this.newWeekSchedule.data.fill(newDay)
       }
-      return indexes
-    },
-    selectDay (i, payload) {
-      let p = payload[0]
-      this.$set(this.schedule.data, p, [payload[1], payload[2]])
-      this.$emit('onEdit', this.schedule)
-    },
-    onEdit (i, payload) {
-      let indexes = this.modesIndexes[i]
-      indexes.forEach(el => {
-        this.$set(this.schedule.data, el, payload)
-      })
-      this.$emit('onEdit', this.schedule)
-      this.modes = _.uniqBy(this.schedule.data, function (e) {
-        return [e[0], e[1]].join()
-      })
-      this.modes = _.remove(this.modes, function (n) {
-        return n[0] !== ''
-      })
+      this.$emit('editWeek', this.newWeekSchedule) // todo add debounce
+      this.setDays()
     }
   }
 }
 </script>
 <style lang="scss">
+  @import '../../assets/styles/day-schedule';
+
   .add-workmode {
     margin-top: 35px;
   }

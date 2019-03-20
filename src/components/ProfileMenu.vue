@@ -28,7 +28,7 @@
             :src="avatar"
           />
         </VFlex>
-        <div style="width: 24px; height: 24px">
+        <div class="profile-expand-more" style="width: 24px; height: 24px">
           <v-icon>expand_more</v-icon>
         </div>
       </VLayout>
@@ -267,4 +267,10 @@ export default {
     border: 1px solid #ef4d37;
   }
 }
+  .profile-expand-more {
+    display: none;
+    @media only screen and (min-width: 1160px) {
+      display: block;
+    }
+  }
 </style>

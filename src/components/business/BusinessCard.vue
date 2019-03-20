@@ -1,190 +1,197 @@
 <template>
-  <VCard>
-    <VLayout
-      justify-start
-      row
-      wrap
-    >
-      <VFlex
-        xs12
-        sm4
-        md3
+  <div class="infocard">
+    <div class="infocard__content">
+      <VLayout
+        align-center justify-center column
       >
-        <VCardTitle>
+        <div>
           <UserAvatar
             size="12em"
             :src="avatar"
           />
-        </VCardTitle>
-      </VFlex>
-      <VFlex
-        xs12
-        sm8
-        md9
-      >
-        <VLayout column>
-          <VFlex>
-            <VCardTitle primary-title>
-              <div>
-                <div>
-                  <span class="headline">
-                    {{ title }}
-                  </span>
-                  <br>
-                  <span class="font-weight-medium grey--text">
-                    {{ category }}
-                  </span>
-                </div>
-              </div>
-            </VCardTitle>
-          </VFlex>
-          <VFlex v-if="address">
-            <BusinessAddress
-              :caption-class="captionClass"
-              :address="address"
-            />
-          </VFlex>
-          <VFlex v-if="phones.length">
-            <BusinessPhones
-              :caption-class="captionClass"
-              :phones="phones"
-            />
-          </VFlex>
-          <VFlex v-if="data.j && data.j.site">
-            <div>
-              <span :class="captionClass">
-                Сайт
-              </span>&nbsp;
+        </div>
+        <VLayout column class="businesscard-form">
+          <div>
+            <div class="businesscard-form__field-title">
+              Название
+            </div>
+            <div class="businesscard-form__field-value">
+              {{ title }}
+            </div>
+            <div class="businesscard-form__field-title">
+              ИНН
+            </div>
+            <div class="businesscard-form__field-value">
+              {{ INN }}
+            </div>
+          </div>
+          <div v-if="address" class="bottom-bordered">
+            <div class="businesscard-form__field-title">
+              Адрес
+            </div>
+            <div class="businesscard-form__field-value">
+              {{ address && address.name }}
+            </div>
+          </div>
+
+          <div v-if="phones.length">
+            <div
+              v-for="(item, i) in phones"
+              :key="i"
+            >
               <span>
-                <a
-                  :href="siteLink"
-                  target="_blank"
-                >
-                  {{ data.j.site }}
-                </a>
+                {{ item | phone }}
               </span>
             </div>
-          </VFlex>
-          <VFlex v-if="data.j && data.j.links">
-            <SocialLinks :links="data.j.links" />
-          </VFlex>
-          <VFlex v-if="data.j && data.j.schedule">
+          </div>
+          <div v-if="businessInfo.j && businessInfo.j.schedule">
             <BusinessSchedule
               :caption-class="captionClass"
-              :schedule="data.j.schedule"
+              :week-schedule="businessInfo.j.schedule"
+              :expanded="expanded"
+              @toggleSchedule="expanded = !expanded"
             />
-          </VFlex>
+          </div>
+          <div v-if="businessInfo.j && businessInfo.j.links">
+            <div v-if="businessInfo.j.links.instagram" class="soc _ig">
+              {{ businessInfo.j.links.instagram }}
+            </div>
+            <div v-if="businessInfo.j.links.vk" class="soc _vk">
+              {{ businessInfo.j.links.vk }}
+            </div>
+            <div v-if="businessInfo.j.links.others && businessInfo.j.links.others.length">
+              <div
+                v-for="(site, ind) in businessInfo.j.links.others"
+                :key="ind"
+              >
+                <div
+                  v-if="site.uri"
+                  class="soc"
+                >
+                  {{ site.uri }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-if="businessInfo.j && businessInfo.j.description">
+            <div class="businesscard-form__field-title">
+              Описание
+            </div>
+            <div class="">
+              {{ businessInfo.j.description }}
+            </div>
+          </div>
         </VLayout>
-      </VFlex>
-    </VLayout>
-    <VCardActions>
-      <VSpacer />
-      <VBtn
-        v-if="data.access"
-        color="primary"
-        @click="onEditClick"
-      >
-        Редактировать
-      </VBtn>
-    </VCardActions>
-  </VCard>
+      </VLayout>
+    </div>
+  </div>
 </template>
 
 <script>
-import Business from '@/classes/business'
-import BusinessAddress from '@/components/business/BusinessAddress.vue'
-import BusinessPhones from '@/components/business/BusinessPhones.vue'
 import BusinessSchedule from '@/components/business/BusinessSchedule.vue'
-import SocialLinks from '@/components/business/SocialLinks.vue'
 import UserAvatar from '@/components/avatar/UserAvatar.vue'
 import { businessMixins } from '@/components/business/mixins'
-import { makeAlert } from '@/api/utils'
 
 export default {
   components: {
-    BusinessAddress,
-    BusinessPhones,
     BusinessSchedule,
-    SocialLinks,
     UserAvatar
+  },
+  filters: {
+    phone (value) {
+      if (!value) return ''
+      return value.replace(
+        /(\d?)(\d{1,3})(\d{1,3})(\d{1,4})$/g,
+        '+$1($2)$3-$4'
+      )
+    }
   },
   mixins: [businessMixins],
   props: {
-    business: {
+    businessInfo: {
       type: Object,
       default () {
         return {}
       }
     },
-    edit: { type: Boolean, default: false }
   },
   data () {
     return {
-      data: new Business(this.business),
       captionClass:
-        'caption font-weight-bold text-no-wrap grey--text text--lighten-1'
+        'caption font-weight-bold text-no-wrap grey--text text--lighten-1',
+      expanded: false
     }
   },
   computed: {
     address () {
-      if (!(this.data && this.data.j)) {
+      if (!(this.businessInfo && this.businessInfo.j)) {
         return
       }
-      return this.data.j.address
+      return this.businessInfo.j.address
     },
     avatar () {
-      if (!(this.data && this.data.j)) {
+      if (!(this.businessInfo && this.businessInfo.j)) {
         return
       }
-      return this.data.j.avatar
+      return this.businessInfo.j.avatar
     },
     category () {
-      if (!(this.data && this.data.j)) {
+      if (!(this.businessInfo && this.businessInfo.j)) {
         return
       }
-      return this.data.j.category
+      return this.businessInfo.j.category
     },
     siteLink () {
-      if (!this.data.j.site) {
+      if (!this.businessInfo.j.site) {
         return
       }
-      return this.prependHttpToUrl(this.data.j.site)
+      return this.prependHttpToUrl(this.businessInfo.j.site)
     },
     title () {
-      if (!(this.data && this.data.j)) {
+      if (!(this.businessInfo && this.businessInfo.j)) {
         return
       }
-      return this.data.j.name
-    }
-  },
-  watch: {
-    id: 'fetchData'
-  },
-  mounted () {
-    this.fetchData()
+      return this.businessInfo.j.name
+    },
+    INN () {
+      return this.businessInfo && this.businessInfo.j && this.businessInfo.j.inn
+    },
   },
   methods: {
-    onEditClick () {
-      this.$emit('onEditClick')
-    },
-    fetchData () {
-      if (this.id === 'new') {
-        return
-      }
-      this.data.load(this.id)
-      .then(res => {
-        console.log(res)
-      })
-      .catch(err => {
-        this.alert(makeAlert(err))
-      })
-    }
   }
 }
 </script>
 
-<style>
-a {
-  text-decoration: none;
-}
+<style lang="scss" scoped>
+  @import '../../assets/styles/businesscard-form';
+  @import '../../assets/styles/infocard';
+
+  a {
+    text-decoration: none;
+  }
+
+  .soc {
+    position: relative;
+    padding: 22px 0 0 30px;
+    &:before {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      top: 22px;
+      left: 0;
+      content: '';
+      background: url('../../assets/sllink.svg') no-repeat center center;
+      background-size: 18px;
+    }
+    &._ig {
+      &:before {
+        background: url('../../assets/images/svg/igg.svg') no-repeat center center;
+      }
+    }
+    &._vk {
+      &:before {
+        background: url('../../assets/images/svg/vkk.svg') no-repeat center center;
+      }
+    }
+  }
 </style>

@@ -14,18 +14,6 @@
       align-center
       justify-start
     >
-      <VFlex
-        v-if="businessId"
-        flex
-        row
-        align-center
-        justify-start
-        display-4
-        hidden-xs-only
-      >
-        {{ businessInfo.category }} {{ businessInfo.name }}
-      </VFlex>
-
       <VFlex v-if="showEmployee">
         <v-select
           v-model="selectedEmployee"
@@ -55,6 +43,14 @@
     <VSpacer />
     <VToolbarItems>
       <!--<Notifications />-->
+      <VLayout align-end justify-center column fill-height class="company-badge">
+        <VFlex class="company-badge__name">
+          {{ businessInfo.name }}
+        </VFlex>
+        <VFlex class="company-badge__category">
+          {{ businessInfo.category }}
+        </VFlex>
+      </VLayout>
       <ProfileMenu />
     </VToolbarItems>
   </VToolbar>
@@ -160,4 +156,26 @@ export default {
   padding-left: 0;
   align-items: center;
 }
+  .company-badge {
+    &__name {
+      padding-top: 9px;
+      font-family: Roboto Slab, Times New Roman, Times, serif;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 18px;
+      line-height: 18px;
+      text-align: right;
+      color: #07101C;
+    }
+
+    &__category {
+      font-family: Lato, sans-serif;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 12px;
+      line-height: normal;
+      text-align: right;
+      color: #8995AF;
+    }
+  }
 </style>

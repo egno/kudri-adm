@@ -1,102 +1,102 @@
 <template>
-  <VLayout
-    v-if="schedule"
-    column
-  >
-    <VFlex pb-2>
-      <div :class="captionClass">
-        Режим работы
-      </div>
-    </VFlex>
-    <VContainer
-      pt-0
-      pl-2
-    >
-      <VLayout
-        justify-space-around
-        column
-        wrap
+  <div class="schedule" :class="{_expanded: expanded }">
+    <div class="schedule__header" @click="$emit('toggleSchedule')">
+      Режим работы
+    </div>
+    <VLayout v-show="expanded" class="schedule__container">
+      <VFlex
+        v-for="(day, j) in days" :key="j"
+        class="day-schedule"
       >
-        <VFlex
-          v-for="(item) in scheduleGroup"
-          :key="item.dow"
-          pt-0
-          pb-0
-        >
-          <span :class="captionClass">
-            {{ item.dow }}:&nbsp;
-          </span>
-          <span
-            v-if="item.works"
-            class="timeClass"
-          >
-            {{ item.time }}
-          </span>
-          <span
-            v-else
-            class="timeClass"
-          >
-            выходной
-          </span>
-        </VFlex>
-      </VLayout>
-    </VContainer>
-  </VLayout>
+        <div class="day-schedule__dayname">
+          {{ day.dayName }}
+        </div>
+        <div v-if="day.value">
+          <div>
+            {{ day.value.start }}
+          </div>
+          <div>
+            {{ day.value.end }}
+          </div>
+        </div>
+      </VFlex>
+    </VLayout>
+  </div>
 </template>
 
 <script>
+import { scheduleMixin} from './mixins'
+
 export default {
+  mixins: [ scheduleMixin ],
   props: {
     captionClass: {
       type: String,
       default: ''
     },
-    schedule: {
-      type: Object,
-      default () {
-        return { type: 'week', data: [] }
-      }
-    }
+    expanded: { type: Boolean, default: false }
   },
-  data () {
-    return {
-      dow: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
-    }
-  },
-  computed: {
-    scheduleGroup () {
-      return (
-        this.schedule &&
-        this.schedule.data &&
-        this.schedule.data
-          .reduce((r, x, i) => {
-            let prev = r[r.length - 1] || [['', '']]
-            if (!(prev[0][0] === x[0] && prev[0][1] === x[1])) {
-              r.push([x, i, i])
-            } else {
-              prev[2] = i
-            }
-            return r
-          }, [])
-          .map(x => {
-            return {
-              time: `${x[0][0]}-${x[0][1]}`,
-              dow:
-                x[1] === x[2]
-                  ? this.dow[x[1]]
-                  : `${this.dow[x[1]]}-${this.dow[x[2]]}`,
-              works: !!x[0][0]
-            }
-          })
-      )
-    }
-  }
 }
 </script>
 
-<style>
-.timeClass {
+<style lang="scss">
+  @import '../../assets/styles/day-schedule';
+
+  .timeClass {
   font-size: 80%;
 }
+  .schedule {
+    &__header {
+      position: relative;
+      padding: 11px 17px 10px 36px;
+      border-radius: 20px;
+      cursor: pointer;
+      background: rgba(137, 149, 175, 0.1);
+      font-family: Lato, sans-serif;
+      font-weight: bold;
+      font-size: 14px;
+      border-bottom: 1px solid transparent;
+
+      &:before {
+        position: absolute;
+        top: 13px;
+        left: 12px;
+        content: '';
+        width: 14px;
+        height: 14px;
+        background: url('../../assets/images/svg/clock.svg') center no-repeat;
+      }
+
+      &:after {
+        position: absolute;
+        top: 18px;
+        right: 20px;
+        content: '';
+        width: 10px;
+        height: 6px;
+        background: url('../../assets/images/svg/down.svg') center no-repeat;
+      }
+    }
+
+    &__container {
+      padding: 10px 0 37px;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      background: rgba(137, 149, 175, 0.1);
+    }
+
+    &._expanded {
+      .schedule__header {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-bottom-color: #fff;
+
+        &:after {
+          transform: rotate(180deg);
+        }
+      }
+    }
+
+  }
 </style>
 
