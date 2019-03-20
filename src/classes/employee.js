@@ -19,11 +19,58 @@ class ScheduleTemplate extends ApiObject {
     let weekSchedule = [],
       l = 7
     while (l--) {
-        weekSchedule.push(new DaySchedule())
+      weekSchedule.push(new DaySchedule())
     }
-    return {
-      week: weekSchedule
-    }
+    return [
+      {
+        title: 'Будние дни',
+        type: 'week',
+        data: weekSchedule,
+        get: function (dt, data) {
+          return data[(dt.getDay() + 1) % 7]
+        }
+      },
+        { title: 'Все', type: 'week', data: weekSchedule,
+        get: function (dt, data) {
+            return data[(dt.getDay() + 1) % 7]
+        }},
+      {
+        title: 'Нечетные числа',
+        type: 'shift',
+        data: [new DaySchedule(), new DaySchedule()],
+          get: function (dt, data) {
+              return data[dt.getDate() % 2]
+          }
+      },
+      {
+        title: 'Четные числа',
+        type: 'shift',
+        data: [new DaySchedule(), new DaySchedule()],
+          get: function (dt, data) {
+              return data[dt.getDate() % 2]
+          }
+      },
+      {
+        title: '2/1',
+        type: 'shift',
+        data: [new DaySchedule(), new DaySchedule(), new DaySchedule()],
+        start: null,
+        get: function (dt, data) {
+            return data[dt.getDate() % 3]
+        }
+      },
+      {
+        title: '2/2',
+        type: 'shift',
+        data: [
+          new DaySchedule(),
+          new DaySchedule(),
+          new DaySchedule(),
+          new DaySchedule()
+        ],
+        start: null
+      }
+    ]
   }
 }
 
