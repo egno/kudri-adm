@@ -17,6 +17,7 @@
 
   &_disabled {
     background-color: rgba(137, 149, 175, 0.2) !important;
+    pointer-events: none;
   }
 
   &_attractive {

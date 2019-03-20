@@ -34,10 +34,11 @@
             </div>
           </div>
 
-          <div v-if="phones.length">
+          <div v-if="phones.length" class="businesscard-form__field-value">
             <div
               v-for="(item, i) in phones"
               :key="i"
+              class="businesscard__phone"
             >
               <span>
                 {{ item | phone }}

@@ -11,7 +11,7 @@
         <div class="day-schedule__dayname">
           {{ day.dayName }}
         </div>
-        <div v-if="day.value">
+        <div v-if="day.value" class="day-schedule__times">
           <div>
             {{ day.value.start }}
           </div>
@@ -46,9 +46,12 @@ export default {
   font-size: 80%;
 }
   .schedule {
+    padding: 20px 0 0;
+
     &__header {
       position: relative;
       padding: 11px 17px 10px 36px;
+      min-width: 284px;
       border-radius: 20px;
       cursor: pointer;
       background: rgba(137, 149, 175, 0.1);
@@ -83,6 +86,9 @@ export default {
       border-bottom-left-radius: 20px;
       border-bottom-right-radius: 20px;
       background: rgba(137, 149, 175, 0.1);
+      &>div {
+        width: 40px;
+      }
     }
 
     &._expanded {
