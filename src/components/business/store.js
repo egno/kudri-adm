@@ -45,10 +45,13 @@ const getters = {
   businessServiceCount: (state, getters) =>
     getters.businessServices && getters.businessServices.length,
   businessDayVisits: state => state.dayVisits,
+  businessFilialCount: state =>
+    state.businessInfo && state.businessInfo.j && state.businessInfo.j.filials,
   businessIsIndividual: (state, getters) =>
     state.businessIndividualCategories.includes(getters.businessCategory),
   businessIsSalon: (state, getters) =>
-    state.businessCategories.includes(getters.businessCategory)
+    state.businessCategories.includes(getters.businessCategory),
+  businessIsFilial: state => state.businessInfo && !!(state.businessInfo.parent)
 }
 
 const mutations = {

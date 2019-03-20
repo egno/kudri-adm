@@ -92,6 +92,7 @@ export default {
   computed: {
     ...mapGetters([
       'actualDate',
+      'businessFilialCount',
       'businessId',
       'businessInfo',
       'businessIsSalon',
@@ -122,9 +123,7 @@ export default {
       return this.employeeCount
     },
     filialsCount () {
-      return (
-        this.businessInfo && this.businessInfo.j && this.businessInfo.j.filials
-      )
+      return this.businessFilialCount
     },
     galleryCount () {
       return (
