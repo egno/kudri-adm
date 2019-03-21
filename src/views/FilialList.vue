@@ -11,6 +11,9 @@
         v-for="(item, i) in data"
         :key="i"
       >
+        <v-btn :to="{name: 'businessCard', params: {id: item.id}}">
+          Перейти
+        </v-btn>
         <FilialCard
           :item="item"
           @onSave="onSave"
@@ -25,7 +28,8 @@
 <script>
 import Api from '@/api/backend'
 import FilialCard from '@/components/business/FilialCard.vue'
-import { mapActions } from 'vuex'
+import Business from '@/classes/business'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   params: {
@@ -47,9 +51,13 @@ export default {
     }
   },
   computed: {
-    id () {
-      return this.$route.params.id
+    ...mapGetters(['businessId','businessInfo', 'businessInn']),
+    inn () {
+      return this.businessInn
     }
+  },
+  watch: {
+    inn: 'fetchData'
   },
   mounted () {
     this.fetchData()
@@ -62,8 +70,9 @@ export default {
   methods: {
     ...mapActions(['setActions']),
     fetchData () {
+      if (!this.inn) return
       Api()
-        .get(`filial?parent=eq.${this.id}`)
+        .get(`business?j->>inn=eq.${this.inn}`)
         .then(res => res.data)
         .then(res => {
           this.data = res
@@ -71,7 +80,7 @@ export default {
     },
     onAction (payload) {
       if (payload === this.formActions[0].action) {
-        this.data.push({ access: true, j: {} })
+        this.data.unshift(new Business({ access: true, parent:this.businessId, name: this.businessInfo.name }))
       }
     },
     onSave (payload) {
@@ -79,9 +88,9 @@ export default {
     },
     sendData (data) {
       data.j.phones = data.j.phones.filter(x => x > '')
-      data.parent = this.id
+      data.parent = this.businessId
       if (!data.id) {
-        Api().post(`filial`, data)
+        Api().post(`business`, data)
         // .then(res => {
         //   const newId = this.locationId(res.headers);
         //   if (newId) {
@@ -89,7 +98,7 @@ export default {
         //   }
         // });
       } else {
-        Api().patch(`filial?id=eq.${data.id}`, data)
+        Api().patch(`business?id=eq.${data.id}`, data)
       }
     }
   }

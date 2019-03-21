@@ -40,6 +40,8 @@ const getters = {
   }),
   businessName: (state, getters) =>
     getters.businessInfo && getters.businessInfo.name,
+  businessInn: (state) =>
+    state.businessInfo && state.businessInfo.j && state.businessInfo.j.inn,
   businessServices: state =>
     state.businessInfo && state.businessInfo.j && state.businessInfo.j.services,
   businessServiceCount: (state, getters) =>
@@ -51,7 +53,7 @@ const getters = {
     state.businessIndividualCategories.includes(getters.businessCategory),
   businessIsSalon: (state, getters) =>
     state.businessCategories.includes(getters.businessCategory),
-  businessIsFilial: state => state.businessInfo && !!(state.businessInfo.parent)
+  businessIsFilial: state => state.businessInfo && !!state.businessInfo.parent
 }
 
 const mutations = {

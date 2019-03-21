@@ -32,6 +32,7 @@ class Business extends ApiObject {
     this.j = (newVal && newVal.j) || {}
 
     this.address = new Address(newVal && newVal.j && newVal.j.address)
+    this.name = newVal && newVal.name || this.j.name
   }
 
   get jsonObject () {
