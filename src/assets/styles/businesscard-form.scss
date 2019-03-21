@@ -1,4 +1,5 @@
 @import './common';
+@import './icon';
 
 .businesscard-form {
 
@@ -33,10 +34,32 @@
       width: 79px;
       padding-left: 12px;
     }
+
+    .v-input__append-inner {
+      display: none;
+    }
+    .v-messages__message {
+      display: none;
+    }
+  }
+
+  &__delete {
+    @include uno-icon();
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover {
+      background-color: rgba(137, 149, 175, 0.35);
+
+      path {
+        fill: #000;
+      }
+    }
   }
 
   &__field-title {
     padding-top: 20px;
+    padding-left: 8px;
     font-family: $lato;
     font-style: normal;
     font-size: 12px;
@@ -46,6 +69,7 @@
 
   &__field-value {
     padding-top: 8px;
+    padding-left: 8px;
     font-family: $lato;
     font-style: normal;
     font-size: 14px;
@@ -96,7 +120,7 @@
     height: 56px !important;
     margin: 28px auto 0;
     color: #fff;
-    background-color: #5699FF ;
+    background-color: #5699FF !important;
     border-radius: 0 !important;
     cursor: pointer;
     font-family: $roboto;
@@ -110,5 +134,10 @@
     &:hover {
       background: #07101C;
     }
+  }
+
+  .v-text-field__prefix {
+    color: #07101C !important;
+    caret-color: #07101C !important;
   }
 }

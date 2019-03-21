@@ -37,6 +37,7 @@
           mask="############"
           :rules="[rules.INN_counter]"
           class="businesscard-form__field"
+          required
         />
         <v-layout row justify-space-between>
           <v-flex>
@@ -104,7 +105,7 @@
         <MainButton
           :disabled="!hasSchedule"
           class="button save-info"
-          :class="{ button_disabled: hasErrors }"
+          :class="{ button_disabled: !hasSchedule }"
           @click="debouncedSave"
         >
           Сохранить

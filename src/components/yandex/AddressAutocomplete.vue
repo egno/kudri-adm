@@ -18,6 +18,7 @@
         :rules="[rules.found]"
         :search-input.sync="search"
         class="businesscard-form__field"
+        required
       />
     </v-flex>
     <v-img

@@ -7,7 +7,9 @@
     >
       <PhoneEdit
         :phone="phone"
+        required
         @onEdit="onEdit(i, $event)"
+        @deletePhone="deletePhone(i)"
       />
       <!--<VBtn
         v-if="newPhones.length > 1"
@@ -65,6 +67,10 @@ export default {
   methods: {
     onEdit (i, payload) {
       this.$set(this.newPhones, i, payload)
+      this.$emit('onEdit', this.newPhones)
+    },
+    deletePhone (index) {
+      this.newPhones.splice(index,1)
       this.$emit('onEdit', this.newPhones)
     },
     update () {

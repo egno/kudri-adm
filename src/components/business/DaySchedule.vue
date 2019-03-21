@@ -1,22 +1,16 @@
 <template>
-  <VLayout
-    align-center
-    justify-start
-    row
-  >
-    <VFlex v-if="newDaySchedule && newDaySchedule" class="day-schedule__times">
-      <TimeEdit
-        :class="{error: errors.includes('intervalError')}"
-        :time="newDaySchedule.start"
-        @onEdit="onEdit('start', $event)"
-      />
-      <TimeEdit
-        :class="{error: errors.includes('intervalError')}"
-        :time="newDaySchedule.end"
-        @onEdit="onEdit('end', $event)"
-      />
-    </VFlex>
-  </VLayout>
+  <VFlex v-if="newDaySchedule && newDaySchedule" class="day-schedule__times">
+    <TimeEdit
+      :class="{error: errors.includes('intervalError')}"
+      :time="newDaySchedule.start"
+      @onEdit="onEdit('start', $event)"
+    />
+    <TimeEdit
+      :class="{error: errors.includes('intervalError')}"
+      :time="newDaySchedule.end"
+      @onEdit="onEdit('end', $event)"
+    />
+  </VFlex>
 </template>
 
 <script>

@@ -1,7 +1,10 @@
 .day-schedule {
-  padding: 0 2px;
   &:first-child .day-schedule__times {
     border-left: 1px solid #8995AF;
+  }
+
+  &>div {
+    text-align: center;
   }
 
   &__dayname {
@@ -20,6 +23,7 @@
   }
 
   &__times {
+    min-height: calc(100% - 19px);
     padding: 5px 2px 0;
     font-family: Lato,  sans-serif;
     font-style: normal;

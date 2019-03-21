@@ -1,7 +1,7 @@
 <template>
   <div class="businesscard">
     <VLayout xs12 align-center justify-start row class="businesscard__header">
-      <VFlex xs6>
+      <VFlex class="businesscard__heading">
         <h1 class="businesscard__h1">
           {{ businessInfo && businessInfo.category }}
         </h1>
@@ -89,8 +89,9 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   @import '../assets/styles/common';
+  @import '../assets/styles/icon';
 
   .businesscard {
     height: 100%;
@@ -107,6 +108,10 @@ export default {
       }
     }
 
+    &__heading {
+      flex-grow: 0;
+    }
+
     &__h1 {
       font-family: $roboto;
       font-style: normal;
@@ -117,13 +122,14 @@ export default {
     }
 
     &__edit {
-      button {
-        width: 40px;
-        height: 40px;
-        margin: 0;
+      padding-left: 40px;
+      button.v-btn {
+        @include uno-icon();
         border: 1px solid rgba(137, 149, 175, 0.1);
-        border-radius: 50%;
-        color:   #C4C4C4;
+        &:hover {
+          border-color: transparent;
+          color: rgba(0,0,0,0.4); 
+        }
       }
     }
 
@@ -183,6 +189,11 @@ export default {
       @media only screen and (min-width: $desktop) {
         padding-left: 127px;
       }
+    }
+
+    &__phone {
+      padding-left: 24px;
+      background: url('../assets/images/svg/ru.svg') left top no-repeat;
     }
   }
 </style>
