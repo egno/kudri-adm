@@ -14,7 +14,7 @@
         @blur="focused = false"
       />
     </VFlex>    
-    <button v-show="focused" type="button" class="businesscard-form__delete" @mousedown="$emit('deletePhone')">
+    <button v-show="removable && focused" type="button" class="businesscard-form__delete" @mousedown="$emit('deletePhone')">
       <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path fill-rule="evenodd" clip-rule="evenodd" d="M8 0H4V2H0V4H12V2H8V0ZM0 6H12V20H0V6Z" fill="#8995AF" fill-opacity="0.2" />
       </svg>
@@ -32,7 +32,8 @@ export default {
       default () {
         return ''
       }
-    }
+    },
+    removable: { type: Boolean, default: true },
   },
   data () {
     return {

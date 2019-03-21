@@ -7,18 +7,11 @@
     >
       <PhoneEdit
         :phone="phone"
+        :removable="i !== 0"
         required
         @onEdit="onEdit(i, $event)"
         @deletePhone="deletePhone(i)"
       />
-      <!--<VBtn
-        v-if="newPhones.length > 1"
-        depressed
-        flat
-        small
-        class="phone-delete"
-        @click="newPhones.splice(i, 1)"
-      />-->
     </div>
     <VBtn
       class="businesscard-form__add-field"
