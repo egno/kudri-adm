@@ -53,6 +53,7 @@
             <AddressAutocomplete
               v-model="data.j.address"
               label="Адрес"
+              @inputAddress="checkAddress"
             />
           </v-flex>
           <div class="businesscard-form__field _office">
@@ -137,9 +138,9 @@
           @delete="scheduleEdit()"
         />
         <MainButton
-          :disabled="!hasSchedule"
+          :disabled="hasErrors || !hasSchedule()"
           class="button save-info"
-          :class="{ button_disabled: !hasSchedule }"
+          :class="{ button_disabled: hasErrors || !hasSchedule() }"
           @click="debouncedSave"
         >
           Сохранить
@@ -205,6 +206,7 @@ export default {
       categoryDisabled: false,
       captionClass: '',
       data: new Business(this.businessInfo),
+      hasAddress: false,
       rules: {
         category: value => !value || value.length > 2 || 'Выберите тип',
         INN_counter: value =>
@@ -234,15 +236,6 @@ export default {
     business () {
       return this.id
     },
-    hasAddress () {
-      return !!(
-        this.data &&
-        this.data.j &&
-        this.data.j.address &&
-        this.data.j.address.name &&
-        !!this.data.j.address.point
-      )
-    },
     hasName () {
       return !!(this.data && this.data.name)
     },
@@ -259,16 +252,6 @@ export default {
         this.data &&
         this.data.j &&
         (this.data.j.category === 'Частный мастер' || this.data.j.inn)
-      )
-    },
-    hasSchedule () {
-      return !!(
-        this.data &&
-        this.data.j &&
-        this.data.j.schedule &&
-        this.data.j.schedule.data &&
-        this.data.j.schedule.data.length &&
-        !this.data.j.schedule.data.some(day => !day.start || !day.end)
       )
     },
     hasErrors () {
@@ -354,10 +337,31 @@ export default {
           if (this.data.j.schedule) {
             this.schedule = this.data.j.schedule
           }
+
+          this.checkAddress()
         })
         .catch(err => {
           this.alert(makeAlert(err))
         })
+    },
+    checkAddress () {
+      this.hasAddress =  !!(
+        this.data &&
+        this.data.j &&
+        this.data.j.address &&
+        this.data.j.address.name &&
+        !!this.data.j.address.point
+      )
+    },
+    hasSchedule () {
+      if (this.data && this.data.j && this.data.j.schedule &&
+        this.data.j.schedule.data && this.data.j.schedule.data.length) {
+        const notFilled = this.data.j.schedule.data.filter(day => !day.start && !day[0] || !day.end && !day[1])
+
+        return notFilled && notFilled.length <= 2
+      }
+
+      return false
     },
     onAvatarSave (img) {
       this.saveImage(img).then(() => {

@@ -86,7 +86,7 @@ export default {
   },
   watch: {
     address (val) {
-      this.$emit('input', val)
+      this.$emit('inputAddress', val)
       this.search = (val && val.name) || ''
       this.success =
         !this.edited ||

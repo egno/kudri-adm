@@ -93,13 +93,15 @@ export const scheduleMixin = {
     }
   },
   watch: {
-    'weekSchedule': 'update',
-    'newWeekSchedule': 'setDays'
+    'weekSchedule' () {
+      this.update()
+      this.setDays()
+    }
   },
   data () {
     return {
       dow: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
-      newWeekSchedule: undefined,
+      newWeekSchedule: this.weekSchedule && new BusinessSchedule(this.weekSchedule),
       days: undefined
     }
   },

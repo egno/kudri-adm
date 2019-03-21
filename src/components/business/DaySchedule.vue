@@ -3,11 +3,13 @@
     <TimeEdit
       :class="{error: errors.includes('intervalError')}"
       :time="newDaySchedule.start"
+      :placeholder="'09:00'"
       @onEdit="onEdit('start', $event)"
     />
     <TimeEdit
       :class="{error: errors.includes('intervalError')}"
       :time="newDaySchedule.end"
+      :placeholder="'21:00'"
       @onEdit="onEdit('end', $event)"
     />
   </VFlex>
@@ -24,8 +26,8 @@
         type: Object,
         default () {
           return new ScheduleDay({
-            start: '00:00',
-            end: '00:00',
+            start: '',
+            end: '',
           })
         }
       },

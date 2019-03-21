@@ -13,7 +13,7 @@
     </VLayout>
     <VLayout>
       <VFlex xs12>
-        <Checkbox v-model="forAllDays" label="Выбрать все дни недели" class="day-schedule__for-all" />
+        <Checkbox v-model="forAllDays" label="Для всех дней недели" class="day-schedule__for-all" />
       </VFlex>
     </VLayout>
   </div>
@@ -43,7 +43,6 @@ export default {
         this.newWeekSchedule.data.fill(newDay)
       }
       this.$emit('editWeek', this.newWeekSchedule) // todo add debounce
-      this.setDays()
     }
   }
 }

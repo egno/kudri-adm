@@ -3,7 +3,7 @@
     v-model="val"
     mask="time"
     class="time-edit"
-    placeholder="00:00"
+    :placeholder="placeholder"
     return-masked-value
     :rules="[rules.time]"
     @blur="onEdit"
@@ -17,7 +17,8 @@ export default {
     time: {
       type: String,
       default: ''
-    }
+    },
+    placeholder: { type: String, default: '00:00' }
   },
   data () {
     return {
