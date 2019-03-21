@@ -65,9 +65,8 @@
           </div>
         </v-layout>
         <v-img
-          v-show="hasAddress"
+          v-if="hasAddress"
           :src="`https://static-maps.yandex.ru/1.x/?lang=ru_RU&l=map&z=16&ll=${point}&pt=${point},org&scale=1.4`"
-          max-width="347px"
           max-height="200px"
           width="100%"
           class="grey lighten-2"
@@ -97,12 +96,14 @@
             <VTextField
               v-model="data.j.links.instagram"
               class="businesscard-form__field"
+              placeholder="Инстаграм"
             />
           </div>
           <div class="soc__input _vk">
             <VTextField
               v-model="data.j.links.vk"
               class="businesscard-form__field"
+              placeholder="Вконтакте"
             />
           </div>
           <div
@@ -114,7 +115,8 @@
               v-model="site.uri"
               class="businesscard-form__field"
               counter="150"
-              @input="site.uri=site.uri.slice(0,150)"
+              placeholder="Веб-сайт"
+              @input="site.uri = $event.slice(0,150); debouncedCheckAddLink()"
             />
           </div>
         </div>
@@ -333,12 +335,17 @@ export default {
     checkAddLink () {
       let sites = this.data.j.links && this.data.j.links.others
 
-      if (!sites || sites.length < 4) {
+      if (!sites) {
         this.addLinkDisabled = false
         return
       }
 
-      this.addLinkDisabled = sites.some(site => !site.uri)
+      if (sites.some(site => !site.uri)) {
+        this.addLinkDisabled = true
+        return
+      }
+
+      this.addLinkDisabled = sites.length > 3      
     },
     emitTabChange () {
       this.$emit('tabChange')
@@ -436,9 +443,6 @@ export default {
   }
 }
 .soc {
-  .v-input__slot {
-    padding-left: 30px;
-  }
   &__input {
     position: relative;
     &:before {
@@ -462,6 +466,10 @@ export default {
         background: url('../../assets/images/svg/vkk.svg') no-repeat center
           center;
       }
+    }
+
+    input {
+      padding-left: 30px;
     }
   }
 }
