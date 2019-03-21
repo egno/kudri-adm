@@ -239,7 +239,7 @@ export default {
         this.data.j &&
         this.data.j.address &&
         this.data.j.address.name &&
-        this.data.j.address.point
+        !!this.data.j.address.point
       )
     },
     hasName () {
@@ -314,7 +314,7 @@ export default {
     checkAddLink () {
       let sites = this.data.j.links && this.data.j.links.others
 
-      if (!sites || !sites.length) {
+      if (!sites || sites.length < 4) {
         this.addLinkDisabled = false
         return
       }
