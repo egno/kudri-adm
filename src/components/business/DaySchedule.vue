@@ -1,5 +1,5 @@
 <template>
-  <VFlex v-if="newDaySchedule && newDaySchedule" class="day-schedule__times">
+  <VFlex v-if="newDaySchedule" class="day-schedule__times">
     <TimeEdit
       :class="{error: errors.includes('intervalError')}"
       :time="newDaySchedule.start"
@@ -15,7 +15,7 @@
 
 <script>
   import TimeEdit from '@/components/TimeEdit.vue'
-  import ScheduleDay from '@/classes/day_schedule'
+  import ScheduleDay from '@/classes/scheduleDay'
 
   export default {
     components: { TimeEdit },
@@ -32,21 +32,11 @@
     },
     data () {
       return {
+        newDaySchedule: new ScheduleDay(this.daySchedule),
         errors: []
       }
     },
     computed: {
-      newDaySchedule: {
-        get () {
-          return new ScheduleDay({
-            start: this.daySchedule.start,
-            end: this.daySchedule.end,
-          })
-        },
-        set (newVal) {
-          this.$emit('editDay', newVal)
-        }
-      }
     },
     methods: {
       reset () {
