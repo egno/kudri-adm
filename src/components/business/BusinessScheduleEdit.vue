@@ -1,6 +1,6 @@
 <template>
   <div>
-    <VLayout v-if="weekSchedule && weekSchedule.data">
+    <VLayout v-if="newWeekSchedule && newWeekSchedule.data">
       <VFlex v-for="(day, index) in days" :key="index" class="day-schedule">
         <div class="day-schedule__dayname">
           {{ day.dayName }}

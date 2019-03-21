@@ -7,7 +7,7 @@ class BusinessSchedule {
       this.data = []
 
       for (let i = 0; i < 7; i++) {
-        this.data.push(new ScheduleDay({ start: '09:00', end: '18:00' }))
+        this.data.push(new ScheduleDay({ start: '', end: '' }))
       }
       return
     }

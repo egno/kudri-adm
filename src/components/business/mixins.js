@@ -93,7 +93,8 @@ export const scheduleMixin = {
     }
   },
   watch: {
-    'weekSchedule': 'setDays'
+    'weekSchedule': 'update',
+    'newWeekSchedule': 'setDays'
   },
   data () {
     return {
@@ -102,13 +103,13 @@ export const scheduleMixin = {
       days: undefined
     }
   },
-  mounted () {
-    this.newWeekSchedule = this.weekSchedule && new BusinessSchedule(this.weekSchedule)
+  created () {
+    this.update()
     this.setDays()
   },
   methods: {
     setDays () {
-      let weekSchedule = this.weekSchedule && this.weekSchedule.data
+      let weekSchedule = this.newWeekSchedule && this.newWeekSchedule.data
       let days = []
 
       if (!weekSchedule) {
@@ -124,6 +125,9 @@ export const scheduleMixin = {
       })
 
       this.days = days
+    },
+    update () {
+      this.newWeekSchedule = this.weekSchedule && new BusinessSchedule(this.weekSchedule)
     }
   }
 }
