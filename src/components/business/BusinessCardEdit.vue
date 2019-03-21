@@ -325,7 +325,11 @@ export default {
     saveData () {
       this.data.save()
         .then(() => {
+          this.$store.commit('business/SET_BUSINESS_INFO', this.data)
           this.$emit('saved')
+        })
+        .catch(err => {
+          this.alert(makeAlert(err))
         })
     },
     /*sendData () {
