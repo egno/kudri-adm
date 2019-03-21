@@ -33,7 +33,7 @@
               small
               @click="clientEdit(props.item)"
             >
-              <UserAvatar
+              <Avatar
                 class="ma-1"
                 :name="props.item.name.fullName || props.item.email"
                 size="2.4em"
@@ -217,7 +217,7 @@
 <script>
 import Api from '@/api/backend'
 import { mapActions, mapGetters } from 'vuex'
-import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import Avatar from '@/components/avatar/Avatar.vue'
 import AppBtn from '@/components/common/AppBtn.vue'
 import AppCardTitle from '@/components/common/AppCardTitle.vue'
 import BusinessPhones from '@/components/business/BusinessPhones.vue'
@@ -232,7 +232,7 @@ export default {
     BusinessPhones,
     ClientCardEdit,
     ClientVisits,
-    UserAvatar
+    Avatar
   },
   data () {
     return {

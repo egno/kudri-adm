@@ -7,7 +7,7 @@
       large
       @click="avatarEdit = !avatarEdit"
     >
-      <UserAvatar
+      <Avatar
         :name="name"
         size="4em"
         :src="avatar"
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import Avatar from '@/components/avatar/Avatar.vue'
 import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue'
 import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue'
 import axios from 'axios'
@@ -59,7 +59,7 @@ import { businessMixins } from '@/components/business/mixins'
 export default {
   components: {
     BusinessScheduleEdit,
-    UserAvatar,
+    Avatar,
     VueAvatarEditor
   },
   mixins: [businessMixins],

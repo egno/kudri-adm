@@ -9,6 +9,9 @@ export const backendMixins = {
       return res[1]
     },
     saveImage (img) {
+      if (!img) {
+        return false
+      }
       this.avatarEdit = false
       var blobBin = atob(img.toDataURL().split(',')[1])
       var array = []
@@ -20,7 +23,7 @@ export const backendMixins = {
       let newFileName = `${this.uuidv4()}.png`
       formData.append('file', file, newFileName)
       let vm = this
-      axios
+      return axios
         .post(process.env.VUE_APP_UPLOAD, formData, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`
@@ -28,10 +31,11 @@ export const backendMixins = {
         })
         .then(function () {
           vm.data.j.avatar = newFileName
+
+          return true
         })
-        .then(() => vm.sendData())
-        .catch(function () {
-          console.log('FAILURE!!')
+        .catch(function (e) {
+          console.log('FAILURE!! ', e)
         })
     }
   }

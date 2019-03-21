@@ -1,65 +1,60 @@
 <template>
-  <VCard>
-    <VContainer justify-center>
+  <VCard class="avatar-editor">
+    <VLayout
+      align-center
+      justify-space-around
+      row
+    >
       <VLayout
         align-center
         justify-space-around
-        row
+        column
       >
-        <VLayout
-          align-center
-          justify-space-around
-          column
+        <VFlex
+          justify-center
+          pb-3
         >
-          <VFlex
-            justify-center
-            pb-3
+          <VueAvatar
+            ref="vueavatar"
+            :width="width"
+            :height="height"
+            :border-radius="borderRadius"
+            :border="border"
+            :color="color"
+            :scale="+scale"
+            :background="background"
+            @vue-avatar-editor:image-ready="onImageReady"
+            @select-file="onSelectFile($event)"
+          />
+        </VFlex>
+        <VFlex>
+          <VLayout
+            v-if="scale"
+            column
+            fill-height
           >
-            <VueAvatar
-              ref="vueavatar"
-              :width="width"
-              :height="height"
-              :rotation="rotation"
-              :border-radius="borderRadius"
-              :border="border"
-              :color="color"
-              :scale="+scale"
-              :background="background"
-              @vue-avatar-editor:image-ready="onImageReady"
-              @select-file="onSelectFile($event)"
-            />
-          </VFlex>
-          <VFlex>
-            <VLayout
-              column
-              fill-height
-            >
-              <VFlex v-if="scale">
-                <input
-                  v-model="scale"
-                  type="range"
-                  min="1"
-                  max="3"
-                  step="0.02"
-                >
-                <br>
-                <input
-                  v-model="rotation"
-                  type="range"
-                  min="-180"
-                  max="180"
-                  step="1"
-                >
-              </VFlex>
-            </VLayout>
-          </VFlex>
-        </VLayout>
+            <VFlex class="avatar-editor__text">
+              Подберите миниатюру под нужный размер и положение в круге
+            </VFlex>
+            <VFlex>
+              <v-slider
+                v-model="scale"
+                min="1"
+                max="3"
+                step="0.02"
+                class="avatar-editor__scale"
+              />
+              <br>
+            </VFlex>
+          </VLayout>
+        </VFlex>
       </VLayout>
-    </VContainer>
+    </VLayout>
     <VCardActions>
-      <VSpacer />
       <VBtn
+        xs12
         color="primary"
+        class="button"
         @click="finished"
       >
         Сохранить
@@ -123,7 +118,6 @@ export default {
   },
   data () {
     return {
-      rotation: 0,
       scale: 0
     }
   },
@@ -133,7 +127,6 @@ export default {
     },
     onImageReady () {
       this.scale = 1
-      this.rotation = 0
     },
     finished () {
       return this.$emit('finished', this.$refs.vueavatar.getImageScaled())
@@ -141,3 +134,41 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  @import '../../assets/styles/button';
+
+  .avatar-editor {
+    padding: 56px 47px 56px 48px;
+
+    &__text {
+      padding: 10px 0;
+      font-family: Lato, sans-serif;
+      font-size: 14px;
+      line-height: normal;
+      text-align: center;
+      color: #8995AF;
+    }
+
+    &__scale {
+      .v-slider__thumb {
+        background: #FFFFFF !important;
+        box-shadow: 0px 0px 3px rgba(137, 149, 175, 0.35);
+      }
+    }
+
+    .v-card__actions {
+      padding: 0;
+    }
+
+    & button {
+      width: 280px;
+      height: 56px;
+      border-radius: 0;
+    }
+
+    #avatarEditorCanvas {
+      display: block;
+    }
+  }
+</style>

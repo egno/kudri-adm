@@ -11,7 +11,7 @@
       <v-card-title>
         <v-layout row>
           <v-flex>
-            <UserAvatar
+            <Avatar
               class="ma-1"
               :name="data.j.name || data.j.email"
               :src="data.j.avatar"
@@ -70,12 +70,12 @@
 <script>
 import Album from '@/components/gallery/Album.vue'
 import AlbumSlider from '@/components/gallery/AlbumSlider.vue'
-import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import Avatar from '@/components/avatar/Avatar.vue'
 import Api from '@/api/backend'
 import { mapActions } from 'vuex'
 
 export default {
-  components: { Album, AlbumSlider, UserAvatar },
+  components: { Album, AlbumSlider, Avatar },
   data () {
     return {
       data: undefined,

@@ -16,11 +16,15 @@
           :name="name"
           @click="avatarEdit = !avatarEdit"
         >
-          <UserAvatar
+          <Avatar
             size=""
             :src="avatar"
             :is-editing="true"
+            :is-company-avatar="true"
             :avatar-class="'business-avatar'"
+            :new-message="false"
+            :required="false"
+            :name="name"
           />
         </v-layout>
 
@@ -115,25 +119,30 @@
     </div>
     <VDialog
       v-model="avatarEdit"
-      max-width="350px"
+      max-width="375px"
+      height="600px"
     >
       <VueAvatarEditor
         :avatar="avatar"
-        @finished="saveImage"
+        :width="280"
+        :height="280"
+        :border="0"
+        :border-radius="140"
+        @finished="onAvatarSave"
       />
     </VDialog>
   </div>
 </template>
 
 <script>
-import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import Avatar from '@/components/avatar/Avatar.vue'
 import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue'
 import BusinessPhonesEdit from '@/components/business/BusinessPhonesEdit.vue'
 import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue'
 import AddressAutocomplete from '@/components/yandex/AddressAutocomplete.vue'
 import { backendMixins } from '@/api/mixins'
 import { businessMixins } from '@/components/business/mixins'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { makeAlert } from '@/api/utils'
 import MainButton from '@/components/common/MainButton.vue'
 import Business from '@/classes/business'
@@ -144,7 +153,7 @@ export default {
     AddressAutocomplete,
     BusinessPhonesEdit,
     BusinessScheduleEdit,
-    UserAvatar,
+    Avatar,
     VueAvatarEditor,
     MainButton
   },
@@ -259,6 +268,9 @@ export default {
   },
   methods: {
     ...mapActions(['alert']),
+    ...mapMutations({
+      setBusinessInfo: 'SET_BUSINESS_INFO'
+    }),
     addLink () {
       if (!this.data.j.links) {
         this.data.j.links = {
@@ -319,48 +331,26 @@ export default {
           this.alert(makeAlert(err))
         })
     },
+    onAvatarSave (img) {
+      this.saveImage(img).then(() => {
+        this.data.save().then(() => {
+          this.setBusinessInfo(this.data)
+        })
+      })
+    },
     phonesEdit (payload) {
       this.data.j.phones = payload
     },
     saveData () {
       this.data.save()
         .then(() => {
-          this.$store.commit('business/SET_BUSINESS_INFO', this.data)
+          this.setBusinessInfo(this.data)
           this.$emit('saved')
         })
         .catch(err => {
           this.alert(makeAlert(err))
         })
     },
-    /*sendData () {
-      this.data.j.phones = this.data.j.phones.filter(x => x > '')
-      if (this.id === 'new') {
-        Api()
-          .post(`business`, this.data)
-          .then(res => {
-            const newId = this.locationId(res.headers)
-            console.log(newId)
-            if (newId) {
-              this.$router.push({
-                name: 'businessCard',
-                params: { id: newId }
-              })
-            }
-          })
-          .catch(res => {
-            this.alert(makeAlert(res))
-          })
-      } else {
-        Api()
-          .patch(`business?id=eq.${this.id}`, this.data)
-          .then(() => {
-            this.$emit('onEditClose')
-          })
-          .catch(res => {
-            this.alert(makeAlert(res))
-          })
-      }
-    },*/
     scheduleEdit (newWeek) {
       this.data.j.schedule = newWeek
       this.schedule = newWeek

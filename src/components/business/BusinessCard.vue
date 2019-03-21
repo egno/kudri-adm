@@ -5,7 +5,7 @@
         align-center justify-center column
       >
         <div>
-          <UserAvatar
+          <Avatar
             size="12em"
             :src="avatar"
           />
@@ -90,13 +90,13 @@
 
 <script>
 import BusinessSchedule from '@/components/business/BusinessSchedule.vue'
-import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import Avatar from '@/components/avatar/Avatar.vue'
 import { businessMixins } from '@/components/business/mixins'
 
 export default {
   components: {
     BusinessSchedule,
-    UserAvatar
+    Avatar
   },
   filters: {
     phone (value) {

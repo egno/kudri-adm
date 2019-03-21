@@ -36,7 +36,7 @@
               :to="{name: 'businessCard', params: {id: props.item.id}}"
               target="_blank"
             >
-              <UserAvatar
+              <Avatar
                 class="ma-1"
                 :name="props.item.j && props.item.j.name || props.item.j.email"
                 size="2.4em"
@@ -104,11 +104,11 @@
 <script>
 import Api from '@/api/backend'
 import router from '@/router'
-import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import Avatar from '@/components/avatar/Avatar.vue'
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  components: { UserAvatar },
+  components: { Avatar },
   data () {
     return {
       formActions: [

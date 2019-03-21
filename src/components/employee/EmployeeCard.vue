@@ -15,7 +15,7 @@
         v-if="!photo"
         pa-3
       >
-        <UserAvatar
+        <Avatar
           class="ma-1"
           :name="item.j && item.j.name || item.j.email"
           :src="avatar"
@@ -94,12 +94,12 @@
 
 <script>
 import BusinessSchedule from '@/components/business/BusinessSchedule.vue'
-import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import Avatar from '@/components/avatar/Avatar.vue'
 import { fullName } from '@/components/business/utils'
 import { imagePath } from '@/components/gallery/utils'
 
 export default {
-  components: { BusinessSchedule, UserAvatar },
+  components: { BusinessSchedule, Avatar },
   props: {
     displayItemsCount: { type: Number, default: 5 },
     item: {

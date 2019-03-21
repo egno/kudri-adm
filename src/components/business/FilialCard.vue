@@ -1,7 +1,7 @@
 <template>
   <VCard>
     <VToolbar>
-      <UserAvatar
+      <Avatar
         class="ma-1"
         :name="item.j.name || item.j.email"
         :src="item.j.avatar"
@@ -80,7 +80,7 @@ import BusinessAddress from '@/components/business/BusinessAddress.vue'
 import BusinessPhones from '@/components/business/BusinessPhones.vue'
 import BusinessSchedule from '@/components/business/BusinessSchedule.vue'
 import FilialCardEdit from '@/components/business/FilialCardEdit.vue'
-import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import Avatar from '@/components/avatar/Avatar.vue'
 
 export default {
   components: {
@@ -88,7 +88,7 @@ export default {
     BusinessPhones,
     BusinessSchedule,
     FilialCardEdit,
-    UserAvatar
+    Avatar
   },
   props: {
     item: {

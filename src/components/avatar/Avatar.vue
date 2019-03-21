@@ -2,7 +2,6 @@
   <VAvatar
     class="ma-1"
     :size="size"
-    :color="color.bg"
     :tile="tile"
     :class="{ [avatarClass]: avatarClass }"
     @mouseover="tooltip = true"
@@ -10,7 +9,7 @@
     @mousemove="move"
   >
     <v-tooltip
-      v-if="isEditing"
+      v-if="isCompanyAvatar && !isEditing"
       v-model="tooltip"
       right
       :position-x="x"
@@ -23,21 +22,15 @@
         Может быть логотип или любое <br> другое привлекательное фото <br> компании
       </span>
     </v-tooltip>
-    <!-- todo <span
-      v-if="isEditing"
-      class="load-text"
-    >
-      Загрузить фотографию
-    </span>-->
-  
   
     <div
       v-if="newMessage"
       class="new-message"
     />
+
     <template v-if="required">
       <img
-        v-if="!valid_error"
+        v-if="!validationError"
         :src="imagePath"
         alt
       >
@@ -47,19 +40,29 @@
         alt
       >
     </template>
-
     <template v-else>
       <img
         v-if="image_exists"
         :src="imagePath"
         alt
       >
-      <div
-        v-else
-        :class="`avatar-letters font-weight-bold ${color.bg}--text text--${color.text}-4`"
-      >
-        {{ initials }}
-      </div>
+      <template v-else-if="isEditing">
+        <div class="add-photo-empty">
+          <div class="add-photo-empty__img">
+            <svg width="40" height="35" viewBox="0 0 40 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M2 5H10.9649L13.9553 0H25.9169L28.9073 5H37.8722H39.8722V7V33V35H37.8722H2H0V33V7V5H2ZM12.6813 6.02657L15.0895 2H24.7827L27.1909 6.02657L27.7731 7H28.9073H37.8722V33H2V7H10.9649H12.0991L12.6813 6.02657ZM25.9106 19C25.9106 22.3197 23.2297 25 19.9361 25C16.6426 25 13.9617 22.3197 13.9617 19C13.9617 15.6803 16.6426 13 19.9361 13C23.2297 13 25.9106 15.6803 25.9106 19ZM27.9106 19C27.9106 23.4183 24.3403 27 19.9361 27C15.532 27 11.9617 23.4183 11.9617 19C11.9617 14.5817 15.532 11 19.9361 11C24.3403 11 27.9106 14.5817 27.9106 19Z" fill="#8995AF" fill-opacity="0.35" />
+            </svg>
+          </div>
+          <div class="add-photo-empty__text">
+            Загрузить фото
+          </div>
+        </div>
+      </template>
+      <template v-else>
+        <div :class="`avatar-letters font-weight-bold ${color.bg}--text text--${color.text}-4`">
+          {{ initials }}
+        </div>
+      </template>
     </template>
   </VAvatar>
 </template>  
@@ -72,6 +75,7 @@ export default {
   props: {
     newMessage: { type: Boolean, default: false },
     size: { type: String, default: '3em' },
+    isCompanyAvatar: { type: Boolean, default: false },
     isEditing: { type: Boolean, default: false },
     avatarClass: { type: String, default: '' },
     name: { type: String, default: '' },
@@ -139,7 +143,7 @@ export default {
     imagePath () {
       return imagePath(this.src) || this.user
     },
-    valid_error () {
+    validationError () {
       return !this.src
     }
   },
@@ -222,6 +226,28 @@ export default {
     width: 140px;
     @media only screen and (min-width : $desktop) {
       width: 170px;
+    }
+  }
+
+  .add-photo-empty {
+    width: 140px;
+    height: 140px;
+    padding-top: 36px;
+    color: rgba(137, 149, 175, 0.5);
+    font: 12px $lato;
+    background: rgba(137, 149, 175, 0.1);
+    border-radius: 50%;
+    text-align: center;
+    cursor: pointer;
+    @media only screen and (min-width : $desktop) {
+      width: 170px;
+      height: 170px;
+      padding-top: 53px;
+      font-size: 14px;
+    }
+
+    &__text {
+      margin-top: 10px;
     }
   }
 </style>

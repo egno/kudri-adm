@@ -1,7 +1,7 @@
 <template>
   <VLayout align-center>
     <div>
-      <UserAvatar
+      <Avatar
         :name="initiales || null"
         size="80px"
         :src="employee && employee.avatar"
@@ -18,12 +18,12 @@
 </template>
 
 <script>
-  import UserAvatar from '@/components/avatar/UserAvatar.vue'
+  import Avatar from '@/components/avatar/Avatar.vue'
   import { imagePath } from '@/components/avatar/utils'
 
   export default {
     components: {
-      UserAvatar,
+      Avatar,
     },
     props: {
       employee: { type: Object, default: undefined },

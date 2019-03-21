@@ -14,7 +14,7 @@
           large
           @click="avatarEdit = !avatarEdit"
         >
-          <UserAvatar
+          <Avatar
             v-if="email"
             size="4em"
             :name="data.data.name || data.data.email"
@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import Avatar from '@/components/avatar/Avatar.vue'
 import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue'
 import Api from '@/api/backend'
 import axios from 'axios'
@@ -62,7 +62,7 @@ import axios from 'axios'
 export default {
   components: {
     VueAvatarEditor: VueAvatarEditor,
-    UserAvatar: UserAvatar
+    Avatar: Avatar
   },
   data () {
     return {

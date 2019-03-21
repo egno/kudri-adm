@@ -21,7 +21,7 @@
         spacer
       >
         <VFlex>
-          <UserAvatar
+          <Avatar
             :new-message="newMessage"
             :size="avatarSize"
             :name="displayName"
@@ -122,12 +122,12 @@
 
 <script>
 import router from '@/router'
-import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import Avatar from '@/components/avatar/Avatar.vue'
 
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  components: { UserAvatar },
+  components: { Avatar },
   props: {
     source: { type: String, default: () => '' }
   },

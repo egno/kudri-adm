@@ -10,7 +10,7 @@
         left
         @click="avatarEdit = !avatarEdit"
       >
-        <UserAvatar
+        <Avatar
           :name="name"
           size="100px"
           :src="avatar"
@@ -115,7 +115,7 @@
 </template>
 
 <script>
-import UserAvatar from '@/components/avatar/UserAvatar.vue'
+import Avatar from '@/components/avatar/Avatar.vue'
 import VueAvatarEditor from '@/components/avatar/VueAvatarEditor.vue'
 import { mapGetters, mapActions } from 'vuex'
 import ImageApi from '@/api/images'
@@ -123,7 +123,7 @@ import { canvasToFormData, imagePath } from '@/components/avatar/utils'
 
 export default {
   components: {
-    UserAvatar,
+    Avatar,
     VueAvatarEditor
   },
   data () {
