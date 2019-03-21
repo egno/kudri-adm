@@ -91,7 +91,8 @@
             <VTextField
               v-model="site.uri"
               class="businesscard-form__field"
-              @input="debouncedCheckAddLink"
+              counter="150"
+              @input="site.uri=site.uri.slice(0,150)"
             />
           </div>
         </div>
@@ -285,7 +286,7 @@ export default {
   },
   created () {
     this.fetchData()
-    this.debouncedCheckAddLink = debounce(this.checkAddLink, 200)
+    this.debouncedCheckAddLink = debounce(this.checkAddLink, 150)
     this.debouncedSave = debounce(this.saveData)
   },
   methods: {
