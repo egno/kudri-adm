@@ -38,6 +38,9 @@
     },
     computed: {
     },
+    watch: {
+      daySchedule: 'update'
+    },
     methods: {
       reset () {
         this.errors = []
@@ -54,6 +57,9 @@
         }
 
         this.$emit('editDay', this.newDaySchedule)
+      },
+      update () {
+        this.newDaySchedule = new ScheduleDay(this.daySchedule)
       },
       validateNewSchedule () {
         this.errors = []
