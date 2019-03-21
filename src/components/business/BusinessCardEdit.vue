@@ -97,7 +97,7 @@
         </div>
         <VBtn
           class="businesscard-form__add-field"
-          :disabled="addLinkDisabled"
+          :disabled="addLinkDisabled || ( data.j.links && data.j.links.others && data.j.links.others.length >= 4)"
           @click="addLink"
         >
           Добавить ссылку
