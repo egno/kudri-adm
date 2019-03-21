@@ -51,9 +51,9 @@
         >
           <v-flex>
             <AddressAutocomplete
-              v-model="data.j.address"
+              :value="data.j.address"
               label="Адрес"
-              @inputAddress="checkAddress"
+              @inputAddress="data.j.address = $event"
             />
           </v-flex>
           <div class="businesscard-form__field _office">
@@ -64,6 +64,27 @@
             />
           </div>
         </v-layout>
+        <v-img
+          v-show="hasAddress"
+          :src="`https://static-maps.yandex.ru/1.x/?lang=ru_RU&l=map&z=16&ll=${point}&pt=${point},org&scale=1.4`"
+          max-width="347px"
+          max-height="200px"
+          width="100%"
+          class="grey lighten-2"
+        >
+          <v-layout
+            slot="placeholder"
+            fill-height
+            align-center
+            justify-center
+            ma-0
+          >
+            <v-progress-circular
+              indeterminate
+              color="grey lighten-5"
+            />
+          </v-layout>
+        </v-img>
         <BusinessPhonesEdit
           :phones="phones"
           @onEdit="phonesEdit"
@@ -206,7 +227,6 @@ export default {
       categoryDisabled: false,
       captionClass: '',
       data: new Business(this.businessInfo),
-      hasAddress: false,
       rules: {
         category: value => !value || value.length > 2 || 'Выберите тип',
         INN_counter: value =>
@@ -236,6 +256,15 @@ export default {
     business () {
       return this.id
     },
+    hasAddress () {
+      return !!(
+        this.data &&
+        this.data.j &&
+        this.data.j.address &&
+        this.data.j.address.name &&
+        !!this.data.j.address.point
+      )
+    },
     hasName () {
       return !!(this.data && this.data.name)
     },
@@ -262,6 +291,12 @@ export default {
     },
     name () {
       return this.data.name
+    },
+    point () {
+      if (!this.data || !this.data.j || !this.data.j.address || !this.data.j.address.point) {
+        return
+      }
+      return this.data.j.address.point.replace(' ', ',')
     }
   },
   watch: {
@@ -337,21 +372,10 @@ export default {
           if (this.data.j.schedule) {
             this.schedule = this.data.j.schedule
           }
-
-          this.checkAddress()
         })
         .catch(err => {
           this.alert(makeAlert(err))
         })
-    },
-    checkAddress () {
-      this.hasAddress =  !!(
-        this.data &&
-        this.data.j &&
-        this.data.j.address &&
-        this.data.j.address.name &&
-        !!this.data.j.address.point
-      )
     },
     hasSchedule () {
       if (this.data && this.data.j && this.data.j.schedule &&

@@ -1,5 +1,5 @@
 <template>
-  <v-layout column>
+  <v-layout>
     <v-flex>
       <v-combobox
         v-model="address"
@@ -21,27 +21,6 @@
         required
       />
     </v-flex>
-    <v-img
-      v-if="success && point"
-      :src="`https://static-maps.yandex.ru/1.x/?lang=ru_RU&l=map&z=16&ll=${point}&pt=${point},org`"
-      :lazy-src="``"
-      aspect-ratio="1"
-      class="grey lighten-2"
-      @click="openMessageWindow"
-    >
-      <v-layout
-        slot="placeholder"
-        fill-height
-        align-center
-        justify-center
-        ma-0
-      >
-        <v-progress-circular
-          indeterminate
-          color="grey lighten-5"
-        />
-      </v-layout>
-    </v-img>
   </v-layout>
 </template>
 
@@ -68,11 +47,6 @@ export default {
     }
   },
   computed: {
-    point () {
-      if (!(this.success && this.items && this.items[0] && this.items[0].point))
-        return
-      return this.items[0].point.replace(' ', ',')
-    },
     rules () {
       return {
         found: () => {
