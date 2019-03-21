@@ -217,7 +217,7 @@ export default {
 </script>
 
 <style >
-.column-truncated{
+.column-truncated {
   max-width: 20em;
 }
 </style>
