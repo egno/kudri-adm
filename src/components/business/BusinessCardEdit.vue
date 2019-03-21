@@ -7,8 +7,9 @@
     <div class="infocard__content">
       <VForm
         v-show="currentTab==='infoTab'"
+        ref="form"
+
         v-model="valid"
-        lazy-validation
       >
         <v-layout
           justify-center
@@ -58,7 +59,7 @@
           :phones="phones"
           @onEdit="phonesEdit"
         />
-        <div class="soc">
+        <div v-if="data.j.links" class="soc">
           <div class="soc__input _ig">
             <VTextField v-model="data.j.links.instagram" class="businesscard-form__field" />
           </div>
@@ -175,7 +176,7 @@ export default {
               'В ИНН должно быть 10 или 12 цифр')) ||
           true
       },
-      valid: true,
+      valid: false,
       schedule: undefined,
       addLinkDisabled: false
     }
@@ -235,9 +236,7 @@ export default {
       return !(
         this.hasAddress &&
         this.hasName &&
-        this.hasPhone &&
-        this.hasINN &&
-        this.valid
+        this.hasPhone
       )
     },
     id () {
