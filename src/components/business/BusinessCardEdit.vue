@@ -237,7 +237,6 @@ export default {
         this.hasName &&
         this.hasPhone &&
         this.hasINN &&
-        this.data.j.office &&
         this.valid
       )
     },
