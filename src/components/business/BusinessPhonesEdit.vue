@@ -22,7 +22,7 @@
     </div>
     <VBtn
       class="businesscard-form__add-field"
-      :disabled="hasEmptyPhone"
+      :disabled="hasEmptyPhone || hasWrongPhone || newPhones.length >= 4"
       @click="newPhones.push('')"
     >
       Добавить телефон
@@ -57,6 +57,9 @@ export default {
   computed: {
     hasEmptyPhone () {
       return this.newPhones.some(x => !x)
+    },
+    hasWrongPhone () {
+      return this.newPhones.some(x => !x.match(/^7?\d{10}$/))
     }
   },
   watch: { phones: 'update' },
