@@ -151,7 +151,7 @@ class Business extends ApiObject {
 
   set name (newVal) {
     if (newVal) {
-      this.j.name = newVal
+      this.j.name = newVal.slice(0,50)
     } else {
       delete this.j.name
     }

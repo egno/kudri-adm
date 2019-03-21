@@ -8,7 +8,6 @@
       <VForm
         v-show="currentTab==='infoTab'"
         ref="form"
-
         v-model="valid"
       >
         <v-layout
@@ -29,11 +28,13 @@
         </v-layout>
 
         <VTextField
-          v-model="data.j.name"
+          v-model="data.name"
           label="Название"
-          :rules="[() => !!data.j.name || 'Это поле обязательно для заполнения']"
+          :rules="[() => !!data.name || 'Это поле обязательно для заполнения',
+                   () => !!data.name && data.name.length <= 50 || 'Слишком длинное наименование']"
           required
           class="businesscard-form__field"
+          counter="50"
         />
         <VTextField
           v-if="!businessIsIndividual"
@@ -44,7 +45,10 @@
           class="businesscard-form__field"
           required
         />
-        <v-layout row justify-space-between>
+        <v-layout
+          row
+          justify-space-between
+        >
           <v-flex>
             <AddressAutocomplete
               v-model="data.j.address"
@@ -63,18 +67,39 @@
           :phones="phones"
           @onEdit="phonesEdit"
         />
-        <div v-if="data.j.links" class="soc">
+        <div
+          v-if="data.j.links"
+          class="soc"
+        >
           <div class="soc__input _ig">
-            <VTextField v-model="data.j.links.instagram" class="businesscard-form__field" />
+            <VTextField
+              v-model="data.j.links.instagram"
+              class="businesscard-form__field"
+            />
           </div>
           <div class="soc__input _vk">
-            <VTextField v-model="data.j.links.vk" class="businesscard-form__field" />
+            <VTextField
+              v-model="data.j.links.vk"
+              class="businesscard-form__field"
+            />
           </div>
-          <div v-for="(site, i) in data.j.links.others" :key="i" class="soc__input">
-            <VTextField v-model="site.uri" class="businesscard-form__field" @input="debouncedCheckAddLink" />
+          <div
+            v-for="(site, i) in data.j.links.others"
+            :key="i"
+            class="soc__input"
+          >
+            <VTextField
+              v-model="site.uri"
+              class="businesscard-form__field"
+              @input="debouncedCheckAddLink"
+            />
           </div>
         </div>
-        <VBtn class="businesscard-form__add-field" :disabled="addLinkDisabled" @click="addLink">
+        <VBtn
+          class="businesscard-form__add-field"
+          :disabled="addLinkDisabled"
+          @click="addLink"
+        >
           Добавить ссылку
         </VBtn>
         <v-textarea
@@ -89,7 +114,10 @@
           class="businesscard-form__field"
         />
 
-        <div v-show="hasErrors" class="businesscard-form__errors">
+        <div
+          v-show="hasErrors"
+          class="businesscard-form__errors"
+        >
           Необходимо заполнить все обязательные поля
         </div>
         <MainButton
@@ -168,7 +196,7 @@ export default {
     currentTab: {
       type: String,
       default: 'infoTab'
-    },
+    }
   },
   data () {
     return {
@@ -214,7 +242,7 @@ export default {
       )
     },
     hasName () {
-      return !!(this.data && this.data.j && this.data.j.name)
+      return !!(this.data && this.data.name)
     },
     hasPhone () {
       return !!(
@@ -242,21 +270,14 @@ export default {
       )
     },
     hasErrors () {
-      return !(
-        this.hasAddress &&
-        this.hasName &&
-        this.hasPhone
-      )
+      return !(this.hasAddress && this.hasName && this.hasPhone)
     },
     id () {
       return this.$route.params.id
     },
     name () {
-      if (this.data.j) {
-        return this.data.j.name
-      }
-      return null
-    },
+      return this.data.name
+    }
   },
   watch: {
     'data.j.links': 'checkAddLink'
@@ -306,7 +327,8 @@ export default {
       if (this.id === 'new') {
         return
       }
-      this.data.load(this.id)
+      this.data
+        .load(this.id)
         .then(() => {
           if (
             !(this.data.j && this.data.j.category) &&
@@ -320,7 +342,11 @@ export default {
           if (this.data.j.category) {
             this.categoryDisabled = true
           }
-          if (!this.data.j.links || !this.data.j.links.others || this.data.j.links.others.length) {
+          if (
+            !this.data.j.links ||
+            !this.data.j.links.others ||
+            this.data.j.links.others.length
+          ) {
             this.addLink()
           }
           if (this.data.j.schedule) {
@@ -342,7 +368,8 @@ export default {
       this.data.j.phones = payload
     },
     saveData () {
-      this.data.save()
+      this.data
+        .save()
         .then(() => {
           this.setBusinessInfo(this.data)
           this.$emit('saved')
@@ -360,8 +387,8 @@ export default {
 </script>
 
 <style lang="scss">
-  @import '../../assets/styles/infocard';
-  @import '../../assets/styles/businesscard-form';
+@import '../../assets/styles/infocard';
+@import '../../assets/styles/businesscard-form';
 
 .form-caption {
   padding-top: 50px;
@@ -396,21 +423,23 @@ export default {
     }
     &._ig {
       &:before {
-        background: url('../../assets/images/svg/igg.svg') no-repeat center center;
+        background: url('../../assets/images/svg/igg.svg') no-repeat center
+          center;
       }
     }
     &._vk {
       &:before {
-        background: url('../../assets/images/svg/vkk.svg') no-repeat center center;
+        background: url('../../assets/images/svg/vkk.svg') no-repeat center
+          center;
       }
     }
   }
 }
 .save-info {
   display: block;
-  width: 240px!important;
-  height: 56px!important;
-  border-radius: 0!important;
+  width: 240px !important;
+  height: 56px !important;
+  border-radius: 0 !important;
   margin: 28px auto 0;
   font-family: $roboto;
   font-weight: bold;
@@ -419,7 +448,7 @@ export default {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   &:hover {
-    background-color: #07101C;
+    background-color: #07101c;
   }
 }
 </style>
