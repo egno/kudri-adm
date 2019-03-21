@@ -238,7 +238,8 @@ export default {
         this.data &&
         this.data.j &&
         this.data.j.address &&
-        this.data.j.address.name
+        this.data.j.address.name &&
+        this.data.j.address.point
       )
     },
     hasName () {
