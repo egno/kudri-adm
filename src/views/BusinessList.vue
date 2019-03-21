@@ -47,7 +47,7 @@
               align-self-center
               justify-start
             >
-              <span>
+              <span class="text-truncate column-truncated">
                 {{ props.item.j && props.item.j.name || '-' }}
               </span>
             </VFlex>
@@ -217,4 +217,7 @@ export default {
 </script>
 
 <style >
+.column-truncated{
+  max-width: 20em;
+}
 </style>
