@@ -44,7 +44,7 @@
     <VToolbarItems>
       <!--<Notifications />-->
       <VLayout align-end justify-center column fill-height class="company-badge">
-        <VFlex class="company-badge__name">
+        <VFlex class="text-truncate company-badge__name">
           {{ businessInfo.name }}
         </VFlex>
         <VFlex class="company-badge__category">
