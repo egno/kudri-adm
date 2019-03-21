@@ -1,7 +1,13 @@
+
 class ScheduleDay {
-  constructor ({ start, end }) {
-    this.start = start
-    this.end = end
+  constructor (newVal) {
+    if (Array.isArray(newVal)) {
+      this.start = newVal[0]
+      this.end = newVal[newVal.length - 1]
+    } else {
+      this.start = newVal.start
+      this.end = newVal.end
+    }
   }
 }
 

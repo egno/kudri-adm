@@ -12,7 +12,7 @@ class BusinessSchedule {
       return
     }
 
-    this.data = data
+    this.data = data.map(x => new ScheduleDay(x))
     this.type = type
   }
 }

@@ -15,6 +15,7 @@
 
 <script>
   import TimeEdit from '@/components/TimeEdit.vue'
+  import ScheduleDay from '@/classes/day_schedule'
 
   export default {
     components: { TimeEdit },
@@ -22,10 +23,10 @@
       daySchedule: {
         type: Object,
         default () {
-          return {
+          return new ScheduleDay({
             start: '00:00',
             end: '00:00',
-          }
+          })
         }
       },
     },
@@ -37,10 +38,10 @@
     computed: {
       newDaySchedule: {
         get () {
-          return {
+          return new ScheduleDay({
             start: this.daySchedule.start,
             end: this.daySchedule.end,
-          }
+          })
         },
         set (newVal) {
           this.$emit('editDay', newVal)
@@ -50,10 +51,10 @@
     methods: {
       reset () {
         this.errors = []
-        this.newDaySchedule = {
-          start: '00:00',
-          end: '00:00'
-        }
+        this.newDaySchedule = new ScheduleDay({
+            start: '00:00',
+            end: '00:00',
+          })
       },
       onEdit (prop, value) {
         this.newDaySchedule[prop] = value
