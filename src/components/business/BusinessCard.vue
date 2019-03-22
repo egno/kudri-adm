@@ -8,6 +8,8 @@
           <Avatar
             size="12em"
             :src="avatar"
+            :is-company-avatar="true"
+            :name="businessInfo.name"
           />
         </div>
         <VLayout column class="businesscard-form">
