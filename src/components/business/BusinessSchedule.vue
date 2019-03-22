@@ -3,21 +3,23 @@
     <div class="schedule__header" @click="$emit('toggleSchedule')">
       Режим работы
     </div>
-    <VLayout v-show="expanded" class="schedule__container">
+    <VLayout v-show="expanded" column class="schedule__container">
       <VFlex
-        v-for="(day, j) in days" :key="j"
+        v-for="(day, j) in days"
+        :key="j" xs12
         class="day-schedule"
       >
         <div class="day-schedule__dayname">
           {{ day.dayName }}
         </div>
         <div v-if="day.value" class="day-schedule__times">
-          <div>
+          <span>
             {{ day.value.start }}
-          </div>
-          <div>
+          </span>
+          <span> - </span>
+          <span>
             {{ day.value.end }}
-          </div>
+          </span>
         </div>
       </VFlex>
     </VLayout>
@@ -40,8 +42,6 @@ export default {
 </script>
 
 <style lang="scss">
-  @import '../../assets/styles/day-schedule';
-
   .timeClass {
   font-size: 80%;
 }
@@ -82,13 +82,10 @@ export default {
     }
 
     &__container {
-      padding: 10px 0 37px;
+      padding: 17px 23px 26px 36px;
       border-bottom-left-radius: 20px;
       border-bottom-right-radius: 20px;
       background: rgba(137, 149, 175, 0.1);
-      &>div {
-        width: 40px;
-      }
     }
 
     &._expanded {

@@ -100,7 +100,7 @@ export const scheduleMixin = {
   },
   data () {
     return {
-      dow: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
+      dow: ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'],
       newWeekSchedule: this.weekSchedule && new BusinessSchedule(this.weekSchedule),
       days: undefined
     }

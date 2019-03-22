@@ -1,7 +1,8 @@
 .day-schedule {
-  &:first-child .day-schedule__times {
-    border-left: 1px solid #8995AF;
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
 
   &>div {
     text-align: center;
@@ -10,8 +11,8 @@
   &__dayname {
     font-family: Lato, sans-serif;
     font-style: normal;
-    font-weight: normal;
-    font-size: 16px;
+    font-weight: bold;
+    font-size: 14px;
     line-height: normal;
     color: #07101C;
     text-align: center;
@@ -23,19 +24,25 @@
   }
 
   &__times {
-    min-height: calc(100% - 19px);
-    padding: 5px 2px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-grow: 0;
+    padding: 3px 6px 3px 7px;
     font-family: Lato,  sans-serif;
     font-style: normal;
     font-weight: normal;
     font-size: 13px;
     line-height: normal;
     color: #07101C;
+    border-left: 1px solid #8995AF;
     border-right: 1px solid #8995AF;
 
     input {
+      width: 38px;
       text-align: center;
       font-weight: 400;
+      padding: 0;
     }
   }
 }

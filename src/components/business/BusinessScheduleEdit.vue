@@ -1,14 +1,17 @@
 <template>
   <div>
-    <VLayout v-if="newWeekSchedule && newWeekSchedule.data">
-      <VFlex v-for="(day, index) in days" :key="index" class="day-schedule">
+    <VLayout v-if="newWeekSchedule && newWeekSchedule.data" align-space-between justify-space-around column fill-height>
+      <VFlex v-for="(day, index) in days" :key="index" xs12 class="day-schedule">
         <div class="day-schedule__dayname">
           {{ day.dayName }}
         </div>
-        <DaySchedule
-          :day-schedule="day.value"
-          @editDay="onEditDay(index, $event)"
-        />
+        <div class="schedule__edit">
+          <DaySchedule
+            :day-schedule="day.value"
+            @editDay="onEditDay(index, $event)"
+          />
+          <div class="schedule__clear" @click="day.value = { start: '', end: '' }" />
+        </div>
       </VFlex>
     </VLayout>
     <VLayout>
@@ -48,9 +51,21 @@ export default {
 }
 </script>
 <style lang="scss">
-  @import '../../assets/styles/day-schedule';
 
   .add-workmode {
     margin-top: 35px;
+  }
+  .schedule__edit {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .schedule__clear {
+    width: 16px;
+    height: 16px;
+    margin-left: 7px;
+    cursor: pointer;
+    background: url('../../assets/images/svg/cross.svg') center no-repeat;
   }
 </style>

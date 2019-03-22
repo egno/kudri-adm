@@ -63,8 +63,9 @@ export default {
   & .v-text-field__details {
     display: none;
   }
-  & .v-text-field input {
-    padding: 0;
+
+  & .v-input__slot {
+    margin-bottom: 0 !important;
   }
 }
 

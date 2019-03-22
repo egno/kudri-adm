@@ -1,18 +1,19 @@
 <template>
-  <VFlex v-if="newDaySchedule" class="day-schedule__times">
+  <div v-if="newDaySchedule" class="day-schedule__times">
     <TimeEdit
       :class="{error: errors.includes('intervalError')}"
       :time="newDaySchedule.start"
       :placeholder="'09:00'"
       @onEdit="onEdit('start', $event)"
     />
+    <div> - </div>
     <TimeEdit
       :class="{error: errors.includes('intervalError')}"
       :time="newDaySchedule.end"
       :placeholder="'21:00'"
       @onEdit="onEdit('end', $event)"
     />
-  </VFlex>
+  </div>
 </template>
 
 <script>
@@ -79,7 +80,7 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   @import '../../assets/styles/day-schedule';
 
   #app {
