@@ -18,6 +18,7 @@
         :rules="[rules.found]"
         :search-input.sync="search"
         class="businesscard-form__field"
+        :class="{'error--text': !address || !address.point}"
         required
       />
     </v-flex>

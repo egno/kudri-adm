@@ -34,7 +34,6 @@
                    () => !!data.name && data.name.length <= 50 || 'Слишком длинное наименование']"
           required
           class="businesscard-form__field"
-          counter="50"
         />
         <VTextField
           v-if="!businessIsIndividual"
@@ -97,6 +96,7 @@
               v-model="data.j.links.instagram"
               class="businesscard-form__field"
               placeholder="Инстаграм"
+              :rules="[rules.uriLength]"
             />
           </div>
           <div class="soc__input _vk">
@@ -104,6 +104,7 @@
               v-model="data.j.links.vk"
               class="businesscard-form__field"
               placeholder="Вконтакте"
+              :rules="[rules.uriLength]"
             />
           </div>
           <div
@@ -114,7 +115,7 @@
             <VTextField
               v-model="site.uri"
               class="businesscard-form__field"
-              counter="150"
+              :rules="[rules.uriLength]"
               placeholder="Веб-сайт"
               @input="site.uri = $event.slice(0,150); debouncedCheckAddLink()"
             />
@@ -137,6 +138,7 @@
           placeholder="Описание"
           maxlength="400"
           class="businesscard-form__field"
+          :rules="[value => value && (value.length <= 400 || 'Слишком длинный текст') || true]"
         />
 
         <div
@@ -236,7 +238,8 @@ export default {
             (value.length === 10 ||
               value.length === 12 ||
               'В ИНН должно быть 10 или 12 цифр')) ||
-          true
+          true,
+        uriLength: value => !!value && value.length <= 150 || 'Слишком длинная ссылка'
       },
       valid: false,
       schedule: undefined,
