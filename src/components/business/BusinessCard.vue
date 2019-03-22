@@ -36,13 +36,13 @@
             </div>
           </div>
 
-          <div v-if="phones.length" class="businesscard-form__field-value">
+          <div v-if="phones.length">
             <div
               v-for="(item, i) in phones"
               :key="i"
-              class="businesscard__phone"
+              class="businesscard-form__field-value"
             >
-              <span>
+              <span class=" businesscard__phone">
                 {{ item | phone }}
               </span>
             </div>
@@ -143,6 +143,12 @@ export default {
         return
       }
       return this.businessInfo.j.category
+    },
+    phones () {
+      if (!(this.businessInfo && this.businessInfo.j)) {
+        return
+      }
+      return this.businessInfo.j.phones
     },
     siteLink () {
       if (!this.businessInfo.j.site) {
