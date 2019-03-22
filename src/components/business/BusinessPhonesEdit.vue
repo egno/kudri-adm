@@ -57,7 +57,7 @@ export default {
   },
   watch: { phones: 'update' },
   mounted () {
-    this.update() 
+    this.update()
     this.newPhones.length === 0 ? this.newPhones.push('') : false
   },
   methods: {
