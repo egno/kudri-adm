@@ -32,7 +32,7 @@
               Адрес
             </div>
             <div class="businesscard-form__field-value">
-              {{ address && address.name }}
+              {{ `${ address.name } ${ office && ', оф. ' + office }` }}
             </div>
           </div>
 
@@ -149,6 +149,12 @@ export default {
         return
       }
       return this.businessInfo.j.phones
+    },
+    office () {
+      if (!(this.businessInfo && this.businessInfo.j)) {
+        return
+      }
+      return this.businessInfo.j.office
     },
     siteLink () {
       if (!this.businessInfo.j.site) {
