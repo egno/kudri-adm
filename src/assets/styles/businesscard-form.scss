@@ -45,8 +45,7 @@
 
   &__delete {
     @include uno-icon();
-    display: flex;
-    align-items: center;
+    @include vertical-align();
     justify-content: center;
     &:hover {
       background-color: rgba(137, 149, 175, 0.35);

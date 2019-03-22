@@ -1,7 +1,8 @@
+@import './common';
+
 .day-schedule {
-  display: flex;
+  @include vertical-align();
   justify-content: space-between;
-  align-items: center;
   padding: 7px 0;
 
   &>div {

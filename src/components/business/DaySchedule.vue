@@ -98,9 +98,8 @@
   }
   .fill,
   .empty {
-    display: flex;
+    @include vertical-align();
     justify-content: center;
-    align-items: center;
     text-transform: capitalize;
     margin-right: 6px;
     width: 24px;

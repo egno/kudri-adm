@@ -5,3 +5,8 @@ $desktop: 1160px;
 
 $roboto: Roboto Slab, Times New Roman, Times, serif;
 $lato: Lato, sans-serif;
+
+@mixin vertical-align () {
+  display: flex;
+  align-items: center;
+}

@@ -118,7 +118,13 @@
               :rules="[rules.uriLength]"
               placeholder="Веб-сайт"
               @input="site.uri = $event.slice(0,150); debouncedCheckAddLink()"
+              @focus="focusedOtherLink = i"
             />
+            <button v-show="i > 0 && focusedOtherLink === i" type="button" class="businesscard-form__delete" @mousedown="deleteLink(i)">
+              <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M8 0H4V2H0V4H12V2H8V0ZM0 6H12V20H0V6Z" fill="#8995AF" fill-opacity="0.2" />
+              </svg>
+            </button>
           </div>
         </div>
         <VBtn
@@ -239,11 +245,12 @@ export default {
               value.length === 12 ||
               'В ИНН должно быть 10 или 12 цифр')) ||
           true,
-        uriLength: value => !!value && value.length <= 150 || 'Слишком длинная ссылка'
+        uriLength: value => value && (value.length <= 150 || 'Слишком длинная ссылка') || true
       },
       valid: false,
       schedule: undefined,
-      addLinkDisabled: false
+      addLinkDisabled: false,
+      focusedOtherLink: undefined
     }
   },
   computed: {
@@ -350,6 +357,12 @@ export default {
 
       this.addLinkDisabled = sites.length > 3      
     },
+    deleteLink (i) {
+      if (!this.data.j.links || !this.data.j.links.others) {
+        return
+      }
+      this.data.j.links.others.splice(i,1)
+    },
     emitTabChange () {
       this.$emit('tabChange')
     },
@@ -448,6 +461,7 @@ export default {
 .soc {
   &__input {
     position: relative;
+    @include vertical-align();
     &:before {
       position: absolute;
       width: 18px;
