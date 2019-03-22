@@ -74,19 +74,19 @@ class ScheduleTemplate extends ApiObject {
   }
 }
 
-class Service extends ApiObject {
-  set jsonObject (newVal) {
-    this.duration = (newVal && newVal.duration) || 60
-    this.group = (newVal && newVal.group) || null
-    this.name = (newVal && newVal.name) || null
-    this.price = (newVal && newVal.price) || 0
-    this.n = (newVal && newVal.n) || 0
-  }
+// class Service extends ApiObject {
+//   set jsonObject (newVal) {
+//     this.duration = (newVal && newVal.duration) || 60
+//     this.group = (newVal && newVal.group) || null
+//     this.name = (newVal && newVal.name) || null
+//     this.price = (newVal && newVal.price) || 0
+//     this.n = (newVal && newVal.n) || 0
+//   }
 
-  get jsonObject () {
-    return super.jsonObject
-  }
-}
+//   get jsonObject () {
+//     return super.jsonObject
+//   }
+// }
 
 class Employee extends ApiObject {
   // Main object
@@ -100,7 +100,6 @@ class Employee extends ApiObject {
     this.parent = (newVal && newVal.parent) || null
     this.j = (newVal && newVal.j) || {}
 
-    this.services = this.j.services
     this.schedule = this.j.schedule_template
   }
 
@@ -201,21 +200,6 @@ class Employee extends ApiObject {
     return this.j && this.j.category
   }
 
-  set services (newVal) {
-    if (!Array.isArray(newVal)) {
-      newVal = [newVal]
-    }
-    this.j.services = []
-    if (newVal) {
-      newVal.forEach((element, idx) => {
-        this.j.services.push(new Service({ ...element, ...{ n: idx } }))
-      })
-    }
-  }
-
-  get services () {
-    return this.j.services
-  }
 
   set schedule (newVal) {
     this.j.schedule_template = new ScheduleTemplate(newVal)
