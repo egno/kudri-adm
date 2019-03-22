@@ -99,18 +99,6 @@ class Business extends ApiObject {
     return this.j && this.j.schedule
   }
 
-  set services (newVal) {
-    if (newVal) {
-      this.j.services = newVal
-    } else {
-      delete this.j.services
-    }
-  }
-
-  get services () {
-    return this.j && this.j.services
-  }
-
   // other
 
   set avatar (newVal) {

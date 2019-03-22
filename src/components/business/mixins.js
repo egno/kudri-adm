@@ -49,9 +49,6 @@ export const businessMixins = {
       if (!data.j.address) {
         data.j.address = {}
       }
-      if (!data.j.services) {
-        data.j.services = []
-      }
       if (!data.j.weekSchedule) {
         data.j.weekSchedule = {}
       }
