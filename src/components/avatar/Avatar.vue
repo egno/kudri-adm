@@ -180,12 +180,12 @@ export default {
 }
 </script>
 
-
 <style lang="scss">
   @import '../../assets/styles/common';
 
   .v-avatar {
     margin: 0 !important;
+    background: #f3f4f7;
     .new-message {
       position: absolute;
       width: 8px;
@@ -235,7 +235,7 @@ export default {
     padding-top: 36px;
     color: rgba(137, 149, 175, 0.5);
     font: 12px $lato;
-    background: rgba(137, 149, 175, 0.1);
+    background: #f3f4f7;
     border-radius: 50%;
     text-align: center;
     cursor: pointer;

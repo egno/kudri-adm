@@ -36,7 +36,7 @@
             </div>
           </div>
 
-          <div v-if="phones.length">
+          <div v-if="phones && phones.length">
             <div
               v-for="(item, i) in phones"
               :key="i"
