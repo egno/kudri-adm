@@ -12,11 +12,11 @@ const getters = {
   employeeCount: state => state.employees.length,
   employeeCategories: state => state.employeeCategories,
   employeePositions: state => state.employeePositions,
-  allEmployeesServices: state =>
-    state.employees &&
-    state.employees
-      .map(x => x.j && x.j.services.map(s => ({ employee: x.id, service: s })))
-      .flat()
+  // allEmployeesServices: state =>
+  //   state.employees &&
+  //   state.employees
+  //     .map(x => x.j && x.j.services.map(s => ({ employee: x.id, service: s })))
+  //     .flat()
 }
 
 const mutations = {
