@@ -94,6 +94,8 @@ export default {
 <style lang="scss">
   @import '../assets/styles/common';
   @import '../assets/styles/icon';
+  @import '../assets/styles/infocard';
+  @import '../assets/styles/businesscard-form';
 
   .businesscard {
     height: 100%;
@@ -202,6 +204,61 @@ export default {
     &__phone {
       padding-left: 24px;
       background: url('../assets/images/svg/ru.svg') left top no-repeat;
+    }
+  }
+
+  .soc {
+    &__input {
+      position: relative;
+      @include vertical-align();
+      &:before {
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        top: 23px;
+        left: 0px;
+        content: '';
+        background: url('../assets/sllink.svg') no-repeat center center;
+        background-size: 18px;
+      }
+      &._ig {
+        &:before {
+          background: url('../assets/images/svg/igg.svg') no-repeat center;
+        }
+      }
+      &._vk {
+        &:before {
+          background: url('../assets/images/svg/vkk.svg') no-repeat center;
+        }
+      }
+
+      input {
+        padding-left: 30px;
+      }
+    }
+    &__value {
+      position: relative;
+      padding: 20px 0 0 30px;
+      &:before {
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        top: 22px;
+        left: 0;
+        content: '';
+        background: url('../assets/sllink.svg') no-repeat center;
+        background-size: 18px;
+      }
+      &._ig {
+        &:before {
+          background: url('../assets/images/svg/igg.svg') no-repeat center;
+        }
+      }
+      &._vk {
+        &:before {
+          background: url('../assets/images/svg/vkk.svg') no-repeat center center;
+        }
+      }
     }
   }
 </style>

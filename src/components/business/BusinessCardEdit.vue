@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="data"
-    class="infocard _edit"
+    class="infocard _edit businesscard-form"
     flat
   >
     <div class="infocard__content">
@@ -68,7 +68,7 @@
           :src="`https://static-maps.yandex.ru/1.x/?lang=ru_RU&l=map&z=16&ll=${point}&pt=${point},org&scale=1.4`"
           max-height="200px"
           width="100%"
-          class="grey lighten-2"
+          class="grey lighten-2 businesscard-form__map"
         >
           <v-layout
             slot="placeholder"
@@ -132,7 +132,10 @@
           :disabled="addLinkDisabled || ( data.j.links && data.j.links.others && data.j.links.others.length >= 4)"
           @click="addLink"
         >
-          Добавить ссылку
+          <svg width="10" height="10" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M9 0H7V7H0V9H7V16H9V9H16V7H9V0Z" fill="#8995AF" fill-opacity="0.35" />
+          </svg>
+          <span>Добавить ссылку</span>
         </VBtn>
         <v-textarea
           v-if="data && data.j"
@@ -440,57 +443,9 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../../assets/styles/infocard';
-@import '../../assets/styles/businesscard-form';
+  @import '../../assets/styles/common';
 
-.form-caption {
-  padding-top: 50px;
-}
-.v-input {
-  .v-counter {
-    order: -1;
-  }
-}
-.business-edit {
-  width: 312px;
-  button.success {
-    margin-left: 0;
-    margin-top: 50px;
-  }
-}
-.soc {
-  &__input {
-    position: relative;
-    @include vertical-align();
-    &:before {
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      top: 14px;
-      left: 0px;
-      content: '';
-      background: url('../../assets/sllink.svg') no-repeat center center;
-      background-size: 18px;
-    }
-    &._ig {
-      &:before {
-        background: url('../../assets/images/svg/igg.svg') no-repeat center
-          center;
-      }
-    }
-    &._vk {
-      &:before {
-        background: url('../../assets/images/svg/vkk.svg') no-repeat center
-          center;
-      }
-    }
-
-    input {
-      padding-left: 30px;
-    }
-  }
-}
-.save-info {
+.businesscard-form .save-info {
   display: block;
   width: 240px !important;
   height: 56px !important;

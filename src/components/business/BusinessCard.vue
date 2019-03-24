@@ -12,7 +12,7 @@
             :name="businessInfo.name"
           />
         </div>
-        <VLayout column class="businesscard-form">
+        <VLayout column class="businesscard-form _view-mode">
           <div>
             <div class="businesscard-form__field-title">
               Название
@@ -27,7 +27,7 @@
               {{ INN }}
             </div>
           </div>
-          <div v-if="address" class="bottom-bordered">
+          <div v-if="address">
             <div class="businesscard-form__field-title">
               Адрес
             </div>
@@ -36,7 +36,7 @@
             </div>
           </div>
 
-          <div v-if="phones && phones.length">
+          <div v-if="phones && phones.length" class="top-bordered">
             <div
               v-for="(item, i) in phones"
               :key="i"
@@ -55,11 +55,11 @@
               @toggleSchedule="expanded = !expanded"
             />
           </div>
-          <div v-if="businessInfo.j && businessInfo.j.links">
-            <div v-if="businessInfo.j.links.instagram" class="soc _ig">
+          <div v-if="businessInfo.j && businessInfo.j.links" class="soc">
+            <div v-if="businessInfo.j.links.instagram" class="soc__value _ig">
               {{ businessInfo.j.links.instagram }}
             </div>
-            <div v-if="businessInfo.j.links.vk" class="soc _vk">
+            <div v-if="businessInfo.j.links.vk" class="soc__value _vk">
               {{ businessInfo.j.links.vk }}
             </div>
             <div v-if="businessInfo.j.links.others && businessInfo.j.links.others.length">
@@ -69,7 +69,7 @@
               >
                 <div
                   v-if="site.uri"
-                  class="soc"
+                  class="soc__value"
                 >
                   {{ site.uri }}
                 </div>
@@ -77,10 +77,10 @@
             </div>
           </div>
           <div v-if="businessInfo.j && businessInfo.j.description">
-            <div class="businesscard-form__field-title">
+            <div class="businesscard-form__field-title top-bordered">
               Описание
             </div>
-            <div class="">
+            <div class="businesscard-form__field-value">
               {{ businessInfo.j.description }}
             </div>
           </div>
@@ -177,36 +177,5 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-  @import '../../assets/styles/businesscard-form';
-  @import '../../assets/styles/infocard';
-
-  a {
-    text-decoration: none;
-  }
-
-  .soc {
-    position: relative;
-    padding: 22px 0 0 30px;
-    &:before {
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      top: 22px;
-      left: 0;
-      content: '';
-      background: url('../../assets/sllink.svg') no-repeat center center;
-      background-size: 18px;
-    }
-    &._ig {
-      &:before {
-        background: url('../../assets/images/svg/igg.svg') no-repeat center center;
-      }
-    }
-    &._vk {
-      &:before {
-        background: url('../../assets/images/svg/vkk.svg') no-repeat center center;
-      }
-    }
-  }
+<style lang="scss">
 </style>
