@@ -84,11 +84,15 @@ export default {
       for (let i = 0; i < this.days.length - 1; i++) {
         const day = this.days[i]
 
+        if (!day.value.start  || !day.value.end) {
+          continue
+        }
+
         let j = i + 1
         for (; j < this.days.length; j++) {
           const nextDay = this.days[j]
 
-          if (!day.value.start || !nextDay.value.start || !day.value.end || !nextDay.value.end) {
+          if (!nextDay.value.start || !nextDay.value.end) {
             continue
           }
 
