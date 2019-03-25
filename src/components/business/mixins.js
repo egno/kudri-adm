@@ -90,15 +90,24 @@ export const scheduleMixin = {
     }
   },
   watch: {
-    'weekSchedule' () {
+    weekSchedule () {
       this.update()
       this.setDays()
     }
   },
   data () {
     return {
-      dow: ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'],
-      newWeekSchedule: this.weekSchedule && new BusinessSchedule(this.weekSchedule),
+      dow: [
+        'Понедельник',
+        'Вторник',
+        'Среда',
+        'Четверг',
+        'Пятница',
+        'Суббота',
+        'Воскресенье'
+      ],
+      newWeekSchedule:
+        this.weekSchedule && new BusinessSchedule(this.weekSchedule),
       days: undefined
     }
   },
@@ -126,29 +135,41 @@ export const scheduleMixin = {
       this.days = days
     },
     update () {
-      this.newWeekSchedule = this.weekSchedule && new BusinessSchedule(this.weekSchedule)
+      this.newWeekSchedule =
+        this.weekSchedule && new BusinessSchedule(this.weekSchedule)
     },
     getDayScheduleErrors (newDaySchedule) {
       const errors = []
       const startTime = this.getTimeArray(newDaySchedule.start)
       const endTime = this.getTimeArray(newDaySchedule.end)
 
-      if (endTime[0] < startTime[0] || endTime[0] === startTime[0] && endTime[1] < startTime[1]) {
+      if (
+        endTime[0] < startTime[0] ||
+        (endTime[0] === startTime[0] && endTime[1] < startTime[1])
+      ) {
         errors.push('intervalError')
       }
 
-      if (!Array.isArray(newDaySchedule) && (newDaySchedule.start && !newDaySchedule.end || !newDaySchedule.start && newDaySchedule.end )) {
+      if (
+        !Array.isArray(newDaySchedule) &&
+        ((newDaySchedule.start && !newDaySchedule.end) ||
+          (!newDaySchedule.start && newDaySchedule.end))
+      ) {
         errors.push('halfEmptyValueError')
       }
 
-      if (Array.isArray(newDaySchedule) && (newDaySchedule[0] && !newDaySchedule[1] || !newDaySchedule[0] && newDaySchedule[1] )) {
+      if (
+        Array.isArray(newDaySchedule) &&
+        ((newDaySchedule[0] && !newDaySchedule[1]) ||
+          (!newDaySchedule[0] && newDaySchedule[1]))
+      ) {
         errors.push('halfEmptyValueError')
       }
 
       return errors
     },
     getTimeArray (timeString) {
-      return timeString.split(':').map(str => parseInt(str))
+      return (!timeString) ? [null,null] : timeString.split(':').map(str => parseInt(str))
     }
   }
 }
