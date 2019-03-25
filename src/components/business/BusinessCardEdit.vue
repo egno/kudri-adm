@@ -29,7 +29,7 @@
 
         <VTextField
           v-model="data.name"
-          label="Название"
+          label="Название*"
           :rules="[() => !!data.name || 'Это поле обязательно для заполнения',
                    () => !!data.name && data.name.length <= 50 || 'Слишком длинное наименование']"
           required
@@ -51,7 +51,7 @@
           <v-flex>
             <AddressAutocomplete
               :value="data.j.address"
-              label="Адрес"
+              label="Адрес*"
               @inputAddress="onAddressInput"
             />
           </v-flex>
@@ -120,7 +120,7 @@
               @input="site.uri = $event.slice(0,150); debouncedCheckAddLink()"
               @focus="focusedOtherLink = i"
             />
-            <button v-show="i > 0 && focusedOtherLink === i" type="button" class="businesscard-form__delete" @mousedown="deleteLink(i)">
+            <button v-show="i > 0" type="button" class="businesscard-form__delete" @mousedown="deleteLink(i)">
               <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M8 0H4V2H0V4H12V2H8V0ZM0 6H12V20H0V6Z" fill="#8995AF" fill-opacity="0.2" />
               </svg>

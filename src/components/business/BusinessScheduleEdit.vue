@@ -93,6 +93,8 @@ export default {
         }
 
         let j = i + 1
+        let hasNextValues = false
+
         for (; j < this.days.length; j++) {
           const nextDay = this.days[j]
 
@@ -100,12 +102,13 @@ export default {
             continue
           }
 
+          hasNextValues = true
           if (day.value.start !== nextDay.value.start ||  day.value.end !== nextDay.value.end) {
             break
           }
         }
 
-        if (j === this.days.length) {
+        if (hasNextValues && j === this.days.length) {
           return day
         }
       }
