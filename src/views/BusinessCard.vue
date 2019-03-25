@@ -212,6 +212,10 @@ export default {
         border-bottom-color: transparent;
       }
     }
+
+    & .avatar-letters {
+      font-size: 80px;
+    }
   }
 
   .soc {
@@ -267,5 +271,5 @@ export default {
         }
       }
     }
-  }
+  }  
 </style>

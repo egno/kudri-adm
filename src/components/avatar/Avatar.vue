@@ -59,7 +59,7 @@
         </div>
       </template>
       <template v-else>
-        <div :class="`avatar-letters font-weight-bold ${color.bg}--text text--${color.text}-4`">
+        <div class="avatar-letters">
           {{ initials }}
         </div>
       </template>
@@ -126,19 +126,7 @@ export default {
       return this.colors[h]
     },
     initials () {
-      const splitChars = /[-_.@ ]/
-      if (!this.name) {
-        return
-      }
-      if (this.name[0] === '7' && this.name.length === 11) {
-        return this.name.slice(-2)
-      }
-      return this.name
-        .split(splitChars)
-        .filter(x => x)
-        .slice(0, 2)
-        .map(x => x[0].toUpperCase())
-        .join('')
+      return this.name.charAt(0).toUpperCase()
     },
     imagePath () {
       return imagePath(this.src) || this.user
@@ -185,7 +173,7 @@ export default {
 
   .v-avatar {
     margin: 0 !important;
-    background: #f3f4f7;
+    background: linear-gradient(180deg, #C9A15D 0%, #BA9462 100%);
     .new-message {
       position: absolute;
       width: 8px;
@@ -222,6 +210,16 @@ export default {
       }
     }
   }
+
+  .avatar-letters {
+    font-family: $roboto;
+    font-style: normal;
+    font-weight: normal;
+    line-height: normal;
+    text-align: center;
+    color: #FFFFFF;
+  }
+
   .business-avatar {
     width: 140px;
     @media only screen and (min-width : $desktop) {
