@@ -45,5 +45,16 @@
       font-weight: 400;
       padding: 0;
     }
+
+    .error--text .v-input__control > .v-input__slot:before  {
+      position: absolute;
+      display: inline-block;
+      bottom: -1px;
+      content: '';
+      left: 0;
+      border: 1px solid #ef4d37;
+      transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+      width: 100%;
+    }
   }
 }

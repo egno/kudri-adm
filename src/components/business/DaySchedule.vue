@@ -1,16 +1,16 @@
 <template>
   <div v-if="newDaySchedule" class="day-schedule__times">
     <TimeEdit
-      :class="{error: errors.includes('intervalError')}"
+      :class="{'error--text': errors.includes('intervalError') || newDaySchedule.end && !newDaySchedule.start}"
       :time="newDaySchedule.start"
-      :placeholder="'00:00'"
+      placeholder="––:––"
       @onEdit="onEdit('start', $event)"
     />
-    <div> - </div>
+    <div> — </div>
     <TimeEdit
-      :class="{error: errors.includes('intervalError')}"
+      :class="{'error--text': errors.includes('intervalError')|| newDaySchedule.start && !newDaySchedule.end}"
       :time="newDaySchedule.end"
-      :placeholder="'00:00'"
+      placeholder="––:––"
       @onEdit="onEdit('end', $event)"
     />
   </div>
@@ -19,9 +19,11 @@
 <script>
   import TimeEdit from '@/components/TimeEdit.vue'
   import ScheduleDay from '@/classes/scheduleDay'
+  import { scheduleMixin} from './mixins'
 
   export default {
     components: { TimeEdit },
+    mixins: [ scheduleMixin ],
     props: {
       daySchedule: {
         type: Object,
@@ -45,37 +47,15 @@
       daySchedule: 'update'
     },
     methods: {
-      reset () {
-        this.errors = []
-        this.newDaySchedule = new ScheduleDay({
-            start: '00:00',
-            end: '00:00',
-          })
-      },
       onEdit (prop, value) {
         this.newDaySchedule[prop] = value
-        this.validateNewSchedule()
-        if (this.errors.length) {
-          return
-        }
-
+        this.errors = this.getDayScheduleErrors(this.newDaySchedule)
         this.$emit('editDay', this.newDaySchedule)
       },
       update () {
         this.newDaySchedule = new ScheduleDay(this.daySchedule)
       },
-      validateNewSchedule () {
-        this.errors = []
-        const startTime = this.getTimeArray(this.newDaySchedule.start)
-        const endTime = this.getTimeArray(this.newDaySchedule.end)
 
-        if (endTime[0] < startTime[0] || endTime[0] === startTime[0] && endTime[1] < startTime[1]) {
-          this.errors.push('intervalError')
-        }
-      },
-      getTimeArray (timeString) {
-        return timeString.split(':').map(str => parseInt(str))
-      }
     }
   }
 </script>

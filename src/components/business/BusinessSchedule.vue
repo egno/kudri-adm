@@ -9,18 +9,20 @@
         :key="j" xs12
         class="day-schedule"
       >
-        <div class="day-schedule__dayname">
-          {{ day.dayName }}
-        </div>
-        <div v-if="day.value && (day.value.start || day.value.end)" class="day-schedule__times">
-          <span>
-            {{ day.value.start }}
-          </span>
-          <span> - </span>
-          <span>
-            {{ day.value.end }}
-          </span>
-        </div>
+        <template v-if="day.value">
+          <div class="day-schedule__dayname">
+            {{ day.dayName }}
+          </div>
+          <div v-if="day.value.start || day.value.end" class="day-schedule__times">
+            <span>
+              {{ day.value.start }}
+            </span>
+            <span> - </span>
+            <span>
+              {{ day.value.end }}
+            </span>
+          </div>
+        </template>
       </VFlex>
     </VLayout>
   </div>

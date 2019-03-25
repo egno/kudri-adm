@@ -205,7 +205,7 @@ import BusinessPhonesEdit from '@/components/business/BusinessPhonesEdit.vue'
 import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue'
 import AddressAutocomplete from '@/components/yandex/AddressAutocomplete.vue'
 import { backendMixins } from '@/api/mixins'
-import { businessMixins } from '@/components/business/mixins'
+import { businessMixins, scheduleMixin } from '@/components/business/mixins'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { makeAlert } from '@/api/utils'
 import MainButton from '@/components/common/MainButton.vue'
@@ -221,7 +221,7 @@ export default {
     VueAvatarEditor,
     MainButton
   },
-  mixins: [backendMixins, businessMixins],
+  mixins: [backendMixins, businessMixins, scheduleMixin],
   props: {
     businessInfo: {
       type: Object,
@@ -252,6 +252,7 @@ export default {
       },
       valid: false,
       schedule: undefined,
+      scheduleErrors: [],
       addLinkDisabled: false,
       focusedOtherLink: undefined,
       hasAddress: false,
@@ -412,14 +413,22 @@ export default {
     checkSchedule () {
       if (this.data && this.data.j && this.data.j.schedule &&
         this.data.j.schedule.data && this.data.j.schedule.data.length) {
-        const notFilled = this.data.j.schedule.data.filter(day => !day.start && !day[0] || !day.end && !day[1])
+        const errorDays = this.data.j.schedule.data.filter(day => this.getDayScheduleErrors(day).length)
 
+        if (errorDays.length) {
+          return false
+        }
+
+        const notFilled = this.data.j.schedule.data.filter(day => !day.start && !day[0] || !day.end && !day[1])
         return notFilled && notFilled.length <= 6
       }
 
       return false
     },
     onAddressInput ({ name, point }) {
+      if (!this.data.j.address) {
+        return
+      }
       this.data.j.address.name = name
       this.data.j.address.point = point
       this.hasAddress = this.checkAddress()

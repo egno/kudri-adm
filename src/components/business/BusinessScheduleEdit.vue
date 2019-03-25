@@ -10,7 +10,7 @@
             :day-schedule="day.value"
             @editDay="onEditDay(index, $event)"
           />
-          <div class="schedule__clear" @click="day.value = { start: '', end: '' }" />
+          <div class="schedule__clear" @click="onClearDay(index)" />
         </div>
       </VFlex>
     </VLayout>
@@ -36,6 +36,10 @@ export default {
     }
   },
   methods: {
+    onClearDay (index) {
+      this.newWeekSchedule.data[index] = { start: '', end: '' }
+      this.$emit('editWeek', this.newWeekSchedule)
+    },
     onEditDay (dayIndex, newDay) {
       if (!this.newWeekSchedule || !this.newWeekSchedule.data) {
         return
