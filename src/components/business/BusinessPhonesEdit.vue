@@ -80,10 +80,23 @@ export default {
 }
 </script>
 <style lang="scss">
-  .phone-input {
+.phone-input {
   position: relative;
   .v-text-field__slot {
+    position: relative;
     padding-left: 56px;
+    background: url('../../assets/images/svg/ru.svg') 20px 7px no-repeat;
+    &:after {
+      position: absolute;
+      left: 41px;
+      top: 11px;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 5px 5px 0 5px;
+      border-color: #8995af transparent transparent transparent;
+      content: '';
+    }
   }
   .phone-delete {
     position: absolute;

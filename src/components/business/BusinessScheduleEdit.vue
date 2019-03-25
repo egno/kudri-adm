@@ -1,24 +1,40 @@
 <template>
-  <div>
-    <VLayout v-if="newWeekSchedule && newWeekSchedule.data" align-space-between justify-space-around column fill-height>
-      <VFlex v-for="(day, index) in days" :key="index" xs12 class="day-schedule">
-        <div class="day-schedule__dayname">
-          {{ day.dayName }}
-        </div>
-        <div class="schedule__edit">
-          <DaySchedule
-            :day-schedule="day.value"
-            @editDay="onEditDay(index, $event)"
-          />
-          <div class="schedule__clear" @click="onClearDay(index)" />
-        </div>
-      </VFlex>
-    </VLayout>
-    <VLayout>
+  <div class="schedule-edit">
+    <div>
+      <h2 class="schedule-edit__heading">
+        Определите рабочее время компании*
+      </h2>
+    </div>
+    <VLayout class="schedule-edit__tumbler">
       <VFlex xs12>
         <Checkbox v-model="forAllDays" label="Для всех дней недели" class="day-schedule__for-all" @change="onToggleForAll" />
       </VFlex>
     </VLayout>
+    <VLayout 
+      v-if="newWeekSchedule && newWeekSchedule.data" 
+      align-space-between 
+      justify-space-around 
+      column 
+      fill-height
+      class="schedule-edit__main"
+    >
+      <VFlex v-for="(day, index) in days" :key="index" xs12 class="day-schedule">
+        <div class="day-schedule__dayname">
+          {{ day.dayName }}
+        </div>
+        <div class="schedule-edit__content">
+          <DaySchedule
+            :day-schedule="day.value"
+            @editDay="onEditDay(index, $event)"
+          />
+          <div class="schedule-edit__clear" @click="onClearDay(index)" />
+        </div>
+      </VFlex>
+    </VLayout>
+    <VLayout class="schedule-edit__description" column>
+      <div>Формат круглосуточной работы: 00:00 — 00:00</div>
+      <div>Дневной график: 00:00 — 23:59</div>
+    </VLayout>  
   </div>
 </template>
 
@@ -123,17 +139,55 @@ export default {
   .add-workmode {
     margin-top: 35px;
   }
-  .schedule__edit {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
 
-  .schedule__clear {
-    width: 16px;
-    height: 16px;
-    margin-left: 7px;
-    cursor: pointer;
-    background: url('../../assets/images/svg/cross.svg') center no-repeat;
+  .schedule-edit {
+    &__heading {
+      margin: 23px 0 0;
+      padding: 0;
+      font-family: Lato, sans-serif;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 16px;
+      line-height: normal;
+      text-align: center;
+      color: #07101C;
+    }
+
+    &__main {
+      margin-top: 31px;
+      padding: 0 11px;
+    }
+
+    &__tumbler {
+      padding: 0 11px;
+    }
+
+    &__content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    &__clear {
+      width: 16px;
+      height: 16px;
+      margin-left: 7px;
+      cursor: pointer;
+      background: url('../../assets/images/svg/cross.svg') center no-repeat;
+    }
+
+    &__description {
+      margin-top: 17px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(137, 149, 175, 0.1);
+      font-family: Lato;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 12px;
+      line-height: normal;
+      text-align: center;
+      color: #8995AF;
+    }
   }
+  
 </style>

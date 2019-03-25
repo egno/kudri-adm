@@ -1,5 +1,5 @@
 <template>
-  <div class="businesscard">
+  <div class="businesscard" :class="{ '_edit-mode': editMode }">
     <VLayout xs12 align-center justify-start row class="businesscard__header">
       <VFlex class="businesscard__heading">
         <h1 class="businesscard__h1">
@@ -108,6 +108,7 @@ export default {
       flex-grow: 0;
       padding: 44px 0 44px 48px;
       background: #fff;
+      border-bottom: 1px solid rgba(137,149,175,0.1);
       @media only screen and (min-width : $desktop) {
         padding-left: 127px;
       }
@@ -204,6 +205,12 @@ export default {
     &__phone {
       padding-left: 24px;
       background: url('../assets/images/svg/ru.svg') left top no-repeat;
+    }
+
+    &._edit-mode {
+      .businesscard__header {
+        border-bottom-color: transparent;
+      }
     }
   }
 

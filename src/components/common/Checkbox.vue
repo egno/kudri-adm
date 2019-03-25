@@ -23,6 +23,7 @@
   }
 </script>
 <style lang="scss" scoped>
+$checkbox-height: 16px;
   .checkbox {
     position: absolute;
     z-index: -1;
@@ -30,11 +31,11 @@
   }
   .checkbox + label {
     position: relative;
-    cursor: pointer;
+    display: block;
     min-width: 24px;
-    min-height: 12px;
-    padding-left: 36px;
-
+    min-height: $checkbox-height;
+    padding-left: 44px;
+    cursor: pointer;
     font-family: Lato, sans-serif;
     font-style: normal;
     font-weight: normal;
@@ -47,8 +48,8 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 24px;
-    height: 12px;
+    width: 32px;
+    height: $checkbox-height;
     border-radius: 13px;
     background: #CDD1DA;
     transition: .2s;
@@ -58,17 +59,17 @@
     position: absolute;
     top: 1px;
     left: 1px;
-    width: 10px;
-    height: 10px;
+    width: 14px;
+    height: 14px;
     border-radius: 10px;
     background: #FFF;
-    box-shadow: 0px 0px 4px rgba(44, 110, 55, 0.2);
+    box-shadow: 0px 0px 4px rgba(137, 149, 175, 0.2);
     transition: .2s;
   }
   .checkbox:checked + label:before {
     background: #5699FF;
   }
   .checkbox:checked + label:after {
-    left: 13px;
+    left: 17px;
   }
 </style>
