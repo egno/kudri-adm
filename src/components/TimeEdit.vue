@@ -1,7 +1,7 @@
 <template>
   <VTextField
     v-model="val"
-    mask="time"
+    mask="##:##"
     class="time-edit"
     :placeholder="placeholder"
     return-masked-value
@@ -13,7 +13,6 @@
 <script>
 export default {
   props: {
-    caption: { type: String, default: '' },
     time: {
       type: String,
       default: ''
@@ -24,9 +23,13 @@ export default {
     return {
       val: null,
       rules: {
-        time: value =>
-          this.checkTime(value) ||
-          'Время должно быть в промежутке от 00:00 до 23:59'
+        time: value => {
+          if (!value) {
+            return true
+          }
+          return !!value.match(/^([01]?[0-9]|2[0-3]):[0-5][0-9]/) ||
+            'Время должно быть в промежутке от 00:00 до 23:59'
+        }
       }
     }
   },
@@ -37,12 +40,6 @@ export default {
     this.loadVal()
   },
   methods: {
-    checkTime (val) {
-      if (!val) {
-        return true
-      }
-      return val.match(/^([01]?[0-9]|2[0-3]):[0-5][0-9]/) !== null
-    },
     loadVal () {
       this.val = this.time
     },
@@ -66,6 +63,10 @@ export default {
 
   & .v-input__slot {
     margin-bottom: 0 !important;
+  }
+
+  &.error--text input {
+    color: #ef4d37 !important;
   }
 }
 

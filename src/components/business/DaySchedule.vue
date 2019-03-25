@@ -3,14 +3,14 @@
     <TimeEdit
       :class="{error: errors.includes('intervalError')}"
       :time="newDaySchedule.start"
-      :placeholder="'09:00'"
+      :placeholder="'00:00'"
       @onEdit="onEdit('start', $event)"
     />
     <div> - </div>
     <TimeEdit
       :class="{error: errors.includes('intervalError')}"
       :time="newDaySchedule.end"
-      :placeholder="'21:00'"
+      :placeholder="'00:00'"
       @onEdit="onEdit('end', $event)"
     />
   </div>
