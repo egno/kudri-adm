@@ -13,6 +13,7 @@ Vue.use(Vuetify, {
     current: 'ru'
   },
   theme: {
+    primary: '#5699FF',
     gold: '#b69768',
     secondary: '#343e55',
     accent: '#ef4d37'
