@@ -12,7 +12,7 @@
         <div class="day-schedule__dayname">
           {{ day.dayName }}
         </div>
-        <div v-if="day.value" class="day-schedule__times">
+        <div v-if="day.value && (day.value.start || day.value.end)" class="day-schedule__times">
           <span>
             {{ day.value.start }}
           </span>

@@ -6,7 +6,7 @@
     :placeholder="placeholder"
     return-masked-value
     :rules="[rules.time]"
-    @blur="onEdit"
+    @input="onEdit"
   />
 </template>
 
@@ -44,7 +44,10 @@ export default {
       this.val = this.time
     },
     onEdit () {
-      this.$emit('onEdit', this.val)
+      const res = this.rules.time(this.val)
+      if (res && typeof res === 'boolean') {
+        this.$emit('onEdit', this.val)
+      }
     }
   }
 }

@@ -52,7 +52,7 @@
             <AddressAutocomplete
               :value="data.j.address"
               label="Адрес"
-              @inputAddress="data.j.address = $event"
+              @inputAddress="onAddressInput"
             />
           </v-flex>
           <div class="businesscard-form__field _office">
@@ -172,9 +172,9 @@
           @delete="scheduleEdit()"
         />
         <MainButton
-          :disabled="hasErrors || !hasSchedule()"
+          :disabled="hasErrors || !hasSchedule"
           class="button save-info"
-          :class="{ button_disabled: hasErrors || !hasSchedule() }"
+          :class="{ button_disabled: hasErrors || !hasSchedule }"
           @click="debouncedSave"
         >
           Сохранить
@@ -253,7 +253,9 @@ export default {
       valid: false,
       schedule: undefined,
       addLinkDisabled: false,
-      focusedOtherLink: undefined
+      focusedOtherLink: undefined,
+      hasAddress: false,
+      hasSchedule: false,
     }
   },
   computed: {
@@ -271,15 +273,7 @@ export default {
     business () {
       return this.id
     },
-    hasAddress () {
-      return !!(
-        this.data &&
-        this.data.j &&
-        this.data.j.address &&
-        this.data.j.address.name &&
-        !!this.data.j.address.point
-      )
-    },
+
     hasName () {
       return !!(this.data && this.data.name)
     },
@@ -360,6 +354,15 @@ export default {
 
       this.addLinkDisabled = sites.length > 3      
     },
+    checkAddress () {
+      return !!(
+        this.data &&
+        this.data.j &&
+        this.data.j.address &&
+        this.data.j.address.name &&
+        this.data.j.address.point
+      )
+    },
     deleteLink (i) {
       if (!this.data.j.links || !this.data.j.links.others) {
         return
@@ -398,20 +401,28 @@ export default {
           if (this.data.j.schedule) {
             this.schedule = this.data.j.schedule
           }
+
+          this.hasAddress = this.checkAddress()
+          this.hasSchedule = this.checkSchedule()
         })
         .catch(err => {
           this.alert(makeAlert(err))
         })
     },
-    hasSchedule () {
+    checkSchedule () {
       if (this.data && this.data.j && this.data.j.schedule &&
         this.data.j.schedule.data && this.data.j.schedule.data.length) {
         const notFilled = this.data.j.schedule.data.filter(day => !day.start && !day[0] || !day.end && !day[1])
 
-        return notFilled && notFilled.length <= 2
+        return notFilled && notFilled.length <= 6
       }
 
       return false
+    },
+    onAddressInput ({ name, point }) {
+      this.data.j.address.name = name
+      this.data.j.address.point = point
+      this.hasAddress = this.checkAddress()
     },
     onAvatarSave (img) {
       this.saveImage(img).then(() => {
@@ -437,6 +448,7 @@ export default {
     scheduleEdit (newWeek) {
       this.data.j.schedule = newWeek
       this.schedule = newWeek
+      this.hasSchedule = this.checkSchedule()
     }
   }
 }

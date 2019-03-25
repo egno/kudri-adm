@@ -32,7 +32,7 @@
               Адрес
             </div>
             <div class="businesscard-form__field-value">
-              {{ `${ address.name } ${ office && ', оф. ' + office }` }}
+              {{ address.name }}{{ office? ', оф. ' + office : '' }}
             </div>
           </div>
 
