@@ -16,7 +16,7 @@
     </VLayout>
     <VLayout>
       <VFlex xs12>
-        <Checkbox v-model="forAllDays" label="Для всех дней недели" class="day-schedule__for-all" />
+        <Checkbox v-model="forAllDays" label="Для всех дней недели" class="day-schedule__for-all" @change="onToggleForAll" />
       </VFlex>
     </VLayout>
   </div>
@@ -46,6 +46,63 @@ export default {
         this.newWeekSchedule.data.fill(newDay)
       }
       this.$emit('editWeek', this.newWeekSchedule) // todo add debounce
+    },
+    onToggleForAll (forAll) {
+      if (!forAll) {
+        return
+      }
+
+      const filled = this.filledDays()
+      let repeated
+
+      switch (filled.length) {
+        case 0:
+          this.newWeekSchedule.data.fill({ start: '09:00', end: '21:00' })
+          break
+        case 1:
+          this.newWeekSchedule.data.fill(filled[0].value)
+          break
+        default:
+          repeated = this.checkRepeated()
+          if (repeated) {
+            this.newWeekSchedule.data.fill(repeated.value)
+          } else {
+            this.newWeekSchedule.data.fill({ start: '09:00', end: '21:00' })
+          }
+      }
+
+      this.$emit('editWeek', this.newWeekSchedule)
+    },
+    filledDays () {
+      if (!(this.days && this.days.length)) {
+        return
+      }
+
+      return this.days.filter((day) => day.value && day.value.start && day.value.end)
+    },
+    checkRepeated () {
+      for (let i = 0; i < this.days.length - 1; i++) {
+        const day = this.days[i]
+
+        let j = i + 1
+        for (; j < this.days.length; j++) {
+          const nextDay = this.days[j]
+
+          if (!day.value.start || !nextDay.value.start || !day.value.end || !nextDay.value.end) {
+            continue
+          }
+
+          if (day.value.start !== nextDay.value.start ||  day.value.end !== nextDay.value.end) {
+            break
+          }
+        }
+
+        if (j === this.days.length) {
+          return day
+        }
+      }
+
+      return false
     }
   }
 }
