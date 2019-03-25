@@ -14,8 +14,8 @@ Vue.use(Vuetify, {
   },
   theme: {
     primary: '#5699FF',
-    gold: '#b69768',
     secondary: '#343e55',
+    gold: '#b69768',
     accent: '#ef4d37'
   }
 })
