@@ -127,7 +127,8 @@
             </button>
           </div>
         </div>
-        <VBtn
+        <button
+          type="button"
           class="businesscard-form__add-field"
           :disabled="addLinkDisabled || ( data.j.links && data.j.links.others && data.j.links.others.length >= 4)"
           @click="addLink"
@@ -136,7 +137,7 @@
             <path fill-rule="evenodd" clip-rule="evenodd" d="M9 0H7V7H0V9H7V16H9V9H16V7H9V0Z" fill="#8995AF" fill-opacity="0.35" />
           </svg>
           <span>Добавить ссылку</span>
-        </VBtn>
+        </button>
         <v-textarea
           v-if="data && data.j"
           v-model="data.j.description"

@@ -31,10 +31,6 @@
         </div>
       </VFlex>
     </VLayout>
-    <VLayout class="schedule-edit__description" column>
-      <div>Формат круглосуточной работы: 00:00 — 00:00</div>
-      <div>Дневной график: 00:00 — 23:59</div>
-    </VLayout>  
   </div>
 </template>
 

@@ -20,6 +20,9 @@
             </svg>
           </v-btn>
         </div>
+        <div v-if="editMode">
+          <button class="businesscard__close" @click="editMode = false" />
+        </div>
       </VFlex>
     </VLayout>
     <div v-if="editMode" class="businesscard__tab-wrapper">
@@ -142,6 +145,14 @@ export default {
           color: rgba(0,0,0,0.4); 
         }
       }
+    }
+
+    &__close {
+      width: 32px;
+      height: 22px;
+      margin: 10px 0 0 25px;
+      padding: 0;
+      background: url('../assets/images/svg/cross.svg') center no-repeat #fff !important;
     }
 
     &__tab-wrapper {

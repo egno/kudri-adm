@@ -14,7 +14,8 @@
         @deletePhone="deletePhone(i)"
       />
     </div>
-    <VBtn
+    <button
+      type="button"
       class="businesscard-form__add-field"
       :disabled="hasEmptyPhone || hasWrongPhone || newPhones.length >= 4"
       @click="newPhones.push('')"
@@ -23,7 +24,7 @@
         <path fill-rule="evenodd" clip-rule="evenodd" d="M9 0H7V7H0V9H7V16H9V9H16V7H9V0Z" fill="#8995AF" fill-opacity="0.35" />
       </svg>
       <span>Добавить телефон</span>      
-    </VBtn>
+    </button>
   </div>
 </template>
 
