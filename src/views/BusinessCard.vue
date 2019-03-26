@@ -22,7 +22,7 @@
         </div>
         <div v-if="editMode">
           <button class="businesscard__close" @click="editMode = false">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="22" height="22" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M13 4L12 3L8 7L4 3L3 4L7 8L3 12L4 13L8 9L12 13L13 12L9 8L13 4Z" fill="#8995AF" fill-opacity="0.35" />
             </svg>
           </button>
@@ -152,16 +152,17 @@ export default {
     }
 
     &__close {
-      width: 22px;
-      height: 22px;
-      margin: 5px 0 0 25px;
-      padding: 3px 0 0;
+      width: 40px;
+      height: 40px;
+      margin: 0 0 0 40px;
+      padding: 5px 0 0;
       background-color: #fff;
       border-radius: 50%;
       color:   #C4C4C4;
       transition: background-color 0.6s 0s;
       outline: none;
       vertical-align: middle;
+      box-sizing: border-box;
       &:hover {
         path {
           fill: #000;
