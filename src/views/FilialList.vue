@@ -1,41 +1,39 @@
 <template>
-  <VContainer
-    fluid
-    grid-list-lg
-  >
-    <VLayout
-      row
-      wrap
-    >
-      <VFlex
-        v-for="(item, i) in data"
-        :key="i"
-      >
-        <FilialCard
-          :branch="item"
-          :pinned="item.id === businessId"
-          @onSave="onSave"
-          @click="$router.push({ name: 'businessCard', params: { id: item.id } })"
+  <BranchesLayout @add="onAction('newFilial')">
+    <template slot="content">
+      <VLayout wrap>
+        <div
+          v-for="(item, i) in data"
+          :key="i"
+          class="card-wrapper"
         >
-          {{ i }} {{ item.id }}
-        </FilialCard>
-      </VFlex>
-    </VLayout>
-  </VContainer>
+          <FilialCard
+            :branch="item"
+            :pinned="item.id === businessId"
+            @onSave="onSave"
+            @click="$router.push({ name: 'businessCard', params: { id: item.id } })"
+          >
+            {{ i }} {{ item.id }}
+          </FilialCard>
+        </div>
+      </VLayout>
+    </template>
+  </BranchesLayout>
 </template>
 
 <script>
 import Api from '@/api/backend'
-import FilialCard from '@/components/business/FilialCard.vue'
+import FilialCard from '@/components/branches/FilialCard.vue'
 import Business from '@/classes/business'
 import { mapActions, mapGetters } from 'vuex'
+import BranchesLayout from '@/components/branches/BranchesLayout'
 
 export default {
   params: {
     items: { type: Array, default: [] },
     search: { type: String, default: '' }
   },
-  components: { FilialCard },
+  components: { BranchesLayout, FilialCard },
   data () {
     return {
       formActions: [
@@ -43,6 +41,11 @@ export default {
           label: 'Добавить филиал',
           action: 'newFilial',
           default: true
+        },
+        {
+          label: 'Удалить филиал',
+          action: 'deleteFilial',
+          default: false
         }
       ],
       edit: false,
@@ -51,15 +54,14 @@ export default {
   },
   computed: {
     ...mapGetters(['businessId','businessInfo', 'businessInn']),
-    inn () {
-      return this.businessInn
-    }
   },
   watch: {
-    inn: 'fetchData'
+    businessInn: 'fetchData'
+  },
+  created () {
+    this.fetchData()
   },
   mounted () {
-    this.fetchData()
     this.setActions(this.formActions)
     this.$root.$on('onAction', this.onAction)
   },
@@ -69,9 +71,9 @@ export default {
   methods: {
     ...mapActions(['setActions']),
     fetchData () {
-      if (!this.inn) return
+      if (!this.businessInn) return
       Api()
-        .get(`business?j->>inn=eq.${this.inn}`)
+        .get(`business?j->>inn=eq.${this.businessInn}`)
         .then(res => res.data)
         .then(res => {
           this.data = res
@@ -103,4 +105,10 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  .card-wrapper {
+    margin: 0 24px 42px 0;
+  }
+</style>
 
