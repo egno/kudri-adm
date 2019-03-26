@@ -2,7 +2,7 @@
   <div class="schedule-edit">
     <div>
       <h2 class="schedule-edit__heading">
-        Определите рабочее время компании*
+        Определите рабочее время компании
       </h2>
     </div>
     <VLayout class="schedule-edit__tumbler">
