@@ -1,119 +1,162 @@
 <template>
-  <VCard>
-    <VToolbar>
-      <Avatar
-        class="ma-1"
-        :name="item.j.name || item.j.email"
-        :src="item.j.avatar"
-      />
-      <VBtn
-        v-if="item.access"
-        small
-        fab
-        bottom
-        right
-        absolute
-        color="light-grey"
-        @click="edit = true"
-      >
-        <VIcon>edit</VIcon>
-      </VBtn>
-      <VToolbarTitle primary-title>
-        <VLayout
-          align-left
-          row
-          spacer
-        >
-          <VFlex>
-            <div>
-              <h4>{{ item.j.name }}</h4>
-              <div class="caption grey--text text--darken-1">
-                {{ item.j.category }}
-              </div>
-            </div>
-          </VFlex>
-        </VLayout>
-      </VToolbarTitle>
-    </VToolbar>
-    <VCardText>
-      <VFlex v-if="item.j.address">
-        <BusinessAddress
-          :caption-class="captionClass"
-          :address="item.j.address"
-        />
-      </VFlex>
-      <VFlex v-if="item.j.phones && item.j.phones.length">
-        <BusinessPhones
-          :caption-class="captionClass"
-          :phones="item.j.phones"
-        />
-      </VFlex>
-      <BusinessSchedule
-        :caption-class="captionClass"
-        :schedule="item.j.schedule"
-      />
-      <div>
-        <span class="font-weight-bold">
-          Услуги:
-        </span>
-        <div
-          v-for="(service, i) in item.j.services"
-          :key="i"
-        >
-          {{ service.name }}
+  <div class="branch-card" :class="{ _pinned: pinned }" @click="$emit('click')">
+    <div class="branch-card__top">
+      <div class="branch-card__left">
+        <h2 class="branch-card__title">
+          <span v-if="!branch.parent" class="branch-card__main">
+            <svg width="10" height="11" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M10 3.4375L5 0L0 3.4375V11H10V3.4375ZM3.75 10.9999V7.33321H6.25V10.9999H3.75Z" :fill="pinned? '#FFFFFF' : '#5699FF'" />
+            </svg>
+          </span>
+          <span>{{ branch.j.name }}</span>
+        </h2>
+        <div v-if="branch.j.address" class="branch-card__subtitle">
+          {{ branch.j.address.name }}
         </div>
       </div>
-    </VCardText>
-    <VDialog v-model="edit">
-      <FilialCardEdit
-        :id="item.id"
-        :item="item"
-        @onEditClose="onSave"
-        @onDelete="onDelete"
-      />
-    </VDialog>
-  </VCard>
+      <div v-if="pinned" class="branch-card__right">
+        <div class="branch-card__pin" />
+      </div>
+    </div>
+    <div class="branch-card__bottom">
+      <div>
+        <div v-if="branch.j.employees" class="branch-card__info">
+          {{ branch.j.employees }} сотрудников
+        </div> <!-- todo добавить склонение слова сотрудников -->
+      </div>
+      <DeleteButton @click.native.stop="emit('delete')" />
+    </div>
+  </div>
 </template>
 
 <script>
-import BusinessAddress from '@/components/business/BusinessAddress.vue'
-import BusinessPhones from '@/components/business/BusinessPhones.vue'
-import BusinessSchedule from '@/components/business/BusinessSchedule.vue'
-import FilialCardEdit from '@/components/business/FilialCardEdit.vue'
-import Avatar from '@/components/avatar/Avatar.vue'
-
+import DeleteButton from '@/components/common/DeleteButton'
 export default {
   components: {
-    BusinessAddress,
-    BusinessPhones,
-    BusinessSchedule,
-    FilialCardEdit,
-    Avatar
+    DeleteButton
   },
   props: {
-    item: {
+    branch: {
       type: Object,
       default: () => {
         return {}
       }
-    }
+    },
+    pinned: {
+      type: Boolean,
+      default: false
+    },
   },
   data () {
     return {
       captionClass:
         'caption font-weight-bold text-no-wrap grey--text text--darken-1',
-      edit: false
     }
   },
   methods: {
     onDelete () {
       this.edit = false
-      this.$emit('onDelete', this.item)
+      this.$emit('onDelete', this.branch)
     },
-    onSave (payload) {
-      this.edit = false
-      this.$emit('onSave', payload)
-    }
   }
 }
 </script>
+
+<style lang="scss">
+  .branch-card {
+    width: 312px;
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-content: space-between;
+    padding: 17px 4px 8px 24px;
+    border-top: 2px solid  transparent;
+    box-shadow: 0px 0px 2px rgba(137, 149, 175, 0.35);
+    transition: border-color 0.4s 0s;
+    box-sizing: border-box;
+    &:hover {
+      border-color: #5699FF;
+      cursor: pointer;
+    }
+
+    &__top,
+    &__bottom {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    &__top {
+      font-family: Lato, sans-serif;
+      font-style: normal;
+      line-height: normal;
+    }
+
+    &__bottom {
+      align-items: center;
+    }
+
+    &__left {
+      max-width: 85%;
+    }
+
+    &__title {
+      font-weight: bold;
+      font-size: 18px;
+      color: #07101C;
+    }
+
+    &__main {
+      display: inline-block;
+      vertical-align: baseline;
+      margin-right: 6px;
+    }
+
+    &__subtitle {
+      font-weight: normal;
+      font-size: 12px;
+      color: #8995AF;
+    }
+
+    &__pin {
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+      background: url('../../assets/images/svg/pin.svg') center no-repeat;
+    }
+
+    &__info {
+      width: 125px;
+      height: 24px;
+      padding: 2px 0 0;
+      background: rgba(137, 149, 175, 0.1);
+      border-radius: 12px;
+      color: #8995AF;
+      text-align: center;
+    }
+
+    &._pinned {
+      background-color: #5699FF;
+
+      .branch-card__title {
+        color: #fff;
+      }
+      .branch-card__subtitle {
+        color: rgba(255, 255, 255, 0.6);
+      }
+      .branch-card__info {
+        color: #fff;
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+      .delete-button {
+        path {
+          fill: #fff;
+          fill-opacity: 1;
+        }
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+      }
+    }
+  }
+</style>

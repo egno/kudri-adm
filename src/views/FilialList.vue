@@ -11,12 +11,11 @@
         v-for="(item, i) in data"
         :key="i"
       >
-        <v-btn :to="{name: 'businessCard', params: {id: item.id}}">
-          Перейти
-        </v-btn>
         <FilialCard
-          :item="item"
+          :branch="item"
+          :pinned="item.id === businessId"
           @onSave="onSave"
+          @click="$router.push({ name: 'businessCard', params: { id: item.id } })"
         >
           {{ i }} {{ item.id }}
         </FilialCard>
