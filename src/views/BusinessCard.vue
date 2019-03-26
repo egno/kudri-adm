@@ -21,7 +21,11 @@
           </v-btn>
         </div>
         <div v-if="editMode">
-          <button class="businesscard__close" @click="editMode = false" />
+          <button class="businesscard__close" @click="editMode = false">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M13 4L12 3L8 7L4 3L3 4L7 8L3 12L4 13L8 9L12 13L13 12L9 8L13 4Z" fill="#8995AF" fill-opacity="0.35" />
+            </svg>
+          </button>
         </div>
       </VFlex>
     </VLayout>
@@ -148,11 +152,21 @@ export default {
     }
 
     &__close {
-      width: 32px;
+      width: 22px;
       height: 22px;
-      margin: 10px 0 0 25px;
-      padding: 0;
-      background: url('../assets/images/svg/cross.svg') center no-repeat #fff !important;
+      margin: 5px 0 0 25px;
+      padding: 3px 0 0;
+      background-color: #fff;
+      border-radius: 50%;
+      color:   #C4C4C4;
+      transition: background-color 0.6s 0s;
+      outline: none;
+      vertical-align: middle;
+      &:hover {
+        path {
+          fill: #000;
+        }
+      }
     }
 
     &__tab-wrapper {
