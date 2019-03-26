@@ -396,7 +396,7 @@ export default {
           if (
             !this.data.j.links ||
             !this.data.j.links.others ||
-            this.data.j.links.others.length
+            !this.data.j.links.others.length
           ) {
             this.addLink()
           }

@@ -155,7 +155,7 @@ export default {
       width: 40px;
       height: 40px;
       margin: 0 0 0 40px;
-      padding: 5px 0 0;
+      padding: 10px 0 0;
       background-color: #fff;
       border-radius: 50%;
       color:   #C4C4C4;
