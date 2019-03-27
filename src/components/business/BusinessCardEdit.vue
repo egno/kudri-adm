@@ -283,7 +283,7 @@ export default {
       return !!(
         this.data &&
         this.data.j &&
-        this.data.j.phones &&
+        !!this.data.j.phones &&
         this.data.j.phones[0]
       )
     },
@@ -426,12 +426,11 @@ export default {
 
       return false
     },
-    onAddressInput ({ name, point }) {
-      if (!this.data.j.address) {
-        return
+    onAddressInput (val) {
+      if (!this.data.j) {
+        this.data.j = {}
       }
-      this.data.j.address.name = name
-      this.data.j.address.point = point
+      this.data.j.address = val
       this.hasAddress = this.checkAddress()
     },
     onAvatarSave (img) {
@@ -442,7 +441,7 @@ export default {
       })
     },
     phonesEdit (payload) {
-      this.data.j.phones = payload
+      this.$set(this.data, 'j', {...this.data.j, ...{phones: payload}})
     },
     saveData () {
       this.data

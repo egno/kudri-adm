@@ -110,6 +110,12 @@ export default {
             .map(x => ({
               name:
                 x.GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted,
+              city:
+                x.GeoObject && x.GeoObject.description,
+              cityAddress:
+                x.GeoObject && x.GeoObject.name,
+              addressComponents:
+                x.GeoObject.metaDataProperty.GeocoderMetaData.Address && x.GeoObject.metaDataProperty.GeocoderMetaData.Address.Components,
               point: x.GeoObject && x.GeoObject.Point && x.GeoObject.Point.pos
             }))
           this.loading = false
