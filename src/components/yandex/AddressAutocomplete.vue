@@ -97,6 +97,7 @@ export default {
         this.loading = false
         return
       }
+      const dt = new Date()
       axios
         .get(
           `https://geocode-maps.yandex.ru/1.x/?format=json&kind=house&geocode=${val}`
@@ -116,7 +117,8 @@ export default {
                 x.GeoObject && x.GeoObject.name,
               addressComponents:
                 x.GeoObject.metaDataProperty.GeocoderMetaData.Address && x.GeoObject.metaDataProperty.GeocoderMetaData.Address.Components,
-              point: x.GeoObject && x.GeoObject.Point && x.GeoObject.Point.pos
+              point: x.GeoObject && x.GeoObject.Point && x.GeoObject.Point.pos,
+              updated: dt.toISOString()
             }))
           this.loading = false
         })
