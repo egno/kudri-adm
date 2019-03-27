@@ -9,7 +9,10 @@
         :key="j" xs12
         class="day-schedule"
       >
-        <template v-if="day.value">
+        <div 
+          v-if="day.value && day.value.start && day.value.end" 
+          class="day-schedule__wrapper"
+        >
           <div class="day-schedule__dayname">
             {{ day.dayName }}
           </div>
@@ -22,7 +25,7 @@
               {{ day.value.end }}
             </span>
           </div>
-        </template>
+        </div>
       </VFlex>
     </VLayout>
   </div>

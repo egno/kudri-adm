@@ -46,7 +46,7 @@ export default {
     onEdit () {
       const res = this.rules.time(this.val)
       if (res && typeof res === 'boolean') {
-        this.$emit('onEdit', this.val)
+        this.$emit('correctInput', this.val)
       }
     }
   }

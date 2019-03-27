@@ -444,6 +444,11 @@ export default {
       this.$set(this.data, 'j', {...this.data.j, ...{phones: payload}})
     },
     saveData () {
+      let schedule = this.data.j.schedule.data
+      for (let i = 0; i < 7; i++) {
+        !schedule[i] && (schedule[i] = {start: '', end: ''})
+      }
+
       this.data
         .save()
         .then(() => {

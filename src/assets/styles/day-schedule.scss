@@ -1,12 +1,15 @@
 @import './common';
 
 .day-schedule {
-  @include vertical-align();
-  justify-content: space-between;
-  padding: 7px 0;
 
   &>div {
     text-align: center;
+  }
+
+  &__wrapper {
+    @include vertical-align();
+    justify-content: space-between;
+    padding: 7px 0;
   }
 
   &__dayname {
@@ -21,6 +24,7 @@
   }
 
   &__for-all {
+    width: 240px;
     padding-top: 32px;
   }
 

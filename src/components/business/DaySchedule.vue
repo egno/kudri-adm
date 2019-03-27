@@ -4,14 +4,14 @@
       :class="{'error--text': errors.includes('intervalError') || newDaySchedule.end && !newDaySchedule.start}"
       :time="newDaySchedule.start"
       placeholder="––:––"
-      @onEdit="onEdit('start', $event)"
+      @correctInput="onEdit('start', $event)"
     />
     <div> — </div>
     <TimeEdit
       :class="{'error--text': errors.includes('intervalError')|| newDaySchedule.start && !newDaySchedule.end}"
       :time="newDaySchedule.end"
       placeholder="––:––"
-      @onEdit="onEdit('end', $event)"
+      @correctInput="onEdit('end', $event)"
     />
   </div>
 </template>

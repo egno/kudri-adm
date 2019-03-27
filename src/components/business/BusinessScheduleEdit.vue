@@ -18,18 +18,20 @@
       fill-height
       class="schedule-edit__main"
     >
-      <VFlex v-for="(day, index) in days" :key="index" xs12 class="day-schedule">
-        <div class="day-schedule__dayname">
-          {{ day.dayName }}
+      <div v-for="(day, index) in days" :key="index" xs12 class="day-schedule">
+        <div class="day-schedule__wrapper">
+          <div class="day-schedule__dayname">
+            {{ day.dayName }}
+          </div>
+          <div class="schedule-edit__content">
+            <DaySchedule
+              :day-schedule="day.value"
+              @editDay="onEditDay(index, $event)"
+            />
+            <div class="schedule-edit__clear" @click="onClearDay(index)" />
+          </div>
         </div>
-        <div class="schedule-edit__content">
-          <DaySchedule
-            :day-schedule="day.value"
-            @editDay="onEditDay(index, $event)"
-          />
-          <div class="schedule-edit__clear" @click="onClearDay(index)" />
-        </div>
-      </VFlex>
+      </div>
     </VLayout>
   </div>
 </template>
