@@ -117,6 +117,11 @@
         @include tag-active()
       }
     }
+
+    &__group {
+      width: 100%;
+      margin-bottom: 40px;
+    }
   }
   .add-branch {
     margin-right: 16px;

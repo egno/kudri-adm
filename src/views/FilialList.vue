@@ -15,7 +15,7 @@
           Все города
         </div>
       </VLayout>
-      <div v-for="(branches, city) in branchesByCities" :key="city">
+      <div v-for="(branches, city) in branchesByCities" :key="city" class="branches__group">
         <template v-if="selectedCity === city || !selectedCity">        
           <div class="city-branch">
             <div class="city-branch__city">
@@ -40,7 +40,7 @@
                 :branch="item"
                 :pinned="item.id === businessId"
                 @onSave="onSave"
-                @click="$router.push({ name: 'businessCard', params: { id: item.id } })"
+                @click="showCheckoutModal(item)"
               >
                 {{ i }} {{ item.id }}
               </FilialCard>
@@ -48,6 +48,8 @@
           </VLayout>
         </template>  
       </div>
+      <Modal :visible="checkoutModal" :template="checkoutTemplate" />
+      <Modal :visible="deleteModal" />
     </template>
   </BranchesLayout>
 </template>
@@ -58,13 +60,14 @@ import FilialCard from '@/components/branches/FilialCard.vue'
 import Business from '@/classes/business'
 import { mapActions, mapGetters } from 'vuex'
 import BranchesLayout from '@/components/branches/BranchesLayout'
+import Modal from '@/components/common/Modal'
 
 export default {
   params: {
     items: { type: Array, default: [] },
     search: { type: String, default: '' }
   },
-  components: { BranchesLayout, FilialCard },
+  components: { BranchesLayout, FilialCard, Modal },
   data () {
     return {
       formActions: [
@@ -80,9 +83,18 @@ export default {
         }
       ],
       edit: false,
+      branchDesiredToCheckout: undefined,
       branchesList: {},
       branchesByCities: {},
-      selectedCity: undefined
+      checkoutModal: false,
+      selectedCity: undefined,
+      checkoutTemplate: {
+        header: 'Перейти в филиал?',
+        text: '<div>Вы будете перемещены</div><div>в филиал Estel Professional.</div>',
+        leftButton: 'ОТМЕНА',
+        rightButton: 'ПЕРЕЙТИ'
+      },
+      deleteModal: false
     }
   },
   computed: {
@@ -127,11 +139,6 @@ export default {
           this.branchesByCities[city].push(branch)          
         }
       })
-
-      /*branchesList.filter(branch => 
-              branch.j 
-                && branch.j.address
-                && branch.j.address.city === city)*/
     },
     onAction (payload) {
       if (payload === this.formActions[0].action) {
@@ -155,6 +162,10 @@ export default {
       } else {
         Api().patch(`business?id=eq.${branchesList.id}`, branchesList)
       }
+    },
+    showCheckoutModal (branch) {
+      this.checkoutModal = true
+      this.branchDesiredToCheckout = branch
     }
   }
 }
@@ -162,7 +173,7 @@ export default {
 
 <style lang="scss">
   .card-wrapper {
-    margin: 0 10px 42px 0;
+    margin: 0 10px 20px 0;
   }
 
   .city-branch {
