@@ -1,22 +1,53 @@
 <template>
   <BranchesLayout @add="onAction('newFilial')">
     <template slot="content">
-      <VLayout wrap>
-        <div
-          v-for="(item, i) in data"
-          :key="i"
-          class="card-wrapper"
+      <VLayout class="branches__cities">
+        <div 
+          v-for="(branches, city) in branchesByCities" 
+          :key="city" 
+          class="branches__city"
+          :class="{_active: selectedCity === city}"
+          @click="selectedCity = city"
         >
-          <FilialCard
-            :branch="item"
-            :pinned="item.id === businessId"
-            @onSave="onSave"
-            @click="$router.push({ name: 'businessCard', params: { id: item.id } })"
-          >
-            {{ i }} {{ item.id }}
-          </FilialCard>
+          {{ city.split(', ')[0] }}
+        </div>
+        <div class="branches__city" :class="{_active: !selectedCity}" @click="selectedCity = null">
+          Все города
         </div>
       </VLayout>
+      <div v-for="(branches, city) in branchesByCities" :key="city">
+        <template v-if="selectedCity === city || !selectedCity">        
+          <div class="city-branch">
+            <div class="city-branch__city">
+              {{ city.split(', ')[0] }}
+            </div>
+            <div class="city-branch__count"> 
+              {{ branches.length }} филиала
+            </div><!-- todo добавить склонение слова филиала -->
+          </div>
+          <VLayout  
+            justify-start
+            align-start 
+            wrap 
+            class="branches__cards"
+          >
+            <div
+              v-for="(item, i) in branches"
+              :key="i"
+              class="card-wrapper"
+            >
+              <FilialCard
+                :branch="item"
+                :pinned="item.id === businessId"
+                @onSave="onSave"
+                @click="$router.push({ name: 'businessCard', params: { id: item.id } })"
+              >
+                {{ i }} {{ item.id }}
+              </FilialCard>
+            </div>
+          </VLayout>
+        </template>  
+      </div>
     </template>
   </BranchesLayout>
 </template>
@@ -49,7 +80,9 @@ export default {
         }
       ],
       edit: false,
-      data: {}
+      branchesList: {},
+      branchesByCities: {},
+      selectedCity: undefined
     }
   },
   computed: {
@@ -76,22 +109,43 @@ export default {
         .get(`business?j->>inn=eq.${this.businessInn}`)
         .then(res => res.data)
         .then(res => {
-          this.data = res
+          this.branchesList = res
+          this.getCities()
         })
+    },
+    getCities () {
+      this.branchesList.forEach(branch => {
+        if (!branch.j || !branch.j.address) {
+          return
+        }
+        if (branch.j.address.city) {
+          const city = branch.j.address.city
+
+          if (!this.branchesByCities[city]) {
+            this.$set(this.branchesByCities, city, [])
+          } 
+          this.branchesByCities[city].push(branch)          
+        }
+      })
+
+      /*branchesList.filter(branch => 
+              branch.j 
+                && branch.j.address
+                && branch.j.address.city === city)*/
     },
     onAction (payload) {
       if (payload === this.formActions[0].action) {
-        this.data.unshift(new Business({ access: true, parent:this.businessId, name: this.businessInfo.name }))
+        this.branchesList.unshift(new Business({ access: true, parent:this.businessId, name: this.businessInfo.name }))
       }
     },
     onSave (payload) {
       this.sendData(payload)
     },
-    sendData (data) {
-      data.j.phones = data.j.phones.filter(x => x > '')
-      data.parent = this.businessId
-      if (!data.id) {
-        Api().post(`business`, data)
+    sendData (branchesList) {
+      branchesList.j.phones = branchesList.j.phones.filter(x => x > '')
+      branchesList.parent = this.businessId
+      if (!branchesList.id) {
+        Api().post(`business`, branchesList)
         // .then(res => {
         //   const newId = this.locationId(res.headers);
         //   if (newId) {
@@ -99,7 +153,7 @@ export default {
         //   }
         // });
       } else {
-        Api().patch(`business?id=eq.${data.id}`, data)
+        Api().patch(`business?id=eq.${branchesList.id}`, branchesList)
       }
     }
   }
@@ -108,7 +162,34 @@ export default {
 
 <style lang="scss">
   .card-wrapper {
-    margin: 0 24px 42px 0;
+    margin: 0 10px 42px 0;
+  }
+
+  .city-branch {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 32px;
+    line-height: 24px;
+
+    &__city {
+      padding-right: 11px;
+      font-family: Roboto Slab, serif;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 18px;
+      color: #07101C;
+    }
+
+    &__count {
+      padding-left: 11px;
+      font-family: Lato, sans-serif;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      color: #8995AF;
+      border-left: 1px solid rgba(137, 149, 175, 0.1);
+    }
+
   }
 </style>
 

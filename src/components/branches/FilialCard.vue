@@ -3,11 +3,11 @@
     <div class="branch-card__top">
       <div class="branch-card__left">
         <h2 class="branch-card__title">
-          <span v-if="!branch.parent" class="branch-card__main">
+          <!--<span v-if="!branch.parent" class="branch-card__main">
             <svg width="10" height="11" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M10 3.4375L5 0L0 3.4375V11H10V3.4375ZM3.75 10.9999V7.33321H6.25V10.9999H3.75Z" :fill="pinned? '#FFFFFF' : '#5699FF'" />
             </svg>
-          </span>
+          </span>-->
           <span>{{ branch.j.name }}</span>
         </h2>
         <div v-if="branch.j.address" class="branch-card__subtitle">
