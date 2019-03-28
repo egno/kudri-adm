@@ -2,7 +2,7 @@ import Api from '@/api/backend'
 import { makeAlert } from '@/api/utils'
 
 const state = {
-  serviceGroups: []
+  serviceGroups: [],
 }
 
 const getters = {

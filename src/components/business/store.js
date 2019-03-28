@@ -12,7 +12,8 @@ const state = {
     'Маникюрная студия',
     'Косметологический кабинет'
   ],
-  dayVisits: []
+  dayVisits: [],
+  businessServices: []
 }
 
 const getters = {
@@ -42,10 +43,11 @@ const getters = {
     getters.businessInfo && getters.businessInfo.name,
   businessInn: (state) =>
     state.businessInfo && state.businessInfo.j && state.businessInfo.j.inn,
-  businessServices: state =>
-    state.businessInfo && state.businessInfo.j && state.businessInfo.j.services,
   businessServiceCount: (state, getters) =>
     getters.businessServices && getters.businessServices.length,
+  businessServiceCategories: (state) => {
+    return [...new Set(state.businessServices.map(service => service.j && service.j.group).filter(name => !!name))]
+  },
   businessDayVisits: state => state.dayVisits,
   businessFilialCount: state =>
     state.businessInfo && state.businessInfo.j && state.businessInfo.j.filials,
@@ -70,6 +72,9 @@ const mutations = {
   },
   SET_DAY_VISITS (state, payload) {
     state.dayVisits = payload
+  },
+  SET_BUSINESS_SERVICES (state, payload) {
+    state.businessServices = payload
   }
 }
 
@@ -102,6 +107,22 @@ const actions = {
       .then(res => {
         commit('SET_BUSINESS_INFO', res)
         dispatch('loadEmployee', payload)
+        res.j && dispatch('loadBusinessServices', res.j.inn)
+      })
+      .catch(err => commit('ADD_ALERT', makeAlert(err)))
+  },
+  loadBusinessServices ({ commit }, inn) {
+    if (!inn) {
+      return
+    }
+
+    const path = `business_service?inn=eq.${inn}`
+
+    Api()
+      .get(path)
+      .then(res => res.data)
+      .then(res => {
+        commit('SET_BUSINESS_SERVICES', res)
       })
       .catch(err => commit('ADD_ALERT', makeAlert(err)))
   }

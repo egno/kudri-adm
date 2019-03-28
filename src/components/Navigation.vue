@@ -194,7 +194,7 @@ export default {
           title: 'Услуги',
           count: this.businessServiceCount,
           route: {
-            name: 'businessCardService',
+            name: 'services',
             params: { id: this.businessLink }
           },
           show: this.loggedIn && !this.isManagerMenu,

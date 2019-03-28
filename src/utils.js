@@ -6,7 +6,7 @@ const businessCards = [
   'businessCardFilal',
   'businessCardServiceGallery',
   'businessCardEmployeeGallery',
-  'businessCardService',
+  'services',
   'businessSettings',
   'businessVisit',
   'employeeCard',

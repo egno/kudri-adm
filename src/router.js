@@ -125,8 +125,8 @@ export default new Router({
     },
     {
       path: '/businessCard/s/:id',
-      name: 'businessCardService',
-      component: () => import('./views/BusinessCardService.vue')
+      name: 'services',
+      component: () => import('./views/Services.vue')
     },
     {
       path: '/businessCard/v/:id/:date',

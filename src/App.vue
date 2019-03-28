@@ -117,6 +117,14 @@ export default {
 </script>
 
 <style lang="scss">
+  @import './assets/styles/common';
+
+  @mixin tag-active () {
+    color: #fff;
+    background: rgba(137, 149, 175, 0.35);
+    transition: color, background-color 0.4s 0s;
+  }
+
 #app {
   .main-cont {
     padding: 40px 56px;
@@ -318,6 +326,59 @@ export default {
       position: absolute;
       right: -18px;
       top: 8px;
+    }
+  }
+
+  .section-add-button {
+    margin-right: 16px;
+    background: url('./assets/images/svg/plus-white.svg') no-repeat center #EF4D37;
+    span {
+      display: none;
+    }
+    @media only screen and (min-width : $desktop) {
+      background-image: none;
+      span {
+        display: inline;
+      }
+    }
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    &__item {
+      padding: 0 24px;
+      margin: 0 24px 28px 0;
+      background: rgba(137, 149, 175, 0.1);
+      border-radius: 14px;
+      font-family: $roboto;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 28px;
+      text-align: center;
+      color: #8995AF;
+      cursor: pointer;
+      &::first-letter {
+        text-transform: capitalize;
+      }
+      &._active {
+        @include tag-active()
+      }
+      &:hover {
+        @include tag-active()
+      }
+    }
+  }
+
+  .filter-results {
+    &__group-name {
+      padding-right: 11px;
+      font-family: Roboto Slab, serif;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 18px;
+      color: #07101C;
     }
   }
 }
