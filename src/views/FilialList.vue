@@ -41,6 +41,7 @@
                 :pinned="item.id === businessId"
                 @onSave="onSave"
                 @click="showCheckoutModal(item)"
+                @delete="showDeleteModal(item)"
               >
                 {{ i }} {{ item.id }}
               </FilialCard>
@@ -48,8 +49,20 @@
           </VLayout>
         </template>  
       </div>
-      <Modal :visible="checkoutModal" :template="checkoutTemplate" />
-      <Modal :visible="deleteModal" />
+      <Modal
+        :visible="checkoutModal"
+        :template="checkoutTemplate"
+        @close="checkoutModal = false"
+        @leftButtonClick="checkoutModal = false"
+        @rightButtonClick="checkout"
+      />
+      <Modal
+        :visible="deleteModal"
+        :template="deleteTemplate"
+        @close="deleteModal = false"
+        @leftButtonClick="deleteModal = false"
+        @rightButtonClick="deleteBranch"
+      />
     </template>
   </BranchesLayout>
 </template>
@@ -84,7 +97,8 @@ export default {
       ],
       edit: false,
       branchDesiredToCheckout: undefined,
-      branchesList: {},
+      branchDesiredToDelete: undefined,
+      branchesList: [],
       branchesByCities: {},
       checkoutModal: false,
       selectedCity: undefined,
@@ -94,11 +108,27 @@ export default {
         leftButton: 'ОТМЕНА',
         rightButton: 'ПЕРЕЙТИ'
       },
-      deleteModal: false
+      deleteModal: false,
     }
   },
   computed: {
     ...mapGetters(['businessId','businessInfo', 'businessInn']),
+    deleteTemplate () {
+      if (!this.branchDesiredToDelete || !this.branchDesiredToDelete.j || !this.branchDesiredToDelete.j.name) {
+        return {
+          header: 'Удалить филиал?',
+          text: `Это приведет к удалению филиала. Вся информация филиала будет удалена.`,
+          leftButton: 'ОТМЕНА',
+          rightButton: 'УДАЛИТЬ'
+        }
+      }
+      return {
+        header: 'Удалить филиал?',
+        text: `Это приведет к удалению филиала ${this.branchDesiredToDelete.j.name}. Вся информация филиала будет удалена.`,
+        leftButton: 'ОТМЕНА',
+        rightButton: 'УДАЛИТЬ'
+      }
+    }
   },
   watch: {
     businessInn: 'fetchData'
@@ -114,7 +144,18 @@ export default {
     this.$root.$off('onAction', this.onAction)
   },
   methods: {
-    ...mapActions(['setActions']),
+    ...mapActions(['setActions', 'setBusiness']),
+    checkout () {
+      if (!this.branchDesiredToCheckout) {
+        return
+      }
+      const id = this.branchDesiredToCheckout.id
+      this.setBusiness(id)
+      this.$router.push({ name: 'businessCard', params: { id: id } })
+    },
+    deleteBranch () {
+
+    },
     fetchData () {
       if (!this.businessInn) return
       Api()
@@ -136,13 +177,16 @@ export default {
           if (!this.branchesByCities[city]) {
             this.$set(this.branchesByCities, city, [])
           } 
-          this.branchesByCities[city].push(branch)          
+          if (!this.branchesByCities[city].includes(branch)) {
+            this.branchesByCities[city].push(branch)
+          }
         }
       })
     },
     onAction (payload) {
       if (payload === this.formActions[0].action) {
         this.branchesList.unshift(new Business({ access: true, parent:this.businessId, name: this.businessInfo.name }))
+        this.getCities()
       }
     },
     onSave (payload) {
@@ -164,9 +208,17 @@ export default {
       }
     },
     showCheckoutModal (branch) {
-      this.checkoutModal = true
-      this.branchDesiredToCheckout = branch
-    }
+      if (branch.id === this.businessId) {
+        this.$router.push({ name: 'businessCard', params: { id: this.businessId } })
+      } else {
+        this.checkoutModal = true
+        this.branchDesiredToCheckout = branch
+      }
+    },
+    showDeleteModal (branch) {
+      this.deleteModal = true
+      this.branchDesiredToDelete = branch
+    },
   }
 }
 </script>

@@ -24,7 +24,7 @@
           {{ branch.j.employees }} сотрудников
         </div> <!-- todo добавить склонение слова сотрудников -->
       </div>
-      <DeleteButton @click.native.stop="emit('delete')" />
+      <DeleteButton @click.native.stop="$emit('delete')" />
     </div>
   </div>
 </template>
@@ -56,7 +56,7 @@ export default {
   methods: {
     onDelete () {
       this.edit = false
-      this.$emit('onDelete', this.branch)
+      this.$emit('delete', this.branch)
     },
   }
 }

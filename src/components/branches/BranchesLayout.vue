@@ -120,6 +120,9 @@
 
     &__group {
       width: 100%;
+    }
+
+    &__cards {
       margin-bottom: 40px;
     }
   }
