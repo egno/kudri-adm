@@ -247,6 +247,24 @@ const actions = {
   openProfileDrawer ({ commit }) {
     commit('PROFILE_DRAWER', true)
   },
+  refreshToken ({ commit, getters }) {
+    const path = 'rpc/token'
+    if (!getters.token) {
+      return
+    }
+    Api()
+      .post(path)
+      .then(res => res.data)
+      .then(res => res[0])
+      .then(res => res.token)
+      .then(token => {
+        commit('SET_TOKEN', token)
+      })
+      .catch(err => {
+        commit('ADD_ALERT', makeAlert(err))
+        commit('SET_TOKEN', undefined)
+      })
+  },
   register ({ commit, dispatch }, payload) {
     const registerPath = 'rpc/register'
     Api()

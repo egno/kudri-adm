@@ -19,6 +19,7 @@ import Alerts from '@/components/Alerts.vue'
 import SendMessage from '@/components/SendMessage.vue'
 import router from '@/router'
 import { mapActions, mapGetters } from 'vuex'
+import { setTimeout, clearTimeout } from 'timers'
 
 export default {
   metaInfo () {
@@ -36,7 +37,7 @@ export default {
   },
   data () {
     return {
-      //
+      tokenTimerId: undefined
     }
   },
   computed: {
@@ -79,6 +80,7 @@ export default {
     this.checkDate()
     this.loadEmployeeCategories()
     this.loadEmployeePositions()
+    this.tokenTimer()
   },
   methods: {
     ...mapActions([
@@ -88,6 +90,7 @@ export default {
       'loadFromStorage',
       'loadServiceList',
       'loadServiceGroups',
+      'refreshToken',
       'setActions',
       'setActualDate',
       'navBar'
@@ -100,6 +103,14 @@ export default {
     },
     onAction (payload) {
       this.$root.$emit('onAction', payload)
+    },
+    tokenTimer () {
+      let vm = this
+      clearTimeout(this.tokenTimerId)
+      this.tokenTimerId = setTimeout(function () {
+        vm.refreshToken()
+        vm.tokenTimer()
+      }, 1000*60*45)
     }
   }
 }
