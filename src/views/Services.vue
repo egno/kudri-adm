@@ -1,26 +1,25 @@
 <template>
   <ServicesLayout>
     <template slot="content">
-      <VLayout wrap class="filters">
-        <div v-for="group in serviceGroups" :key="group" class="filters__item" :class="{ _active: selectedGroups[group] }" @click="toggleFilter(group)">
+      <div class="filters">
+        <div v-for="group in businessServiceCategories" :key="group" class="filters__item" :class="{ _active: selectedGroups.includes(group) }" @click="toggleFilter(group)">
           {{ group }}
         </div>
-        <div class="filters__item" :class="{ _active: selectedGroups && selectedGroups.length === serviceGroups.length }" @click="toggleAll">
+        <div class="filters__item" :class="{ _active: selectedGroups && selectedGroups.length === businessServiceCategories.length }" @click="toggleAll">
           Все категории
         </div>
-      </VLayout>
+      </div>
       <div class="filter-results">
-        <!--<div v-for="group in selectedGroups" class="filter-results__group">-->
-        <!--<template v-for="(services, group) in selectedGroups">
-          <div class="filter-results__group-name">
-            {{ group }}
-          </div>
-
-          <template v-for="service in services ">
-            <ServiceCard :service="service" />
+        <div v-for="(services, group) in groupedBusinessServices" :key="group" class="filter-results__group">
+          <template v-if="selectedGroups.includes(group)">
+            <div class="filter-results__group-name">
+              {{ group }}
+            </div>
+            <div class="filter-results__cards">
+              <ServiceCard v-for="(service, i) in services" :key="i" :service="service" />
+            </div>
           </template>
-        </template>-->
-        <!--</div>-->
+        </div>
       </div>
     </template>
   </ServicesLayout>
@@ -28,12 +27,14 @@
 
 <script>
 import ServicesLayout from '@/components/services/ServicesLayout.vue'
+import ServiceCard from '@/components/services/ServiceCard.vue'
 import { businessMixins } from '@/components/business/mixins'
 import { mapState, mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
     ServicesLayout,
+    ServiceCard
   },
   mixins: [businessMixins],
   data () {
@@ -45,7 +46,7 @@ export default {
       data: { j: {} },
       edit: false,
       newService: {},
-      selectedGroups: {}
+      selectedGroups: []
     }
   },
   computed: {
@@ -54,9 +55,29 @@ export default {
     id () {
       return this.$route.params.id
     },
+    groupedBusinessServices () {
+      let obj = {}
+
+      this.businessServices.forEach(s => {
+        if (!s.j || !s.j.group) {
+          return
+        }
+        const category = s.j.group
+
+        if (!obj[category]) {
+          obj[category] = []
+        }
+
+        if (!obj[category].includes(s)) {
+          obj[category].push(s)
+        }
+      })
+
+      return obj
+    }
   },
   watch: {
-    'serviceGroups': 'selectAll'
+    'businessServiceCategories': 'selectAll'
   },
   mounted () {
     this.setActions(this.formActions)
@@ -77,26 +98,28 @@ export default {
       return this.services && this.services.filter(x => x.group === grp)
     },
     selectAll () {
-      if (!this.businessServices || !this.businessServices.length) {
+      if (!this.businessServiceCategories || !this.businessServiceCategories.length) {
         return
       }
-      this.selectedGroups = this.businessServices.map(service => service.j && service.j.group)
+      this.selectedGroups = this.businessServiceCategories.slice()
     },
     toggleAll () {
-      if (this.selectedGroups.length === this.serviceGroups.length) {
+      if (this.selectedGroups.length === this.businessServiceCategories.length) {
         this.selectedGroups = []
       } else {
         this.selectAll()
       }
     },
     toggleFilter (group) {
-      if (this.selectedGroups[group]) {
-        delete this.selectedGroups[group]
+      const index = this.selectedGroups.indexOf(group)
+
+      if (index !== -1) {
+        this.selectedGroups.splice(index, 1)
       } else {
-        this.selectedGroups[group] = this.businessServices.filter(serv => serv.j.group === group)
+        this.selectedGroups.push(group)
       }
 
-      if (!Object.keys(this.selectedGroups).length) {
+      if (!this.selectedGroups.length) {
         this.selectAll()
       }
     }

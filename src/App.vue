@@ -346,7 +346,9 @@ export default {
   .filters {
     display: flex;
     flex-wrap: wrap;
+    flex-grow: 0;
     &__item {
+      height: 28px;
       padding: 0 24px;
       margin: 0 24px 28px 0;
       background: rgba(137, 149, 175, 0.1);
@@ -373,12 +375,18 @@ export default {
 
   .filter-results {
     &__group-name {
+      margin: 40px 0 32px;
       padding-right: 11px;
       font-family: Roboto Slab, serif;
       font-style: normal;
       font-weight: normal;
       font-size: 18px;
       color: #07101C;
+    }
+
+    &__cards {
+      display: flex;
+      flex-wrap: wrap;
     }
   }
 }

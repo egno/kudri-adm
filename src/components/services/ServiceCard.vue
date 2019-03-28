@@ -81,6 +81,7 @@ export default {
   justify-content: space-between;
   align-content: space-between;
   padding: 17px 4px 8px 24px;
+  margin: 0 10px 20px 0;
   border-top: 2px solid  transparent;
   box-shadow: 0px 0px 2px rgba(137, 149, 175, 0.35);
   transition: border-color 0.4s 0s;

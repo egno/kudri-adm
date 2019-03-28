@@ -27,7 +27,7 @@
         </main-button>
       </v-flex>
     </v-layout>
-    <v-layout class="services__content" wrap>
+    <v-layout class="services__content" column>
       <slot name="content" />
     </v-layout>
   </div>
