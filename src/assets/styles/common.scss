@@ -6,7 +6,38 @@ $desktop: 1160px;
 $roboto: Roboto Slab, Times New Roman, Times, serif;
 $lato: Lato, sans-serif;
 
-@mixin vertical-align () {
+%vertical-align {
   display: flex;
   align-items: center;
+}
+
+%filter-active {
+  color: #fff;
+  background: rgba(137, 149, 175, 0.35);
+  transition: color, background-color 0.4s 0s;
+}
+
+%filter {
+  height: 28px;
+  padding: 0 24px;
+  margin: 0 24px 28px 0;
+  background: rgba(137, 149, 175, 0.1);
+  border-radius: 14px;
+  font-family: $roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 28px;
+  text-align: center;
+  color: #8995AF;
+  cursor: pointer;
+  &::first-letter {
+    text-transform: capitalize;
+  }
+  &._active {
+    @extend %filter-active
+  }
+  &:hover {
+    @extend %filter-active
+  }
 }

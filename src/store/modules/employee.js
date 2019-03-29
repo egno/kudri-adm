@@ -75,12 +75,12 @@ const actions = {
         this.alert(makeAlert(err))
       })
   },
-  loadEmployee ({ commit }, payload) {
+  loadEmployee ({ commit }, businessId) {
     commit('LOAD_EMPLOYEES', null)
-    if (!payload) {
+    if (!businessId) {
       return
     }
-    const path = `employee?parent=eq.${payload}`
+    const path = `employee?parent=eq.${businessId}`
     Api()
       .get(path)
       .then(res => res.data)

@@ -69,6 +69,15 @@
     &__h1 {
       font: 24px Roboto Slab, Times New Roman, Times, serif;
     }
+    &__empty-notification {
+      padding: 0 5px;
+      font-family: $lato;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 16px;
+      line-height: normal;
+      color: #07101C;
+    }
     &__content {
       display: flex;
       flex-grow: 1;
@@ -76,7 +85,7 @@
       align-content: flex-start;
       background: #f4f5f7;
       @media only screen and (min-width : $desktop) {
-        padding-left: 103px;
+        padding-left: 122px;
       }
     }
   }

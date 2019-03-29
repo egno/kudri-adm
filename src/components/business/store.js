@@ -95,18 +95,18 @@ const actions = {
   addClientsCounter ({ commit }, payload) {
     commit('ADD_CLIENTS_COUNTER', payload)
   },
-  setBusiness ({ commit, dispatch }, payload) {
-    if (!(payload && payload.length == 36)) {
+  setBusiness ({ commit, dispatch }, businessId) {
+    if (!(businessId && businessId.length == 36)) {
       commit('SET_BUSINESS_INFO', {})
       return
     }
-    const path = `business?id=eq.${payload}`
+    const path = `business?id=eq.${businessId}`
     Api()
       .get(path)
       .then(res => res.data[0])
       .then(res => {
         commit('SET_BUSINESS_INFO', res)
-        dispatch('loadEmployee', payload)
+        dispatch('loadEmployee', businessId)
         res.j && dispatch('loadBusinessServices', res.j.inn)
       })
       .catch(err => commit('ADD_ALERT', makeAlert(err)))

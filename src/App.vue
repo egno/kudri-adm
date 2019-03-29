@@ -119,12 +119,6 @@ export default {
 <style lang="scss">
   @import './assets/styles/common';
 
-  @mixin tag-active () {
-    color: #fff;
-    background: rgba(137, 149, 175, 0.35);
-    transition: color, background-color 0.4s 0s;
-  }
-
 #app {
   .main-cont {
     padding: 40px 56px;
@@ -343,37 +337,18 @@ export default {
     }
   }
 
+
   .filters {
     display: flex;
     flex-wrap: wrap;
     flex-grow: 0;
     &__item {
-      height: 28px;
-      padding: 0 24px;
-      margin: 0 24px 28px 0;
-      background: rgba(137, 149, 175, 0.1);
-      border-radius: 14px;
-      font-family: $roboto;
-      font-style: normal;
-      font-weight: normal;
-      font-size: 14px;
-      line-height: 28px;
-      text-align: center;
-      color: #8995AF;
-      cursor: pointer;
-      &::first-letter {
-        text-transform: capitalize;
-      }
-      &._active {
-        @include tag-active()
-      }
-      &:hover {
-        @include tag-active()
-      }
+      @extend %filter
     }
   }
 
   .filter-results {
+    padding-left: 5px;
     &__group-name {
       margin: 40px 0 32px;
       padding-right: 11px;

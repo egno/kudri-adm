@@ -1,32 +1,41 @@
 <template>
-  <ServicesLayout>
+  <ServicesLayout @add="addService">
     <template slot="content">
-      <div class="filters">
-        <div v-for="group in businessServiceCategories" :key="group" class="filters__item" :class="{ _active: selectedGroups.includes(group) }" @click="toggleFilter(group)">
-          {{ group }}
+      <template v-if="!businessServices.length">
+        <div class="services__empty-notification">
+          Cоздайте свою первую услугу
         </div>
-        <div class="filters__item" :class="{ _active: selectedGroups && selectedGroups.length === businessServiceCategories.length }" @click="toggleAll">
-          Все категории
+      </template>
+      <template v-else>
+        <div class="filters">
+          <div v-for="group in businessServiceCategories" :key="group" class="filters__item" :class="{ _active: selectedGroups.includes(group) }" @click="toggleFilter(group)">
+            {{ group }}
+          </div>
+          <div class="filters__item" :class="{ _active: selectedGroups && selectedGroups.length === businessServiceCategories.length }" @click="toggleAll">
+            Все категории
+          </div>
         </div>
-      </div>
-      <div class="filter-results">
-        <div v-for="(services, group) in groupedBusinessServices" :key="group" class="filter-results__group">
-          <template v-if="selectedGroups.includes(group)">
-            <div class="filter-results__group-name">
-              {{ group }}
-            </div>
-            <div class="filter-results__cards">
-              <ServiceCard v-for="(service, i) in services" :key="i" :service="service" />
-            </div>
-          </template>
+        <div class="filter-results">
+          <div v-for="(services, group) in groupedBusinessServices" :key="group" class="filter-results__group">
+            <template v-if="selectedGroups.includes(group)">
+              <div class="filter-results__group-name">
+                {{ group }}
+              </div>
+              <div class="filter-results__cards">
+                <ServiceCard v-for="(service, i) in services" :key="i" :service="service" />
+              </div>
+            </template>
+          </div>
         </div>
-      </div>
+      </template>
+      <EditService :visible="showEdit" :create="true" @close="showEdit = false" />
     </template>
   </ServicesLayout>
 </template>
 
 <script>
 import ServicesLayout from '@/components/services/ServicesLayout.vue'
+import EditService from '@/components/services/EditService.vue'
 import ServiceCard from '@/components/services/ServiceCard.vue'
 import { businessMixins } from '@/components/business/mixins'
 import { mapState, mapGetters, mapActions } from 'vuex'
@@ -34,7 +43,8 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 export default {
   components: {
     ServicesLayout,
-    ServiceCard
+    ServiceCard,
+    EditService
   },
   mixins: [businessMixins],
   data () {
@@ -46,7 +56,8 @@ export default {
       data: { j: {} },
       edit: false,
       newService: {},
-      selectedGroups: []
+      selectedGroups: [],
+      showEdit: false
     }
   },
   computed: {
@@ -89,6 +100,9 @@ export default {
   },
   methods: {
     ...mapActions(['setActions']),
+    addService () {
+      this.showEdit = true
+    },
     onAction (payload) {
       if (payload === this.formActions[0].action) {
         this.edit = true
