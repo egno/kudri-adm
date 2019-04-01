@@ -201,10 +201,6 @@ export default {
       } else {
         this.selectedGroups.push(group)
       }
-
-      if (!this.selectedGroups.length) {
-        this.selectAll()
-      }
     }
   }
 }

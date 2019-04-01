@@ -73,14 +73,26 @@
             />
           </div>
 
-          <div class="edit-service__field-block">
+          <div class="edit-service__field-block _employees">
             <VSelect
               v-model="selectedEmployees"
               :items="employees"
-              item-text="j.surname"
+              :item-text="employeeFullName"
               multiple
               placeholder="ВЫБЕРИТЕ МАСТЕРОВ"
-            />
+              return-object
+            >
+              <template v-slot:selection="{ item, index }">
+                <div v-if="index === 0">
+                  ВЫБЕРИТЕ МАСТЕРОВ
+                </div>
+              </template>
+            </VSelect>
+            <div>
+              <span v-for="(e, i) in selectedEmployees" :key="e.id">
+                {{ employeeFullName(e) }}{{ (selectedEmployees.length > 1) && (i < selectedEmployees.length - 1) ? ', ' : '' }}
+              </span>
+            </div>
           </div>
 
           <div class="edit-service__field-block">
@@ -143,7 +155,10 @@
         rules: {
           required: value => !!value || 'Это поле обязательно для заполнения',
           maxLength: length => (value) => value && (value.length <= length || 'Слишком длинный текст') || true
-        }
+        },
+        employeeFullName (e) {
+          return `${ e.j.name }${ e.j.surname? ' ' + e.j.surname : '' }`
+        } 
       }
     },
     computed: {
@@ -172,7 +187,7 @@
           price,
           duration,
           description,
-          // selectedEmployees
+          employees
         } = this.service.j
 
         this.name = this.service.name
@@ -181,7 +196,7 @@
         this.price = price || 0
         this.duration = duration || 15
         this.description = description || ''
-        // this.selectedEmployees = selectedEmployees; // todo
+        this.selectedEmployees = employees 
       },
       onSave () {
         let {
@@ -205,7 +220,7 @@
           price,
           duration,
           description,
-          selectedEmployees
+          employees: selectedEmployees
         })
       },
     }
@@ -215,8 +230,10 @@
 <style lang="scss">
   @import "../../assets/styles/common";
   %button {
+    display: block;
     height: 56px;
     padding: 0 28px;
+    margin: 0 auto;
     font-family: $roboto;
     font-style: normal;
     font-weight: bold;
@@ -281,10 +298,12 @@
     }
     &__field-block {
       margin-top: 28px;
+      padding-top: 20px;
     }
     input {
       text-align: center;
       padding-bottom: 6px;
+      font-weight: 400;
     }
     .counter input {
       padding-bottom: 0;
@@ -328,6 +347,9 @@
     }
     .v-label {
       @extend %placeholder;
+      &.v-label--active {
+        top: 0;
+      }      
     }
     input::placeholder,
     textarea::placeholder {
@@ -341,6 +363,7 @@
     }
     &__save {
       @extend %button;
+      width: 240px;
       color: #FFFFFF;
       background: linear-gradient(270deg, #C9A15D -9.86%, #BA9462 103.49%);
       &:hover {
@@ -353,6 +376,7 @@
     &__cancel {
       @extend %button;
       color: #8995AF;
+      margin-top: 40px;
       &:hover {
         color: #07101C;
       }
@@ -382,6 +406,14 @@
     }
     .v-counter {
       color: rgba(137, 149, 175, 0.35);
+    }
+    .v-select__selections>div{
+      text-align: right;
+      justify-content: flex-end;
+      flex-grow: 1;
+    }
+    ._employees .v-select__selections>div{
+      @extend %placeholder;
     }
   }
 </style>
