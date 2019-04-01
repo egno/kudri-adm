@@ -4,10 +4,10 @@ import common from '@/store/modules/common'
 import layout from '@/store/modules/layout'
 import alerts from '@/store/modules/alerts'
 import employee from '@/store/modules/employee'
+import service from '@/store/modules/services'
 
 import user from '@/components/user/store'
 import business from '@/components/business/store'
-import service from '@/components/service/store'
 
 Vue.use(Vuex)
 

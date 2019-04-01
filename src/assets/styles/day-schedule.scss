@@ -7,7 +7,7 @@
   }
 
   &__wrapper {
-    @include vertical-align();
+    @extend %vertical-align;
     justify-content: space-between;
     padding: 7px 0;
   }

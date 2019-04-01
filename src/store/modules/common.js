@@ -50,14 +50,6 @@ const getters = {
   schedule: state => state.schedule,
   searchString: state => state.searchString,
   selectedVisit: state => state.selectedVisit,
-  serviceCategories: state =>
-    state.serviceList
-      .map(x => x.j.groups)
-      .reduce((acc, cur) => {
-        acc.push(...cur)
-        return acc
-      }, [])
-      .filter((element, index, array) => array.indexOf(element) === index),
   serviceList: state => state.serviceList,
   token: state => {
     return state.token
@@ -71,9 +63,6 @@ const mutations = {
   },
   LOAD_SCHEDULE (state, payload) {
     state.schedule = payload
-  },
-  LOAD_SERVICE_CATEGORIES (state, payload) {
-    state.serviceCategories = payload
   },
   LOAD_SERVICE_LIST (state, payload) {
     state.serviceList = payload

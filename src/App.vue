@@ -117,6 +117,8 @@ export default {
 </script>
 
 <style lang="scss">
+  @import './assets/styles/common';
+
 #app {
   .main-cont {
     padding: 40px 56px;
@@ -320,6 +322,48 @@ export default {
       top: 8px;
     }
   }
+
+  .section-add-button {
+    margin-right: 16px;
+    background: url('./assets/images/svg/plus-white.svg') no-repeat center #EF4D37;
+    span {
+      display: none;
+    }
+    @media only screen and (min-width : $desktop) {
+      background-image: none;
+      span {
+        display: inline;
+      }
+    }
+  }
+
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    flex-grow: 0;
+    &__item {
+      @extend %filter
+    }
+  }
+
+  .filter-results {
+    padding-left: 5px;
+    &__group-name {
+      margin: 40px 0 32px;
+      padding-right: 11px;
+      font-family: Roboto Slab, serif;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 18px;
+      color: #07101C;
+    }
+
+    &__cards {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  }
 }
 
 .v-text-field {
@@ -462,5 +506,9 @@ export default {
   }
   .v-breadcrumbs__item--disabled {
     color: #8995AF;
+  }
+  .v-counter {
+    order: -1;
+    font-size: 14px;
   }
 </style>

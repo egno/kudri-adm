@@ -78,7 +78,7 @@
   }
   .fill,
   .empty {
-    @include vertical-align();
+    @extend %vertical-align;
     justify-content: center;
     text-transform: capitalize;
     margin-right: 6px;

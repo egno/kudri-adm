@@ -247,7 +247,7 @@ export default {
   .soc {
     &__input {
       position: relative;
-      @include vertical-align();
+      @extend %vertical-align;
       &:before {
         position: absolute;
         width: 18px;
