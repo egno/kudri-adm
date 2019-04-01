@@ -507,4 +507,8 @@ export default {
   .v-breadcrumbs__item--disabled {
     color: #8995AF;
   }
+  .v-counter {
+    order: -1;
+    font-size: 14px;
+  }
 </style>

@@ -2,7 +2,7 @@
   <div class="counter">
     <div class="counter__control _down" @click="onDecrement" />
 
-    <input :id="id" type="text" :value="quantity" @input.prevent="setNewValue" @blur="onBlur">
+    <input :id="id" type="text" :value="quantity" @input.prevent="setNewValue">
 
     <div class="counter__control _up" @click="onIncrement" />
   </div>
@@ -11,33 +11,47 @@
 <script>
   export default {
     name: 'Counter',
-    props: ['value', 'maxValue', 'id'],
+    props: {
+      id: {
+        type: String,
+        required: true
+      },
+      value: {
+        type: Number,
+        default: 0
+      },
+      maxValue: {
+        type: Number,
+        default: 999
+      },
+      minValue: {
+        type: Number,
+        default: 0
+      },
+      interval: {
+        type: Number,
+        default: 1
+      }
+    },
     data () {
       return {
-        quantity: this.value || 1
+        quantity: this.value || this.minValue || 0
       }
     },
     computed: {
-      maxQuantity () {
-        return this.maxValue || 999
-      }
     },
     methods: {
-      onBlur () {
-        if (!this.quantity) {
-          this.quantity = 1
-          this.$emit('changeCount', this.quantity)
-        }
-      },
       onIncrement () {
-        if (this.maxQuantity && this.quantity <= this.maxQuantity - 1) {
-          this.quantity++
+        if (this.quantity <= this.maxValue - this.interval) {
+          this.quantity += this.interval
           this.$emit('changeCount', this.quantity)
         } 
       },
       onDecrement () {
-        this.quantity > 1? --this.quantity : this.quantity = 1
-        this.$emit('changeCount', this.quantity)
+        if (this.quantity >= this.minValue + this.interval) {
+          this.quantity -= this.interval
+          this.$emit('changeCount', this.quantity)
+        }
       },
       setNewValue (event) {
         let value = event.target.value.replace(/\D/g, '')
@@ -46,12 +60,12 @@
         if (!event.target.value) {
           this.quantity = 0
           event.target.value = ''
-        } else if (value <= this.maxQuantity) {
+        } else if (value <= this.maxValue) {
           this.quantity = value
           event.target.value = value
         } else {
-          this.quantity = this.maxQuantity
-          event.target.value = this.maxQuantity
+          this.quantity = this.maxValue
+          event.target.value = this.maxValue
         }
         this.$emit('changeCount', this.quantity)
       }
@@ -77,15 +91,19 @@
       border-radius: 50%;
       cursor: pointer;
       outline: none;
+      background-color: #8995AF;
+      background-position: center;
+      background-repeat: no-repeat;
 
       &._down {
         left: 0.0625rem;
-        background: url('../../assets/images/minus.png') center no-repeat ;
+        background-image: url('../../assets/images/svg/minus-white.svg');
       }
 
       &._up {
         right: 0.0625rem;
-        background: url('../../assets/images/plus.png') center no-repeat ;
+        background-image: url('../../assets/images/svg/plus-white.svg');
+        background-size: 12px;
       }
     }
   }

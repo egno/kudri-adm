@@ -1,5 +1,5 @@
 <template>
-  <ServicesLayout @add="addService">
+  <ServicesLayout @add="showCreate = true">
     <template slot="content">
       <template v-if="!businessServices.length">
         <div class="services__empty-notification">
@@ -22,13 +22,30 @@
                 {{ group }}
               </div>
               <div class="filter-results__cards">
-                <ServiceCard v-for="(service, i) in services" :key="i" :service="service" />
+                <ServiceCard
+                  v-for="(service, i) in services"
+                  :key="i" :service="service"
+                  @click="onEdit(service)"
+                  @delete="deleteService(service)"
+                />
               </div>
             </template>
           </div>
         </div>
       </template>
-      <EditService :visible="showEdit" :create="true" @close="showEdit = false" />
+      <EditService
+        :visible="showCreate"
+        :create="true"
+        @close="showCreate = false"
+        @save="createService"
+      />
+      <EditService
+        :visible="showEdit"
+        :create="false"
+        :service="editingService"
+        @close="showEdit = false; editingService = null"
+        @save="editService"
+      />
     </template>
   </ServicesLayout>
 </template>
@@ -37,8 +54,8 @@
 import ServicesLayout from '@/components/services/ServicesLayout.vue'
 import EditService from '@/components/services/EditService.vue'
 import ServiceCard from '@/components/services/ServiceCard.vue'
-import { businessMixins } from '@/components/business/mixins'
 import { mapState, mapGetters, mapActions } from 'vuex'
+import Api from '@/api/backend'
 
 export default {
   components: {
@@ -46,23 +63,24 @@ export default {
     ServiceCard,
     EditService
   },
-  mixins: [businessMixins],
   data () {
     return {
       searchString: '',
       formActions: [
         { label: 'Добавить услугу', action: 'newService', default: false }
       ],
-      data: { j: {} },
+      branchInfo: { j: {} },
       edit: false,
       newService: {},
       selectedGroups: [],
-      showEdit: false
+      showCreate: false,
+      showEdit: false,
+      editingService: undefined
     }
   },
   computed: {
     ...mapState({ businessServices: state => state.business.businessServices }),
-    ...mapGetters(['serviceList', 'serviceGroups', 'businessServiceCategories']),
+    ...mapGetters(['serviceList', 'serviceGroups', 'businessServiceCategories', 'businessInfo']),
     id () {
       return this.$route.params.id
     },
@@ -88,7 +106,10 @@ export default {
     }
   },
   watch: {
-    'businessServiceCategories': 'selectAll'
+    'businessServiceCategories': 'selectAll',
+    'businessInfo' () {
+      this.businessInfo && this.businessInfo.j && this.businessInfo.j.inn && this.loadBusinessServices(this.businessInfo.j.inn)
+    }
   },
   mounted () {
     this.setActions(this.formActions)
@@ -99,17 +120,65 @@ export default {
     this.$root.$off('onAction', this.onAction)
   },
   methods: {
-    ...mapActions(['setActions']),
-    addService () {
-      this.showEdit = true
+    ...mapActions(['setActions', 'loadBusinessServices']),
+    createService (newService) {
+      Api().post(`business_service`, {
+        business_id: this.id,
+        name: newService.name,
+        inn: this.businessInfo.j.inn,
+        j: {
+          ...newService
+        }
+      })
+        .then(() => {
+          this.showCreate = false
+          this.loadBusinessServices(this.businessInfo.j.inn)
+        })
+        .catch((e) => {
+          console.log('FAILURE!! ', e)
+        })
+    },
+    deleteService (service) {
+      Api().delete(`business_service?id=eq.${service.id}`)
+        .then(() => {
+          this.showEdit = false
+          this.loadBusinessServices(this.businessInfo.j.inn)
+        })
+        .catch((e) => {
+          console.log('FAILURE!! ', e)
+        })
+    },
+    editService (service) {
+      Api().patch(`business_service`, {
+        id: service.id,
+        business_id: this.id,
+        name: service.name,
+        access: true,
+        inn: this.businessInfo.j.inn,
+        j: {
+          ...service
+        }
+      })
+        .then(() => {
+          this.showEdit = false
+          this.loadBusinessServices(this.businessInfo.j.inn)
+        })
+        .catch((e) => {
+          console.log('FAILURE!! ', e)
+        })
+
     },
     onAction (payload) {
       if (payload === this.formActions[0].action) {
         this.edit = true
       }
     },
-    servicesInGroup (grp) {
-      return this.services && this.services.filter(x => x.group === grp)
+    onEdit (service) {
+      if (this.showEdit) {
+        return
+      }
+      this.showEdit = true
+      this.editingService = service
     },
     selectAll () {
       if (!this.businessServiceCategories || !this.businessServiceCategories.length) {

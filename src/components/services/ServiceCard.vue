@@ -19,14 +19,16 @@
           {{ service.j.employees }} мастеров
         </div> <!-- todo добавить склонение слова сотрудников -->
       </div>
-      <!--<DeleteButton @click.native.stop="emit('delete')" />-->
+      <DeleteButton @click.native.stop="$emit('delete')" />
     </div>
   </div>
 </template>
 
 <script>
+import DeleteButton from '@/components/common/DeleteButton'
 
 export default {
+  components: { DeleteButton },
   props: {
     access: { type: Boolean, default: false },
     editMode: { type: Boolean, default: false },
@@ -39,31 +41,6 @@ export default {
       }
     }
   },
-  data () {
-    return {
-      edit: false
-    }
-  },
-  watch: {
-    editMode: 'onInit'
-  },
-  mount () {
-    this.onInit()
-  },
-  methods: {
-    onInit () {
-      console.log(this.editMode)
-      this.edit = this.editMode
-    },
-    onDelete () {
-      this.edit = false
-      this.$emit('onDelete')
-    },
-    onSave (payload) {
-      this.edit = false
-      this.$emit('onSave', payload)
-    }
-  }
 }
 </script>
 

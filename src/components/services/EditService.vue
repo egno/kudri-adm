@@ -1,7 +1,7 @@
 <template>
   <v-expand-x-transition>
     <div v-show="visible" class="edit-service">
-      <VForm class="edit-service__container">
+      <VForm :value="!saveDisabled" class="edit-service__container">
         <button type="button" class="edit-service__close" @click="$emit('close')" />
         <div class="edit-service__content">
           <div class="edit-service__header">
@@ -9,20 +9,41 @@
           </div>
 
           <div class="edit-service__field-block">
-            <VTextField v-model="name" label="НАЗВАНИЕ УСЛУГИ" />
+            <VTextField v-model="name" label="НАЗВАНИЕ УСЛУГИ" :rules="[ rules.required, rules.maxLength(150) ]" />
           </div>
 
           <div class="edit-service__field-block">
-            <VSelect v-model="category" :items="serviceGroups" placeholder="ВЫБЕРИТЕ КАТЕГОРИЮ" />
+            <VSelect v-model="group" :items="serviceGroups" label="КАТЕГОРИЯ" :rules="[ rules.required ]" />
           </div>
 
           <div class="edit-service__field-block">
             <div class="edit-service__field-name">
               Пол
             </div>
-            <input id="male" v-model="sex" name="sex" type="radio" value="male"><label for="male" class="edit-service__radio">Муж</label>
-            <input id="female" v-model="sex" name="sex" type="radio" value="female" class="filters__item"><label for="female" class="edit-service__radio">Жен</label>
-            <input id="child" v-model="sex" name="sex" type="radio" value="child" class="filters__item"><label for="child" class="edit-service__radio">Дети</label>
+            <input
+              :id="create? 'male' : 'male2'"
+              v-model="sex"
+              type="checkbox"
+              value="male"
+              class="filters__item edit-service__sex"
+            >
+            <label :for="create? 'male' : 'male2'" class="edit-service__sex-label">Муж</label>
+            <input
+              :id="create? 'female' : 'female2'"
+              v-model="sex"
+              type="checkbox"
+              value="female"
+              class="filters__item edit-service__sex"
+            >
+            <label :for="create? 'female' : 'female2'" class="edit-service__sex-label">Жен</label>
+            <input
+              :id="create? 'child' : 'child2'"
+              v-model="sex"
+              type="checkbox"
+              value="child"
+              class="filters__item edit-service__sex"
+            >
+            <label :for="create? 'child' : 'child2'" class="edit-service__sex-label">Дети</label>
           </div>
 
           <div class="edit-service__field-block">
@@ -33,7 +54,7 @@
               <div class="edit-service__from">
                 от
               </div>
-              <VTextField v-model="price" mask="######" class="edit-service__price" />
+              <VTextField v-model="price" mask="#####" class="edit-service__price" />
             </div>
           </div>
 
@@ -41,7 +62,15 @@
             <div class="edit-service__field-name">
               Длительность (мин)
             </div>
-            <Counter id="'edit-service-duration'" :value="duration" />
+            <Counter
+              id="'edit-service-duration'"
+              :value="duration"
+              :min-value="15"
+              :max-value="720"
+              :interval="15"
+              :class="{ _invalid: duration < 15 }"
+              @changeCount="duration = $event"
+            />
           </div>
 
           <div class="edit-service__field-block">
@@ -55,19 +84,16 @@
           </div>
 
           <div class="edit-service__field-block">
-            <VTextarea v-model="description" placeholder="ОПИСАНИЕ" counter="400" rows="1" :auto-grow="true" />
+            <VTextarea v-model="description" placeholder="ОПИСАНИЕ" counter="1000" rows="1" :auto-grow="true" />
           </div>
 
           <div class="edit-service__buttons">
-            <button type="button" class="edit-service__save" @click="$emit('save')">
+            <button type="button" class="edit-service__save" :class="{ _disabled: saveDisabled }" @click="onSave">
               Сохранить
             </button>
             <template v-if="!create">
-              <button type="button" class="edit-service__cancel" @click="$emit('cancel')">
+              <button type="button" class="edit-service__cancel" @click="$emit('close')">
                 Отмена
-              </button>
-              <button type="button" class="edit-service__delete" @click="$emit('delete')">
-                Удалить услугу
               </button>
             </template>
           </div>
@@ -88,27 +114,101 @@
     props: {
       visible: {
         type: Boolean,
-        default: false
+        default: false,
+        required: true
       },
       create: {
         type: Boolean,
-        default: false
+        default: false,
+        required: true
       },
+      service: {
+        type: Object,
+        default () {
+          return {
+            j: {}
+          }
+        }
+      }
     },
     data () {
       return {
         name: '',
-        category: '',
-        sex: '',
+        group: '',
+        sex: [],
         price: '',
-        duration: 0,
+        duration: 15,
         description: '',
-        selectedEmployees: []
+        selectedEmployees: [],
+        rules: {
+          required: value => !!value || 'Это поле обязательно для заполнения',
+          maxLength: length => (value) => value && (value.length <= length || 'Слишком длинный текст') || true
+        }
       }
     },
     computed: {
       ...mapGetters(['serviceGroups', 'employees']),
+      saveDisabled () {
+        return !this.name || !this.group || !this.duration
+      }
     },
+    watch: {
+      'service': 'init'
+    },
+    methods: {
+      init () {
+        if (!this.service) {
+          this.name = ''
+          this.group = ''
+          this.sex = []
+          this.price = 0
+          this.duration = 15
+          this.description = ''
+          return
+        }
+        let {
+          group,
+          sex,
+          price,
+          duration,
+          description,
+          // selectedEmployees
+        } = this.service.j
+
+        this.name = this.service.name
+        this.group = group
+        this.sex = sex || []
+        this.price = price || 0
+        this.duration = duration || 15
+        this.description = description || ''
+        // this.selectedEmployees = selectedEmployees; // todo
+      },
+      onSave () {
+        let {
+          name,
+          group,
+          sex,
+          price,
+          duration,
+          description,
+          selectedEmployees
+        } = this.$data
+
+        if (!sex.length) {
+          sex = ['male', 'female', 'child']
+        }
+
+        this.$emit('save', {
+          name,
+          group,
+          sex,
+          price,
+          duration,
+          description,
+          selectedEmployees
+        })
+      },
+    }
   }
 </script>
 
@@ -117,7 +217,7 @@
   %button {
     height: 56px;
     padding: 0 28px;
-    font-family: Roboto Slab;
+    font-family: $roboto;
     font-style: normal;
     font-weight: bold;
     font-size: 18px;
@@ -128,6 +228,10 @@
     outline: none;
   }
 
+  %button-disabled {
+    background: rgba(137, 149, 175, 0.2) !important;
+    pointer-events: none;
+  }
   %placeholder {
     text-align: center;
     letter-spacing: 0.25em;
@@ -185,7 +289,7 @@
     .counter input {
       padding-bottom: 0;
     }
-    input[type="radio"] {
+    &__sex {
       display: none;
     }
     .v-text-field {
@@ -199,7 +303,7 @@
       font-weight: bold;
       font-size: 16px;
     }
-    &__radio {
+    &__sex-label {
       @extend %filter;
       display: inline-block;
       height: 28px;
@@ -207,14 +311,14 @@
       margin-bottom: 15px;
     }
     &__from {
-      @extend .edit-service__radio;
+      @extend .edit-service__sex-label;
       margin-right: 19px;
       margin-bottom: 0;
       &::first-letter {
         text-transform: none;
       }
     }
-    input[type="radio"]:checked + label {
+    input[type="checkbox"]:checked + label {
       @extend %filter-active
     }
     &__row {
@@ -232,12 +336,18 @@
     &__price {
       max-width: 140px;
     }
+    &__buttons {
+      margin-top: 31px;
+    }
     &__save {
       @extend %button;
       color: #FFFFFF;
       background: linear-gradient(270deg, #C9A15D -9.86%, #BA9462 103.49%);
       &:hover {
         background: #07101C;
+      }
+      &._disabled {
+        @extend %button-disabled
       }
     }
     &__cancel {
@@ -250,6 +360,28 @@
     .counter {
       width: 122px;
       margin: 0 auto;
+      &._invalid {
+        .counter__control {
+          background-color: #EF4D37;
+        }
+        input {
+          color: #EF4D37;
+        }
+      }
+    }
+    .v-messages {
+      display: none;
+    }
+    .error--text {
+      label {
+        color: rgba(7, 16, 28, 0.35) !important;
+      }
+    }
+    .v-input__slot {
+      margin-bottom: 5px;
+    }
+    .v-counter {
+      color: rgba(137, 149, 175, 0.35);
     }
   }
 </style>
