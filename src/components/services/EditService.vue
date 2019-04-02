@@ -1,7 +1,7 @@
 <template>
   <v-expand-x-transition>
     <div v-show="visible" class="edit-service">
-      <VForm :value="!saveDisabled" class="edit-service__container" @input="$event && (error = '')">
+      <VForm ref="form" :value="!saveDisabled" class="edit-service__container" @input="$event && (error = '')">
         <button type="button" class="edit-service__close" @click="$emit('close')" />
         <div class="edit-service__content">
           <div class="edit-service__header">
@@ -158,7 +158,6 @@
         type: Object,
         default () {
           return {
-            j: {}
           }
         }
       },
@@ -193,7 +192,8 @@
       }
     },
     watch: {
-      'service': 'init'
+      'service': 'init',
+      'visible': 'init'
     },
     methods: {
       sliceByLength (property, length, e) {
@@ -203,7 +203,8 @@
         }
       },
       init () {
-        if (!this.service) {
+        this.$refs.form.reset()
+        if (!this.service || !this.service.j) {
           this.name = ''
           this.group = ''
           this.sex = []
@@ -230,7 +231,6 @@
         this.selectedEmployees = employees 
       },
       onSave () {
-        const id = this.service.id
         let {
           name,
           group,
@@ -246,7 +246,6 @@
         }
 
         this.$emit('save', {
-          id,
           name,
           group,
           sex,

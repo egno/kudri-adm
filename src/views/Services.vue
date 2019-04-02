@@ -184,8 +184,10 @@ export default {
         })
     },
     editService (service) {
-      Api().patch(`business_service?id=eq.${service.id}`, {
-        id: service.id,
+      const serviceId = this.editingService.id
+
+      Api().patch(`business_service?id=eq.${serviceId}`, {
+        id: serviceId,
         business_id: this.id,
         name: service.name,
         access: true,
