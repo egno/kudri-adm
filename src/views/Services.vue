@@ -1,14 +1,14 @@
 <template>
   <ServicesLayout @add="showCreate = true">
     <template slot="content">
-      <template v-if="!businessServices.length">
+      <template v-if="!branchServices.length">
         <div class="services__empty-notification">
           Cоздайте свою первую услугу
         </div>
       </template>
       <template v-else>
         <div class="filters">
-          <div v-for="group in businessServiceCategories" :key="group" class="filters__item" :class="{ _active: selectedGroups.includes(group) }" @click="toggleFilter(group)">
+          <div v-for="group in branchServiceCategories" :key="group" class="filters__item" :class="{ _active: selectedGroups.includes(group) }" @click="toggleFilter(group)">
             {{ group }}
           </div>
           <div class="filters__item" :class="{ _active: selectedGroups && selectedGroups.length === businessServiceCategories.length }" @click="toggleAll">
@@ -16,7 +16,7 @@
           </div>
         </div>
         <div class="filter-results">
-          <div v-for="(services, group) in groupedBusinessServices" :key="group" class="filter-results__group">
+          <div v-for="(services, group) in groupedBranchServices" :key="group" class="filter-results__group">
             <template v-if="selectedGroups.includes(group)">
               <div class="filter-results__group-name">
                 {{ group }}
@@ -110,10 +110,13 @@ export default {
     id () {
       return this.$route.params.id
     },
-    groupedBusinessServices () {
+    branchServices () {
+      return this.businessServices.filter(s => s.business_id === this.id)
+    },
+    groupedBranchServices () {
       let obj = {}
 
-      this.businessServices.filter(s => s.business_id === this.id).forEach(s => {
+      this.branchServices.forEach(s => {
         if (!s.j || !s.j.group) {
           return
         }
@@ -129,6 +132,15 @@ export default {
       })
 
       return obj
+    },
+    branchServiceCategories () {
+      let res = []
+
+      for (let key in this.groupedBranchServices) {
+        res.push(key)
+      }
+
+      return res      
     },
     deleteModalTemplate () {
       if (!this.deletingService || !this.deletingService.j || !this.deletingService.j.employees) {
