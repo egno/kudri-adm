@@ -1,5 +1,5 @@
 <template>
-  <div class="service-card" @click="$emit('click')">
+  <div class="service-card" :style="{ 'background-image': `url(/images/service_group/${image}` }" @click="$emit('click')">
     <div class="service-card__top">
       <div class="service-card__left">
         <h2 class="service-card__title">
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import DeleteButton from '@/components/common/DeleteButton'
 
 export default {
@@ -39,6 +40,17 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['serviceGroups']),
+    image () {
+      if (!this.service.j || !this.service.j.groupImg) {
+        const group = this.serviceGroups.find(gr => gr.name === this.service.j.group)
+
+        return group && group.j && group.j.image
+      }
+      return this.service.j.groupImg
+    }
+  }
 }
 </script>
 
@@ -61,6 +73,10 @@ export default {
   box-shadow: 0px 0px 2px rgba(137, 149, 175, 0.35);
   transition: border-color 0.4s 0s;
   box-sizing: border-box;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #fff;
   &:hover {
     border-color: #5699FF;
     cursor: pointer;

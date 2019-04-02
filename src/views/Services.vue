@@ -11,7 +11,7 @@
           <div v-for="group in branchServiceCategories" :key="group" class="filters__item" :class="{ _active: selectedGroups.includes(group) }" @click="toggleFilter(group)">
             {{ group }}
           </div>
-          <div class="filters__item" :class="{ _active: selectedGroups && selectedGroups.length === businessServiceCategories.length }" @click="toggleAll">
+          <div class="filters__item" :class="{ _active: selectedGroups && selectedGroups.length === branchServiceCategories.length }" @click="toggleAll">
             Все категории
           </div>
         </div>
@@ -175,11 +175,17 @@ export default {
     ...mapActions(['setActions', 'loadBusinessServices']),
     createService (newService) {
       this.errorMessage = ''
+      const group = this.serviceGroups.find(gr => gr.name === newService.group)
+      let groupImg
+
+      group && group.j && (groupImg = group.j.image)
+
       Api().post(`business_service`, {
         business_id: this.id,
         name: newService.name,
         j: {
-          ...newService
+          ...newService,
+          groupImg
         }
       })
         .then(() => {
@@ -235,7 +241,7 @@ export default {
     },
     onAction (payload) {
       if (payload === this.formActions[0].action) {
-        this.edit = true
+        this.showCreate = true
       }
     },
     showEditPanel (service) {
@@ -246,10 +252,10 @@ export default {
       this.editingService = service
     },
     selectAll () {
-      if (!this.businessServiceCategories || !this.businessServiceCategories.length) {
+      if (!this.branchServiceCategories || !this.branchServiceCategories.length) {
         return
       }
-      this.selectedGroups = this.businessServiceCategories.slice()
+      this.selectedGroups = this.branchServiceCategories.slice()
     },
     showDeleteModal (service) {
       if (this.showDelete) {
@@ -259,7 +265,7 @@ export default {
       this.deletingService = service
     },
     toggleAll () {
-      if (this.selectedGroups.length === this.businessServiceCategories.length) {
+      if (this.selectedGroups.length === this.branchServiceCategories.length) {
         this.selectedGroups = []
       } else {
         this.selectAll()

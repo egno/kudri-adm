@@ -22,7 +22,7 @@ const actions = {
       .get(path)
       .then(res => res.data)
       .then(res => {
-        commit('SET_SERVICE_GROUPS', res.map(x => x.name))
+        commit('SET_SERVICE_GROUPS', res)
       })
       .catch(err => commit('ADD_ALERT', makeAlert(err)))
   }

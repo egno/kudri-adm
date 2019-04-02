@@ -28,6 +28,7 @@
             <VSelect
               v-model="group"
               :items="serviceGroups"
+              :item-text="servGr => servGr.name"
               label="КАТЕГОРИЯ"
               :rules="[ rules.required ]"
               @blur="!group && (error = 'Необходимо заполнить все обязательные поля')"
@@ -81,7 +82,7 @@
               Длительность (мин)
             </div>
             <Counter
-              id="'edit-service-duration'"
+              id="create? 'create-service-duration': 'edit-service-duration'"
               :value="duration"
               :min-value="15"
               :max-value="720"
