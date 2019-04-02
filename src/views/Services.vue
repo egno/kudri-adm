@@ -60,7 +60,7 @@
             v-if="deletingService && deletingService.name && deletingService.j && deletingService.j.employees && deletingService.j.employees.length"
             class="uno-modal__text"
           >
-            Это приведет к удалению услуги <b>{{ deletingService.name }}</b>. <b>{{ deletingService.j.employees.length }} мастеров</b> больше не будут оказывать данную услугу.` }}
+            Это приведет к удалению услуги <b>{{ deletingService.name }}</b>. <b>{{ deletingService.j.employees.length }} мастеров</b> больше не будут оказывать данную услугу.
           </div>
           <div v-else class="uno-modal__text">
             Это приведет к удалению услуги.
@@ -113,7 +113,7 @@ export default {
     groupedBusinessServices () {
       let obj = {}
 
-      this.businessServices.forEach(s => {
+      this.businessServices.filter(s => s.business_id === this.id).forEach(s => {
         if (!s.j || !s.j.group) {
           return
         }
@@ -149,9 +149,7 @@ export default {
   },
   watch: {
     'businessServiceCategories': 'selectAll',
-    'businessInfo' () {
-      this.businessInfo && this.businessInfo.j && this.businessInfo.j.inn && this.loadBusinessServices(this.businessInfo.j.inn)
-    }
+    'businessInfo': 'loadCompanyServices'
   },
   mounted () {
     this.setActions(this.formActions)
@@ -168,14 +166,13 @@ export default {
       Api().post(`business_service`, {
         business_id: this.id,
         name: newService.name,
-        inn: this.businessInfo.j.inn,
         j: {
           ...newService
         }
       })
         .then(() => {
           this.showCreate = false
-          this.loadBusinessServices(this.businessInfo.j.inn)
+          this.loadCompanyServices()
         })
         .catch((e) => {
           console.log('FAILURE!! ', e)
@@ -189,7 +186,7 @@ export default {
       Api().delete(`business_service?id=eq.${service.id}`)
         .then(() => {
           this.showEdit = false
-          this.loadBusinessServices(this.businessInfo.j.inn)
+          this.loadCompanyServices()
         })
         .catch((e) => {
           console.log('FAILURE!! ', e)
@@ -203,14 +200,13 @@ export default {
         business_id: this.id,
         name: service.name,
         access: true,
-        inn: this.businessInfo.j.inn,
         j: {
           ...service
         }
       })
         .then(() => {
           this.showEdit = false
-          this.loadBusinessServices(this.businessInfo.j.inn)
+          this.loadCompanyServices()
         })
         .catch((e) => {
           console.log('FAILURE!! ', e)
@@ -219,7 +215,11 @@ export default {
             this.errorMessage = 'Услуга с таким названием уже существует. Пожалуйста, выберите другое название'
           }
         })
-
+    },
+    loadCompanyServices () {
+      if (this.businessInfo && this.businessInfo.parent) {
+        this.loadBusinessServices(this.businessInfo.parent)
+      }
     },
     onAction (payload) {
       if (payload === this.formActions[0].action) {

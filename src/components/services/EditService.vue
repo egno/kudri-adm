@@ -8,18 +8,30 @@
             {{ create? 'Создать услугу' : 'Редактировать услугу' }}
           </div>
 
-          <div class="edit-service__field-block">
+          <div class="edit-service__field-block _select">
             <VTextField
               v-model="name"
               label="НАЗВАНИЕ УСЛУГИ"
               :rules="[ rules.required, rules.maxLength(150) ]"
-              @input.native="sliceByLength('name', 150, $event)"
-              @blur="!name && (error = 'Необходимо заполнить все обязательные поля')"
+              @input.native="onInputName"
+              @blur="!name && (error = 'Необходимо заполнить все обязательные поля'); selectNameVisible = false"
+            />
+            <SearchSelect
+              :options="suggestedServiceNames"
+              :searching-value="name"
+              :visible="selectNameVisible"
+              @select="name = $event; selectNameVisible = false"
             />
           </div>
 
           <div class="edit-service__field-block">
-            <VSelect v-model="group" :items="serviceGroups" label="КАТЕГОРИЯ" :rules="[ rules.required ]" @blur="!group && (error = 'Необходимо заполнить все обязательные поля')" />
+            <VSelect
+              v-model="group"
+              :items="serviceGroups"
+              label="КАТЕГОРИЯ"
+              :rules="[ rules.required ]"
+              @blur="!group && (error = 'Необходимо заполнить все обязательные поля')"
+            />
           </div>
 
           <div class="edit-service__field-block">
@@ -136,11 +148,13 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import { mapState, mapGetters } from 'vuex'
   import Counter from '@/components/common/Counter'
+  import SearchSelect from '@/components/common/SearchSelect.vue'
 
   export default {
     components: {
+      SearchSelect,
       Counter
     },
     props: {
@@ -182,13 +196,18 @@
         employeeFullName (e) {
           return `${ e.j.name }${ e.j.surname? ' ' + e.j.surname : '' }`
         },
-        error: ''
+        error: '',
+        selectNameVisible: false
       }
     },
     computed: {
-      ...mapGetters(['serviceGroups', 'employees']),
+      ...mapState({ businessServices: state => state.business.businessServices }),
+      ...mapGetters(['serviceList', 'serviceGroups', 'employees']),
       saveDisabled () {
         return !this.name || !this.group || !this.duration
+      },
+      suggestedServiceNames () {
+        return [...new Set(this.serviceList.map(s => s.name).concat(this.businessServices.map(s => s.name)))]
       }
     },
     watch: {
@@ -198,6 +217,7 @@
     methods: {
       sliceByLength (property, length, e) {
         let val = e.target.value
+
         if (val && val.length > length) {
           this[property] = val.substring(0, length)
         }
@@ -229,6 +249,10 @@
         this.duration = duration || 15
         this.description = description || ''
         this.selectedEmployees = employees 
+      },
+      onInputName (e) {
+        this.sliceByLength('name', 150, e)
+        this.selectNameVisible = true
       },
       onSave () {
         let {
@@ -331,6 +355,9 @@
     &__field-block {
       margin-top: 28px;
       padding-top: 20px;
+      &._select .v-input__slot {
+        margin-bottom: 0;
+      }
     }
     input {
       text-align: center;
