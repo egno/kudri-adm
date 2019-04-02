@@ -54,7 +54,19 @@
         @rightButtonClick="deleteService(deletingService)"
         @leftButtonClick="showDelete = false; deletingService = null"
         @close="showDelete = false; deletingService = null"
-      />
+      >
+        <template slot="text">
+          <div
+            v-if="deletingService && deletingService.name && deletingService.j && deletingService.j.employees && deletingService.j.employees.length"
+            class="uno-modal__text"
+          >
+            Это приведет к удалению услуги <b>{{ deletingService.name }}</b>. <b>{{ deletingService.j.employees.length }} мастеров</b> больше не будут оказывать данную услугу.` }}
+          </div>
+          <div v-else class="uno-modal__text">
+            Это приведет к удалению услуги.
+          </div>
+        </template>
+      </Modal>
     </template>
   </ServicesLayout>
 </template>
@@ -94,7 +106,7 @@ export default {
   },
   computed: {
     ...mapState({ businessServices: state => state.business.businessServices }),
-    ...mapGetters(['serviceList', 'serviceGroups', 'businessServiceCategories', 'businessInfo']),
+    ...mapGetters(['serviceGroups', 'businessServiceCategories', 'businessInfo']),
     id () {
       return this.$route.params.id
     },

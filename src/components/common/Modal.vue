@@ -6,7 +6,7 @@
         <div class="uno-modal__header">
           {{ template.header }}
         </div>
-        <div class="uno-modal__text" v-html="template.text" />
+        <slot name="text" />
         <div class="uno-modal__buttons">
           <button type="button" class="uno-modal__left" @click="$emit('leftButtonClick'); $emit('close')">
             {{ template.leftButton }}
