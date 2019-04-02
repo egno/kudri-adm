@@ -8,10 +8,10 @@
         </div>
         <div class="uno-modal__text" v-html="template.text" />
         <div class="uno-modal__buttons">
-          <button type="button" class="uno-modal__left" @click="$emit('leftButtonClick')">
+          <button type="button" class="uno-modal__left" @click="$emit('leftButtonClick'); $emit('close')">
             {{ template.leftButton }}
           </button>
-          <button type="button" class="uno-modal__right" @click="$emit('rightButtonClick')">
+          <button type="button" class="uno-modal__right" @click="$emit('rightButtonClick'); $emit('close')">
             {{ template.rightButton }}
           </button>
         </div>
