@@ -25,8 +25,8 @@
                 <ServiceCard
                   v-for="(service, i) in services"
                   :key="i" :service="service"
-                  @click="onEdit(service)"
-                  @delete="deleteService(service)"
+                  @click="showEditPanel(service)"
+                  @delete="showDeleteModal(service)"
                 />
               </div>
             </template>
@@ -36,6 +36,7 @@
       <EditService
         :visible="showCreate"
         :create="true"
+        :error-message="errorMessage"
         @close="showCreate = false"
         @save="createService"
       />
@@ -43,8 +44,16 @@
         :visible="showEdit"
         :create="false"
         :service="editingService"
+        :error-message="errorMessage"
         @close="showEdit = false; editingService = null"
         @save="editService"
+      />
+      <Modal
+        :visible="showDelete"
+        :template="deleteModalTemplate"
+        @rightButtonClick="deleteService(deletingService)"
+        @leftButtonClick="showDelete = false; deletingService = null"
+        @close="showDelete = false; deletingService = null"
       />
     </template>
   </ServicesLayout>
@@ -56,12 +65,14 @@ import EditService from '@/components/services/EditService.vue'
 import ServiceCard from '@/components/services/ServiceCard.vue'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import Api from '@/api/backend'
+import Modal from '@/components/common/Modal'
 
 export default {
   components: {
     ServicesLayout,
     ServiceCard,
-    EditService
+    EditService,
+    Modal
   },
   data () {
     return {
@@ -75,7 +86,10 @@ export default {
       selectedGroups: [],
       showCreate: false,
       showEdit: false,
-      editingService: undefined
+      showDelete: false,
+      editingService: undefined,
+      deletingService: undefined,
+      errorMessage: ''
     }
   },
   computed: {
@@ -103,6 +117,22 @@ export default {
       })
 
       return obj
+    },
+    deleteModalTemplate () {
+      if (!this.deletingService || !this.deletingService.j || !this.deletingService.j.employees) {
+        return {
+          header: 'Удалить услугу?',
+          text: `Это приведет к удалению услуги. Мастера больше не будут оказывать данную услугу.`,
+          leftButton: 'ОТМЕНА',
+          rightButton: 'УДАЛИТЬ'
+        }
+      }
+      return {
+        header: 'Удалить услугу?',
+        text: `Это приведет к удалению услуги <b>${this.deletingService.name}</b>. <b>${ this.deletingService.j.employees.length }</b> мастеров больше не будут оказывать данную услугу.`,
+        leftButton: 'ОТМЕНА',
+        rightButton: 'УДАЛИТЬ'
+      }
     }
   },
   watch: {
@@ -122,6 +152,7 @@ export default {
   methods: {
     ...mapActions(['setActions', 'loadBusinessServices']),
     createService (newService) {
+      this.errorMessage = ''
       Api().post(`business_service`, {
         business_id: this.id,
         name: newService.name,
@@ -136,6 +167,10 @@ export default {
         })
         .catch((e) => {
           console.log('FAILURE!! ', e)
+          if (e.response && e.response.data &&
+            (e.response.data.message === 'duplicate key value violates unique constraint "business_service_un"')) {
+            this.errorMessage = 'Услуга с таким названием уже существует. Пожалуйста, выберите другое название'
+          }
         })
     },
     deleteService (service) {
@@ -149,7 +184,7 @@ export default {
         })
     },
     editService (service) {
-      Api().patch(`business_service`, {
+      Api().patch(`business_service?id=eq.${service.id}`, {
         id: service.id,
         business_id: this.id,
         name: service.name,
@@ -165,6 +200,10 @@ export default {
         })
         .catch((e) => {
           console.log('FAILURE!! ', e)
+          if (e.response && e.response.data &&
+            (e.response.data.message === 'duplicate key value violates unique constraint "business_service_un"')) {
+            this.errorMessage = 'Услуга с таким названием уже существует. Пожалуйста, выберите другое название'
+          }
         })
 
     },
@@ -173,7 +212,7 @@ export default {
         this.edit = true
       }
     },
-    onEdit (service) {
+    showEditPanel (service) {
       if (this.showEdit) {
         return
       }
@@ -185,6 +224,13 @@ export default {
         return
       }
       this.selectedGroups = this.businessServiceCategories.slice()
+    },
+    showDeleteModal (service) {
+      if (this.showDelete) {
+        return
+      }
+      this.showDelete = true
+      this.deletingService = service
     },
     toggleAll () {
       if (this.selectedGroups.length === this.businessServiceCategories.length) {
@@ -200,10 +246,6 @@ export default {
         this.selectedGroups.splice(index, 1)
       } else {
         this.selectedGroups.push(group)
-      }
-
-      if (!this.selectedGroups.length) {
-        this.selectAll()
       }
     }
   }

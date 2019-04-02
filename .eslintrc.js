@@ -30,6 +30,9 @@ module.exports = {
         "asyncArrow": "always"
       }
     ],
-    'vue/max-attributes-per-line': 0
+    'vue/max-attributes-per-line': 0,
+    'vue/no-parsing-error': [2, {
+      "invalid-first-character-of-tag-name": false
+    }]
   }
 }

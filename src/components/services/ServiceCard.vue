@@ -5,18 +5,18 @@
         <h2 class="service-card__title">
           <span>{{ service.name.length > 70? service.name.substring(0, 70) + '...' : service.name }}</span>
         </h2>
-        <div v-if="service.j.duration" class="service-card__subtitle">
+        <div v-if="service.j.duration" class="service-card__subtitle _duration">
           {{ service.j.duration }} мин.
         </div>
-        <div v-if="service.j.price" class="service-card__subtitle">
+        <div v-if="service.j.price" class="service-card__subtitle _price">
           {{ service.j.price }} р.
         </div>
       </div>
     </div>
     <div class="service-card__bottom">
       <div>
-        <div v-if="service.j.employees" class="service-card__info">
-          {{ service.j.employees }} мастеров
+        <div v-if="service.j.employees && service.j.employees.length" class="service-card__info">
+          {{ service.j.employees.length }} мастеров
         </div> <!-- todo добавить склонение слова сотрудников -->
       </div>
       <DeleteButton @click.native.stop="$emit('delete')" />
@@ -32,8 +32,6 @@ export default {
   props: {
     access: { type: Boolean, default: false },
     editMode: { type: Boolean, default: false },
-    employee: { type: String, default: undefined },
-    employeeName: { type: String, default: undefined },
     service: {
       type: Object,
       default: () => {
@@ -84,9 +82,11 @@ export default {
     max-width: 85%;
   }
   &__title {
+    margin-bottom: 10px;
     font-weight: bold;
     font-size: 18px;
     color: #07101C;
+    text-transform: capitalize;
   }
   &__main {
     display: inline-block;
@@ -94,9 +94,18 @@ export default {
     margin-right: 6px;
   }
   &__subtitle {
+    margin-bottom: 9px;
+    padding-left: 20px;
     font-weight: normal;
     font-size: 12px;
     color: #8995AF;
+    
+    &._duration {
+      background: url('../../assets/images/clock.png') left center no-repeat;
+    }
+    &._price {
+      background: url('../../assets/images/rub.png') left center no-repeat;
+    }
   }
   &__info {
     width: 125px;

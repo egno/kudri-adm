@@ -1,7 +1,7 @@
 <template>
   <v-expand-x-transition>
     <div v-show="visible" class="edit-service">
-      <VForm :value="!saveDisabled" class="edit-service__container">
+      <VForm :value="!saveDisabled" class="edit-service__container" @input="$event && (error = '')">
         <button type="button" class="edit-service__close" @click="$emit('close')" />
         <div class="edit-service__content">
           <div class="edit-service__header">
@@ -9,11 +9,17 @@
           </div>
 
           <div class="edit-service__field-block">
-            <VTextField v-model="name" label="НАЗВАНИЕ УСЛУГИ" :rules="[ rules.required, rules.maxLength(150) ]" />
+            <VTextField
+              v-model="name"
+              label="НАЗВАНИЕ УСЛУГИ"
+              :rules="[ rules.required, rules.maxLength(150) ]"
+              @input.native="sliceByLength('name', 150, $event)"
+              @blur="!name && (error = 'Необходимо заполнить все обязательные поля')"
+            />
           </div>
 
           <div class="edit-service__field-block">
-            <VSelect v-model="group" :items="serviceGroups" label="КАТЕГОРИЯ" :rules="[ rules.required ]" />
+            <VSelect v-model="group" :items="serviceGroups" label="КАТЕГОРИЯ" :rules="[ rules.required ]" @blur="!group && (error = 'Необходимо заполнить все обязательные поля')" />
           </div>
 
           <div class="edit-service__field-block">
@@ -73,18 +79,44 @@
             />
           </div>
 
-          <div class="edit-service__field-block">
+          <div class="edit-service__field-block _employees">
             <VSelect
               v-model="selectedEmployees"
               :items="employees"
-              item-text="j.surname"
+              :item-text="employeeFullName"
               multiple
               placeholder="ВЫБЕРИТЕ МАСТЕРОВ"
-            />
+              return-object
+            >
+              <template v-slot:selection="{ item, index }">
+                <div v-if="index === 0">
+                  ВЫБЕРИТЕ МАСТЕРОВ
+                </div>
+              </template>
+            </VSelect>
+            <div>
+              <span v-for="(e, i) in selectedEmployees" :key="e.id">
+                {{ employeeFullName(e) }}{{ (selectedEmployees.length > 1) && (i < selectedEmployees.length - 1) ? ', ' : '' }}
+              </span>
+            </div>
           </div>
 
           <div class="edit-service__field-block">
-            <VTextarea v-model="description" placeholder="ОПИСАНИЕ" counter="1000" rows="1" :auto-grow="true" />
+            <VTextarea
+              v-model="description"
+              placeholder="ОПИСАНИЕ"
+              counter="1000" rows="1"
+              :auto-grow="true"
+              @input.native="sliceByLength('description', 1000, $event)"
+            />
+          </div>
+
+          <div v-if="error" class="edit-service__error">
+            {{ error }}
+          </div>
+
+          <div v-if="errorMessage" class="edit-service__error">
+            {{ errorMessage }}
           </div>
 
           <div class="edit-service__buttons">
@@ -129,6 +161,10 @@
             j: {}
           }
         }
+      },
+      errorMessage: {
+        type: String,
+        default: ''
       }
     },
     data () {
@@ -143,7 +179,11 @@
         rules: {
           required: value => !!value || 'Это поле обязательно для заполнения',
           maxLength: length => (value) => value && (value.length <= length || 'Слишком длинный текст') || true
-        }
+        },
+        employeeFullName (e) {
+          return `${ e.j.name }${ e.j.surname? ' ' + e.j.surname : '' }`
+        },
+        error: ''
       }
     },
     computed: {
@@ -156,6 +196,12 @@
       'service': 'init'
     },
     methods: {
+      sliceByLength (property, length, e) {
+        let val = e.target.value
+        if (val && val.length > length) {
+          this[property] = val.substring(0, length)
+        }
+      },
       init () {
         if (!this.service) {
           this.name = ''
@@ -172,7 +218,7 @@
           price,
           duration,
           description,
-          // selectedEmployees
+          employees
         } = this.service.j
 
         this.name = this.service.name
@@ -181,9 +227,10 @@
         this.price = price || 0
         this.duration = duration || 15
         this.description = description || ''
-        // this.selectedEmployees = selectedEmployees; // todo
+        this.selectedEmployees = employees 
       },
       onSave () {
+        const id = this.service.id
         let {
           name,
           group,
@@ -199,13 +246,14 @@
         }
 
         this.$emit('save', {
+          id,
           name,
           group,
           sex,
           price,
           duration,
           description,
-          selectedEmployees
+          employees: selectedEmployees
         })
       },
     }
@@ -215,8 +263,10 @@
 <style lang="scss">
   @import "../../assets/styles/common";
   %button {
+    display: block;
     height: 56px;
     padding: 0 28px;
+    margin: 0 auto;
     font-family: $roboto;
     font-style: normal;
     font-weight: bold;
@@ -281,10 +331,12 @@
     }
     &__field-block {
       margin-top: 28px;
+      padding-top: 20px;
     }
     input {
       text-align: center;
       padding-bottom: 6px;
+      font-weight: 400;
     }
     .counter input {
       padding-bottom: 0;
@@ -292,12 +344,7 @@
     &__sex {
       display: none;
     }
-    .v-text-field {
-      padding-top: 0;
-    }
-    .v-input {
-      margin-top: 0;
-    }
+
     &__field-name {
       margin-bottom: 14px;
       font-weight: bold;
@@ -326,9 +373,7 @@
       justify-content: center;
       align-items: baseline;
     }
-    .v-label {
-      @extend %placeholder;
-    }
+
     input::placeholder,
     textarea::placeholder {
       @extend %placeholder;
@@ -341,6 +386,7 @@
     }
     &__save {
       @extend %button;
+      width: 240px;
       color: #FFFFFF;
       background: linear-gradient(270deg, #C9A15D -9.86%, #BA9462 103.49%);
       &:hover {
@@ -353,9 +399,20 @@
     &__cancel {
       @extend %button;
       color: #8995AF;
+      margin-top: 40px;
       &:hover {
         color: #07101C;
       }
+    }
+    &__error {
+      margin-top: 14px;
+      font-family: $lato;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: normal;
+      text-align: center;
+      color: #EF4D37;
     }
     .counter {
       width: 122px;
@@ -369,8 +426,20 @@
         }
       }
     }
+    .v-text-field {
+      padding-top: 0;
+    }
+    .v-input {
+      margin-top: 0;
+    }
     .v-messages {
       display: none;
+    }
+    .v-label {
+      @extend %placeholder;
+      &.v-label--active {
+        top: 0;
+      }
     }
     .error--text {
       label {
@@ -382,6 +451,17 @@
     }
     .v-counter {
       color: rgba(137, 149, 175, 0.35);
+    }
+    .v-select__selections>div{
+      text-align: right;
+      justify-content: flex-end;
+      flex-grow: 1;
+    }
+    ._employees .v-select__selections>div{
+      @extend %placeholder;
+    }
+    .v-select__selection {
+      font-size: 14px;
     }
   }
 </style>
