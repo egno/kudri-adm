@@ -15,7 +15,7 @@
     </div>
     <div class="service-card__bottom">
       <div>
-        <div v-if="service.j.employees" class="service-card__info">
+        <div v-if="service.j.employees && service.j.employees.length" class="service-card__info">
           {{ service.j.employees.length }} мастеров
         </div> <!-- todo добавить склонение слова сотрудников -->
       </div>
