@@ -8,18 +8,14 @@
         </div>
 
         <div class="edit-service__field-block _select">
-          <VTextField
-            v-model="name"
-            label="НАЗВАНИЕ УСЛУГИ"
-            :rules="[ rules.required, rules.maxLength(150) ]"
-            @input.native="onInputName"
-            @blur="!name && (error = 'Необходимо заполнить все обязательные поля'); selectNameVisible = false"
-          />
           <SearchSelect
-            :options="suggestedServiceNames"
             :searching-value="name"
-            :visible="selectNameVisible"
-            @select="name = $event; selectNameVisible = false"
+            :options="suggestedServiceNames"
+            :required="true"
+            label="НАЗВАНИЕ УСЛУГИ"
+            @input="onInputName"
+            @select="name = $event"
+            @error="error = $event"
           />
         </div>
 
@@ -92,25 +88,16 @@
         </div>
 
         <div class="edit-service__field-block _employees">
-          <VSelect
+          <v-combobox
             v-model="selectedEmployees"
             :items="employees"
             :item-text="employeeFullName"
             multiple
             placeholder="ВЫБЕРИТЕ МАСТЕРОВ"
             return-object
-          >
-            <template v-slot:selection="{ item, index }">
-              <div v-if="index === 0">
-                ВЫБЕРИТЕ МАСТЕРОВ
-              </div>
-            </template>
-          </VSelect>
-          <div>
-            <span v-for="(e, i) in selectedEmployees" :key="e.id">
-              {{ employeeFullName(e) }}{{ (selectedEmployees.length > 1) && (i < selectedEmployees.length - 1) ? ', ' : '' }}
-            </span>
-          </div>
+            chips
+            deletable-chips
+          />
         </div>
 
         <div class="edit-service__field-block">
@@ -201,7 +188,6 @@
           return `${ e.j.name }${ e.j.surname? ' ' + e.j.surname : '' }`
         },
         error: '',
-        selectNameVisible: false
       }
     },
     computed: {
@@ -223,11 +209,11 @@
       'visible': 'init'
     },
     methods: {
-      sliceByLength (property, length, e) {
-        let val = e.target.value
-
+      sliceByLength (property, length, val) {
         if (val && val.length > length) {
           this[property] = val.substring(0, length)
+        } else {
+          this[property] = val
         }
       },
       init () {
@@ -258,9 +244,8 @@
         this.description = description || ''
         this.selectedEmployees = employees 
       },
-      onInputName (e) {
-        this.sliceByLength('name', 150, e)
-        this.selectNameVisible = true
+      onInputName (val) {
+        this.sliceByLength('name', 150, val)
       },
       onSave () {
         let {
@@ -502,8 +487,18 @@
       justify-content: flex-end;
       flex-grow: 1;
     }
-    ._employees .v-select__selections>div{
-      @extend %placeholder;
+
+    ._employees {
+      .v-select__selections>div {
+        @extend %placeholder;
+      }
+      .filters__item {
+        display: inline-block;
+        width: auto;
+        margin: 0 12px 16px 0;
+        padding: 0 25px 0 12px;
+        background: url('../../assets/images/svg/cross.svg') right center no-repeat rgba(137, 149, 175, 0.1);
+      }
     }
     .v-select__selection {
       font-size: 14px;

@@ -337,16 +337,6 @@ export default {
     }
   }
 
-
-  .filters {
-    display: flex;
-    flex-wrap: wrap;
-    flex-grow: 0;
-    &__item {
-      @extend %filter
-    }
-  }
-
   .filter-results {
     padding-left: 5px;
     &__group-name {
@@ -365,6 +355,14 @@ export default {
     }
   }
 }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    flex-grow: 0;
+    &__item {
+      @extend %filter
+    }
+  }
 
 .v-text-field {
   .v-input--is-focused {
@@ -468,7 +466,9 @@ export default {
     line-height: 24px;
   }
 }
-
+.v-input--selection-controls .v-input__slot {
+  margin-bottom: 0 !important;
+}
 .v-navigation-drawer {
   z-index: 11;
 }
@@ -510,5 +510,42 @@ export default {
   .v-counter {
     order: -1;
     font-size: 14px;
+  }
+  #app .v-list {
+    background-color: rgba(137, 149, 175, 0.1);
+  }
+  .v-list__tile {
+    height: auto;
+    padding: 0;
+    &:hover {
+      background: rgba(137, 149, 175, 0.2);
+    }
+  }
+  .v-list__tile__content {
+    height: auto;
+    padding: 6px 0 5px 32px;
+
+  }
+  .v-list__tile__title {
+    height: auto;
+    color: #8995AF;
+    font-family: Lato, sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: normal;
+  }
+  .v-chip__close .v-icon {
+    color: transparent !important;
+    background: url('./assets/images/svg/cross.svg') center no-repeat transparent;
+    opacity: 1;
+    &:before {
+      width: 20px;
+      height: 20px;
+      content: '';
+    }
+  }
+  .v-select .v-chip {
+    background: rgba(137, 149, 175, 0.1);
   }
 </style>
