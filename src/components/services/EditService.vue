@@ -1,151 +1,149 @@
 <template>
-  <v-expand-x-transition>
-    <div v-show="visible" class="edit-service">
-      <VForm ref="form" :value="!saveDisabled" class="edit-service__container" @input="$event && (error = '')">
-        <button type="button" class="edit-service__close" @click="$emit('close')" />
-        <div class="edit-service__content">
-          <div class="edit-service__header">
-            {{ create? 'Создать услугу' : 'Редактировать услугу' }}
-          </div>
+  <v-dialog :value="visible" content-class="edit-service" transition="slide" @input="$emit('close')">
+    <VForm ref="form" :value="!saveDisabled" class="edit-service__container" @input="$event && (error = '')">
+      <button type="button" class="edit-service__close" @click="$emit('close')" />
+      <div class="edit-service__content">
+        <div class="edit-service__header">
+          {{ create? 'Создать услугу' : 'Редактировать услугу' }}
+        </div>
 
-          <div class="edit-service__field-block _select">
-            <VTextField
-              v-model="name"
-              label="НАЗВАНИЕ УСЛУГИ"
-              :rules="[ rules.required, rules.maxLength(150) ]"
-              @input.native="onInputName"
-              @blur="!name && (error = 'Необходимо заполнить все обязательные поля'); selectNameVisible = false"
-            />
-            <SearchSelect
-              :options="suggestedServiceNames"
-              :searching-value="name"
-              :visible="selectNameVisible"
-              @select="name = $event; selectNameVisible = false"
-            />
-          </div>
+        <div class="edit-service__field-block _select">
+          <VTextField
+            v-model="name"
+            label="НАЗВАНИЕ УСЛУГИ"
+            :rules="[ rules.required, rules.maxLength(150) ]"
+            @input.native="onInputName"
+            @blur="!name && (error = 'Необходимо заполнить все обязательные поля'); selectNameVisible = false"
+          />
+          <SearchSelect
+            :options="suggestedServiceNames"
+            :searching-value="name"
+            :visible="selectNameVisible"
+            @select="name = $event; selectNameVisible = false"
+          />
+        </div>
 
-          <div class="edit-service__field-block">
-            <VSelect
-              v-model="group"
-              :items="serviceGroups"
-              :item-text="servGr => servGr.name"
-              label="КАТЕГОРИЯ"
-              :rules="[ rules.required ]"
-              @blur="!group && (error = 'Необходимо заполнить все обязательные поля')"
-            />
-          </div>
+        <div class="edit-service__field-block">
+          <VSelect
+            v-model="group"
+            :items="serviceGroups"
+            :item-text="servGr => servGr.name"
+            label="КАТЕГОРИЯ"
+            :rules="[ rules.required ]"
+            @blur="!group && (error = 'Необходимо заполнить все обязательные поля')"
+          />
+        </div>
 
-          <div class="edit-service__field-block">
-            <div class="edit-service__field-name">
-              Пол
+        <div class="edit-service__field-block">
+          <div class="edit-service__field-name">
+            Пол
+          </div>
+          <input
+            :id="create? 'male' : 'male2'"
+            v-model="sex"
+            type="checkbox"
+            value="male"
+            class="filters__item edit-service__sex"
+          >
+          <label :for="create? 'male' : 'male2'" class="edit-service__sex-label">Муж</label>
+          <input
+            :id="create? 'female' : 'female2'"
+            v-model="sex"
+            type="checkbox"
+            value="female"
+            class="filters__item edit-service__sex"
+          >
+          <label :for="create? 'female' : 'female2'" class="edit-service__sex-label">Жен</label>
+          <input
+            :id="create? 'child' : 'child2'"
+            v-model="sex"
+            type="checkbox"
+            value="child"
+            class="filters__item edit-service__sex"
+          >
+          <label :for="create? 'child' : 'child2'" class="edit-service__sex-label">Дети</label>
+        </div>
+
+        <div class="edit-service__field-block">
+          <div class="edit-service__field-name">
+            Цена
+          </div>
+          <div class="edit-service__row">
+            <div class="edit-service__from">
+              от
             </div>
-            <input
-              :id="create? 'male' : 'male2'"
-              v-model="sex"
-              type="checkbox"
-              value="male"
-              class="filters__item edit-service__sex"
-            >
-            <label :for="create? 'male' : 'male2'" class="edit-service__sex-label">Муж</label>
-            <input
-              :id="create? 'female' : 'female2'"
-              v-model="sex"
-              type="checkbox"
-              value="female"
-              class="filters__item edit-service__sex"
-            >
-            <label :for="create? 'female' : 'female2'" class="edit-service__sex-label">Жен</label>
-            <input
-              :id="create? 'child' : 'child2'"
-              v-model="sex"
-              type="checkbox"
-              value="child"
-              class="filters__item edit-service__sex"
-            >
-            <label :for="create? 'child' : 'child2'" class="edit-service__sex-label">Дети</label>
-          </div>
-
-          <div class="edit-service__field-block">
-            <div class="edit-service__field-name">
-              Цена
-            </div>
-            <div class="edit-service__row">
-              <div class="edit-service__from">
-                от
-              </div>
-              <VTextField v-model="price" mask="#####" class="edit-service__price" />
-            </div>
-          </div>
-
-          <div class="edit-service__field-block">
-            <div class="edit-service__field-name">
-              Длительность (мин)
-            </div>
-            <Counter
-              id="create? 'create-service-duration': 'edit-service-duration'"
-              :value="duration"
-              :min-value="15"
-              :max-value="720"
-              :interval="15"
-              :class="{ _invalid: duration < 15 }"
-              @changeCount="duration = $event"
-            />
-          </div>
-
-          <div class="edit-service__field-block _employees">
-            <VSelect
-              v-model="selectedEmployees"
-              :items="employees"
-              :item-text="employeeFullName"
-              multiple
-              placeholder="ВЫБЕРИТЕ МАСТЕРОВ"
-              return-object
-            >
-              <template v-slot:selection="{ item, index }">
-                <div v-if="index === 0">
-                  ВЫБЕРИТЕ МАСТЕРОВ
-                </div>
-              </template>
-            </VSelect>
-            <div>
-              <span v-for="(e, i) in selectedEmployees" :key="e.id">
-                {{ employeeFullName(e) }}{{ (selectedEmployees.length > 1) && (i < selectedEmployees.length - 1) ? ', ' : '' }}
-              </span>
-            </div>
-          </div>
-
-          <div class="edit-service__field-block">
-            <VTextarea
-              v-model="description"
-              placeholder="ОПИСАНИЕ"
-              counter="1000" rows="1"
-              :auto-grow="true"
-              @input.native="sliceByLength('description', 1000, $event)"
-            />
-          </div>
-
-          <div v-if="error" class="edit-service__error">
-            {{ error }}
-          </div>
-
-          <div v-if="errorMessage" class="edit-service__error">
-            {{ errorMessage }}
-          </div>
-
-          <div class="edit-service__buttons">
-            <button type="button" class="edit-service__save" :class="{ _disabled: saveDisabled }" @click="onSave">
-              Сохранить
-            </button>
-            <template v-if="!create">
-              <button type="button" class="edit-service__cancel" @click="$emit('close')">
-                Отмена
-              </button>
-            </template>
+            <VTextField v-model="price" mask="#####" class="edit-service__price" />
           </div>
         </div>
-      </VForm>
-    </div>
-  </v-expand-x-transition>
+
+        <div class="edit-service__field-block">
+          <div class="edit-service__field-name">
+            Длительность (мин)
+          </div>
+          <Counter
+            id="create? 'create-service-duration': 'edit-service-duration'"
+            :value="duration"
+            :min-value="15"
+            :max-value="720"
+            :interval="15"
+            :class="{ _invalid: duration < 15 }"
+            @changeCount="duration = $event"
+          />
+        </div>
+
+        <div class="edit-service__field-block _employees">
+          <VSelect
+            v-model="selectedEmployees"
+            :items="employees"
+            :item-text="employeeFullName"
+            multiple
+            placeholder="ВЫБЕРИТЕ МАСТЕРОВ"
+            return-object
+          >
+            <template v-slot:selection="{ item, index }">
+              <div v-if="index === 0">
+                ВЫБЕРИТЕ МАСТЕРОВ
+              </div>
+            </template>
+          </VSelect>
+          <div>
+            <span v-for="(e, i) in selectedEmployees" :key="e.id">
+              {{ employeeFullName(e) }}{{ (selectedEmployees.length > 1) && (i < selectedEmployees.length - 1) ? ', ' : '' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="edit-service__field-block">
+          <VTextarea
+            v-model="description"
+            placeholder="ОПИСАНИЕ"
+            counter="1000" rows="1"
+            :auto-grow="true"
+            @input.native="sliceByLength('description', 1000, $event)"
+          />
+        </div>
+
+        <div v-if="error" class="edit-service__error">
+          {{ error }}
+        </div>
+
+        <div v-if="errorMessage" class="edit-service__error">
+          {{ errorMessage }}
+        </div>
+
+        <div class="edit-service__buttons">
+          <button type="button" class="edit-service__save" :class="{ _disabled: saveDisabled }" @click="onSave">
+            Сохранить
+          </button>
+          <template v-if="!create">
+            <button type="button" class="edit-service__cancel" @click="$emit('close')">
+              Отмена
+            </button>
+          </template>
+        </div>
+      </div>
+    </VForm>
+  </v-dialog>
 </template>
 
 <script>
@@ -295,6 +293,11 @@
 
 <style lang="scss">
   @import "../../assets/styles/common";
+
+  .slide-enter, .slide-leave-to {
+    right: -440px !important;
+  }
+
   %button {
     display: block;
     height: 56px;
@@ -326,18 +329,24 @@
 
   .edit-service {
     position: fixed;
-    right: 0;
+    right: -400px;
     margin: 0;
     top: 0;
     bottom: 0;
     width: 100%;
     max-width: 440px;
     height: 100vh;
+    max-height: 100vh !important;
     background-color: #fff;
     text-align: center;
     font-family: $lato;
     z-index: 1000;
     overflow-y: auto;
+    transition: right 0.3s linear;
+
+    &.v-dialog--active {
+      right: 0;
+    }
 
     &__container {
       position: relative;
