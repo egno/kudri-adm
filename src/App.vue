@@ -511,30 +511,6 @@ export default {
     order: -1;
     font-size: 14px;
   }
-  #app .v-list {
-    background-color: rgba(137, 149, 175, 0.1);
-  }
-  .v-list__tile {
-    height: auto;
-    padding: 0;
-    &:hover {
-      background: rgba(137, 149, 175, 0.2);
-    }
-  }
-  .v-list__tile__content {
-    height: auto;
-    padding: 6px 0 5px 32px;
-
-  }
-  .v-list__tile__title {
-    height: auto;
-    color: #8995AF;
-    font-family: Lato, sans-serif;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 14px;
-    line-height: normal;
-  }
   .v-chip__close .v-icon {
     color: transparent !important;
     background: url('./assets/images/svg/cross.svg') center no-repeat transparent;

@@ -19,13 +19,14 @@
           />
         </div>
 
-        <div class="edit-service__field-block">
+        <div class="edit-service__field-block _groups">
           <VSelect
             v-model="group"
             :items="serviceGroups"
             :item-text="servGr => servGr.name"
             label="КАТЕГОРИЯ"
             :rules="[ rules.required ]"
+            :attach="'.edit-service__field-block._groups'"
             @blur="!group && (error = 'Необходимо заполнить все обязательные поля')"
           />
         </div>
@@ -97,6 +98,7 @@
             return-object
             chips
             deletable-chips
+            :attach="'.edit-service__field-block._employees'"
           />
         </div>
 
@@ -489,6 +491,7 @@
     }
 
     ._employees {
+      position: relative;
       .v-select__selections>div {
         @extend %placeholder;
       }
@@ -499,9 +502,44 @@
         padding: 0 25px 0 12px;
         background: url('../../assets/images/svg/cross.svg') right center no-repeat rgba(137, 149, 175, 0.1);
       }
+      .v-menu__content {
+        top: 63px !important;
+      }
+    }
+    ._groups {
+      position: relative;
+      .v-menu__content {
+        top: 28px !important;
+      }
     }
     .v-select__selection {
       font-size: 14px;
     }
+
+    .v-list {
+      background-color: rgba(137, 149, 175, 0.1);
+    }
+    .v-list__tile {
+      height: auto;
+      padding: 0;
+      &:hover {
+        background: rgba(137, 149, 175, 0.2);
+      }
+    }
+    .v-list__tile__content {
+      height: auto;
+      padding: 6px 0 5px 32px;
+
+    }
+    .v-list__tile__title {
+      height: auto;
+      color: #8995AF;
+      font-family: Lato, sans-serif;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: normal;
+    }
+
   }
 </style>
