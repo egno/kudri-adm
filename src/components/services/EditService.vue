@@ -1,7 +1,7 @@
 <template>
-  <v-dialog :id="create? 'create': 'edit'" :value="visible" content-class="edit-service" transition="slide" @input="$emit('close')">
+  <v-dialog :value="visible" :content-class="`edit-service ${create? 'create': 'edit'}`" persistent transition="slide" @input="onClose">
     <VForm ref="form" :value="!saveDisabled" class="edit-service__container" @input="$event && (error = '')">
-      <button type="button" class="edit-service__close" @click="$emit('close')" />
+      <button type="button" class="edit-service__close" @click="onClose" />
       <div class="edit-service__content">
         <div class="edit-service__header">
           {{ create? 'Создать услугу' : 'Редактировать услугу' }}
@@ -12,6 +12,7 @@
             :searching-value="name"
             :options="suggestedServiceNames"
             :required="true"
+            :max-length="150"
             label="НАЗВАНИЕ УСЛУГИ"
             @input="onInputName"
             @select="name = $event"
@@ -26,7 +27,7 @@
             :item-text="servGr => servGr.name"
             label="КАТЕГОРИЯ"
             :rules="[ rules.required ]"
-            :attach="create? '#create .edit-service__field-block._groups' : '#edit .edit-service__field-block._groups'"
+            :attach="create? '.create .edit-service__field-block._groups' : '.edit .edit-service__field-block._groups'"
             @blur="!group && (error = 'Необходимо заполнить все обязательные поля')"
           />
         </div>
@@ -69,7 +70,7 @@
             <div class="edit-service__from">
               от
             </div>
-            <VTextField v-model="price" mask="#####" class="edit-service__price" />
+            <VTextField v-model="price" mask="#####" placeholder="0" class="edit-service__price" />
           </div>
         </div>
 
@@ -98,7 +99,7 @@
             return-object
             chips
             deletable-chips
-            :attach="create?'#create .edit-service__field-block._employees': '#edit .edit-service__field-block._employees'"
+            :attach="create?'.create .edit-service__field-block._employees': '.edit .edit-service__field-block._employees'"
           />
         </div>
 
@@ -125,7 +126,7 @@
             Сохранить
           </button>
           <template v-if="!create">
-            <button type="button" class="edit-service__cancel" @click="$emit('close')">
+            <button type="button" class="edit-service__cancel" @click="onClose">
               Отмена
             </button>
           </template>
@@ -139,11 +140,16 @@
   import { mapState, mapGetters } from 'vuex'
   import Counter from '@/components/common/Counter'
   import SearchSelect from '@/components/common/SearchSelect.vue'
+  import { isEqual } from 'lodash'
 
   export default {
     components: {
       SearchSelect,
       Counter
+    },
+    model: {
+      prop: 'visible',
+      event: 'close'
     },
     props: {
       visible: {
@@ -218,14 +224,43 @@
           this[property] = val
         }
       },
+      hasDiff () {
+        if (!this.service || !this.service.j) {
+          return (this.name || this.group || this.sex.length ||
+            Number(this.price) || this.duration !== 15 ||
+            this.selectedEmployees.length || this.description)
+        }
+
+        let {
+          group,
+          sex,
+          price,
+          duration,
+          description,
+          employees
+        } = this.service.j
+
+        if (!isEqual(this.sex.sort(), sex.slice().sort()))
+          return true
+        if (!isEqual(this.selectedEmployees.sort(), employees.slice().sort()))
+          return true
+
+        return this.name !== this.service.name || this.group !== group ||
+          Number(this.price) !== Number(price) || this.duration !== duration ||
+          this.description !== description
+      },
       init () {
-        this.$refs.form.reset()
+        if (this.$refs.form) {
+          this.$refs.form.reset()
+        }
+
         if (!this.service || !this.service.j) {
           this.name = ''
           this.group = ''
           this.sex = []
-          this.price = 0
+          this.price = ''
           this.duration = 15
+          this.selectedEmployees = []
           this.description = ''
           return
         }
@@ -241,15 +276,24 @@
         this.name = this.service.name
         this.group = group
         this.sex = sex || []
-        this.price = price || 0
+        this.price = price || ''
         this.duration = duration || 15
         this.description = description || ''
         this.selectedEmployees = employees 
+      },
+      onClose () {
+        this.$emit('close', {
+          hasDiff: this.hasDiff(),
+          service: this.prepareNewService()
+        })
       },
       onInputName (val) {
         this.sliceByLength('name', 150, val)
       },
       onSave () {
+        this.$emit('save', this.prepareNewService())
+      },
+      prepareNewService () {
         let {
           name,
           group,
@@ -264,7 +308,7 @@
           sex = ['male', 'female', 'child']
         }
 
-        this.$emit('save', {
+        return {
           name,
           group,
           sex,
@@ -272,7 +316,7 @@
           duration,
           description,
           employees: selectedEmployees
-        })
+        }
       },
     }
   }
@@ -369,6 +413,9 @@
       text-align: center;
       padding-bottom: 6px;
       font-weight: 400;
+      &::placeholder {
+        font-size: 14px;
+      }
     }
     .counter input {
       padding-bottom: 0;
@@ -390,12 +437,9 @@
       margin-bottom: 15px;
     }
     &__from {
-      @extend .edit-service__sex-label;
       margin-right: 19px;
       margin-bottom: 0;
-      &::first-letter {
-        text-transform: none;
-      }
+      font-weight: bold;
     }
     input[type="checkbox"]:checked + label {
       @extend %filter-active
@@ -414,7 +458,7 @@
       max-width: 140px;
     }
     &__buttons {
-      margin-top: 31px;
+      margin-top: 15px;
     }
     &__save {
       @extend %button;
@@ -437,7 +481,8 @@
       }
     }
     &__error {
-      margin-top: 14px;
+      width: 80%;
+      margin: 29px auto 0;
       font-family: $lato;
       font-style: normal;
       font-weight: normal;

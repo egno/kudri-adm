@@ -43,12 +43,9 @@ export default {
   computed: {
     ...mapGetters(['serviceGroups']),
     image () {
-      if (!this.service.j || !this.service.j.groupImg) {
-        const group = this.serviceGroups.find(gr => gr.name === this.service.j.group)
+      const group = this.serviceGroups.find(gr => gr.name === this.service.j.group)
 
-        return group && group.j && group.j.image
-      }
-      return this.service.j.groupImg
+      return group && group.j && group.j.image
     }
   }
 }

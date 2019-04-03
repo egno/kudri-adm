@@ -1,5 +1,5 @@
 <template>
-  <VDialog :value="visible" max-width="440px">
+  <VDialog :value="visible" max-width="440px" persistent>
     <div class="uno-modal">
       <button type="button" class="uno-modal__close" @click="$emit('close')" />
       <div class="uno-modal__content">
@@ -44,9 +44,12 @@
 <style lang="scss">
   .uno-modal {
     position: relative;
-    padding: 59px 62px 56px;
+    padding: 30px 30px 25px;
     background-color: #fff;
     text-align: center;
+    @media only screen and (min-width : 1160px) {
+      padding: 59px 62px 56px;
+    }
     &__close {
       position: absolute;
       top: 21px;
@@ -81,8 +84,9 @@
       justify-content: space-between;
       margin-top: 36px;
       button {
+        min-width: 130px;
         height: 56px;
-        padding: 0 28px;
+        padding: 0 14px;
         font-family: Roboto Slab;
         font-style: normal;
         font-weight: bold;
@@ -92,6 +96,9 @@
         text-transform: uppercase;
         transition: background-color 0.4s 0s, color 0.4s 0s;
         outline: none;
+        @media only screen and (min-width : 1160px) {
+          padding: 0 28px;
+        }
       }
     }
 

@@ -38,7 +38,7 @@
         :branch-id="id"
         :create="true"
         :error-message="errorMessage"
-        @close="showCreate = false"
+        @close="onClose"
         @save="createService"
       />
       <EditService
@@ -47,7 +47,7 @@
         :create="false"
         :service="editingService"
         :error-message="errorMessage"
-        @close="showEdit = false; editingService = null"
+        @close="onClose"
         @save="editService"
       />
       <Modal
@@ -66,6 +66,19 @@
           </div>
           <div v-else class="uno-modal__text">
             Это приведет к удалению услуги.
+          </div>
+        </template>
+      </Modal>
+      <Modal
+        :visible="showSave"
+        :template="saveModalTemplate"
+        @rightButtonClick="closeWithoutSaving"
+        @leftButtonClick="showSave = false"
+        @close="showSave = false"
+      >
+        <template slot="text">
+          <div class="uno-modal__text">
+            {{ saveModalTemplate.text }}
           </div>
         </template>
       </Modal>
@@ -101,9 +114,16 @@ export default {
       showCreate: false,
       showEdit: false,
       showDelete: false,
+      showSave: false,
       editingService: undefined,
       deletingService: undefined,
-      errorMessage: ''
+      errorMessage: '',
+      saveModalTemplate: {
+        header: 'Данные были изменены.',
+        text: `Выйти без сохранения?`,
+        leftButton: 'ОТМЕНА',
+        rightButton: 'ДА'
+      }
     }
   },
   computed: {
@@ -175,19 +195,20 @@ export default {
   },
   methods: {
     ...mapActions(['setActions', 'loadBusinessServices']),
+    closeWithoutSaving () {
+      this.showCreate = false
+      this.showEdit = false
+      this.editingService = null
+      this.newService = null
+    },
     createService (newService) {
       this.errorMessage = ''
-      const group = this.serviceGroups.find(gr => gr.name === newService.group)
-      let groupImg
-
-      group && group.j && (groupImg = group.j.image)
 
       Api().post(`business_service`, {
         business_id: this.id,
         name: newService.name,
         j: {
           ...newService,
-          groupImg
         }
       })
         .then(() => {
@@ -244,6 +265,16 @@ export default {
     onAction (payload) {
       if (payload === this.formActions[0].action) {
         this.showCreate = true
+      }
+    },
+    onClose ({ hasDiff }) {
+      if (hasDiff) {
+        this.showSave = true
+      } else {
+        this.showCreate = false
+        this.showEdit = false
+        this.editingService = null
+        this.newService = null
       }
     },
     showEditPanel (service) {

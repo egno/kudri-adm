@@ -6,6 +6,7 @@
       :rules="required? [ rules.required, rules.maxLength(maxLength) ] : [ rules.maxLength(maxLength) ]"
       @input.native="onInput"
       @blur="visible = false; required && !searchingValue && $emit('error', 'Необходимо заполнить все обязательные поля')"
+      @update:error="!$event && $emit('error', 'Слишком длинный текст')"
     />
     <div v-if="visible && filteredOptions && filteredOptions.length" class="custom-select__dropdown">
       <div
