@@ -35,6 +35,7 @@
       </template>
       <EditService
         :visible="showCreate"
+        :branch-id="id"
         :create="true"
         :error-message="errorMessage"
         @close="showCreate = false"
@@ -42,6 +43,7 @@
       />
       <EditService
         :visible="showEdit"
+        :branch-id="id"
         :create="false"
         :service="editingService"
         :error-message="errorMessage"

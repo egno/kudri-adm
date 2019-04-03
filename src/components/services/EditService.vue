@@ -164,6 +164,11 @@
         default: false,
         required: true
       },
+      branchId: {
+        type: String,
+        default: '',
+        required: true,
+      },
       create: {
         type: Boolean,
         default: false,
@@ -208,7 +213,11 @@
         return !this.name || !this.group || !this.duration
       },
       suggestedServiceNames () {
-        return [...new Set(this.serviceList.map(s => s.name).concat(this.businessServices.map(s => s.name)))]
+        const base = this.serviceList.map(s => s.name)
+        const company = this.businessServices.map(s => s.name)
+        const branch = this.businessServices.filter(s => s.business_id === this.branchId).map(s => s.name)
+
+        return [...new Set(base.concat(company))].filter(name => !branch.includes(name))
       }
     },
     watch: {
