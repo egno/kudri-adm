@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="visible" content-class="edit-service" transition="slide" @input="$emit('close')">
+  <v-dialog :id="create? 'create': 'edit'" :value="visible" content-class="edit-service" transition="slide" @input="$emit('close')">
     <VForm ref="form" :value="!saveDisabled" class="edit-service__container" @input="$event && (error = '')">
       <button type="button" class="edit-service__close" @click="$emit('close')" />
       <div class="edit-service__content">
@@ -26,7 +26,7 @@
             :item-text="servGr => servGr.name"
             label="КАТЕГОРИЯ"
             :rules="[ rules.required ]"
-            :attach="'.edit-service__field-block._groups'"
+            :attach="create? '#create .edit-service__field-block._groups' : '#edit .edit-service__field-block._groups'"
             @blur="!group && (error = 'Необходимо заполнить все обязательные поля')"
           />
         </div>
@@ -98,7 +98,7 @@
             return-object
             chips
             deletable-chips
-            :attach="'.edit-service__field-block._employees'"
+            :attach="create?'#create .edit-service__field-block._employees': '#edit .edit-service__field-block._employees'"
           />
         </div>
 
@@ -503,13 +503,13 @@
         background: url('../../assets/images/svg/cross.svg') right center no-repeat rgba(137, 149, 175, 0.1);
       }
       .v-menu__content {
-        top: 63px !important;
+        top: 100% !important;
       }
     }
     ._groups {
       position: relative;
       .v-menu__content {
-        top: 28px !important;
+        top: 100% !important;
       }
     }
     .v-select__selection {
