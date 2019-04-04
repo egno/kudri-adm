@@ -90,47 +90,53 @@ export default {
   .calendar-btn {
     width: 20px;
     height: 20px;
-    font-size: 11px;
-  }
-  .v-btn--block {
-    color: #fff;
-    margin: 2px 0!important;
-    line-height: 11px;
-    &.weekend {
-      &.red--text {
-        color: #8995AF!important;
-      }
+    font-size: 12px;
+    font-weight: 300;
+    border: none;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.3);
     }
-    &.red--text {
-      color: #8995AF!important;
-    }
-    &.grey--text {
-      color: #D6DAE3!important;
-    }
-    /*цвет для выходного для*/
-    &.v-btn--no-working {
-      color: #8995AF;
-    }
-    &.v-btn--outline {
-      background: #fff!important;
-      color: #142941;
-      font-weight: bold;
-      &.badge {
-        &:after {
-          top: 20px;
+
+    &.v-btn--block {
+      color: #fff;
+      margin: 2px 0 !important;
+      line-height: 11px;
+      &.weekend {
+        &.red--text {
+          color: #8995AF !important;
         }
       }
-    }
-    &.badge {
-      position: relative;
-      &:after {
-        content: '';
-        position: absolute;
-        width: 4px;
-        height: 4px;
-        border-radius: 4px;
-        top: 16px;
-        background: #5699FF;
+      &.red--text {
+        color: #8995AF !important;
+      }
+      &.grey--text {
+        color: rgba(137, 149, 175, 0.35) !important;
+      }
+      /*цвет для выходного для*/
+      &.v-btn--no-working {
+        color: #8995AF;
+      }
+      &.v-btn--outline {
+        background: #fff !important;
+        color: #142941;
+        font-weight: bold;
+        &.badge {
+          &:after {
+            top: 20px;
+          }
+        }
+      }
+      &.badge {
+        position: relative;
+        &:after {
+          content: '';
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          border-radius: 4px;
+          top: 16px;
+          background: #5699FF;
+        }
       }
     }
   }

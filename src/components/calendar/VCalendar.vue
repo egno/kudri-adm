@@ -5,7 +5,6 @@
   >
     <VFlex
       v-if="showHeader"
-      px-2
       class="month-header"
     >
       <VLayout
@@ -43,7 +42,7 @@
       </VLayout>
     </VFlex>
     <VFlex v-if="dates">
-      <VContainer py-1>
+      <VContainer class="calendar-container">
         <VLayout
           v-if="period==='month'"
           align-space-between
@@ -494,7 +493,7 @@ export default {
   font-style: normal;
   font-weight: normal;
   line-height: normal;
-  font-size: 11px;
+  font-size: 12px;
   text-align: center;
   color: #fff;
   text-transform: capitalize;
@@ -504,12 +503,15 @@ export default {
   }
 }
 .month-header {
+  display: flex;
+  align-items: center;
+  padding: 0 38px 0 40px;
   background: linear-gradient(270deg, #c9a15d -9.86%, #ba9462 103.49%);
   height: 40px;
 }
 .week-wrapper {
   width: 160px;
-  margin: 0 auto;
+  margin: 2px auto;
   &.dow {
     margin-top: 14px;
     margin-bottom: 6px;
@@ -519,6 +521,9 @@ export default {
   padding-bottom: 22px;
   border-bottom: 1px solid rgba(137, 149, 175, 0.2);
   margin-bottom: 30px;
+}
+.calendar-container {
+  padding: 4px 40px;
 }
 .cal-month {
   width: 160px;
@@ -530,20 +535,22 @@ export default {
   color: #fff;
 }
 .cal-next-prev {
+  position: relative;
   margin: 0;
+  padding: 0;
   width: 16px;
-  max-width: 16px;
   min-width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  &:hover {
+    background-color: rgba(255,255,255,0.3);
+  }
+  i {
+    font-size: 16px;
+  }
+
   .v-ripple__container {
     display: none !important;
-  }
-  &:before {
-    border-radius: 50px;
-    width: 16px;
-    min-width: 16px;
-    height: 16px;
-    top: 6px;
-    left: 0px;
   }
 }
 </style>

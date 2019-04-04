@@ -16,15 +16,13 @@
       height="55"
       class="pa-0"
     >
-      <VList class="px-3">
+      <VList class="logo-wrap">
         <v-list-tile-content>
           <v-list-tile-title
             overflow-hidden
             @click="goHome()"
           >
-            <span class="title">
-              {{ defaultAppTitle }}
-            </span>
+            <div class="logo" />
           </v-list-tile-title>
         </v-list-tile-content>
       </VList>
@@ -98,7 +96,6 @@ export default {
       'businessIsSalon',
       'businessClientCount',
       'businessServiceCount',
-      'defaultAppTitle',
       'employeeCount',
       'loggedIn',
       'navigationMini',
@@ -344,6 +341,12 @@ export default {
 .v-toolbar.theme--dark {
   background-color: var(--v-secondary-base);
 }
+.navigation.theme--dark {
+  background: linear-gradient(180deg, #333C54 0.06%, #4A5D6D 85.63%);
+  &.v-navigation-drawer .v-list {
+    background: transparent;
+  }
+}
 .title-action {
   position: absolute;
   right: 0;
@@ -352,5 +355,13 @@ export default {
 }
 .blind {
   opacity: 0.2;
+}
+.logo-wrap {
+  padding: 0 40px;
+}
+.logo {
+  width: 73px;
+  height: 24px;
+  background: url('./../assets/images/svg/uno_full.svg') center/contain no-repeat;
 }
 </style>
