@@ -148,6 +148,15 @@ export default {
     menu () {
       return [
         {
+          title: 'Информация',
+          count: undefined,
+          route: {
+            name: 'businessCard',
+            params: { id: this.businessLink }
+          },
+          show: this.loggedIn && !this.isManagerMenu
+        },
+        {
           title: 'Мои компании',
           icon: 'business',
           route: { name: 'myBusinessList' },
@@ -160,15 +169,30 @@ export default {
           show: !this.loggedIn || this.isManagerMenu
         },
         {
-          title: 'Журнал записи',
+          title: 'Филиалы',
+          count: this.filialsCount,
           route: {
-            name: 'businessVisit',
-            params: { id: this.businessId, date: this.date }
+            name: 'businessCardFilal',
+            params: { id: this.businessLink }
+          },
+          show: this.loggedIn && !this.isManagerMenu && this.businessIsSalon,
+          action: {
+            label: 'Добавить филиал',
+            action: 'newFilial',
+            default: true
+          }
+        },
+        {
+          title: 'Услуги',
+          count: this.businessServiceCount,
+          route: {
+            name: 'services',
+            params: { id: this.businessLink }
           },
           show: this.loggedIn && !this.isManagerMenu,
           action: {
-            label: 'Добавить запись',
-            action: 'newVisit',
+            label: 'Добавить услугу',
+            action: 'newService',
             default: true
           }
         },
@@ -191,18 +215,13 @@ export default {
           }
         },
         {
-          title: 'Услуги',
-          count: this.businessServiceCount,
+          title: 'Галерея',
+          count: null,
           route: {
-            name: 'services',
+            name: 'companyGallery',
             params: { id: this.businessLink }
           },
-          show: this.loggedIn && !this.isManagerMenu,
-          action: {
-            label: 'Добавить услугу',
-            action: 'newService',
-            default: true
-          }
+          show: this.loggedIn && !this.isManagerMenu
         },
         {
           title: 'Клиенты',
@@ -223,39 +242,20 @@ export default {
           }
         },
         {
-          title: 'Филиалы',
-          count: this.filialsCount,
+          title: 'Журнал записи',
           route: {
-            name: 'businessCardFilal',
-            params: { id: this.businessLink }
+            name: 'businessVisit',
+            params: { id: this.businessId, date: this.date }
           },
-          show: this.loggedIn && !this.isManagerMenu && this.businessIsSalon,
+          show: this.loggedIn && !this.isManagerMenu,
           action: {
-            label: 'Добавить филиал',
-            action: 'newFilial',
+            label: 'Добавить запись',
+            action: 'newVisit',
             default: true
           }
         },
         {
-          title: 'Информация',
-          count: undefined,
-          route: {
-            name: 'businessCard',
-            params: { id: this.businessLink }
-          },
-          show: this.loggedIn && !this.isManagerMenu
-        },
-        {
-          title: 'Галерея',
-          count: null,
-          route: {
-            name: 'companyGallery',
-            params: { id: this.businessLink }
-          },
-          show: this.loggedIn && !this.isManagerMenu
-        },
-        {
-          title: 'Настройки',
+          title: 'SMS уведомления',
           count: undefined,
           route: {
             name: 'businessSettings',
