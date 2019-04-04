@@ -115,10 +115,10 @@ export default {
     color: #8995AF;
     
     &._duration {
-      background: url('../../assets/images/clock.png') left center no-repeat;
+      background: url('../../assets/images/svg/clock_opacity_1.svg') left center no-repeat;
     }
     &._price {
-      background: url('../../assets/images/rub.png') left center no-repeat;
+      background: url('../../assets/images/svg/rub.svg') 3px center no-repeat;
     }
   }
   &__info {

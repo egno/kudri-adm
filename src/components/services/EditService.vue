@@ -435,6 +435,16 @@
         margin-bottom: 0;
       }
     }
+    & &__field-block .v-input__control > .v-input__slot:before {
+      border-color: #8995af;
+    }
+    & .error--text .v-input__control > .v-input__slot:before {
+      border-color: currentColor;
+    }
+    textarea {
+      font-weight: 400;
+      text-align: center;
+    }
     input {
       text-align: center;
       padding-bottom: 6px;
@@ -457,12 +467,12 @@
       display: inline-block;
       height: 28px;
       padding: 0 12px;
-      margin-bottom: 15px;
+      margin: 0 12px 15px;
     }
     &__from {
       margin-right: 19px;
       margin-bottom: 0;
-      font-weight: bold;
+      font-weight: 400;
     }
     input[type="checkbox"]:checked + label {
       @extend %filter-active
@@ -588,7 +598,9 @@
     .v-select__selection {
       font-size: 14px;
     }
-
+    .v-select--chips .v-select__selections {
+      min-height: auto;
+    }
     .v-list {
       background-color: rgba(137, 149, 175, 0.1);
     }

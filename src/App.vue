@@ -290,6 +290,11 @@ export default {
     .v-input__append-inner {
       position: absolute;
       right: 0;
+      top: 0;
+      bottom: 0;
+      margin-top: -2px;
+      display: flex;
+      align-items: center;
       .mdi-menu-down:before {
         content: '';
         width: 10px;
@@ -300,9 +305,6 @@ export default {
   }
   .v-input__slot {
     margin-bottom: 3px;
-    &:before {
-      border-color: #8995af;
-    }
   }
   .title {
     font-size: 18px !important;
@@ -482,6 +484,7 @@ export default {
 .v-input--selection-controls .v-input__slot {
   margin-bottom: 0 !important;
 }
+
 .v-navigation-drawer {
   z-index: 11;
 }
