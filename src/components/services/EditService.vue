@@ -109,7 +109,7 @@
             placeholder="ОПИСАНИЕ"
             counter="1000" rows="1"
             :auto-grow="true"
-            @input.native="sliceByLength('description', 1000, $event)"
+            @input.native="sliceByLength('description', 1000, $event.target.value)"
           />
         </div>
 
@@ -218,7 +218,10 @@
     },
     methods: {
       sliceByLength (property, length, val) {
-        if (val && val.length > length) {
+        if (!val) {
+          return
+        }
+        if (val.length > length) {
           this[property] = val.substring(0, length)
         } else {
           this[property] = val
