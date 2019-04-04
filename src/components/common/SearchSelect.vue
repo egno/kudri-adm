@@ -1,12 +1,12 @@
 <template>
   <div class="custom-select">
     <VTextField
+      ref="textfield"
       :value="searchingValue"
       :label="label"
       :rules="required? [ rules.required, rules.maxLength(maxLength) ] : [ rules.maxLength(maxLength) ]"
       @input.native="onInput"
       @blur="visible = false; required && !searchingValue && $emit('error', 'Необходимо заполнить все обязательные поля')"
-      @update:error="!$event && $emit('error', 'Слишком длинный текст')"
     />
     <div v-if="visible && filteredOptions && filteredOptions.length" class="custom-select__dropdown">
       <div
@@ -74,6 +74,9 @@
       onInput (e) {
         this.visible = true
         this.$emit('input',  e.target.value)
+        if (this.$refs.textfield.errorBucket.length) {
+          this.$emit('error', this.$refs.textfield.errorBucket[0])
+        }
       },
       select (option) {
         this.$emit('select', option)

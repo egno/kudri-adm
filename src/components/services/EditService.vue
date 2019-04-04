@@ -308,6 +308,7 @@
         })
       },
       onInputName (val) {
+        this.error = ''
         this.sliceByLength('name', 150, val)
         if (this.name.length < 2) {
           return
