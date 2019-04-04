@@ -137,10 +137,11 @@
 </template>
 
 <script>
-  import { mapState, mapGetters } from 'vuex'
+  import { mapState, mapGetters, mapMutations } from 'vuex'
   import Counter from '@/components/common/Counter'
   import SearchSelect from '@/components/common/SearchSelect.vue'
-  import { isEqual } from 'lodash'
+  import { isEqual, debounce } from 'lodash'
+  import Api from '@/api/backend'
 
   export default {
     components: {
@@ -199,8 +200,11 @@
       }
     },
     computed: {
-      ...mapState({ businessServices: state => state.business.businessServices }),
-      ...mapGetters(['serviceList', 'serviceGroups', 'employees']),
+      ...mapState({
+        businessServices: state => state.business.businessServices,
+        serviceList: state => state.service.serviceList
+      }),
+      ...mapGetters(['serviceGroups', 'employees']),
       saveDisabled () {
         return !this.name || !this.group || !this.duration
       },
@@ -216,7 +220,11 @@
       'service': 'init',
       'visible': 'init'
     },
+    created () {
+      this.debouncedGetServices = debounce(this.getServices, 250)
+    },
     methods: {
+      ...mapMutations(['LOAD_SERVICE_LIST']),
       sliceByLength (property, length, val) {
         if (!val) {
           return
@@ -284,6 +292,14 @@
         this.description = description || ''
         this.selectedEmployees = employees 
       },
+      getServices () {
+        Api()
+          .get(`service?name=ilike.*${this.name}*`)
+          .then(res => res.data)
+          .then(res => {
+            res && res.length && this.LOAD_SERVICE_LIST(this.serviceList.concat(res))
+          })
+      },
       onClose () {
         this.$emit('close', {
           hasDiff: this.hasDiff(),
@@ -292,6 +308,11 @@
       },
       onInputName (val) {
         this.sliceByLength('name', 150, val)
+        if (this.name.length < 2) {
+          return
+        }
+
+        this.debouncedGetServices()
       },
       onSave () {
         this.$emit('save', this.prepareNewService())

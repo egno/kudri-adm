@@ -26,7 +26,6 @@ const state = {
   schedule: [],
   searchString: '',
   selectedVisit: undefined,
-  serviceList: [],
   token: ''
 }
 
@@ -50,7 +49,6 @@ const getters = {
   schedule: state => state.schedule,
   searchString: state => state.searchString,
   selectedVisit: state => state.selectedVisit,
-  serviceList: state => state.serviceList,
   token: state => {
     return state.token
     // window.localStorage.accessToken;
@@ -63,9 +61,6 @@ const mutations = {
   },
   LOAD_SCHEDULE (state, payload) {
     state.schedule = payload
-  },
-  LOAD_SERVICE_LIST (state, payload) {
-    state.serviceList = payload
   },
   MESSAGE_WINDOW (state, payload) {
     state.messageWindow = !!payload
@@ -216,17 +211,6 @@ const actions = {
     commit('SET_TOKEN', localStorage.getItem('accessToken'))
     dispatch('loadUserInfo')
   },
-  loadServiceList ({ commit }) {
-    const path = 'service'
-    Api()
-      .get(path)
-      .then(res => res.data)
-      .then(res => {
-        commit('LOAD_SERVICE_LIST', res)
-      })
-      .catch(err => commit('ADD_ALERT', makeAlert(err)))
-  },
-
   navBar ({ commit }, payload) {
     commit('NAVBAR', payload)
   },
