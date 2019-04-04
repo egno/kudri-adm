@@ -25,7 +25,7 @@
             v-model="group"
             :items="serviceGroups"
             :item-text="servGr => servGr.name"
-            label="КАТЕГОРИЯ"
+            placeholder="КАТЕГОРИЯ"
             :rules="[ rules.required ]"
             :attach="create? '.create .edit-service__field-block._groups' : '.edit .edit-service__field-block._groups'"
             @blur="!group && (error = 'Необходимо заполнить все обязательные поля')"
@@ -71,6 +71,7 @@
               от
             </div>
             <VTextField v-model="price" mask="#####" placeholder="0" class="edit-service__price" />
+            рублей
           </div>
         </div>
 
@@ -437,9 +438,6 @@
       text-align: center;
       padding-bottom: 6px;
       font-weight: 400;
-      &::placeholder {
-        font-size: 14px;
-      }
     }
     .counter input {
       padding-bottom: 0;
@@ -457,7 +455,7 @@
       @extend %filter;
       display: inline-block;
       height: 28px;
-      padding: 0 10px;
+      padding: 0 12px;
       margin-bottom: 15px;
     }
     &__from {
@@ -479,7 +477,11 @@
       @extend %placeholder;
     }
     &__price {
-      max-width: 140px;
+      max-width: 100px;
+      margin-right: 5px;
+      input::placeholder {
+        font-size: 14px;
+      }
     }
     &__buttons {
       margin-top: 15px;
@@ -538,6 +540,7 @@
     }
     .v-label {
       @extend %placeholder;
+      max-width: 100%;
       &.v-label--active {
         top: 0;
       }

@@ -101,7 +101,7 @@
   }
   .add-master {
     margin-right: 16px;
-    background: url('../../assets/images/svg/plus-white.svg') no-repeat center #EF4D37;
+    background: url('../../assets/images/svg/plus-white.svg') no-repeat center/16px #EF4D37;
       @media only screen and (min-width : $desktop) {
         background-image: none;
       }
