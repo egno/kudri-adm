@@ -16,14 +16,14 @@
           </div>
         </div>
         <div class="filter-results">
-          <div v-for="(services, group) in groupedBranchServices" :key="group" class="filter-results__group">
+          <div v-for="group in branchServiceCategories" :key="group" class="filter-results__group">
             <template v-if="selectedGroups.includes(group)">
               <div class="filter-results__group-name">
                 {{ group }}
               </div>
               <div class="filter-results__cards">
                 <ServiceCard
-                  v-for="(service, i) in services"
+                  v-for="(service, i) in groupedBranchServices[group]"
                   :key="i" :service="service"
                   @click="showEditPanel(service)"
                   @delete="showDeleteModal(service)"
@@ -162,7 +162,7 @@ export default {
         res.push(key)
       }
 
-      return res      
+      return res.sort()
     },
     deleteModalTemplate () {
       if (!this.deletingService || !this.deletingService.j || !this.deletingService.j.employees) {
