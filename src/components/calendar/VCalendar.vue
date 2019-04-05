@@ -505,7 +505,7 @@ export default {
 .month-header {
   display: flex;
   align-items: center;
-  padding: 0 38px 0 40px;
+  padding: 0 38px 0 39px;
   background: linear-gradient(270deg, #c9a15d -9.86%, #ba9462 103.49%);
   height: 40px;
 }
@@ -520,10 +520,10 @@ export default {
 .calendar-wrapper {
   padding-bottom: 22px;
   border-bottom: 1px solid rgba(137, 149, 175, 0.2);
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 .calendar-container {
-  padding: 4px 40px;
+  padding: 4px 40px 4px 36px;
 }
 .cal-month {
   width: 160px;

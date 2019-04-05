@@ -49,7 +49,7 @@
 
     <VCalendar v-if="isCalendarVisible" />
     <AddMenu v-if="loggedIn && isManagerMenu" />
-    <VList v-if="!mini">
+    <VList v-if="!mini" class="nav-menu">
       <nav-powered-item
         v-for="item in menu"
         :key="item.title"
@@ -60,7 +60,7 @@
     <v-spacer />
     <div
       v-if="!mini"
-      class="blue-link help-link"
+      class="blue-link help-link navigation__report"
       @click="openMessageWindow"
     >
       Сообщить о проблеме
@@ -121,7 +121,7 @@ export default {
       return isBusinessRoute(this.$route.name)
     },
     isCalendarVisible () {
-      return this.isBusinessCard && this.isEditorUser
+      return this.businessIsFilial && this.isBusinessCard && this.isEditorUser
     },
     isManagerMenu () {
       return (
@@ -330,8 +330,30 @@ export default {
 }
 .navigation.theme--dark {
   background: linear-gradient(180deg, #333C54 0.06%, #4A5D6D 85.63%);
+}
+
+.navigation {
+  padding-bottom: 40px;
   &.v-navigation-drawer .v-list {
     background: transparent;
+  }
+  .v-list__tile {
+    height: 40px;
+    padding: 0 16px 0 38px;
+  }
+  .v-list__tile__title {
+    font-size: 12px;
+    font-weight: normal;
+  }
+  .primary--text.v-list__tile {
+    color: #fff !important;
+  }
+  &__report {
+    position: absolute;
+    bottom: 24px;
+    text-align: center;
+    width: 100%;
+    cursor: pointer;
   }
 }
 .title-action {
