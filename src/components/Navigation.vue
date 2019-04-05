@@ -52,7 +52,6 @@
     <VList v-if="!mini">
       <nav-powered-item
         v-for="item in menu"
-        v-show="item.show"
         :key="item.title"
         :item="item"
         @onAction="onAction"
@@ -84,14 +83,12 @@ export default {
   mixins: [Users],
   data () {
     return {
-      //
     }
   },
   computed: {
     ...mapGetters([
       'actualDate',
       'businessFilialCount',
-      'businessId',
       'businessInfo',
       'businessIsSalon',
       'businessClientCount',
@@ -101,17 +98,15 @@ export default {
       'navigationMini',
       'token',
       'navigationVisible',
-      'userRole'
+      'userRole',
+      'businessIsFilial'
     ]),
     date () {
       const dt = new Date()
       return formatDate(dt)
     },
-    routeBisinessId () {
+    businessId () {
       return this.$route && this.$route.params && this.$route.params.id
-    },
-    businessLink () {
-      return this.businessId
     },
     clientsCount () {
       return this.businessClientCount
@@ -122,19 +117,11 @@ export default {
     filialsCount () {
       return this.businessFilialCount
     },
-    galleryCount () {
-      return (
-        this.businessInfo && this.businessInfo.j && this.businessInfo.j.gallery
-      )
-    },
     isBusinessCard () {
       return isBusinessRoute(this.$route.name)
     },
     isCalendarVisible () {
       return this.isBusinessCard && this.isEditorUser
-    },
-    isCompany () {
-      return this.businessId && this.userRole === 'business'
     },
     isManagerMenu () {
       return (
@@ -149,7 +136,7 @@ export default {
           count: undefined,
           route: {
             name: 'businessCard',
-            params: { id: this.businessLink }
+            params: { id: this.businessId }
           },
           show: this.loggedIn && !this.isManagerMenu
         },
@@ -170,9 +157,9 @@ export default {
           count: this.filialsCount,
           route: {
             name: 'businessCardFilal',
-            params: { id: this.businessLink }
+            params: { id: this.businessId }
           },
-          show: this.loggedIn && !this.isManagerMenu && this.businessIsSalon,
+          show: !this.businessIsFilial && this.loggedIn && !this.isManagerMenu && this.businessIsSalon,
           action: {
             label: 'Добавить филиал',
             action: 'newFilial',
@@ -184,9 +171,9 @@ export default {
           count: this.businessServiceCount,
           route: {
             name: 'services',
-            params: { id: this.businessLink }
+            params: { id: this.businessId }
           },
-          show: this.loggedIn && !this.isManagerMenu,
+          show: this.businessIsFilial && this.loggedIn && !this.isManagerMenu,
           action: {
             label: 'Добавить услугу',
             action: 'newService',
@@ -198,15 +185,15 @@ export default {
           count: this.employeesCount,
           route: {
             name: 'businessCardEmployee',
-            params: { id: this.businessLink }
+            params: { id: this.businessId }
           },
-          show: this.loggedIn && !this.isManagerMenu && this.businessIsSalon,
+          show: this.businessIsFilial && this.loggedIn && !this.isManagerMenu && this.businessIsSalon,
           action: {
             label: 'Добавить сотрудника',
             action: 'newEmployee',
             to: {
               name: 'employeeFull',
-              params: { id: this.businessLink, employee: 'new' }
+              params: { id: this.businessId, employee: 'new' }
             },
             default: true
           }
@@ -216,24 +203,24 @@ export default {
           count: null,
           route: {
             name: 'companyGallery',
-            params: { id: this.businessLink }
+            params: { id: this.businessId }
           },
-          show: false
+          show: this.businessIsFilial
         },
         {
           title: 'Клиенты',
           count: this.clientsCount,
           route: {
             name: 'businessCardClients',
-            params: { id: this.businessLink }
+            params: { id: this.businessId }
           },
-          show: this.loggedIn && !this.isManagerMenu,
+          show: this.businessIsFilial && this.loggedIn && !this.isManagerMenu,
           action: {
             label: 'Добавить клиента',
             action: 'newClient',
             to: {
               name: 'businessCardClient',
-              params: { id: this.businessLink, client: 'new' }
+              params: { id: this.businessId, client: 'new' }
             },
             default: true
           }
@@ -244,7 +231,7 @@ export default {
             name: 'businessVisit',
             params: { id: this.businessId, date: this.date }
           },
-          show: this.loggedIn && !this.isManagerMenu,
+          show: this.businessIsFilial && this.loggedIn && !this.isManagerMenu,
           action: {
             label: 'Добавить запись',
             action: 'newVisit',
@@ -256,7 +243,7 @@ export default {
           count: undefined,
           route: {
             name: 'businessSettings',
-            params: { id: this.businessLink }
+            params: { id: this.businessId }
           },
           show: this.loggedIn && !this.isManagerMenu
         }
@@ -289,11 +276,11 @@ export default {
   },
   watch: {
     token: 'loadUserInfo',
-    routeBisinessId: 'loadBusiness',
+    '$route.params': {
+      handler: 'loadBusiness',
+      deep: true
+    },
     actualDate: 'loadBusiness'
-  },
-  mounted () {
-    this.loadBusiness()
   },
   methods: {
     ...mapActions([
@@ -306,15 +293,15 @@ export default {
       'setBusiness',
       'setNavigationMini'
     ]),
-    doNothing () {
-      console.log('')
-    },
     loadBusiness () {
-      this.setBusiness(this.routeBisinessId)
+      if (!this.businessId) {
+        return
+      }
+      this.setBusiness(this.businessId)
       if (!this.actualDate) return
       const month = this.actualDate.replace(/\d{2}$/, '01')
       this.loadDayVisits({
-        business: this.routeBisinessId,
+        business: this.businessId,
         month: month
       })
     },
