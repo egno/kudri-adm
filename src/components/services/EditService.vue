@@ -372,19 +372,6 @@
     outline: none;
   }
 
-  %button-disabled {
-    background: rgba(137, 149, 175, 0.2) !important;
-    pointer-events: none;
-  }
-  %placeholder {
-    text-align: center;
-    letter-spacing: 0.25em;
-    color: rgba(7, 16, 28, 0.35);
-    font-weight: 400;
-    font-size: 12px;
-    opacity: 1;
-  }
-
   .edit-service {
     position: fixed;
     right: -400px;

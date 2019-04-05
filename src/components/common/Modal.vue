@@ -85,21 +85,7 @@
       justify-content: space-between;
       margin-top: 36px;
       button {
-        min-width: 130px;
-        height: 56px;
-        padding: 0 14px;
-        font-family: $roboto;
-        font-style: normal;
-        font-weight: bold;
-        font-size: 18px;
-        line-height: normal;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        transition: background-color 0.4s 0s, color 0.4s 0s;
-        outline: none;
-        @media only screen and (min-width : 1160px) {
-          padding: 0 28px;
-        }
+        @extend %button
       }
     }
 
@@ -111,8 +97,8 @@
     }
 
     &__right {
-      color: #FFFFFF;
-      background: linear-gradient(270deg, #C9A15D -9.86%, #BA9462 103.49%);
+      @extend %gold-gradient;
+      color: #FFFFFF !important;
       &:hover {
         background: #07101C;
       }

@@ -151,7 +151,7 @@
 </template>
 
 <script>
-import PhoneEdit from '@/components/business/PhoneEdit.vue'
+import PhoneEdit from '@/components/common/PhoneEdit.vue'
 import AppTabs from '@/components/common/AppTabs.vue'
 import {
   dateInLocalTimeZone,

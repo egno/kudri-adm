@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import PhoneEdit from '@/components/business/PhoneEdit.vue'
+import PhoneEdit from '@/components/common/PhoneEdit.vue'
 export default {
   components: {
     PhoneEdit
