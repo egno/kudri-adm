@@ -355,6 +355,18 @@ export default {
     width: 100%;
     cursor: pointer;
   }
+  .calendar-container {
+    overflow: hidden;
+    opacity: 0;
+    max-height: 0;
+    transition: opacity  0.6s 0s, max-height 0.4s 0s;
+    pointer-events: none;
+    &._expanded {
+      opacity: 1;
+      pointer-events: all;
+      max-height: 250px;
+    }
+  }
 }
 .title-action {
   position: absolute;
@@ -372,5 +384,6 @@ export default {
   width: 73px;
   height: 24px;
   background: url('./../assets/images/svg/uno_full.svg') center/contain no-repeat;
+  cursor: pointer;
 }
 </style>

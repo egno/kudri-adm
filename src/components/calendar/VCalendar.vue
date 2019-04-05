@@ -6,6 +6,10 @@
     <VFlex
       v-if="showHeader"
       class="month-header"
+      :class="{ _expanded: expanded }"
+      @click="expanded = !expanded"
+      @mouseenter="tooltip = true"
+      @mouseleave="tooltip = false"
     >
       <VLayout
         align-center
@@ -17,14 +21,14 @@
           {{ dateMonthHeader }}
         </div>
 
-        <div>
+        <div v-if="expanded">
           <v-btn
             class="cal-next-prev"
             depressed
             flat
             small
             color="#ffffff"
-            @click="addMonth(-1)"
+            @click.stop="addMonth(-1)"
           >
             <v-icon>navigate_before</v-icon>
           </v-btn>
@@ -34,17 +38,26 @@
             depressed
             flat
             small
-            @click="addMonth(1)"
+            @click.stop="addMonth(1)"
           >
             <v-icon>navigate_next</v-icon>
           </v-btn>
         </div>
+        <v-tooltip
+          v-if="!expanded"
+          v-model="tooltip"
+          attach=".month-header"
+          top
+          @input.stop=""
+        >
+          <span>Показать календарь</span>
+        </v-tooltip>
       </VLayout>
     </VFlex>
     <VFlex v-if="dates">
-      <VContainer class="calendar-container">
+      <VContainer class="calendar-container" :class="{ _expanded: expanded }">
         <VLayout
-          v-if="period==='month'"
+          v-show="period==='month'"
           align-space-between
           justify-center
           fill-height
@@ -204,9 +217,11 @@ export default {
       days: [],
       edit: false,
       editVisitPage: undefined,
+      expanded: true,
       timeEdit: false,
       visits: [],
-      dow: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
+      dow: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
+      tooltip: false
     }
   },
   computed: {
@@ -487,7 +502,7 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss" >
 .dow {
   font-family: Lato;
   font-style: normal;
@@ -503,11 +518,22 @@ export default {
   }
 }
 .month-header {
+  position: relative;
   display: flex;
   align-items: center;
   padding: 0 38px 0 39px;
-  background: linear-gradient(270deg, #c9a15d -9.86%, #ba9462 103.49%);
+  background: url('../../assets/images/svg/calendar.svg') 199px center no-repeat, linear-gradient(270deg, #c9a15d -9.86%, #ba9462 103.49%);
   height: 40px;
+  cursor: pointer;
+
+  &._expanded {
+    background: linear-gradient(270deg, #c9a15d -9.86%, #ba9462 103.49%);
+  }
+  .v-tooltip__content {
+    position: absolute;
+    top: 110% !important;
+    right: 8px !important;
+  }
 }
 .week-wrapper {
   width: 160px;

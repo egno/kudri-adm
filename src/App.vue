@@ -470,9 +470,11 @@ export default {
 }
 
 .v-tooltip__content {
-  background: linear-gradient(142.11deg, #536976 -29.81%, #292e49 136.3%);
+  background: #1C2F44;
   box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.04);
   padding: 15px 20px;
+  border-radius: 0;
+  text-align: center;
   .text-secondary {
     line-height: 17px;
     color: rgba(255, 255, 255, 0.5);
