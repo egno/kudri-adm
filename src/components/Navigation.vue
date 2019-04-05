@@ -218,7 +218,7 @@ export default {
             name: 'companyGallery',
             params: { id: this.businessLink }
           },
-          show: this.loggedIn && !this.isManagerMenu
+          show: false
         },
         {
           title: 'Клиенты',
