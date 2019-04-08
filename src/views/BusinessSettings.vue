@@ -62,7 +62,7 @@
 <script>
 import BusinessSettings from '@/classes/business_settings'
 import { mapGetters } from 'vuex'
-import PhoneEdit from '@/components/business/PhoneEdit.vue'
+import PhoneEdit from '@/components/common/PhoneEdit.vue'
 
 export default {
   components: { PhoneEdit },

@@ -239,7 +239,7 @@ export default {
           }
         },
         {
-          title: 'SMS уведомления',
+          title: 'Настройки',
           count: undefined,
           route: {
             name: 'businessSettings',
@@ -333,7 +333,9 @@ export default {
 }
 
 .navigation {
-  padding-bottom: 40px;
+  @media only screen and (min-height: 667px) {
+    padding-bottom: 40px;
+  }
   &.v-navigation-drawer .v-list {
     background: transparent;
   }
@@ -349,11 +351,15 @@ export default {
     color: #fff !important;
   }
   &__report {
-    position: absolute;
-    bottom: 24px;
     text-align: center;
     width: 100%;
     cursor: pointer;
+    margin: 60px auto 15px;
+    @media only screen and (min-height: 667px) {
+      position: absolute;
+      bottom: 24px;
+      margin: 0;
+    }
   }
   .calendar-container {
     overflow: hidden;

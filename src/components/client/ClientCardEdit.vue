@@ -122,7 +122,7 @@ import { newClient } from '@/components/client/utils'
 import AppBtn from '@/components/common/AppBtn.vue'
 // import AppTabs from '@/components/common/AppTabs.vue'
 import AppCardTitle from '@/components/common/AppCardTitle.vue'
-import PhoneEdit from '@/components/business/PhoneEdit.vue'
+import PhoneEdit from '@/components/common/PhoneEdit.vue'
 
 export default {
   components: { AppBtn, AppCardTitle, PhoneEdit },

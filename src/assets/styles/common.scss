@@ -42,3 +42,41 @@ $lato: Lato, sans-serif;
     @extend %filter-active
   }
 }
+
+%placeholder {
+  text-align: center;
+  letter-spacing: 0.25em;
+  color: rgba(7, 16, 28, 0.35);
+  font-weight: 400;
+  font-size: 12px;
+  opacity: 1;
+  text-transform: uppercase;
+}
+
+%gold-gradient {
+  background: linear-gradient(270deg, #c9a15d -9.86%, #ba9462 103.49%);
+}
+
+%button {
+  min-width: 130px;
+  height: 56px;
+  padding: 0 14px;
+  font-family: $roboto;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: normal;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: background-color 0.4s 0s, color 0.4s 0s;
+  outline: none;
+  border-radius: 0;
+  @media only screen and (min-width : 1160px) {
+    padding: 0 28px;
+  }
+}
+
+%button-disabled {
+  background: rgba(137, 149, 175, 0.2) !important;
+  pointer-events: none;
+}

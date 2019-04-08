@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="add-menu">
     <div v-if="navigationMini">
       <v-menu
         offset-x
@@ -83,7 +83,7 @@
 import { mapGetters } from 'vuex'
 export default {
   data: () => ({
-    adds: ['Менеджера', 'Компанию', 'Частного мастера'],
+    adds: ['Менеджера', 'Компанию'],
     expand: false,
     showMenu: true
   }),
@@ -96,7 +96,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss">
 .add-btn {
   width: 48px;
   height: 48px;
@@ -106,7 +106,12 @@ export default {
   align-items: center;
   cursor: pointer;
 }
-.list-group-item-unshift {
-  margin-left: -3em;
+.add-menu a.v-list__tile.v-list__tile--link.theme--dark {
+  background: rgba(137, 149, 175, 0.2) !important;
+  &:hover {
+    span {
+      text-decoration: underline;
+    }
+  }
 }
 </style>
