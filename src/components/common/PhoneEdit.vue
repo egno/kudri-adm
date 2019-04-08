@@ -5,6 +5,7 @@
       <VTextField
         v-model="newPhone"
         :label="label"
+        :placeholder="placeholder"
         mask="phone"
         prefix="+7"
         :rules="[rules.counter]"
@@ -27,7 +28,8 @@
 export default {
   props: {
     disabled: { type: Boolean, default: false },
-    label: { type: String, default: 'Телефон' },
+    label: { type: String, default: null },
+    placeholder: { type: String, default: 'Телефон' },
     phone: {
       type: String,
       default () {

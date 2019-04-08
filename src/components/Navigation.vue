@@ -239,7 +239,7 @@ export default {
           }
         },
         {
-          title: 'SMS уведомления',
+          title: 'Настройки',
           count: undefined,
           route: {
             name: 'businessSettings',
@@ -333,7 +333,7 @@ export default {
 }
 
 .navigation {
-  @media only screen and (min-width : 1160px) {
+  @media only screen and (min-height: 667px) {
     padding-bottom: 40px;
   }
   &.v-navigation-drawer .v-list {
@@ -355,7 +355,7 @@ export default {
     width: 100%;
     cursor: pointer;
     margin: 60px auto 15px;
-    @media only screen and (min-width : 1160px) {
+    @media only screen and (min-height: 667px) {
       position: absolute;
       bottom: 24px;
       margin: 0;
