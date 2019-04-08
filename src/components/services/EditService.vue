@@ -291,7 +291,7 @@
         this.price = price || ''
         this.duration = duration || 15
         this.description = description || ''
-        this.selectedEmployees = employees 
+        this.selectedEmployees = this.employees.filter(e => employees.includes(e.id))
       },
       getServices () {
         Api()
@@ -329,6 +329,7 @@
           description,
           selectedEmployees
         } = this.$data
+        const employees = selectedEmployees && selectedEmployees.map(e => e.id)
 
         if (!sex.length) {
           sex = ['male', 'female', 'child']
@@ -341,7 +342,7 @@
           price,
           duration,
           description,
-          employees: selectedEmployees
+          employees
         }
       },
     }
