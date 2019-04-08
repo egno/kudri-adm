@@ -42,6 +42,7 @@
 </script>
 
 <style lang="scss">
+  @import "../../assets/styles/common";
   .uno-modal {
     position: relative;
     padding: 30px 30px 25px;
@@ -61,7 +62,7 @@
     }
 
     &__header {
-      font-family: Lato;
+      font-family: $lato;
       font-style: normal;
       font-weight: bold;
       font-size: 16px;
@@ -71,7 +72,7 @@
 
     &__text {
       margin: 36px auto 0;
-      font-family: Lato;
+      font-family: $lato;
       font-style: normal;
       font-weight: normal;
       font-size: 14px;
@@ -87,7 +88,7 @@
         min-width: 130px;
         height: 56px;
         padding: 0 14px;
-        font-family: Roboto Slab;
+        font-family: $roboto;
         font-style: normal;
         font-weight: bold;
         font-size: 18px;
