@@ -205,7 +205,7 @@ export default {
             name: 'companyGallery',
             params: { id: this.businessId }
           },
-          show: this.businessIsFilial
+          show: false
         },
         {
           title: 'Клиенты',
