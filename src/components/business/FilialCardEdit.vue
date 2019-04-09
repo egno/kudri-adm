@@ -125,7 +125,7 @@ export default {
       }
       var file = new Blob([new Uint8Array(array)], { type: 'image/png' })
       let formData = new FormData()
-      let newFileName = `${this.uuidv4()}.png`
+      let newFileName = `${this.data.id}.png`
       formData.append('file', file, newFileName)
       let vm = this
       axios
