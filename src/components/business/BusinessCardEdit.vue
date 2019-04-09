@@ -272,10 +272,6 @@ export default {
       }
       return null
     },
-    business () {
-      return this.id
-    },
-
     hasName () {
       return !!(this.data && this.data.name)
     },
@@ -285,13 +281,6 @@ export default {
         this.data.j &&
         !!this.data.j.phones &&
         this.data.j.phones[0]
-      )
-    },
-    hasINN () {
-      return !!(
-        this.data &&
-        this.data.j &&
-        (this.data.j.category === 'Частный мастер' || this.data.j.inn)
       )
     },
     hasErrors () {
@@ -375,11 +364,11 @@ export default {
       this.$emit('tabChange')
     },
     fetchData () {
-      if (this.id === 'new') {
+      if (this.businessInfo.id === 'new') {
         return
       }
       this.data
-        .load(this.id)
+        .load(this.businessInfo.id)
         .then(() => {
           if (
             !(this.data.j && this.data.j.category) &&
@@ -444,6 +433,10 @@ export default {
       this.$set(this.data, 'j', {...this.data.j, ...{phones: payload}})
     },
     saveData () {
+      if (this.businessInfo.id === 'new') {
+        this.$emit('save', this.data)
+        return
+      }
       let schedule = this.data.j.schedule.data
       for (let i = 0; i < 7; i++) {
         !schedule[i] && (schedule[i] = {start: '', end: ''})

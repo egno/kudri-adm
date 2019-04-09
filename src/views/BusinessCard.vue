@@ -102,6 +102,7 @@ export default {
   @import '../assets/styles/common';
   @import '../assets/styles/icon';
   @import '../assets/styles/infocard';
+  @import '../assets/styles/businesscard-tabs';
   @import '../assets/styles/businesscard-form';
 
   .businesscard {
@@ -167,64 +168,6 @@ export default {
         path {
           fill: #000;
         }
-      }
-    }
-
-    &__tab-wrapper {
-      padding:0 37px;
-      font-family: $lato;
-      font-style: normal;
-      font-size: 16px;
-      line-height: 40px;
-      background: #fff;
-      border-bottom: 1px solid rgba(137, 149, 175, 0.1);
-      @media only screen and (min-width : $desktop) {
-        padding-left: 127px;
-      }
-    }
-
-    &__tab {
-      display: flex;
-      justify-content: space-around;
-
-      @media only screen and (min-width: $tablet) {
-        max-width: 524px;
-        margin: 0 auto;
-      }
-      @media only screen and (min-width: $desktop) {
-        margin: 0;
-      }
-    }
-
-    &__tab-header {
-      position: relative;
-      flex-grow: 1;
-      text-align: center;
-      color: #8995AF;
-      cursor: pointer;
-      &._active {
-        color: #07101C;
-        font-weight: bold;
-        &:after {
-          content: '';
-          width: 100%;
-          height: 2px;
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          background: linear-gradient(90.49deg, #C9A15D 0%, #BA9462 101.44%);
-        }
-      }
-    }
-
-    &__content {
-      flex-grow: 1;
-      background: #fff;
-      @media only screen and (min-width: $tablet) {
-        background: #f4f5f7;
-      }
-      @media only screen and (min-width: $desktop) {
-        padding-left: 127px;
       }
     }
 

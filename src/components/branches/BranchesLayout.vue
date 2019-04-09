@@ -1,8 +1,5 @@
 <template>
-  <div class="branches">
-    <v-layout class="branches__breadcrumbs">
-      <slot name="breadcrumbs" />
-    </v-layout>
+  <div class="branches" :class="{ _view: !isCreating }">
     <v-layout
       class="branches__header"
       row
@@ -15,11 +12,12 @@
         xs12
       >
         <h1 class="branches__h1">
-          Филиалы
+          {{ isCreating? 'Создать новый филиал' : 'Филиалы' }}
         </h1>
       </v-flex>
       <v-flex>
         <main-button
+          v-if="!isCreating"
           class="button_attractive add-branch"
           @click="$emit('add')"
         >
@@ -38,30 +36,23 @@
 
   export default {
     components: { MainButton },
+    props: {
+      isCreating: {
+        type: Boolean,
+        default: false
+      }
+    }
   }
 </script>
 
 <style lang="scss">
   @import '../../assets/styles/common';
 
-  @mixin tag-active () {
-    color: #fff;
-    background: rgba(137, 149, 175, 0.35);
-    transition: color, background-color 0.4s 0s;
-  }
   .branches {
     display: flex;
     flex-direction: column;
     min-height: 100%;
     padding-right: 0;
-
-    &__breadcrumbs {
-      flex-grow: 0;
-      padding-left: 48px;
-      @media only screen and (min-width : $desktop) {
-        padding-left: 127px;
-      }
-    }
 
     &__header {
       flex-grow: 0;
@@ -83,11 +74,11 @@
     &__content {
       display: flex;
       flex-grow: 1;
-      padding: 40px 0 0 48px;
+      //padding: 40px 0 0 48px;
       align-content: flex-start;
       background: #f4f5f7;
       @media only screen and (min-width : $desktop) {
-        padding-left: 103px;
+        //padding-left: 103px;
       }
     }
 
@@ -97,6 +88,7 @@
     }
 
     &__city {
+      height: 28px;
       padding: 0 24px;
       margin-right: 24px;
       background: rgba(137, 149, 175, 0.1);
@@ -111,10 +103,10 @@
       cursor: pointer;
 
       &._active {
-        @include tag-active()
+        @extend %filter-active
       }
       &:hover {
-        @include tag-active()
+        @extend %filter-active
       }
     }
 
@@ -124,6 +116,15 @@
 
     &__cards {
       margin-bottom: 40px;
+    }
+
+    &._view {
+      .branches__content {
+        padding: 40px 0 0 48px;
+        @media only screen and (min-width : $desktop) {
+          padding-left: 103px;
+        }
+      }
     }
   }
   .add-branch {

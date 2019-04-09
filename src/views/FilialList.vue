@@ -1,10 +1,30 @@
 <template>
-  <BranchesLayout @add="onAction('newFilial')">
-    <template slot="content">
+  <BranchesLayout :is-creating="isCreating" @add="onAction('newFilial')">
+    <template v-if="isCreating" slot="content">
+      <div class="businesscard__tab-wrapper">
+        <div class="businesscard__tab">
+          <div class="businesscard__tab-header" :class="{_active: infoTab}" @click="infoTab = !infoTab">
+            Информация
+          </div>
+          <div class="businesscard__tab-header" :class="{_active: !infoTab}" @click="infoTab = !infoTab">
+            Режим работы
+          </div>
+        </div>
+      </div>
+      <VLayout class="businesscard__content">
+        <BusinessCardEdit
+          :business-info="newBranch"
+          :current-tab="infoTab? 'infoTab' : 'scheduleTab'"
+          @tabChange="infoTab=!infoTab"
+          @save="sendData"
+        />
+      </VLayout>
+    </template>
+    <template v-else slot="content">
       <VLayout class="branches__cities">
-        <div 
-          v-for="(branches, city) in branchesByCities" 
-          :key="city" 
+        <div
+          v-for="(branches, city) in branchesByCities"
+          :key="city"
           class="branches__city"
           :class="{_active: selectedCity === city}"
           @click="selectedCity = city"
@@ -16,19 +36,19 @@
         </div>
       </VLayout>
       <div v-for="(branches, city) in branchesByCities" :key="city" class="branches__group">
-        <template v-if="selectedCity === city || !selectedCity">        
+        <template v-if="selectedCity === city || !selectedCity">
           <div class="city-branch">
             <div class="city-branch__city">
               {{ city.split(', ')[0] }}
             </div>
-            <div class="city-branch__count"> 
+            <div class="city-branch__count">
               {{ branches.length }} филиала
             </div><!-- todo добавить склонение слова филиала -->
           </div>
-          <VLayout  
+          <VLayout
             justify-start
-            align-start 
-            wrap 
+            align-start
+            wrap
             class="branches__cards"
           >
             <div
@@ -39,7 +59,7 @@
               <FilialCard
                 :branch="item"
                 :pinned="item.id === businessId"
-                @onSave="onSave"
+                @onSave="sendData"
                 @click="showCheckoutModal(item)"
                 @delete="showDeleteModal(item)"
               >
@@ -47,22 +67,34 @@
               </FilialCard>
             </div>
           </VLayout>
-        </template>  
+        </template>
       </div>
       <Modal
         :visible="checkoutModal"
         :template="checkoutTemplate"
         @close="checkoutModal = false"
-        @leftButtonClick="checkoutModal = false"
+        @leftButtonClick="checkoutModal = false; branchToCheckout = null"
         @rightButtonClick="checkout"
       />
       <Modal
         :visible="deleteModal"
         :template="deleteTemplate"
         @close="deleteModal = false"
-        @leftButtonClick="deleteModal = false"
+        @leftButtonClick="deleteModal = false; branchToDelete = null"
         @rightButtonClick="deleteBranch"
-      />
+      >
+        <template slot="text">
+          <div
+            v-if="branchToDelete && branchToDelete.j && branchToDelete.j.name"
+            class="uno-modal__text"
+          >
+            Это приведет к удалению филиала {{ branchToDelete.j.name }}. Вся информация филиала будет удалена.
+          </div>
+          <div v-else class="uno-modal__text">
+            Это приведет к удалению услуги.
+          </div>
+        </template>
+      </Modal>
     </template>
   </BranchesLayout>
 </template>
@@ -74,13 +106,14 @@ import Business from '@/classes/business'
 import { mapActions, mapGetters } from 'vuex'
 import BranchesLayout from '@/components/branches/BranchesLayout'
 import Modal from '@/components/common/Modal'
+import BusinessCardEdit from '@/components/business/BusinessCardEdit.vue'
 
 export default {
   params: {
     items: { type: Array, default: [] },
     search: { type: String, default: '' }
   },
-  components: { BranchesLayout, FilialCard, Modal },
+  components: { BranchesLayout, FilialCard, Modal, BusinessCardEdit },
   data () {
     return {
       formActions: [
@@ -95,9 +128,9 @@ export default {
           default: false
         }
       ],
-      edit: false,
-      branchDesiredToCheckout: undefined,
-      branchDesiredToDelete: undefined,
+      isCreating: false,
+      branchToCheckout: undefined,
+      branchToDelete: undefined,
       branchesList: [],
       branchesByCities: {},
       checkoutModal: false,
@@ -109,12 +142,14 @@ export default {
         rightButton: 'ПЕРЕЙТИ'
       },
       deleteModal: false,
+      newBranch: null,
+      infoTab: true
     }
   },
   computed: {
-    ...mapGetters(['businessId','businessInfo', 'businessInn']),
+    ...mapGetters(['businessId','businessInfo']),
     deleteTemplate () {
-      if (!this.branchDesiredToDelete || !this.branchDesiredToDelete.j || !this.branchDesiredToDelete.j.name) {
+      if (!this.branchToDelete || !this.branchToDelete.j || !this.branchToDelete.j.name) {
         return {
           header: 'Удалить филиал?',
           text: `Это приведет к удалению филиала. Вся информация филиала будет удалена.`,
@@ -124,17 +159,17 @@ export default {
       }
       return {
         header: 'Удалить филиал?',
-        text: `Это приведет к удалению филиала ${this.branchDesiredToDelete.j.name}. Вся информация филиала будет удалена.`,
+        text: `Это приведет к удалению филиала ${this.branchToDelete.j.name}. Вся информация филиала будет удалена.`,
         leftButton: 'ОТМЕНА',
         rightButton: 'УДАЛИТЬ'
       }
     }
   },
   watch: {
-    businessInn: 'fetchData'
+    businessId: 'getFilials'
   },
   created () {
-    this.fetchData()
+    this.getFilials()
   },
   mounted () {
     this.setActions(this.formActions)
@@ -146,27 +181,32 @@ export default {
   methods: {
     ...mapActions(['setActions', 'setBusiness']),
     checkout () {
-      if (!this.branchDesiredToCheckout) {
+      if (!this.branchToCheckout) {
         return
       }
-      const id = this.branchDesiredToCheckout.id
+      const id = this.branchToCheckout.id
       this.setBusiness(id)
       this.$router.push({ name: 'businessCard', params: { id: id } })
     },
     deleteBranch () {
-
-    },
-    fetchData () {
-      if (!this.businessInn) return
       Api()
-        .get(`business?j->>inn=eq.${this.businessInn}`)
+        .delete(`business?id=eq.${this.branchToDelete.id}`)
+        .catch(err => {
+          console.log(err)
+          return false
+        })
+    },
+    getFilials () {
+      if (!this.businessId) return
+      Api()
+        .get(`business?parent=eq.${this.businessId}`)
         .then(res => res.data)
         .then(res => {
           this.branchesList = res
-          this.getCities()
+          this.groupBranches()
         })
     },
-    getCities () {
+    groupBranches () {
       this.branchesList.forEach(branch => {
         if (!branch.j || !branch.j.address) {
           return
@@ -176,7 +216,7 @@ export default {
 
           if (!this.branchesByCities[city]) {
             this.$set(this.branchesByCities, city, [])
-          } 
+          }
           if (!this.branchesByCities[city].includes(branch)) {
             this.branchesByCities[city].push(branch)
           }
@@ -185,45 +225,45 @@ export default {
     },
     onAction (payload) {
       if (payload === this.formActions[0].action) {
-        this.branchesList.unshift(new Business({ access: true, parent:this.businessId, name: this.businessInfo.name }))
-        this.getCities()
+        this.newBranch = new Business({
+          id: 'new',
+          parent:this.businessId,
+          name: this.businessInfo.name,
+        })
+        this.isCreating = true
       }
     },
-    onSave (payload) {
-      this.sendData(payload)
-    },
-    sendData (branchesList) {
-      branchesList.j.phones = branchesList.j.phones.filter(x => x > '')
-      branchesList.parent = this.businessId
-      if (!branchesList.id) {
-        Api().post(`business`, branchesList)
-        // .then(res => {
-        //   const newId = this.locationId(res.headers);
-        //   if (newId) {
-        //   router.push({ name: 'businessCard', params: { id: newId } });
-        //   }
-        // });
-      } else {
-        Api().patch(`business?id=eq.${branchesList.id}`, branchesList)
+    sendData (branch) {
+      branch.j.phones = branch.j.phones.filter(x => x > '')
+      branch.parent = this.businessId
+      if (branch.id === 'new') {
+        branch.id = null
       }
+      branch.save() //todo add debounce
+      // todo add commit to store
+      // todo add this.creating = false;
     },
     showCheckoutModal (branch) {
       if (branch.id === this.businessId) {
         this.$router.push({ name: 'businessCard', params: { id: this.businessId } })
       } else {
         this.checkoutModal = true
-        this.branchDesiredToCheckout = branch
+        this.branchToCheckout = branch
       }
     },
     showDeleteModal (branch) {
       this.deleteModal = true
-      this.branchDesiredToDelete = branch
+      this.branchToDelete = branch
     },
   }
 }
 </script>
 
 <style lang="scss">
+  @import '../assets/styles/common';
+  @import '../assets/styles/infocard';
+  @import '../assets/styles/businesscard-tabs';
+
   .card-wrapper {
     margin: 0 10px 20px 0;
   }

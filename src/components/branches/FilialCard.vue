@@ -75,6 +75,7 @@ export default {
     box-shadow: 0px 0px 2px rgba(137, 149, 175, 0.35);
     transition: border-color 0.4s 0s;
     box-sizing: border-box;
+    background-color: #fff;
     &:hover {
       border-color: #5699FF;
       cursor: pointer;
