@@ -159,6 +159,7 @@ export default {
 
     .v-card__actions {
       padding: 0;
+      justify-content: center;
     }
 
     & button {

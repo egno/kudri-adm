@@ -29,17 +29,17 @@
         </div>
       </VFlex>
     </VLayout>
-    <div v-if="editMode" class="businesscard__tab-wrapper">
-      <div class="businesscard__tab">
-        <div class="businesscard__tab-header" :class="{_active: infoTab}" @click="infoTab = !infoTab">
+    <div v-if="editMode" class="businesscard-tabs__tab-wrapper">
+      <div class="businesscard-tabs__tab">
+        <div class="businesscard-tabs__tab-header" :class="{_active: infoTab}" @click="infoTab = !infoTab">
           Информация
         </div>
-        <div class="businesscard__tab-header" :class="{_active: !infoTab}" @click="infoTab = !infoTab">
+        <div class="businesscard-tabs__tab-header" :class="{_active: !infoTab}" @click="infoTab = !infoTab">
           Режим работы
         </div>
       </div>
     </div>
-    <VLayout class="businesscard__content">
+    <VLayout class="businesscard-tabs__content">
       <BusinessCardEdit
         v-if="editMode"
         :business-info="businessInfo"
@@ -153,22 +153,7 @@ export default {
     }
 
     &__close {
-      width: 40px;
-      height: 40px;
-      margin: 0 0 0 40px;
-      padding: 10px 0 0;
-      background-color: #fff;
-      border-radius: 50%;
-      color:   #C4C4C4;
-      transition: background-color 0.6s 0s;
-      outline: none;
-      vertical-align: middle;
-      box-sizing: border-box;
-      &:hover {
-        path {
-          fill: #000;
-        }
-      }
+      @extend %inline-svg-close;
     }
 
     &__phone {

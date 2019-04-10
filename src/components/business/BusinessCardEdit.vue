@@ -12,8 +12,8 @@
       >
         <v-layout
           justify-center
-          :name="name"
-          @click="avatarEdit = !avatarEdit"
+          class="businesscard-form__avatar"
+          @click="avatarEdit = !avatarEdit; $emit('formChange')"
         >
           <Avatar
             size=""
@@ -34,6 +34,7 @@
                    () => !!data.name && data.name.length <= 50 || 'Слишком длинное наименование']"
           required
           class="businesscard-form__field"
+          @change="$emit('formChange')"
         />
         <VTextField
           v-if="!businessIsIndividual"
@@ -43,6 +44,7 @@
           :rules="[rules.INN_counter]"
           class="businesscard-form__field"
           required
+          @change="$emit('formChange')"
         />
         <v-layout
           row
@@ -60,6 +62,7 @@
               v-model="data.j.office"
               label="Офис"
               class="businesscard-form__field"
+              @change="$emit('formChange')"
             />
           </div>
         </v-layout>
@@ -97,6 +100,7 @@
               class="businesscard-form__field"
               placeholder="Инстаграм"
               :rules="[rules.uriLength]"
+              @change="$emit('formChange')"
             />
           </div>
           <div class="soc__input _vk">
@@ -105,6 +109,7 @@
               class="businesscard-form__field"
               placeholder="Вконтакте"
               :rules="[rules.uriLength]"
+              @change="$emit('formChange')"
             />
           </div>
           <div
@@ -119,6 +124,7 @@
               placeholder="Веб-сайт"
               @input="site.uri = $event.slice(0,150); debouncedCheckAddLink()"
               @focus="focusedOtherLink = i"
+              @change="$emit('formChange')"
             />
             <button v-show="i > 0" type="button" class="businesscard-form__delete" @mousedown="deleteLink(i)">
               <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -149,6 +155,7 @@
           maxlength="400"
           class="businesscard-form__field"
           :rules="[value => value && (value.length <= 400 || 'Слишком длинный текст') || true]"
+          @change="$emit('formChange')"
         />
 
         <div
@@ -359,12 +366,14 @@ export default {
         return
       }
       this.data.j.links.others.splice(i,1)
+      this.$emit('formChange')
     },
     emitTabChange () {
       this.$emit('tabChange')
     },
     fetchData () {
       if (this.businessInfo.id === 'new') {
+        this.addLink()
         return
       }
       this.data
@@ -421,6 +430,7 @@ export default {
       }
       this.data.j.address = val
       this.hasAddress = this.checkAddress()
+      this.$emit('formChange')
     },
     onAvatarSave (img) {
       this.saveImage(img).then(() => {
@@ -431,6 +441,7 @@ export default {
     },
     phonesEdit (payload) {
       this.$set(this.data, 'j', {...this.data.j, ...{phones: payload}})
+      this.$emit('formChange')
     },
     saveData () {
       if (this.businessInfo.id === 'new') {
@@ -456,6 +467,7 @@ export default {
       this.data.j.schedule = newWeek
       this.schedule = newWeek
       this.hasSchedule = this.checkSchedule()
+      this.$emit('formChange')
     }
   }
 }

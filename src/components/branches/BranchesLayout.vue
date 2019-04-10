@@ -14,6 +14,13 @@
         <h1 class="branches__h1">
           {{ isCreating? 'Создать новый филиал' : 'Филиалы' }}
         </h1>
+        <div v-if="isCreating">
+          <button class="branches__close" @click="$emit('close')">
+            <svg width="22" height="22" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M13 4L12 3L8 7L4 3L3 4L7 8L3 12L4 13L8 9L12 13L13 12L9 8L13 4Z" fill="#8995AF" fill-opacity="0.35" />
+            </svg>
+          </button>
+        </div>
       </v-flex>
       <v-flex>
         <main-button
@@ -61,6 +68,7 @@
     }
 
     &__heading {
+      align-items: center;
       padding-left: 48px;
       @media only screen and (min-width : $desktop) {
         padding-left: 127px;
@@ -71,15 +79,15 @@
       font: 24px Roboto Slab, Times New Roman, Times, serif;
     }
 
+    &__close {
+      @extend %inline-svg-close;
+    }
+
     &__content {
       display: flex;
       flex-grow: 1;
-      //padding: 40px 0 0 48px;
       align-content: flex-start;
       background: #f4f5f7;
-      @media only screen and (min-width : $desktop) {
-        //padding-left: 103px;
-      }
     }
 
     &__cities {
@@ -112,6 +120,7 @@
 
     &__group {
       width: 100%;
+      padding-left: 5px;
     }
 
     &__cards {
@@ -122,7 +131,7 @@
       .branches__content {
         padding: 40px 0 0 48px;
         @media only screen and (min-width : $desktop) {
-          padding-left: 103px;
+          padding-left: 122px;
         }
       }
     }

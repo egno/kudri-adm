@@ -1,24 +1,38 @@
 <template>
-  <BranchesLayout :is-creating="isCreating" @add="onAction('newFilial')">
+  <BranchesLayout :is-creating="isCreating" @add="onAction('newFilial')" @close="onClose">
     <template v-if="isCreating" slot="content">
-      <div class="businesscard__tab-wrapper">
-        <div class="businesscard__tab">
-          <div class="businesscard__tab-header" :class="{_active: infoTab}" @click="infoTab = !infoTab">
+      <div class="businesscard-tabs__tab-wrapper">
+        <div class="businesscard-tabs__tab">
+          <div class="businesscard-tabs__tab-header" :class="{_active: infoTab}" @click="infoTab = !infoTab">
             Информация
           </div>
-          <div class="businesscard__tab-header" :class="{_active: !infoTab}" @click="infoTab = !infoTab">
+          <div class="businesscard-tabs__tab-header" :class="{_active: !infoTab}" @click="infoTab = !infoTab">
             Режим работы
           </div>
         </div>
       </div>
-      <VLayout class="businesscard__content">
+      <VLayout class="businesscard-tabs__content">
         <BusinessCardEdit
           :business-info="newBranch"
           :current-tab="infoTab? 'infoTab' : 'scheduleTab'"
           @tabChange="infoTab=!infoTab"
           @save="sendData"
+          @formChange="isFormChanged = true"
         />
       </VLayout>
+      <Modal
+        :visible="showSave"
+        :template="saveModalTemplate"
+        @rightButtonClick="closeWithoutSaving"
+        @leftButtonClick="showSave = false"
+        @close="showSave = false"
+      >
+        <template slot="text">
+          <div class="uno-modal__text">
+            {{ saveModalTemplate.text }}
+          </div>
+        </template>
+      </Modal>
     </template>
     <template v-else slot="content">
       <VLayout class="branches__cities">
@@ -60,8 +74,8 @@
                 :branch="item"
                 :pinned="item.id === businessId"
                 @onSave="sendData"
-                @click="showCheckoutModal(item)"
-                @delete="showDeleteModal(item)"
+                @click="showCheckoutDialog(item)"
+                @delete="showDeleteDialog(item)"
               >
                 {{ i }} {{ item.id }}
               </FilialCard>
@@ -75,7 +89,19 @@
         @close="checkoutModal = false"
         @leftButtonClick="checkoutModal = false; branchToCheckout = null"
         @rightButtonClick="checkout"
-      />
+      >
+        <template slot="text">
+          <div
+            v-if="branchToCheckout && branchToCheckout.j && branchToCheckout.j.name"
+            class="uno-modal__text"
+          >
+            Вы будете перемещены в филиал <b>{{ branchToCheckout.j.name }}.</b>
+          </div>
+          <div v-else class="uno-modal__text">
+            Вы будете перемещены в филиал.
+          </div>
+        </template>
+      </Modal>
       <Modal
         :visible="deleteModal"
         :template="deleteTemplate"
@@ -88,10 +114,10 @@
             v-if="branchToDelete && branchToDelete.j && branchToDelete.j.name"
             class="uno-modal__text"
           >
-            Это приведет к удалению филиала {{ branchToDelete.j.name }}. Вся информация филиала будет удалена.
+            Это приведет к удалению филиала <b>{{ branchToDelete.j.name }}.</b> Вся информация филиала будет удалена.
           </div>
           <div v-else class="uno-modal__text">
-            Это приведет к удалению услуги.
+            Это приведет к удалению филиала. Вся информация филиала будет удалена.
           </div>
         </template>
       </Modal>
@@ -129,6 +155,7 @@ export default {
         }
       ],
       isCreating: false,
+      isFormChanged: false,
       branchToCheckout: undefined,
       branchToDelete: undefined,
       branchesList: [],
@@ -143,7 +170,14 @@ export default {
       },
       deleteModal: false,
       newBranch: null,
-      infoTab: true
+      infoTab: true,
+      saveModalTemplate: {
+        header: 'Данные были изменены.',
+        text: `Выйти без сохранения?`,
+        leftButton: 'ОТМЕНА',
+        rightButton: 'ДА'
+      },
+      showSave: false
     }
   },
   computed: {
@@ -187,6 +221,11 @@ export default {
       const id = this.branchToCheckout.id
       this.setBusiness(id)
       this.$router.push({ name: 'businessCard', params: { id: id } })
+    },
+    closeWithoutSaving () {
+      this.showSave = false
+      this.isCreating = false
+      this.newBranch = null
     },
     deleteBranch () {
       Api()
@@ -233,6 +272,9 @@ export default {
         this.isCreating = true
       }
     },
+    onClose () {
+      this.isFormChanged? this.showSave = true : this.isCreating = false
+    },
     sendData (branch) {
       branch.j.phones = branch.j.phones.filter(x => x > '')
       branch.parent = this.businessId
@@ -241,9 +283,9 @@ export default {
       }
       branch.save() //todo add debounce
       // todo add commit to store
-      // todo add this.creating = false;
+      // todo add this.creating = false; isFormChanged = false; newBranch = null; infoTab: true
     },
-    showCheckoutModal (branch) {
+    showCheckoutDialog (branch) {
       if (branch.id === this.businessId) {
         this.$router.push({ name: 'businessCard', params: { id: this.businessId } })
       } else {
@@ -251,7 +293,7 @@ export default {
         this.branchToCheckout = branch
       }
     },
-    showDeleteModal (branch) {
+    showDeleteDialog (branch) {
       this.deleteModal = true
       this.branchToDelete = branch
     },

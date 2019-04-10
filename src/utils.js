@@ -3,7 +3,7 @@ const businessCards = [
   'businessCardClient',
   'businessCardClients',
   'businessCardEmployee',
-  'businessCardFilal',
+  'businessCardFilial',
   'businessCardServiceGallery',
   'businessCardEmployeeGallery',
   'services',

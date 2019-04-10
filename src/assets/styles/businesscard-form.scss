@@ -3,6 +3,9 @@
 
 .businesscard-form {
   min-width: 375px;
+  &__avatar {
+    margin-bottom: 26px;
+  }
   &__field {
     label {
       padding-left: 20px;
