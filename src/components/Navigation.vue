@@ -20,7 +20,7 @@
         <v-list-tile-content>
           <v-list-tile-title
             overflow-hidden
-            @click="goHome()"
+            @click="goHome"
           >
             <div class="logo" />
           </v-list-tile-title>
@@ -38,10 +38,23 @@
             v-if="!mini"
             class="blind"
           >
-            arrow_back
+            close
           </v-icon>
           <v-icon v-else>
             menu
+          </v-icon>
+        </v-btn>
+      </v-list-tile-action>
+      <v-list-tile-action
+        v-else-if="isEditorUser && businessIsFilial"
+        class="title-action"
+      >
+        <v-btn
+          icon
+          @click.stop="goToCompany"
+        >
+          <v-icon class="blind">
+            arrow_back
           </v-icon>
         </v-btn>
       </v-list-tile-action>
@@ -72,7 +85,6 @@
 import AddMenu from '@/components/AddMenu.vue'
 import NavPoweredItem from '@/components/NavPoweredItem.vue'
 import VCalendar from '@/components/calendar/VCalendar.vue'
-import router from '@/router'
 import { mapActions, mapGetters } from 'vuex'
 import { isBusinessRoute } from '@/utils'
 import { formatDate } from '@/components/calendar/utils'
@@ -156,7 +168,7 @@ export default {
           title: 'Филиалы',
           count: this.filialsCount,
           route: {
-            name: 'businessCardFilal',
+            name: 'businessCardFilial',
             params: { id: this.businessId }
           },
           show: !this.businessIsFilial && this.loggedIn && !this.isManagerMenu && this.businessIsSalon,
@@ -306,7 +318,12 @@ export default {
       })
     },
     goHome () {
-      router.push({ name: 'home' })
+      this.$router.push({ name: 'home' })
+    },
+    goToCompany () {
+      const parentId = this.businessInfo.parent
+      this.setBusiness(parentId)
+      this.$router.push({name: 'businessCardFilial',params:{id: parentId}})
     },
     onAction (action) {
       console.log(action)
