@@ -1,6 +1,14 @@
 import Api from '@/api/backend'
 import { makeAlert } from '@/api/utils'
 
+/* todo update
+    Роли:
+admin, manager - это сотрудники Uno.
+business - бизнес: салон\частный мастер.
+client - клиент салона.
+anon - незарегистрированный.
+Могут быть еще разные роли внутри business
+*/
 const state = {
   userInfo: {}
 }

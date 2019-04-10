@@ -53,11 +53,11 @@
     }
     &__close {
       position: absolute;
-      top: 21px;
-      right: 22px;
-      width: 14px;
-      height: 14px;
-      background: url('../../assets/images/svg/cross.svg') center no-repeat;
+      top: 16px;
+      right: 17px;
+      width: 24px;
+      height: 24px;
+      background: url('../../assets/images/svg/cross.svg') center/14px no-repeat;
       outline: none;
     }
 
@@ -71,6 +71,7 @@
     }
 
     &__text {
+      max-width: 80%;
       margin: 36px auto 0;
       font-family: $lato;
       font-style: normal;
