@@ -16,7 +16,7 @@
           :business-info="newBranch"
           :current-tab="infoTab? 'infoTab' : 'scheduleTab'"
           @tabChange="infoTab=!infoTab"
-          @save="sendData"
+          @save="debouncedSendData"
           @formChange="isFormChanged = true"
         />
       </VLayout>
@@ -73,7 +73,6 @@
               <FilialCard
                 :branch="item"
                 :pinned="item.id === businessId"
-                @onSave="sendData"
                 @click="showCheckoutDialog(item)"
                 @delete="showDeleteDialog(item)"
               >
@@ -84,10 +83,10 @@
         </template>
       </div>
       <Modal
-        :visible="checkoutModal"
+        :visible="checkoutModalVisible"
         :template="checkoutTemplate"
-        @close="checkoutModal = false"
-        @leftButtonClick="checkoutModal = false; branchToCheckout = null"
+        @close="checkoutModalVisible = false"
+        @leftButtonClick="checkoutModalVisible = false; branchToCheckout = null"
         @rightButtonClick="checkout"
       >
         <template slot="text">
@@ -103,10 +102,10 @@
         </template>
       </Modal>
       <Modal
-        :visible="deleteModal"
+        :visible="deleteModalVisible"
         :template="deleteTemplate"
-        @close="deleteModal = false"
-        @leftButtonClick="deleteModal = false; branchToDelete = null"
+        @close="deleteModalVisible = false"
+        @leftButtonClick="deleteModalVisible = false; branchToDelete = null"
         @rightButtonClick="deleteBranch"
       >
         <template slot="text">
@@ -133,6 +132,7 @@ import { mapActions, mapGetters } from 'vuex'
 import BranchesLayout from '@/components/branches/BranchesLayout'
 import Modal from '@/components/common/Modal'
 import BusinessCardEdit from '@/components/business/BusinessCardEdit.vue'
+import { debounce } from 'lodash'
 
 export default {
   params: {
@@ -160,7 +160,7 @@ export default {
       branchToDelete: undefined,
       branchesList: [],
       branchesByCities: {},
-      checkoutModal: false,
+      checkoutModalVisible: false,
       selectedCity: undefined,
       checkoutTemplate: {
         header: 'Перейти в филиал?',
@@ -168,7 +168,7 @@ export default {
         leftButton: 'ОТМЕНА',
         rightButton: 'ПЕРЕЙТИ'
       },
-      deleteModal: false,
+      deleteModalVisible: false,
       newBranch: null,
       infoTab: true,
       saveModalTemplate: {
@@ -204,6 +204,7 @@ export default {
   },
   created () {
     this.getFilials()
+    this.debouncedSendData = debounce(this.sendData, 300)
   },
   mounted () {
     this.setActions(this.formActions)
@@ -230,6 +231,11 @@ export default {
     deleteBranch () {
       Api()
         .delete(`business?id=eq.${this.branchToDelete.id}`)
+        .then(() => {
+          this.getFilials()
+          this.branchToDelete = null
+          this.deleteModalVisible = false
+        })
         .catch(err => {
           console.log(err)
           return false
@@ -246,6 +252,7 @@ export default {
         })
     },
     groupBranches () {
+      this.branchesByCities = {}
       this.branchesList.forEach(branch => {
         if (!branch.j || !branch.j.address) {
           return
@@ -281,20 +288,25 @@ export default {
       if (branch.id === 'new') {
         branch.id = null
       }
-      branch.save() //todo add debounce
-      // todo add commit to store
-      // todo add this.creating = false; isFormChanged = false; newBranch = null; infoTab: true
+      branch.save()
+        .then(() => {
+          this.getFilials()
+          this.isCreating = false
+          this.isFormChanged = false
+          this.newBranch = null
+          this.infoTab = true
+        })
     },
     showCheckoutDialog (branch) {
       if (branch.id === this.businessId) {
         this.$router.push({ name: 'businessCard', params: { id: this.businessId } })
       } else {
-        this.checkoutModal = true
+        this.checkoutModalVisible = true
         this.branchToCheckout = branch
       }
     },
     showDeleteDialog (branch) {
-      this.deleteModal = true
+      this.deleteModalVisible = true
       this.branchToDelete = branch
     },
   }
