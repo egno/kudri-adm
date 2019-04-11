@@ -133,6 +133,7 @@ import BranchesLayout from '@/components/branches/BranchesLayout'
 import Modal from '@/components/common/Modal'
 import BusinessCardEdit from '@/components/business/BusinessCardEdit.vue'
 import { debounce } from 'lodash'
+import { formatDate } from '@/components/calendar/utils'
 
 export default {
   params: {
@@ -220,8 +221,18 @@ export default {
         return
       }
       const id = this.branchToCheckout.id
+
       this.setBusiness(id)
-      this.$router.push({ name: 'businessCard', params: { id: id } })
+      this.checkoutTo(id)
+    },
+    checkoutTo (id) {
+      this.$router.push({
+        name: 'businessVisit',
+        params: {
+          id,
+          date: formatDate(new Date())
+        }
+      })
     },
     closeWithoutSaving () {
       this.showSave = false
@@ -299,7 +310,7 @@ export default {
     },
     showCheckoutDialog (branch) {
       if (branch.id === this.businessId) {
-        this.$router.push({ name: 'businessCard', params: { id: this.businessId } })
+        this.checkoutTo(this.businessId)
       } else {
         this.checkoutModalVisible = true
         this.branchToCheckout = branch
