@@ -1,8 +1,9 @@
 <template>
   <v-layout>
-    <v-flex>
+    <v-flex class="address">
       <v-combobox
         v-model="address"
+        allow-overflow
         auto-select-first
         browser-autocomplete
         :error="!success"
@@ -16,14 +17,13 @@
         :prepend-icon="prependIcon"
         :rules="[rules.found]"
         :search-input.sync="search"
-        class="businesscard-form__field"
+        attach=".address .dropdown-select"
+        class="businesscard-form__field dropdown-select"
         @blur="edited = true"
       />
     </v-flex>
   </v-layout>
 </template>
-
-
 
 <script>
   import axios from 'axios'
@@ -102,7 +102,7 @@
         const dt = new Date()
         axios
           .get(
-            `https://geocode-maps.yandex.ru/1.x/?format=json&kind=house&geocode=${val}`
+            `https://geocode-maps.yandex.ru/1.x/?format=json&kind=house&geocode=Россия,${val}`
           )
           .then(res => {
             this.items = res.data.response.GeoObjectCollection.featureMember
@@ -110,18 +110,25 @@
                 x =>
                   x.GeoObject.metaDataProperty.GeocoderMetaData.kind === 'house'
               )
-              .map(x => ({
-                name:
-                x.GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted,
-                city:
-                  x.GeoObject && x.GeoObject.description,
-                cityAddress:
-                  x.GeoObject && x.GeoObject.name,
-                addressComponents:
-                  x.GeoObject.metaDataProperty.GeocoderMetaData.Address && x.GeoObject.metaDataProperty.GeocoderMetaData.Address.Components,
-                point: x.GeoObject && x.GeoObject.Point && x.GeoObject.Point.pos,
-                updated: dt.toISOString()
-              }))
+              .map(x => {
+                const addressComponents = x.GeoObject.metaDataProperty.GeocoderMetaData.Address && x.GeoObject.metaDataProperty.GeocoderMetaData.Address.Components
+                let city
+
+                if (addressComponents) {
+                  city = addressComponents.find(component => component.kind === "locality")["name"]
+                }
+
+                return {
+                  name:
+                  x.GeoObject.metaDataProperty.GeocoderMetaData.Address.formatted,
+                  city,
+                  cityAddress:
+                    x.GeoObject && x.GeoObject.name,
+                  addressComponents,
+                  point: x.GeoObject && x.GeoObject.Point && x.GeoObject.Point.pos,
+                  updated: dt.toISOString()
+                }
+              })
             this.loading = false
           })
           .catch(() => {
@@ -133,11 +140,12 @@
 </script>
 
 <style lang="scss">
-  @import '../../assets/styles/businesscard-form';
-
   .href {
     text-decoration: underline;
     color: rgb(158, 0, 0);
+  }
+  .address.flex .v-input__append-inner {
+    display: none !important;
   }
 </style>
 

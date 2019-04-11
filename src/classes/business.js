@@ -12,6 +12,8 @@ class Address extends ApiObject {
     this.name = newVal && newVal.name
     this.point = newVal && newVal.point
     this.city = newVal && newVal.city
+    this.cityAddress = newVal && newVal.cityAddress
+    this.addressComponents = newVal && newVal.addressComponents
   }
 
   get jsonObject () {

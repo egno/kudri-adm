@@ -36,6 +36,15 @@
           class="businesscard-form__field"
           @change="$emit('formChange')"
         />
+        <VSelect
+          v-if="!!data.parent"
+          v-model="data.j.category"
+          :items="categories"
+          placeholder="Тип бизнеса"
+          :rules="[ rules.required ]"
+          attach=".dropdown-select.category"
+          class="dropdown-select category businesscard-form__field"
+        />
         <VTextField
           v-if="!businessIsIndividual"
           v-model="data.j.inn"
@@ -214,7 +223,7 @@ import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue
 import AddressAutocomplete from '@/components/yandex/AddressAutocomplete.vue'
 import { backendMixins } from '@/api/mixins'
 import { businessMixins, scheduleMixin } from '@/components/business/mixins'
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapState, mapActions, mapGetters, mapMutations } from 'vuex'
 import { makeAlert } from '@/api/utils'
 import MainButton from '@/components/common/MainButton.vue'
 import Business from '@/classes/business'
@@ -246,17 +255,16 @@ export default {
   data () {
     return {
       avatarEdit: false,
-      categoryDisabled: false,
       captionClass: '',
       data: new Business(this.businessInfo),
       rules: {
-        category: value => !value || value.length > 2 || 'Выберите тип',
         INN_counter: value =>
           (value &&
             (value.length === 10 ||
               value.length === 12 ||
               'В ИНН должно быть 10 или 12 цифр')) ||
           true,
+        required: v => !!v || 'Обязательное поле',
         uriLength: value => value && (value.length <= 150 || 'Слишком длинная ссылка') || true
       },
       valid: false,
@@ -269,6 +277,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      categories: state => state.business.businessCategories
+    }),
     ...mapGetters({
       userInfo: 'userInfo',
       businessCategories: 'businessCategories',
@@ -394,9 +405,6 @@ export default {
           ) {
             this.data.j.category = this.userInfo.data.j.category
           }
-          if (this.data.j.category) {
-            this.categoryDisabled = true
-          }
           if (
             !this.data.j.links ||
             !this.data.j.links.others ||
@@ -482,6 +490,7 @@ export default {
 <style lang="scss">
   @import '../../assets/styles/common';
   @import '../../assets/styles/businesscard-form';
+  @import '../../assets/styles/dropdown-select';
 
 .businesscard-form .save-info {
   display: block;

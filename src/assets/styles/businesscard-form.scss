@@ -13,13 +13,13 @@
       font-weight: normal;
       font-size: 12px;
       line-height: normal;
-
       color: rgba(7, 16, 28, 0.35);
     }
 
-    input, textarea {
+    .v-select__selection, input, textarea {
       padding-left: 20px;
       font-weight: 400;
+      font-size: 14px;
     }
 
     textarea {
@@ -46,6 +46,9 @@
     }
     .v-messages__message {
       display: none;
+    }
+    .v-select__selection--comma {
+      margin: 0;
     }
   }
 

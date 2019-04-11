@@ -129,7 +129,7 @@
 import Api from '@/api/backend'
 import FilialCard from '@/components/branches/FilialCard.vue'
 import Business from '@/classes/business'
-import { mapActions, mapGetters } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 import BranchesLayout from '@/components/branches/BranchesLayout'
 import Modal from '@/components/common/Modal'
 import BusinessCardEdit from '@/components/business/BusinessCardEdit.vue'
@@ -173,6 +173,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      categories: state => state.business.businessCategories
+    }),
     ...mapGetters(['businessId','businessInfo', 'businessIsFilial']),
     deleteTemplate () {
       if (!this.branchToDelete || !this.branchToDelete.j || !this.branchToDelete.j.name) {
@@ -283,6 +286,9 @@ export default {
         if (this.businessInfo && this.businessInfo.j) {
           this.newBranch.inn = this.businessInfo.j.inn
           this.newBranch.schedule = Object.assign({}, this.businessInfo.j.schedule)
+          if (this.categories && this.categories.includes(this.businessInfo.j.category)) {
+            this.newBranch.category = this.businessInfo.j.category
+          }
         }
         this.isCreating = true
       }

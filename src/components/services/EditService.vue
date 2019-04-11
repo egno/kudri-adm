@@ -14,13 +14,14 @@
             :required="true"
             :max-length="150"
             label="НАЗВАНИЕ УСЛУГИ"
+            attach=".edit-service__field-block._select"
             @input="onInputName"
             @select="name = $event"
             @error="error = $event"
           />
         </div>
 
-        <div class="edit-service__field-block _groups">
+        <div class="edit-service__field-block _groups dropdown-select">
           <VSelect
             v-model="group"
             :items="serviceGroups"
@@ -90,7 +91,7 @@
           />
         </div>
 
-        <div class="edit-service__field-block _employees">
+        <div class="edit-service__field-block _employees dropdown-select">
           <v-combobox
             v-model="selectedEmployees"
             :items="employees"
@@ -589,30 +590,7 @@
     .v-select--chips .v-select__selections {
       min-height: auto;
     }
-    .v-list {
-      background-color: rgba(137, 149, 175, 0.1);
-    }
-    .v-list__tile {
-      height: auto;
-      padding: 0;
-      &:hover {
-        background: rgba(137, 149, 175, 0.2);
-      }
-    }
-    .v-list__tile__content {
-      height: auto;
-      padding: 6px 0 5px 32px;
 
-    }
-    .v-list__tile__title {
-      height: auto;
-      color: #8995AF;
-      font-family: Lato, sans-serif;
-      font-style: normal;
-      font-weight: normal;
-      font-size: 14px;
-      line-height: normal;
-    }
 
   }
 </style>

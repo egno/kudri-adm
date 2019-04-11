@@ -5,6 +5,8 @@
       :value="searchingValue"
       :label="label"
       :rules="required? [ rules.required, rules.maxLength(maxLength) ] : [ rules.maxLength(maxLength) ]"
+      class="dropdown-select"
+      :attach="attach"
       @input.native="onInput"
       @blur="visible = false; required && !searchingValue && $emit('error', 'Необходимо заполнить все обязательные поля')"
     />
@@ -49,6 +51,10 @@
       maxLength: {
         type: Number,
         default: 200
+      },
+      attach: {
+        type: String,
+        default: ''
       }
     },
     data () {
@@ -87,6 +93,8 @@
 </script>
 
 <style lang="scss">
+  @import '../../assets/styles/dropdown-select';
+
   .custom-select {
     position: relative;
 
