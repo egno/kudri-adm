@@ -101,7 +101,6 @@ export default {
 <style lang="scss">
   @import '../assets/styles/common';
   @import '../assets/styles/icon';
-  @import '../assets/styles/infocard';
   @import '../assets/styles/businesscard-tabs';
   @import '../assets/styles/businesscard-form';
 

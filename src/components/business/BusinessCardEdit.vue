@@ -151,14 +151,13 @@
           counter="400"
           height="auto"
           auto-grow
-          rows="1"
+          rows="3"
           placeholder="Описание"
           maxlength="400"
           class="businesscard-form__field"
           :rules="[value => value && (value.length <= 400 || 'Слишком длинный текст') || true]"
           @change="$emit('formChange')"
         />
-
         <div
           v-show="hasErrors"
           class="businesscard-form__errors"

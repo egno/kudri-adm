@@ -2,7 +2,6 @@
 @import './icon';
 
 .businesscard-form {
-  min-width: 375px;
   &__avatar {
     margin-bottom: 26px;
   }
@@ -61,26 +60,6 @@
         fill: #000;
       }
     }
-  }
-
-  &__field-title {
-    padding-top: 20px;
-    padding-left: 8px;
-    font-family: $lato;
-    font-style: normal;
-    font-size: 12px;
-    line-height: normal;
-    color: rgba(7, 16, 28, 0.35);
-  }
-
-  &__field-value {
-    padding-top: 8px;
-    padding-left: 8px;
-    font-family: $lato;
-    font-style: normal;
-    font-size: 14px;
-    line-height: normal;
-    color: #07101C;
   }
 
   &__add-field {
@@ -174,19 +153,5 @@
   .v-counter {
     order: -1;
     margin-top: 5px;
-  }
-
-  &._view-mode {
-    .businesscard-form__field-title {
-      margin-right: 10px;
-      margin-left: 2px;
-    }
-    .businesscard-form__field-value {
-      margin-right: 10px;
-      margin-left: 2px;
-    }
-    .soc {
-      padding: 0 10px;
-    }
   }
 }

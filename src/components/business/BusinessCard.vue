@@ -1,5 +1,5 @@
 <template>
-  <div class="infocard">
+  <div class="infocard _view">
     <div class="infocard__content">
       <VLayout
         align-center justify-center column
@@ -12,26 +12,26 @@
             :name="businessInfo.name"
           />
         </div>
-        <VLayout column class="businesscard-form _view-mode">
+        <VLayout column>
           <div>
-            <div class="businesscard-form__field-title">
+            <div class="infocard__field-title">
               Название
             </div>
-            <div class="businesscard-form__field-value">
+            <div class="infocard__field-value">
               {{ title }}
             </div>
-            <div class="businesscard-form__field-title">
+            <div class="infocard__field-title">
               ИНН
             </div>
-            <div class="businesscard-form__field-value">
+            <div class="infocard__field-value">
               {{ INN }}
             </div>
           </div>
           <div v-if="address">
-            <div class="businesscard-form__field-title">
+            <div class="infocard__field-title">
               Адрес
             </div>
-            <div class="businesscard-form__field-value">
+            <div class="infocard__field-value">
               {{ address.name }}{{ office? ', оф. ' + office : '' }}
             </div>
           </div>
@@ -40,9 +40,9 @@
             <div
               v-for="(item, i) in phones"
               :key="i"
-              class="businesscard-form__field-value"
+              class="infocard__field-value"
             >
-              <span class=" businesscard__phone">
+              <span class=" infocard__phone">
                 {{ item | phone }}
               </span>
             </div>
@@ -77,10 +77,10 @@
             </div>
           </div>
           <div v-if="businessInfo.j && businessInfo.j.description">
-            <div class="businesscard-form__field-title top-bordered">
+            <div class="infocard__field-title top-bordered">
               Описание
             </div>
-            <div class="businesscard-form__field-value">
+            <div class="infocard__field-value">
               {{ businessInfo.j.description }}
             </div>
           </div>
@@ -178,4 +178,5 @@ export default {
 </script>
 
 <style lang="scss">
+  @import '../../assets/styles/infocard';
 </style>
