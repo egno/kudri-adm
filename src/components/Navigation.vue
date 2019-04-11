@@ -53,7 +53,7 @@
           icon
           @click.stop="goToCompany"
         >
-          <v-icon class="blind">
+          <v-icon>
             arrow_back
           </v-icon>
         </v-btn>
@@ -89,12 +89,14 @@ import { mapActions, mapGetters } from 'vuex'
 import { isBusinessRoute } from '@/utils'
 import { formatDate } from '@/components/calendar/utils'
 import Users from '@/mixins/users'
+import { filials} from "./business/mixins"
 
 export default {
   components: { AddMenu, NavPoweredItem, VCalendar },
-  mixins: [Users],
+  mixins: [Users, filials],
   data () {
     return {
+      parentFilialsCount: null
     }
   },
   computed: {
@@ -125,9 +127,6 @@ export default {
     },
     employeesCount () {
       return this.employeeCount
-    },
-    filialsCount () {
-      return this.businessFilialCount
     },
     isBusinessCard () {
       return isBusinessRoute(this.$route.name)
@@ -166,12 +165,12 @@ export default {
         },
         {
           title: 'Филиалы',
-          count: this.filialsCount,
+          count: this.businessFilialCount,
           route: {
             name: 'businessCardFilial',
             params: { id: this.businessId }
           },
-          show: !this.businessIsFilial && this.loggedIn && !this.isManagerMenu && this.businessIsSalon,
+          show: (!this.businessIsFilial || this.parentFilialsCount > 1) && this.loggedIn && !this.isManagerMenu && this.businessIsSalon,
           action: {
             label: 'Добавить филиал',
             action: 'newFilial',
@@ -292,7 +291,11 @@ export default {
       handler: 'loadBusiness',
       deep: true
     },
-    actualDate: 'loadBusiness'
+    actualDate: 'loadBusiness',
+    'businessInfo': {
+      handler: 'getFilialsCount',
+      deep: true
+    },
   },
   methods: {
     ...mapActions([
@@ -316,6 +319,14 @@ export default {
         business: this.businessId,
         month: month
       })
+    },
+    getFilialsCount () {
+      if (this.businessIsFilial) {
+        this.getFilialsOf(this.businessInfo.parent)
+          .then(filials => {
+            this.parentFilialsCount = filials.length
+          })
+      }
     },
     goHome () {
       this.$router.push({ name: 'home' })
@@ -361,7 +372,6 @@ export default {
     padding: 0 16px 0 38px;
   }
   .v-list__tile__title {
-    font-size: 12px;
     font-weight: normal;
   }
   .primary--text.v-list__tile {

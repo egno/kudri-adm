@@ -1,6 +1,6 @@
 <template>
-  <BranchesLayout :is-creating="isCreating" @add="onAction('newFilial')" @close="onClose">
-    <template v-if="isCreating" slot="content">
+  <BranchesLayout :is-creating="!businessIsFilial && isCreating" :is-button-visible="!businessIsFilial" @add="createBranch('newFilial')" @close="onClose">
+    <template v-if="!businessIsFilial && isCreating" slot="content">
       <div class="businesscard-tabs__tab-wrapper">
         <div class="businesscard-tabs__tab">
           <div class="businesscard-tabs__tab-header" :class="{_active: infoTab}" @click="infoTab = !infoTab">
@@ -35,7 +35,7 @@
       </Modal>
     </template>
     <template v-else slot="content">
-      <VLayout class="branches__cities">
+      <VLayout wrap class="branches__cities">
         <div
           v-for="(branches, city) in branchesByCities"
           :key="city"
@@ -73,6 +73,7 @@
               <FilialCard
                 :branch="item"
                 :pinned="item.id === businessId"
+                :is-editable="!businessIsFilial"
                 @click="showCheckoutDialog(item)"
                 @delete="showDeleteDialog(item)"
               >
@@ -134,6 +135,7 @@ import Modal from '@/components/common/Modal'
 import BusinessCardEdit from '@/components/business/BusinessCardEdit.vue'
 import { debounce } from 'lodash'
 import { formatDate } from '@/components/calendar/utils'
+import { filials} from "../components/business/mixins"
 
 export default {
   params: {
@@ -141,20 +143,9 @@ export default {
     search: { type: String, default: '' }
   },
   components: { BranchesLayout, FilialCard, Modal, BusinessCardEdit },
+  mixins: [filials],
   data () {
     return {
-      formActions: [
-        {
-          label: 'Добавить филиал',
-          action: 'newFilial',
-          default: true
-        },
-        {
-          label: 'Удалить филиал',
-          action: 'deleteFilial',
-          default: false
-        }
-      ],
       isCreating: false,
       isFormChanged: false,
       branchToCheckout: undefined,
@@ -182,7 +173,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['businessId','businessInfo']),
+    ...mapGetters(['businessId','businessInfo', 'businessIsFilial']),
     deleteTemplate () {
       if (!this.branchToDelete || !this.branchToDelete.j || !this.branchToDelete.j.name) {
         return {
@@ -209,10 +200,10 @@ export default {
   },
   mounted () {
     this.setActions(this.formActions)
-    this.$root.$on('onAction', this.onAction)
+    this.$root.$on('onAction', this.createBranch)
   },
   beforeDestroy () {
-    this.$root.$off('onAction', this.onAction)
+    this.$root.$off('onAction', this.createBranch)
   },
   methods: {
     ...mapActions(['setActions', 'setBusiness']),
@@ -253,10 +244,12 @@ export default {
         })
     },
     getFilials () {
-      if (!this.businessId) return
-      Api()
-        .get(`business?parent=eq.${this.businessId}`)
-        .then(res => res.data)
+      const id = this.businessIsFilial
+        ? this.businessInfo && this.businessInfo.parent
+        : this.businessId
+
+      if (!id) return
+      this.getFilialsOf(id)
         .then(res => {
           this.branchesList = res
           this.groupBranches()
@@ -280,13 +273,17 @@ export default {
         }
       })
     },
-    onAction (payload) {
-      if (payload === this.formActions[0].action) {
+    createBranch (payload) {
+      if (payload === 'newFilial') {
         this.newBranch = new Business({
           id: 'new',
           parent:this.businessId,
           name: this.businessInfo.name,
         })
+        if (this.businessInfo && this.businessInfo.j) {
+          this.newBranch.inn = this.businessInfo.j.inn
+          this.newBranch.schedule = Object.assign({}, this.businessInfo.j.schedule)
+        }
         this.isCreating = true
       }
     },

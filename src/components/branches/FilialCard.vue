@@ -24,7 +24,7 @@
           {{ branch.j.employees }} сотрудников
         </div> <!-- todo добавить склонение слова сотрудников -->
       </div>
-      <DeleteButton :is-dark="true" @click.native.stop="$emit('delete')" />
+      <DeleteButton :is-dark="true" :visible="isEditable" @click.native.stop="$emit('delete')" />
     </div>
   </div>
 </template>
@@ -43,6 +43,10 @@ export default {
       }
     },
     pinned: {
+      type: Boolean,
+      default: false
+    },
+    isEditable: {
       type: Boolean,
       default: false
     },

@@ -41,6 +41,7 @@
           v-model="data.j.inn"
           label="ИНН"
           mask="############"
+          :disabled="!businessIsIndividual && !!data.parent"
           :rules="[rules.INN_counter]"
           class="businesscard-form__field"
           required
@@ -218,6 +219,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { makeAlert } from '@/api/utils'
 import MainButton from '@/components/common/MainButton.vue'
 import Business from '@/classes/business'
+import BusinessSchedule from '@/classes/businessSchedule'
 import { debounce } from 'lodash'
 
 export default {
@@ -374,6 +376,11 @@ export default {
     fetchData () {
       if (this.businessInfo.id === 'new') {
         this.addLink()
+        if (this.businessInfo.j && this.businessInfo.j.schedule) {
+          this.data.schedule = new BusinessSchedule(this.businessInfo.j.schedule)
+          this.schedule = this.data.j.schedule
+        }
+
         return
       }
       this.data
@@ -475,6 +482,7 @@ export default {
 
 <style lang="scss">
   @import '../../assets/styles/common';
+  @import '../../assets/styles/businesscard-form';
 
 .businesscard-form .save-info {
   display: block;

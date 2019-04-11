@@ -1,4 +1,5 @@
 import BusinessSchedule from '@/classes/businessSchedule'
+import Api from '@/api/backend'
 
 export const businessMixins = {
   computed: {
@@ -171,5 +172,17 @@ export const scheduleMixin = {
     getTimeArray (timeString) {
       return (!timeString) ? [null,null] : timeString.split(':').map(str => parseInt(str))
     }
+  }
+}
+
+export const filials = {
+  methods: {
+    getFilialsOf (id) {
+      if (!id) return []
+      return Api()
+        .get(`business?parent=eq.${id}`)
+        .then(res => res.data)
+
+    },
   }
 }

@@ -24,7 +24,7 @@
       </v-flex>
       <v-flex>
         <main-button
-          v-if="!isCreating"
+          v-if="isButtonVisible && !isCreating"
           class="button_attractive add-branch"
           @click="$emit('add')"
         >
@@ -45,6 +45,10 @@
     components: { MainButton },
     props: {
       isCreating: {
+        type: Boolean,
+        default: false
+      },
+      isButtonVisible: {
         type: Boolean,
         default: false
       }
@@ -92,13 +96,14 @@
 
     &__cities {
       width: 100%;
-      margin-bottom: 60px;
+      margin-bottom: 32px;
     }
 
     &__city {
       height: 28px;
       padding: 0 24px;
       margin-right: 24px;
+      margin-bottom: 28px;
       background: rgba(137, 149, 175, 0.1);
       border-radius: 14px;
       font-family: $roboto;
