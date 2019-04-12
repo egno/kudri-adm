@@ -39,24 +39,28 @@
         <div
           v-for="(branches, city) in branchesByCities"
           :key="city"
-          class="branches__city"
-          :class="{_active: selectedCity === city}"
           @click="selectedCity = city"
         >
-          {{ city.split(', ')[0] }}
+          <div v-if="city !== 'Другие'" class="branches__city" :class="{_active: selectedCity === city}">
+            {{ city }}
+          </div>
+        </div>
+        <div class="branches__city" :class="{_active: selectedCity === 'Другие'}" @click="selectedCity = 'Другие'">
+          Другие
         </div>
         <div class="branches__city" :class="{_active: !selectedCity}" @click="selectedCity = null">
           Все города
         </div>
       </VLayout>
-      <div v-for="(branches, city) in branchesByCities" :key="city" class="branches__group">
-        <template v-if="selectedCity === city || !selectedCity">
+
+      <div v-for="(city, cityInd) in sortedUniqueCities" :key="cityInd" class="branches__group">
+        <template v-if="city && (city !== 'Другие') && (selectedCity === city || !selectedCity)">
           <div class="city-branch">
             <div class="city-branch__city">
-              {{ city.split(', ')[0] }}
+              {{ city }}
             </div>
             <div class="city-branch__count">
-              {{ branches.length | formatFilial }}
+              {{ branchesByCities[city] && branchesByCities[city].length | formatFilial }}
             </div>
           </div>
           <VLayout
@@ -66,7 +70,7 @@
             class="branches__cards"
           >
             <div
-              v-for="(item, i) in branches"
+              v-for="(item, i) in branchesByCities[city]"
               :key="i"
               class="card-wrapper"
             >
@@ -83,6 +87,39 @@
           </VLayout>
         </template>
       </div>
+      <div v-show="selectedCity === 'Другие' || !selectedCity" class="branches__group">
+        <div class="city-branch">
+          <div class="city-branch__city">
+            Другие
+          </div>
+          <div class="city-branch__count">
+            {{ branchesByCities['Другие'].length | formatFilial }}
+          </div>
+        </div>
+        <VLayout
+          justify-start
+          align-start
+          wrap
+          class="branches__cards"
+        >
+          <div
+            v-for="(item, i) in branchesByCities['Другие']"
+            :key="i"
+            class="card-wrapper"
+          >
+            <FilialCard
+              :branch="item"
+              :pinned="item.id === businessId"
+              :is-editable="!businessIsFilial"
+              @click="showCheckoutDialog(item)"
+              @delete="showDeleteDialog(item)"
+            >
+              {{ i }} {{ item.id }}
+            </FilialCard>
+          </div>
+        </VLayout>
+      </div>
+
       <Modal
         :visible="checkoutModalVisible"
         :template="checkoutTemplate"
@@ -157,7 +194,9 @@ export default {
       branchToCheckout: undefined,
       branchToDelete: undefined,
       branchesList: [],
-      branchesByCities: {},
+      branchesByCities: {
+        'Другие': []
+      },
       checkoutModalVisible: false,
       selectedCity: undefined,
       checkoutTemplate: {
@@ -175,6 +214,7 @@ export default {
         leftButton: 'ОТМЕНА',
         rightButton: 'ДА'
       },
+      sortedUniqueCities: [],
       showSave: false
     }
   },
@@ -262,11 +302,14 @@ export default {
       this.getFilialsOf(id)
         .then(res => {
           this.branchesList = res
+          this.sortedUniqueCities = [...new Set(res.map(branch => branch.j && branch.j.address && branch.j.address.city))].sort()
           this.groupBranches()
         })
     },
     groupBranches () {
-      this.branchesByCities = {}
+      this.branchesByCities = {
+        'Другие': []
+      }
       this.branchesList.forEach(branch => {
         if (!branch.j || !branch.j.address) {
           return
@@ -280,6 +323,8 @@ export default {
           if (!this.branchesByCities[city].includes(branch)) {
             this.branchesByCities[city].push(branch)
           }
+        } else {
+          this.branchesByCities['Другие'].push(branch)
         }
       })
     },
@@ -316,6 +361,7 @@ export default {
           this.isFormChanged = false
           this.newBranch = null
           this.infoTab = true
+          this.selectedCity = null
         })
     },
     showCheckoutDialog (branch) {

@@ -299,11 +299,15 @@ export default {
         this.data &&
         this.data.j &&
         !!this.data.j.phones &&
-        this.data.j.phones[0]
+        this.data.j.phones.length &&
+          this.data.j.phones.some(phone => phone.length === 10)
       )
     },
     hasErrors () {
-      return !(this.hasAddress && this.hasName && this.hasPhone)
+      return !(this.hasName && this.hasPhone && this.data &&
+        this.data.j &&
+        this.data.j.address &&
+        this.data.j.address.name)
     },
     id () {
       return this.$route.params.id
