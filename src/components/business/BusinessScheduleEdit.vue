@@ -63,7 +63,7 @@ export default {
       } else {
         this.newWeekSchedule.data.fill(newDay)
       }
-      this.$emit('editWeek', this.newWeekSchedule) // todo add debounce
+      this.$emit('editWeek', this.newWeekSchedule)
     },
     onToggleForAll (forAll) {
       if (!forAll) {

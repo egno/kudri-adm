@@ -389,6 +389,7 @@ export default {
         if (this.businessInfo.j && this.businessInfo.j.schedule) {
           this.data.schedule = new BusinessSchedule(this.businessInfo.j.schedule)
           this.schedule = this.data.j.schedule
+          this.hasSchedule = this.checkSchedule()
         }
 
         return

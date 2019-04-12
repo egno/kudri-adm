@@ -56,8 +56,8 @@
               {{ city.split(', ')[0] }}
             </div>
             <div class="city-branch__count">
-              {{ branches.length }} филиала
-            </div><!-- todo добавить склонение слова филиала -->
+              {{ branches.length | formatFilial }}
+            </div>
           </div>
           <VLayout
             justify-start
@@ -136,6 +136,7 @@ import BusinessCardEdit from '@/components/business/BusinessCardEdit.vue'
 import { debounce } from 'lodash'
 import { formatDate } from '@/components/calendar/utils'
 import { filials} from "../components/business/mixins"
+import { conjugateFilial } from '@/components/utils'
 
 export default {
   params: {
@@ -143,6 +144,11 @@ export default {
     search: { type: String, default: '' }
   },
   components: { BranchesLayout, FilialCard, Modal, BusinessCardEdit },
+  filters: {
+    formatFilial (n) {
+      return conjugateFilial(n)
+    }
+  },
   mixins: [filials],
   data () {
     return {
@@ -232,6 +238,7 @@ export default {
       this.showSave = false
       this.isCreating = false
       this.newBranch = null
+      this.infoTab = true
     },
     deleteBranch () {
       Api()

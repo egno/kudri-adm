@@ -21,8 +21,8 @@
     <div class="branch-card__bottom">
       <div>
         <div v-if="branch.j.employees" class="branch-card__info">
-          {{ branch.j.employees }} сотрудников
-        </div> <!-- todo добавить склонение слова сотрудников -->
+          {{ branch.j.employees | formatMaster }}
+        </div>
       </div>
       <DeleteButton :is-dark="true" :visible="isEditable" @click.native.stop="$emit('delete')" />
     </div>
@@ -31,9 +31,16 @@
 
 <script>
 import DeleteButton from '@/components/common/DeleteButton'
+import { conjugateEmployee } from '@/components/utils'
+
 export default {
   components: {
     DeleteButton
+  },
+  filters: {
+    formatMaster (n) {
+      return conjugateEmployee(n)
+    }
   },
   props: {
     branch: {

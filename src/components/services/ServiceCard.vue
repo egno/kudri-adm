@@ -16,8 +16,8 @@
     <div class="service-card__bottom">
       <div>
         <div v-if="service.j.employees && service.j.employees.length" class="service-card__info">
-          {{ service.j.employees.length }} мастеров
-        </div> <!-- todo добавить склонение слова сотрудников -->
+          {{ service.j.employees.length | formatMaster }}
+        </div>
       </div>
       <DeleteButton @click.native.stop="$emit('delete')" />
     </div>
@@ -27,9 +27,15 @@
 <script>
 import { mapGetters } from 'vuex'
 import DeleteButton from '@/components/common/DeleteButton'
+import { conjugateEmployee } from '@/components/utils'
 
 export default {
   components: { DeleteButton },
+  filters: {
+    formatMaster (n) {
+      return conjugateEmployee(n)
+    }
+  },
   props: {
     access: { type: Boolean, default: false },
     editMode: { type: Boolean, default: false },

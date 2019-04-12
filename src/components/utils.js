@@ -20,3 +20,34 @@ export function uuidv4 () {
     return v.toString(16)
   })
 }
+
+export function numberText (n, textArray) {
+
+  function format (n, template) {
+    if (template.indexOf('%') > -1) {
+      return template.replace('%', ''+n)
+    }
+    return `${n} ${template}`
+  }
+
+  if (!n) {
+    return (textArray[3] !== undefined) ? textArray[3] : format(n, textArray[2])
+  }
+  if (n % 10 == 1 && (~~(n / 10)) % 10 != 1) {
+    return format(n, textArray[0])
+  }
+  if (n % 10 < 5 && (~~(n / 10)) % 10 != 1) {
+    return format(n, textArray[1])
+  }
+  return format(n, textArray[2])
+}
+
+export function conjugateEmployee (n) {
+  const forms = ["мастер", "мастера", "мастеров", "Нет мастеров"]
+  return numberText(n, forms)
+}
+
+export function conjugateFilial (n) {
+  const forms = ["филиал", "филиала", "филиалов", "Нет филиалов"]
+  return numberText(n, forms)
+}
