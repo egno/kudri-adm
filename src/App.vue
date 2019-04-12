@@ -1,9 +1,9 @@
 <template>
   <VApp app>
-    <top-bar />
+    <top-bar @inputService="searchingService = $event" />
     <Navigation @onAction="onAction" />
     <VContent app>
-      <RouterView />
+      <RouterView v-bind="viewProps" />
     </VContent>
     <Alerts />
     <SendMessage :edit="messageWindow" />
@@ -37,7 +37,8 @@ export default {
   },
   data () {
     return {
-      tokenTimerId: undefined
+      tokenTimerId: undefined,
+      searchingService: ''
     }
   },
   computed: {
@@ -52,6 +53,14 @@ export default {
       'userID',
       'userRole'
     ]),
+    viewProps () {
+      if (this.$route.name === 'services') {
+        return {
+          searchingService: this.searchingService
+        }
+      }
+      return false
+    },
     defaultAction () {
       if (!this.actions) {
         return

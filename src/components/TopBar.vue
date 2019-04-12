@@ -39,6 +39,21 @@
         />
       </VFlex>
     </VLayout>
+    <VLayout
+      v-if="$route.name === 'services'"
+      row
+      align-center
+      justify-start
+    >
+      <VFlex>
+        <VTextField
+          v-model="searchingService"
+          clearable
+          label="Поиск по Услугам"
+          @input="onInputService"
+        />
+      </VFlex>
+    </VLayout>
 
     <VSpacer />
     <VToolbarItems>
@@ -69,6 +84,7 @@ export default {
   data () {
     return {
       searchString: '',
+      searchingService: '',
       selectedEmployee: null,
       name: 'Salon name',
       type: 'salon',
@@ -141,6 +157,9 @@ export default {
     onDefaultAction () {
       this.$emit('onAction', this.defaultAction.action)
     },
+    onInputService () {
+      this.$emit('inputService', this.searchingService)
+    },
     onSelectEmployee () {
       this.$root.$emit('onSelectEmployee', [this.selectedEmployee])
     },
@@ -157,6 +176,11 @@ export default {
   align-items: center;
 }
   .company-badge {
+    display: none;
+    padding-right: 24px;
+    @media only screen and (min-width: 1160px) {
+      display: flex;
+    }
     &__name {
       padding-top: 9px;
       font-family: Roboto Slab, Times New Roman, Times, serif;

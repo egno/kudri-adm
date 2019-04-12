@@ -7,8 +7,10 @@
     full-width
     offset-y
     disable-resize-watcher
-    min-width="150"
-    max-width="150"
+    min-width="174"
+    max-width="174"
+    content-class="profile-dropdown"
+    open-on-hover
     :close-on-content-click="false"
   >
     <VBtn
@@ -17,43 +19,36 @@
     >
       <VLayout
         align-center
-        row
-        spacer
+        justify-space-between
       >
-        <VFlex>
-          <Avatar
-            :new-message="newMessage"
-            :size="avatarSize"
-            :name="displayName"
-            :src="avatar"
-          />
-        </VFlex>
-        <div class="profile-expand-more" style="width: 24px; height: 24px">
-          <v-icon>expand_more</v-icon>
-        </div>
+        <Avatar
+          :new-message="newMessage"
+          :size="avatarSize"
+          :name="displayName"
+          :src="avatar"
+        />
+        <div class="profile-expand-more" />
       </VLayout>
     </VBtn>
     <VList class="menu-list">
-      <template>
-        <VListTile
-          v-for="(item, index) in menuList"
-          :key="index"
-          :to="item.route"
-          @click="menuHandler(item.action)"
+      <VListTile
+        v-for="(item, index) in menuList"
+        :key="index"
+        :to="item.route"
+        @click="menuHandler(item.action)"
+      >
+        <VListTileTitle :class="{ _bold: item.count && item.title === 'Сообщения' }">
+          {{ item.title }}
+        </VListTileTitle>
+        <span
+          v-if="item.count"
+          class="caption count"
+          :class="{ attention: item.count === '!' }"
+          flat
         >
-          <VListTileTitle class="caption">
-            {{ item.title }}
-          </VListTileTitle>
-          <span
-            v-if="item.count"
-            class="caption count"
-            :class="{ attention: item.count === '!' }"
-            flat
-          >
-            {{ item.count }}
-          </span>
-        </VListTile>
-      </template>
+          {{ item.count }}
+        </span>
+      </VListTile>
     </VList>
   </VMenu>
   <VMenu
@@ -239,15 +234,43 @@ export default {
 <style lang="scss">
 .v-menu.profile-menu {
   border-left: 1px solid rgba(137, 149, 175, 0.1);
+  box-sizing: border-box;
+
+  button {
+    position: relative;
+    min-width: 60px;
+    max-width: 60px;
+    padding: 0 3px 0 15px;
+    &:hover {
+      background-color: rgba(137, 149, 175, 0.1);
+    }
+  }
+
+  .v-menu__activator--active button {
+    background-color: rgba(137, 149, 175, 0.1);
+  }
 }
 .menu-list {
-  padding: 17px 0;
+  padding: 13px 0;
+  @media only screen and (min-width: 1160px) {
+    padding: 17px 0;
+  }
   .v-list__tile {
-    height: 24px;
+    --v-primary-base: #2D333B;
+    color: var(--v-primary-base);
+    height: 36px;
+    padding-left: 20px;
+    font-weight: 400;
+    @media only screen and (min-width: 1160px) {
+      height: 24px;
+    }
     &__title {
       display: flex;
       align-items: center;
     }
+  }
+  .v-list__tile__title {
+    font-size: 14px;
   }
   .count,
   .attention {
@@ -266,11 +289,17 @@ export default {
     background: #fff;
     border: 1px solid #ef4d37;
   }
-}
-  .profile-expand-more {
-    display: none;
-    @media only screen and (min-width: 1160px) {
-      display: block;
-    }
+  ._bold {
+    font-weight: bold;
   }
+}
+.profile-expand-more {
+  display: none;
+  @media only screen and (min-width: 1160px) {
+    display: block;
+    width: 10px;
+    height: 6px;
+    background: url('../assets/images/svg/down-blue.svg') center no-repeat;
+  }
+}
 </style>

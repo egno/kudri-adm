@@ -101,6 +101,12 @@ export default {
     EditService,
     Modal
   },
+  props: {
+    searchingService: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
     return {
       searchString: '',
@@ -183,7 +189,10 @@ export default {
   },
   watch: {
     'businessServiceCategories': 'selectAll',
-    'businessInfo': 'loadCompanyServices'
+    'businessInfo': 'loadCompanyServices',
+    searchingService (val) {
+      this.selectedGroups = this.branchServices.filter(s => s.name.includes(val)).map(s => s.j.group)
+    }
   },
   mounted () {
     this.setActions(this.formActions)
