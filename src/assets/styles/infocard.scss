@@ -41,7 +41,10 @@
     font-size: 14px;
     line-height: normal;
     color: #07101C;
-    word-break: break-all;
+
+    &._description {
+      word-break: break-all;
+    }
   }
 
   .soc {

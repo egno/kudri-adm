@@ -80,7 +80,7 @@
             <div class="infocard__field-title top-bordered">
               Описание
             </div>
-            <div class="infocard__field-value">
+            <div class="infocard__field-value _description">
               {{ businessInfo.j.description }}
             </div>
           </div>

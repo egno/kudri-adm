@@ -300,7 +300,7 @@ export default {
         this.data.j &&
         !!this.data.j.phones &&
         this.data.j.phones.length &&
-          this.data.j.phones.some(phone => phone.length === 10)
+          this.data.j.phones.some(phone => phone.length > 10)
       )
     },
     hasErrors () {
