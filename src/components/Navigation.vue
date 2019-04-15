@@ -201,7 +201,7 @@ export default {
             label: 'Добавить сотрудника',
             action: 'newEmployee',
             to: {
-              name: 'employeeFull',
+              name: 'employeeProfile',
               params: { id: this.businessId, employee: 'new' }
             },
             default: true

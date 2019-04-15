@@ -79,14 +79,12 @@ export default {
     this.loadServiceGroups()
     this.checkDate()
     this.loadEmployeeCategories()
-    this.loadEmployeePositions()
     this.tokenTimer()
   },
   methods: {
     ...mapActions([
       'loadApiTime',
       'loadEmployeeCategories',
-      'loadEmployeePositions',
       'loadFromStorage',
       'loadServiceList',
       'loadServiceGroups',

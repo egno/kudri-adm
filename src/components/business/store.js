@@ -15,7 +15,7 @@ const state = {
     'Барбершоп'
   ],
   dayVisits: [],
-  businessServices: []
+  businessServices: [],
 }
 
 const getters = {

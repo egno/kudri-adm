@@ -518,6 +518,7 @@ export default {
   }
 }
 .month-header {
+  max-height: 40px;
   position: relative;
   display: flex;
   align-items: center;

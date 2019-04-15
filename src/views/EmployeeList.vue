@@ -1,83 +1,118 @@
 <template>
-  <VContainer
-    fluid
-    grid-list-lg
+  <PageLayout
+    :is-button-visible="true"
+    :template="{ headerText: 'Сотрудники', buttonText: 'Новый сотрудник' }"
+    @add="
+      $router.push({
+        name: 'employeeProfile',
+        params: { id: id, employee: 'new' }
+      })
+    "
   >
-    <VLayout column>
-      <VFlex v-if="queryService">
-        <h2>{{ queryService }}</h2>
-      </VFlex>
-      <VFlex>
-        <VTextField
-          key="mainSearch"
-          v-model="searchString"
-          autofocus
-          clearable
-          label="Поиск"
-          single-line
-          type="text"
-        />
-      </VFlex>
-      <VFlex>
-        <VLayout column>
-          <VFlex
-            v-for="(category, ci) in categories"
-            :key="'cat'+ci"
-            xs12
+    <template slot="content">
+      <div class="filters">
+        <div
+          v-for="category in categories"
+          :key="category"
+          @click="toggleFilter(category)"
+        >
+          <div
+            v-if="category"
+            class="filters__item"
+            :class="{ _active: selectedCategories.includes(category) }"
           >
-            <VLayout column>
-              <VFlex pb-0>
-                <span class="title">
-                  {{ category || 'Прочие' }}
-                </span>
-              </VFlex>
-              <VFlex>
-                <VLayout
-                  row
-                  wrap
-                  fill-height
-                >
-                  <VFlex
-                    v-for="(item, i) in categoryItems(category)"
-                    :key="i"
-                    xs12
-                    md6
-                    lg4
-                    xl2
-                  >
-                    <EmployeeCard
-                      :item="item"
-                      @onSave="onSave"
-                    >
-                      }
-                    </EmployeeCard>
-                  </VFlex>
-                </VLayout>
-              </VFlex>
-            </VLayout>
-          </VFlex>
-        </VLayout>
-      </VFlex>
-    </VLayout>
-  </VContainer>
+            {{ category }}
+          </div>
+        </div>
+        <div
+          class="filters__item"
+          :class="{
+            _active:
+              selectedCategories &&
+              selectedCategories.length === categories.length
+          }"
+          @click="toggleAll"
+        >
+          Все мастера
+        </div>
+      </div>
+      <div class="filter-results">
+        <div
+          v-for="category in selectedCategories"
+          :key="category"
+          class="filter-results__group"
+        >
+          <div class="filter-results__group-name">
+            {{ category ? category : '' }}
+          </div>
+          <div class="filter-results__cards">
+            <div v-for="(employee, i) in businessEmployees" :key="i">
+              <EmployeeCard
+                v-if="employee.j.category === category"
+                :employee="employee"
+                @click="
+                  $router.push({
+                    name: 'employeeProfile',
+                    params: { id: id, employee: employee.id }
+                  })
+                "
+                @delete="showDeleteDialog(employee)"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <Modal
+        :visible="deleteModalVisible"
+        :template="deleteTemplate"
+        @close="deleteModalVisible = false"
+        @leftButtonClick="
+          deleteModalVisible = false;
+          empToDelete = null;
+        "
+        @rightButtonClick="deleteEmployee"
+      >
+        <template slot="text">
+          <div
+            v-if="empToDelete && empToDelete.j && empToDelete.j.name"
+            class="uno-modal__text"
+          >
+            Вы точно хотите удалить сотрудника <b>{{ empToDelete.j.name }}?</b>
+          </div>
+          <div v-else class="uno-modal__text">
+            Вы точно хотите удалить сотрудника?
+          </div>
+        </template>
+      </Modal>
+    </template>
+  </PageLayout>
 </template>
 
 <script>
+import PageLayout from '@/components/common/PageLayout.vue'
 import Api from '@/api/backend'
 import EmployeeCard from '@/components/employee/EmployeeCard.vue'
 import { mapActions } from 'vuex'
+import Modal from '@/components/common/Modal'
 
 export default {
   params: {
     items: { type: Array, default: [] },
     search: { type: String, default: '' }
   },
-  components: { EmployeeCard },
+  components: { PageLayout, EmployeeCard, Modal },
   data () {
     return {
-      searchString: '',
+      businessEmployees: [],
       edit: false,
-      data: []
+      empToDelete: undefined,
+      deleteModalVisible: false,
+      deleteTemplate: {
+        leftButton: 'ОТМЕНА',
+        rightButton: 'УДАЛИТЬ'
+      },
+      newEmp: undefined,
+      selectedCategories: []
     }
   },
   computed: {
@@ -86,7 +121,10 @@ export default {
     },
     categories () {
       return [
-        ...new Set(this.data && this.data.map(x => x.j && x.j.category))
+        ...new Set(
+          this.businessEmployees &&
+            this.businessEmployees.map(x => x.j && x.j.category)
+        )
       ].sort((a, b) => (a < b ? -1 : 1))
     },
     queryService () {
@@ -101,8 +139,8 @@ export default {
     ...mapActions(['setActions']),
     categoryItems (category) {
       return (
-        this.data &&
-        this.data.filter(
+        this.businessEmployees &&
+        this.businessEmployees.filter(
           x =>
             x.j &&
             x.j.category === category &&
@@ -142,12 +180,13 @@ export default {
         )
       )
     },
+    deleteEmployee () {},
     fetchData () {
       Api()
         .get(`employee?parent=eq.${this.id}`)
         .then(res => res.data)
         .then(res => {
-          this.data = res
+          this.businessEmployees = res
         })
     },
     onSave (payload) {
@@ -163,10 +202,33 @@ export default {
         Api().patch(`employee?id=eq.${data.id}`, data)
       }
     },
-    setStoreSearchString () {
-      this.setSearchString(this.searchString)
+    selectAll () {
+      if (!this.categories || !this.categories.length) {
+        return
+      }
+      this.selectedCategories = this.categories.slice()
+    },
+    showDeleteDialog (emp) {
+      this.deleteModalVisible = true
+      this.empToDelete = emp
+    },
+    showEditPanel () {},
+    toggleAll () {
+      if (this.selectedCategories.length === this.categories.length) {
+        this.selectedCategories = []
+      } else {
+        this.selectAll()
+      }
+    },
+    toggleFilter (category) {
+      const index = this.selectedCategories.indexOf(category)
+
+      if (index !== -1) {
+        this.selectedCategories.splice(index, 1)
+      } else {
+        this.selectedCategories.push(category)
+      }
     }
   }
 }
 </script>
-
