@@ -6,6 +6,7 @@
   >
     <v-toolbar-side-icon
       v-if="!navigationVisible"
+      class="menu-button"
       @click="setNavigationVisible(true)"
     />
     <VLayout
@@ -26,31 +27,15 @@
         />
       </VFlex>
 
-      <VFlex v-if="isManagerCabinet">
+      <VFlex>
         <VTextField
           key="mainSearch"
           v-model="searchString"
           class="topsearch"
           autofocus
-          clearable
           label="Поиск"
           single-line
           type="text"
-        />
-      </VFlex>
-    </VLayout>
-    <VLayout
-      v-if="$route.name === 'services'"
-      row
-      align-center
-      justify-start
-    >
-      <VFlex>
-        <VTextField
-          v-model="searchingService"
-          clearable
-          label="Поиск по Услугам"
-          @input="onInputService"
         />
       </VFlex>
     </VLayout>
@@ -84,7 +69,6 @@ export default {
   data () {
     return {
       searchString: '',
-      searchingService: '',
       selectedEmployee: null,
       name: 'Salon name',
       type: 'salon',
@@ -121,12 +105,6 @@ export default {
     isBusinessCard () {
       return isBusinessRoute(this.$route.name)
     },
-    isManagerCabinet () {
-      return !this.isBusinessCard
-    },
-    routePath () {
-      return this.$route.path
-    },
     showEmployee () {
       const list = ['businessVisit']
       return list.some(x => x === this.$route.name) && this.employees.length
@@ -154,17 +132,11 @@ export default {
     goHome () {
       router.push({ name: 'home' })
     },
-    onDefaultAction () {
-      this.$emit('onAction', this.defaultAction.action)
-    },
-    onInputService () {
-      this.$emit('inputService', this.searchingService)
-    },
     onSelectEmployee () {
       this.$root.$emit('onSelectEmployee', [this.selectedEmployee])
     },
-    setStoreSearchString () {
-      this.setSearchString(this.searchString)
+    setStoreSearchString (newVal) {
+      this.setSearchString(newVal && newVal.toLowerCase())
     }
   }
 }

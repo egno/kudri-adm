@@ -98,14 +98,15 @@ export default {
 
 <style lang="scss">
 .add-btn {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   background: #ef4d37;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
 }
+
 .add-menu a.v-list__tile.v-list__tile--link.theme--dark {
   background: rgba(137, 149, 175, 0.2) !important;
   &:hover {

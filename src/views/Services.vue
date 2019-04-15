@@ -101,15 +101,8 @@ export default {
     EditService,
     Modal
   },
-  props: {
-    searchingService: {
-      type: String,
-      default: ''
-    }
-  },
   data () {
     return {
-      searchString: '',
       formActions: [
         { label: 'Добавить услугу', action: 'newService', default: false }
       ],
@@ -134,7 +127,7 @@ export default {
   },
   computed: {
     ...mapState({ businessServices: state => state.business.businessServices }),
-    ...mapGetters(['serviceGroups', 'businessServiceCategories', 'businessInfo']),
+    ...mapGetters(['serviceGroups', 'businessServiceCategories', 'businessInfo', 'searchString']),
     id () {
       return this.$route.params.id
     },
@@ -190,8 +183,8 @@ export default {
   watch: {
     'businessServiceCategories': 'selectAll',
     'businessInfo': 'loadCompanyServices',
-    searchingService (val) {
-      this.selectedGroups = this.branchServices.filter(s => s.name.includes(val)).map(s => s.j.group)
+    searchString (val) {
+      this.selectedGroups = this.branchServices.filter(s => s.name.toLowerCase().includes(val)).map(s => s.j.group)
     }
   },
   mounted () {

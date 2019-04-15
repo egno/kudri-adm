@@ -6,7 +6,7 @@
     mobile-break-point="1000"
     width="240"
     :mini-variant.sync="mini"
-    :mini-variant-width="48"
+    :mini-variant-width="40"
     class="navigation"
     @input="onInput($event)"
   >
@@ -32,6 +32,7 @@
       >
         <v-btn
           icon
+          :class="{ 'menu-button': mini }"
           @click.stop="mini = !mini"
         >
           <v-icon
@@ -39,9 +40,6 @@
             class="blind"
           >
             close
-          </v-icon>
-          <v-icon v-else>
-            menu
           </v-icon>
         </v-btn>
       </v-list-tile-action>
@@ -398,6 +396,20 @@ export default {
       opacity: 1;
       pointer-events: all;
       max-height: 250px;
+    }
+  }
+  .menu-button {
+    border-right: none;
+  }
+  .v-list__tile__action {
+    min-width: 40px;
+  }
+  &.v-navigation-drawer--mini-variant {
+    .logo-wrap {
+      display: none;
+    }
+    .v-toolbar__content {
+      padding: 0;
     }
   }
 }

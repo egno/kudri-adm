@@ -1,9 +1,9 @@
 <template>
   <VApp app>
-    <top-bar @inputService="searchingService = $event" />
+    <top-bar />
     <Navigation @onAction="onAction" />
     <VContent app>
-      <RouterView v-bind="viewProps" />
+      <RouterView />
     </VContent>
     <Alerts />
     <SendMessage :edit="messageWindow" />
@@ -38,7 +38,6 @@ export default {
   data () {
     return {
       tokenTimerId: undefined,
-      searchingService: ''
     }
   },
   computed: {
@@ -53,14 +52,6 @@ export default {
       'userID',
       'userRole'
     ]),
-    viewProps () {
-      if (this.$route.name === 'services') {
-        return {
-          searchingService: this.searchingService
-        }
-      }
-      return false
-    },
     defaultAction () {
       if (!this.actions) {
         return
@@ -139,7 +130,8 @@ export default {
     margin-bottom: 35px;
   }
   .topsearch {
-    padding-left: 24px;
+    display: none;
+    padding-left: 32px;
     background: url('assets/images/svg/search.svg') no-repeat left 0px center;
     background-size: 24px;
     font-family: Lato;
@@ -147,9 +139,6 @@ export default {
     font-weight: 300;
     line-height: normal;
     font-size: 11px;
-    .v-label {
-      top: 10px;
-    }
     .v-input--is-focused {
       .v-input__slot {
         &:after {
@@ -164,6 +153,10 @@ export default {
       &:before {
         display: none !important;
       }
+    }
+
+    @media only screen and (min-width : $desktop) {
+      display: flex;
     }
   }
   .blue-link {
@@ -185,6 +178,10 @@ export default {
     .v-toolbar__content {
       background: #fff;
       padding-right: 0;
+      padding-left: 0;
+      @media only screen and (min-width : $desktop) {
+        padding-left: 16px;
+      }
     }
   }
   .v-btn {
@@ -393,7 +390,17 @@ export default {
     @extend %filter
   }
 }
-
+.menu-button {
+  width: 40px;
+  height: 55px;
+  margin: 0 !important;
+  border-radius: 0;
+  border-right: 1px solid rgba(137, 149, 175, 0.1);
+  background: url('./assets/images/svg/menu.svg') center no-repeat;
+  .v-icon.mdi-menu{
+    display: none;
+  }
+}
 .v-text-field {
   .v-input--is-focused {
     border-bottom: 1px solid #5699ff !important;

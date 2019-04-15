@@ -56,15 +56,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.add-btn {
-  width: 40px;
-  height: 40px;
-  background: #ef4d37;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
 .menu-item-container {
   display: flex;
 }
