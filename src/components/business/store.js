@@ -109,16 +109,16 @@ const actions = {
       .then(res => {
         commit('SET_BUSINESS_INFO', res)
         dispatch('loadEmployee', businessId)
-        res.parent && dispatch('loadBusinessServices', res.parent)
+        dispatch('loadBusinessServices', businessId)
       })
       .catch(err => commit('ADD_ALERT', makeAlert(err)))
   },
-  loadBusinessServices ({ commit }, companyId) {
-    if (!companyId) {
+  loadBusinessServices ({ commit }, branchId) {
+    if (!branchId) {
       return
     }
 
-    const path = `business_service?parent=eq.${companyId}`
+    const path = `business_service?business_id=eq.${branchId}`
 
     Api()
       .get(path)

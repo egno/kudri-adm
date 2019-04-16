@@ -1,7 +1,7 @@
 <template>
   <ServicesLayout @add="showCreate = true">
     <template slot="content">
-      <template v-if="!branchServices.length">
+      <template v-if="!businessServices.length">
         <div class="services__empty-notification">
           Cоздайте свою первую услугу
         </div>
@@ -49,7 +49,7 @@
         :error-message="errorMessage"
         @close="onClose"
         @save="editService"
-      />
+      /><!--todo remove the second EditService, combine creating and editing in one -->
       <Modal
         :visible="showDelete"
         :template="deleteModalTemplate"
@@ -127,17 +127,14 @@ export default {
   },
   computed: {
     ...mapState({ businessServices: state => state.business.businessServices }),
-    ...mapGetters(['serviceGroups', 'businessServiceCategories', 'businessInfo', 'searchString']),
+    ...mapGetters(['serviceGroups', 'businessServiceCategories', 'searchString', 'businessId']),
     id () {
       return this.$route.params.id
-    },
-    branchServices () {
-      return this.businessServices.filter(s => s.business_id === this.id)
     },
     groupedBranchServices () {
       let obj = {}
 
-      this.branchServices.forEach(s => {
+      this.businessServices.forEach(s => {
         if (!s.j || !s.j.group) {
           return
         }
@@ -182,9 +179,8 @@ export default {
   },
   watch: {
     'businessServiceCategories': 'selectAll',
-    'businessInfo': 'loadCompanyServices',
     searchString (val) {
-      this.selectedGroups = this.branchServices.filter(s => s.name.toLowerCase().includes(val)).map(s => s.j.group)
+      this.selectedGroups = this.businessServices.filter(s => s.name.toLowerCase().includes(val)).map(s => s.j.group)
     }
   },
   mounted () {
@@ -215,7 +211,7 @@ export default {
       })
         .then(() => {
           this.showCreate = false
-          this.loadCompanyServices()
+          this.loadBusinessServices(this.businessId)
         })
         .catch((e) => {
           console.log('FAILURE!! ', e)
@@ -229,7 +225,7 @@ export default {
       Api().delete(`business_service?id=eq.${service.id}`)
         .then(() => {
           this.showEdit = false
-          this.loadCompanyServices()
+          this.loadBusinessServices(this.businessId)
         })
         .catch((e) => {
           console.log('FAILURE!! ', e)
@@ -249,7 +245,7 @@ export default {
       })
         .then(() => {
           this.showEdit = false
-          this.loadCompanyServices()
+          this.loadBusinessServices(this.businessId)
         })
         .catch((e) => {
           console.log('FAILURE!! ', e)
@@ -258,11 +254,6 @@ export default {
             this.errorMessage = 'Услуга с таким названием уже существует. Пожалуйста, выберите другое название'
           }
         })
-    },
-    loadCompanyServices () {
-      if (this.businessInfo && this.businessInfo.parent) {
-        this.loadBusinessServices(this.businessInfo.parent)
-      }
     },
     onAction (payload) {
       if (payload === this.formActions[0].action) {
