@@ -10,55 +10,60 @@
     "
   >
     <template slot="content">
-      <div class="filters">
-        <div
-          v-for="category in categories"
-          :key="category"
-          @click="toggleFilter(category)"
-        >
+      <div class="employees-list">
+        <div class="filters">
           <div
-            v-if="category"
-            class="filters__item"
-            :class="{ _active: selectedCategories.includes(category) }"
+            v-for="category in categories"
+            :key="category"
+            @click="toggleFilter(category)"
           >
-            {{ category }}
-          </div>
-        </div>
-        <div
-          class="filters__item"
-          :class="{
-            _active:
-              selectedCategories &&
-              selectedCategories.length === categories.length
-          }"
-          @click="toggleAll"
-        >
-          Все мастера
-        </div>
-      </div>
-      <div class="filter-results">
-        <div
-          v-for="category in selectedCategories"
-          :key="category"
-          class="filter-results__group"
-        >
-          <div class="filter-results__group-name">
-            {{ category ? category : '' }}
-          </div>
-          <div class="filter-results__cards">
-            <div v-for="(employee, i) in businessEmployees" :key="i">
-              <EmployeeCard
-                v-if="employee.j.category === category"
-                :employee="employee"
-                @click="
-                  $router.push({
-                    name: 'employeeProfile',
-                    params: { id: id, employee: employee.id }
-                  })
-                "
-                @delete="showDeleteDialog(employee)"
-              />
+            <div
+              v-if="category"
+              class="filters__item"
+              :class="{ _active: selectedCategories.includes(category) }"
+            >
+              {{ category }}
             </div>
+          </div>
+          <div
+            class="filters__item"
+            :class="{
+              _active:
+                selectedCategories &&
+                selectedCategories.length >= categories.length
+            }"
+            @click="toggleAll"
+          >
+            Все мастера
+          </div>
+        </div>
+        <div class="filter-results">
+          <div
+            v-for="category in selectedCategories"
+            :key="category"
+            class="filter-results__group"
+          >
+            <template v-if="businessEmployees.some(e => e.j && e.j.category === category)">
+              <div class="filter-results__group-name">
+                {{ category ? category : '' }}
+              </div>
+              <div class="filter-results__cards">
+                <div v-for="(employee, i) in businessEmployees" :key="i">
+                  <EmployeeCard
+                    v-if="employee.j.category === category"
+                    :employee="employee"
+                    :services-count="empServices(employee.id)"
+                    @click="
+                      $router.push({
+                        name: 'employeeProfile',
+                        params: { id: id, employee: employee.id }
+                      })
+                    "
+                    @delete="showDeleteDialog(employee)"
+                  />
+                </div>
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -92,7 +97,7 @@
 import PageLayout from '@/components/common/PageLayout.vue'
 import Api from '@/api/backend'
 import EmployeeCard from '@/components/employee/EmployeeCard.vue'
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import Modal from '@/components/common/Modal'
 
 export default {
@@ -103,7 +108,6 @@ export default {
   components: { PageLayout, EmployeeCard, Modal },
   data () {
     return {
-      businessEmployees: [],
       edit: false,
       empToDelete: undefined,
       deleteModalVisible: false,
@@ -116,6 +120,8 @@ export default {
     }
   },
   computed: {
+    ...mapState({ businessServices: state => state.business.businessServices }),
+    ...mapState({ businessEmployees: state => state.business.businessEmployees }),
     id () {
       return this.$route.params.id
     },
@@ -127,67 +133,29 @@ export default {
         )
       ].sort((a, b) => (a < b ? -1 : 1))
     },
-    queryService () {
-      return this.$route && this.$route.query && this.$route.query.service
-    }
   },
   mounted () {
-    this.fetchData()
     this.setActions()
+    this.selectAll()
   },
   methods: {
-    ...mapActions(['setActions']),
-    categoryItems (category) {
-      return (
-        this.businessEmployees &&
-        this.businessEmployees.filter(
-          x =>
-            x.j &&
-            x.j.category === category &&
-            (!this.queryService ||
-              (x.j.services &&
-                x.j.services.length > 0 &&
-                x.j.services.some(s => (s.name || s) === this.queryService))) &&
-            (!this.searchString ||
-              (x.j.category &&
-                x.j.category
-                  .toUpperCase()
-                  .indexOf(this.searchString.toUpperCase()) > -1) ||
-              // (x.j.phone &&
-              //   x.j.phone
-              //     .toUpperCase()
-              //     .indexOf(this.searchString.toUpperCase()) > -1) ||
-              // (x.j.email &&
-              //   x.j.email
-              //     .toUpperCase()
-              //     .indexOf(this.searchString.toUpperCase()) > -1) ||
-              (x.j.surname &&
-                x.j.surname
-                  .toUpperCase()
-                  .indexOf(this.searchString.toUpperCase()) > -1) ||
-              (x.j.name &&
-                x.j.name
-                  .toUpperCase()
-                  .indexOf(this.searchString.toUpperCase()) > -1) ||
-              (x.j.services &&
-                x.j.services.length > 0 &&
-                x.j.services.some(
-                  s =>
-                    (s.name || s)
-                      .toUpperCase()
-                      .indexOf(this.searchString.toUpperCase()) > -1
-                )))
-        )
-      )
-    },
-    deleteEmployee () {},
-    fetchData () {
+    ...mapActions(['setActions', 'loadBusinessEmployees']),
+    deleteEmployee () {
       Api()
-        .get(`employee?parent=eq.${this.id}`)
-        .then(res => res.data)
-        .then(res => {
-          this.businessEmployees = res
+        .delete(`employee?id=eq.${this.empToDelete.id}`)
+        .then(() => {
+          this.deleteModalVisible = false
+          this.loadBusinessEmployees(this.id)
         })
+        .catch((e) => {
+          console.log('FAILURE!! ', e)
+        })
+    },
+    empServices (empId) {
+      if (!this.businessServices || !this.businessServices.length) {
+        return 0
+      }
+      return this.businessServices.filter(s => s.j.employees && s.j.employees.includes(empId)).length
     },
     onSave (payload) {
       this.sendData(payload)
@@ -232,3 +200,14 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  @import '../assets/styles/common';
+
+  .employees-list {
+    padding: 28px 28px 0;
+    @media only screen and (min-width : $desktop) {
+      padding: 38px 40px 0 122px;
+    }
+  }
+</style>

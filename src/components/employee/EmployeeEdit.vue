@@ -1,6 +1,9 @@
 <template>
-  <v-layout column align-center>
-    <div>
+  <v-layout column>
+    <v-layout
+      justify-center
+      class="businesscard-form__avatar"
+    >
       <Avatar
         size=""
         :src="imagePath"
@@ -11,39 +14,39 @@
         :required="false"
         :name="employee.j.name"
       />
-    </div>
-    <div v-if="employee && employee.j">
-      <v-flex>
-        <v-text-field
-          v-model="employee.j.name"
-          browser-autocomplete="name"
-          label="Имя и Фамилия"
-          required
-          :disabled="!employee.access"
-        />
-      </v-flex>
-
-      <v-flex>
-        <v-combobox
-          v-model="employee.j.category"
-          label="Должность"
-          :employees="employeeCategories"
-          :disabled="!employee.access"
-          :rules="[ rules.required ]"
-        />
-      </v-flex>
-
-      <v-flex>
-        <PhoneEdit :phone="employee.j.phone" :disabled="!employee.access" :removable="false" />
-      </v-flex>
-    </div>
-    <v-flex v-if="employee.j">
+    </v-layout>
+    <template v-if="employee.j">
+      <v-text-field
+        v-model="employee.j.name"
+        browser-autocomplete="name"
+        label="Имя и Фамилия*"
+        required
+        :disabled="!employee.access"
+        :rules="[ rules.required ]"
+        class="businesscard-form__field"
+      />
+      <v-select
+        v-model="employee.j.category"
+        label="Должность*"
+        :items="employeeCategories"
+        :disabled="!employee.access"
+        :rules="[ rules.required ]"
+        class="businesscard-form__field dropdown-select"
+      />
+      <PhoneEdit :phone="employee.j.phone" :disabled="!employee.access" :removable="false" @onEdit="employee.j.phone = $event" />
       <v-textarea
         v-model="employee.j.notes"
-        label="Дополнительные сведения"
+        counter="500"
+        height="auto"
+        auto-grow
+        rows="3"
+        class="businesscard-form__field"
+        maxlength="500"
+        placeholder="Дополнительные сведения"
         :disabled="!employee.access"
+        :rules="[value => value && (value.length <= 500 || 'Слишком длинный текст') || true]"
       />
-    </v-flex>
+    </template>
   </v-layout>
 </template>
 <script>
@@ -85,3 +88,8 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  @import '../../assets/styles/businesscard-form';
+
+</style>

@@ -1,6 +1,6 @@
 <template>
   <PageLayout
-    :is-edit-mode="isEditMode"
+    :is-edit-mode="isEditMode || isCreating"
     :is-edit-visible="!isCreating"
     :template="layoutText"
     @add="
@@ -11,7 +11,7 @@
     "
     @changeMode="isEditMode = $event"
   >
-    <template v-if="!isEditMode" slot="content">
+    <template v-if="!isEditMode && !isCreating" slot="content">
       <div class="infocard _view">
         <div v-if="employee && employee.j" class="infocard__content">
           <VLayout align-center justify-center column>
@@ -24,16 +24,11 @@
               />
             </div>
             <VLayout column>
-              <div />
-              <div v-if="phones && phones.length" class="top-bordered">
-                <div
-                  v-for="(item, i) in phones"
-                  :key="i"
-                  class="infocard__field-value"
-                >
+              <div v-if="phone" class="top-bordered">
+                <div class="infocard__field-value">
                   <span class=" infocard__phone">
-                    {{ item | phone }}
-                  </span>
+                    {{ phone | phone }}
+                  </span><!--todo -->
                 </div>
               </div>
               <div v-if="employee.j.schedule">
@@ -57,55 +52,68 @@
         </div>
       </div>
     </template>
-    <template v-if="isEditMode" slot="content">
+    <template v-else slot="content">
       <AppTabs v-model="activeTab">
-        <v-flex>
-          <v-tab
-            key="0"
-            ripple
-          >
-            Профиль
-          </v-tab>
-        </v-flex>
-        <v-flex>
-          <v-tab
-            key="1"
-            ripple
-            :disabled="!(employee && employee.id)"
-          >
-            Услуги
-          </v-tab>
-        </v-flex>
-        <v-flex>
-          <v-tab
-            key="2"
-            ripple
-            :disabled="!(employee && employee.id)"
-          >
-            График работы
-          </v-tab>
-        </v-flex>
-        <v-tab-item key="0">
-          <EmployeeEdit
-            v-if="employee"
-            :employee="employee"
-            @onImageUpload="onImageUpload($event)"
-          />
-        </v-tab-item>
-        <v-tab-item key="1">
-          <!--<EmployeeServices
-            v-if="employee"
-            :item="employee"
-            @onSave="onServiceSave($event)"
-          />-->
-        </v-tab-item>
-        <v-tab-item key="2">
-          <EmployeeSchedule
-            v-if="employee"
-            :item="employee"
-          />
-        </v-tab-item>
+        <v-tab
+          :key="0"
+          ripple
+        >
+          Профиль
+        </v-tab>
+        <v-tab
+          :key="1"
+          ripple
+        >
+          Услуги
+        </v-tab>
+        <v-tab
+          :key="2"
+          ripple
+        >
+          График работы
+        </v-tab>
       </AppTabs>
+      <div class="tab-content">
+        <v-form
+          ref="form"
+          v-model="valid"
+        >
+          <div v-show="activeTab === 0" class="infocard _edit">
+            <div class="infocard__content">
+              <EmployeeEdit
+                v-if="employee"
+                :employee="employee"
+                @onImageUpload="onImageUpload($event)"
+              />
+              <MainButton
+                color="success"
+                class="businesscard-form__next"
+                :class="{ button_disabled: hasErrors }"
+                @click.native.prevent="activeTab = 1"
+              >
+                Далее
+              </MainButton>
+            </div>
+          </div>
+          <div v-show="activeTab === 1" class="infocard _edit">
+            <div class="infocard__content">
+              <!--<EmployeeServices
+              v-if="employee"
+              :item="employee"
+              @onSave="onServiceSave($event)"
+            />-->
+            </div>
+          </div>
+          <div v-show="activeTab === 2" class="infocard _edit">
+            <div class="infocard__content">
+              <EmployeeSchedule
+                v-if="employee"
+                :item="employee"
+              />
+            </div>
+          </div>
+        </v-form>
+      </div>
     </template>
   </PageLayout>
 </template>
@@ -123,6 +131,7 @@ import EmployeeEdit from '@/components/employee/EmployeeEdit.vue'
 // import EmployeeServices from '@/components/employee/EmployeeServices.vue'
 import EmployeeSchedule from '@/components/employee/EmployeeSchedule.vue'
 import Avatar from '@/components/avatar/Avatar.vue'
+import MainButton from '@/components/common/MainButton.vue'
 
 export default {
   components: {
@@ -133,6 +142,7 @@ export default {
     EmployeeEdit,
     // EmployeeServices,
     EmployeeSchedule,
+    MainButton,
     PageLayout
   },
   mixins: [businessMixins],
@@ -142,7 +152,8 @@ export default {
       employee: undefined,
       dialog: false,
       isEditMode: false,
-      scheduleExpanded: false
+      scheduleExpanded: false,
+      valid: false
     }
   },
   computed: {
@@ -158,6 +169,15 @@ export default {
         this.$route.params.employee === 'new'
       )
     },
+    hasCategory () {
+      return !!(this.employee && this.employee.j && this.employee.j.category)
+    },
+    hasErrors () {
+      return !(this.hasName && this.hasCategory)
+    },
+    hasName () {
+      return !!(this.employee && this.employee.j && this.employee.j.name)
+    },
     layoutText () {
       return this.isCreating
         ? { headerText: 'Новый сотрудник', buttonText: '' }
@@ -168,14 +188,13 @@ export default {
     }
   },
   watch: {
-    id: 'loadBusiness',
     employee_id: 'loadEmployee'
   },
   mounted () {
-    this.load()
+    this.loadEmployee()
   },
   methods: {
-    ...mapActions(['alert', 'deleteEmployee', 'setBusiness']),
+    ...mapActions(['alert', 'deleteEmployee']),
     deleteItem () {
       if (this.employee_id && this.employee_id !== 'new') {
         this.deleteEmployee(this.employee_id)
@@ -186,16 +205,6 @@ export default {
     },
     exit () {
       this.$router.back()
-    },
-    load () {
-      this.loadBusiness()
-      this.loadEmployee()
-    },
-    loadBusiness () {
-      if (!this.id) return
-      if (this.id !== this.businessId) {
-        this.setBusiness(this.id)
-      }
     },
     loadEmployee () {
       if (!this.employee_id) return
@@ -230,4 +239,10 @@ export default {
 
 <style lang="scss">
 @import '../assets/styles/infocard';
+
+.tab-content {
+  @media only screen and (min-width : $desktop) {
+    padding-left: 122px;
+  }
+}
 </style>

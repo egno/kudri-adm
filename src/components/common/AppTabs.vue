@@ -4,6 +4,7 @@
     color="grey lighten-4"
     slider-color="primary"
     class="app-tabs"
+    height="40px"
     @change="$emit('input', $event)"
   >
     <slot />
@@ -21,8 +22,8 @@ export default {
 <style lang="scss">
   @import '../../assets/styles/common';
   .app-tabs {
+    border-bottom: 1px solid rgba(137, 149, 175, 0.1);
     .v-tabs__wrapper {
-      padding-left: 48px;
       background-color: #fff;
       @media only screen and (min-width : $desktop) {
         padding-left: 122px;
@@ -30,19 +31,26 @@ export default {
 
     }
     .v-tabs__container {
-      max-width: 524px;
-    }
-    .v-window {
-      max-width: 524px;
       margin: 0 auto;
-      background-color: #fff;
-
+      @media only screen and (min-width : $tablet) {
+        max-width: 524px;
+      }
       @media only screen and (min-width : $desktop) {
-        margin-left: 120px;
+        margin: 0;
       }
     }
-    .schedule-edit__heading {
-      margin-top: 0;
+    .v-tabs__slider-wrapper .primary{
+      @extend %gold-gradient;
+    }
+    .v-tabs__div {
+      flex: 1 1 auto;
+      text-transform: none;
+    }
+    .v-tabs__item {
+      padding: 0;
+    }
+    .v-tabs__item--active {
+      font-weight: bold;
     }
   }
 

@@ -2,11 +2,12 @@
   <div class="employee-card" @click="$emit('click')">
     <div class="employee-card__top">
       <Avatar
-        class="ma-1"
+        class="employee-card__avatar"
         :name="employee.j && employee.j.name || employee.j.email"
         :src="avatar"
+        size="80px"
       />
-      <div class="employee-card__left">
+      <div class="employee-card__badge">
         <h2 class="employee-card__title">
           <span>{{ employee.j.name.length > 70? employee.j.name.substring(0, 70) + '...' : employee.j.name }}</span>
         </h2>
@@ -17,8 +18,8 @@
     </div>
     <div class="employee-card__bottom">
       <div>
-        <div v-if="employee.j.services && employee.j.services.length" class="employee-card__info">
-          {{ servicesCount }}
+        <div class="employee-card__info">
+          {{ servicesCount | formatServices }}
         </div>
       </div>
       <DeleteButton :is-dark="true" @click.native.stop="$emit('delete')" />
@@ -32,16 +33,25 @@ import Avatar from '@/components/avatar/Avatar.vue'
 import { fullName } from '@/components/business/utils'
 import { imagePath } from '@/components/gallery/utils'
 import DeleteButton from '@/components/common/DeleteButton'
+import { conjugateServices } from '@/components/utils'
 
 export default {
   components: { Avatar, DeleteButton },
+  filters: {
+    formatServices (n) {
+      return conjugateServices(n)
+    }
+  },
   props: {
-    displayemployeesCount: { type: Number, default: 5 },
     employee: {
       type: Object,
       default: () => {
         return {}
       }
+    },
+    servicesCount: {
+      type: Number,
+      default: 0
     }
   },
   data () {
@@ -60,14 +70,6 @@ export default {
         imagePath(this.employee.j && this.employee.j.image, this.employee.parent)
       )
     },
-    servicesCount () {
-      return (
-        this.employee &&
-        this.employee.j &&
-        this.employee.j.services &&
-        this.employee.j.services.length
-      )
-    }
   },
   methods: {
     fullName (emp) {
@@ -80,6 +82,6 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
   @import '../../assets/styles/employee-card.scss';
 </style>

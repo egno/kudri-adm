@@ -111,7 +111,7 @@
       }
     }
     &__h1 {
-      font: 24px Roboto Slab, Times New Roman, Times, serif;
+      font: 24px/40px Roboto Slab, Times New Roman, Times, serif;
     }
     &__edit {
       padding-left: 40px;
@@ -147,6 +147,7 @@
       flex-grow: 1;
       align-content: flex-start;
       background: #f4f5f7;
+      min-width: 375px;
     }
   }
 </style>
