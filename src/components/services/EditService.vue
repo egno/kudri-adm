@@ -81,7 +81,7 @@
             Длительность (мин)
           </div>
           <Counter
-            id="create? 'create-service-duration': 'edit-service-duration'"
+            :id="create? 'create-service-duration': 'edit-service-duration'"
             :value="duration"
             :min-value="15"
             :max-value="720"
