@@ -1,18 +1,18 @@
 <template>
   <div class="employee-card" @click="$emit('click')">
-    <div class="employee-card__top">
+    <div v-if="employee.j" class="employee-card__top">
       <Avatar
         class="employee-card__avatar"
-        :name="employee.j && employee.j.name || employee.j.email"
+        :name="employee.j.name || employee.j.email"
         :src="avatar"
         size="80px"
       />
       <div class="employee-card__badge">
         <h2 class="employee-card__title">
-          <span>{{ employee.j.name.length > 70? employee.j.name.substring(0, 70) + '...' : employee.j.name }}</span>
+          <span>{{ employee.j.name && employee.j.name.length > 70? employee.j.name.substring(0, 70) + '...' : employee.j.name }}</span>
         </h2>
         <div v-if="employee.j.category" class="employee-card__subtitle">
-          {{ employee.j && employee.j.category }}
+          {{ employee.j.category }}
         </div>
       </div>
     </div>

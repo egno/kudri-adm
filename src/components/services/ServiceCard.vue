@@ -19,7 +19,8 @@
           {{ service.j.employees.length | formatMaster }}
         </div>
       </div>
-      <DeleteButton @click.native.stop="$emit('delete')" />
+      <DeleteButton v-if="editMode" @click.native.stop="$emit('delete')" />
+      <div v-else :class="['service-card__selection', { '_selected': isSelected }]" />
     </div>
   </div>
 </template>
@@ -37,14 +38,14 @@ export default {
     }
   },
   props: {
-    access: { type: Boolean, default: false },
     editMode: { type: Boolean, default: false },
     service: {
       type: Object,
       default: () => {
         return {}
       }
-    }
+    },
+    isSelected: { type: Boolean, default: false }
   },
   computed: {
     ...mapGetters(['serviceGroups']),
@@ -135,6 +136,14 @@ export default {
     border-radius: 12px;
     color: #8995AF;
     text-align: center;
+  }
+  &__selection {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    &._selected {
+      background: url('../../assets/images/svg/selection.svg') center no-repeat #5699FF;
+    }
   }
 }
 </style>

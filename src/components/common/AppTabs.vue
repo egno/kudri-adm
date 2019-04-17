@@ -26,7 +26,7 @@ export default {
     .v-tabs__wrapper {
       background-color: #fff;
       @media only screen and (min-width : $desktop) {
-        padding-left: 122px;
+        padding-left: 127px;
       }
 
     }

@@ -13,7 +13,7 @@
         :new-message="false"
         :required="false"
         :name="employee.j.name"
-      />
+      /><!--todo-->
     </v-layout>
     <template v-if="employee.j">
       <v-text-field
@@ -33,13 +33,13 @@
         :rules="[ rules.required ]"
         class="businesscard-form__field dropdown-select"
       />
-      <PhoneEdit :phone="employee.j.phone" :disabled="!employee.access" :removable="false" @onEdit="employee.j.phone = $event" />
+      <PhoneEdit :phone="employee.j.phone" :disabled="!employee.access" :removable="false" class="phone-input" @onEdit="employee.j.phone = $event" />
       <v-textarea
         v-model="employee.j.notes"
         counter="500"
         height="auto"
         auto-grow
-        rows="3"
+        rows="1"
         class="businesscard-form__field"
         maxlength="500"
         placeholder="Дополнительные сведения"
@@ -90,6 +90,5 @@ export default {
 </script>
 
 <style lang="scss">
-  @import '../../assets/styles/businesscard-form';
-
+  @import '../../assets/styles/phone-input';
 </style>

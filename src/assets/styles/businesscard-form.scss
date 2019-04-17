@@ -157,4 +157,21 @@
     order: -1;
     margin-top: 5px;
   }
+
+  .save-info {
+    display: block;
+    width: 240px !important;
+    height: 56px !important;
+    border-radius: 0 !important;
+    margin: 28px auto 0;
+    font-family: $roboto;
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    &:hover {
+      background-color: #07101c;
+    }
+  }
 }

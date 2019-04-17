@@ -25,6 +25,7 @@
                 <ServiceCard
                   v-for="(service, i) in groupedBranchServices[group]"
                   :key="i" :service="service"
+                  :edit-mode="true"
                   @click="showEditPanel(service)"
                   @delete="showDeleteModal(service)"
                 />

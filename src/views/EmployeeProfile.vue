@@ -3,6 +3,7 @@
     :is-edit-mode="isEditMode || isCreating"
     :is-edit-visible="!isCreating"
     :template="layoutText"
+    :class="{ 'businesscard-form': isEditMode || isCreating }"
     @add="
       $router.push({
         name: 'employeeProfile',
@@ -26,9 +27,7 @@
             <VLayout column>
               <div v-if="phone" class="top-bordered">
                 <div class="infocard__field-value">
-                  <span class=" infocard__phone">
-                    {{ phone | phone }}
-                  </span><!--todo -->
+                  <span class=" infocard__phone"> {{ phone | phone }} </span><!--todo -->
                 </div>
               </div>
               <div v-if="employee.j.schedule">
@@ -54,30 +53,18 @@
     </template>
     <template v-else slot="content">
       <AppTabs v-model="activeTab">
-        <v-tab
-          :key="0"
-          ripple
-        >
+        <v-tab :key="0" ripple>
           Профиль
         </v-tab>
-        <v-tab
-          :key="1"
-          ripple
-        >
+        <v-tab :key="1" ripple>
           Услуги
         </v-tab>
-        <v-tab
-          :key="2"
-          ripple
-        >
+        <v-tab :key="2" ripple>
           График работы
         </v-tab>
       </AppTabs>
       <div class="tab-content">
-        <v-form
-          ref="form"
-          v-model="valid"
-        >
+        <v-form v-if="employee" ref="form" v-model="valid">
           <div v-show="activeTab === 0" class="infocard _edit">
             <div class="infocard__content">
               <EmployeeEdit
@@ -95,21 +82,28 @@
               </MainButton>
             </div>
           </div>
-          <div v-show="activeTab === 1" class="infocard _edit">
+          <div v-show="activeTab === 1" class="infocard _edit _emp-serv">
             <div class="infocard__content">
-              <!--<EmployeeServices
-              v-if="employee"
-              :item="employee"
-              @onSave="onServiceSave($event)"
-            />-->
+              <EmployeeServices
+                :item="employee"
+                @selected="onServicesSelected"
+              />
             </div>
           </div>
           <div v-show="activeTab === 2" class="infocard _edit">
             <div class="infocard__content">
-              <EmployeeSchedule
-                v-if="employee"
-                :item="employee"
+              <BusinessScheduleEdit
+                :week-schedule="employee.schedule"
+                @editWeek="onScheduleEdit"
               />
+              <MainButton
+                color="success"
+                class="button save-info"
+                :class="{ button_disabled: hasErrors }"
+                @click.native.prevent="save"
+              >
+                Сохранить
+              </MainButton>
             </div>
           </div>
         </v-form>
@@ -119,29 +113,26 @@
 </template>
 
 <script>
+import AppTabs from '@/components/common/AppTabs.vue'
 import PageLayout from '@/components/common/PageLayout.vue'
+import EmployeeEdit from '@/components/employee/EmployeeEdit.vue'
+import EmployeeServices from '@/components/employee/EmployeeServices.vue'
+import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue'
+import Avatar from '@/components/avatar/Avatar.vue'
+import MainButton from '@/components/common/MainButton.vue'
+
 import { businessMixins } from '@/components/business/mixins'
 import { mapGetters, mapActions } from 'vuex'
 import { fullName } from '@/components/business/utils'
 import Employee from '@/classes/employee'
-/*import AppBtn from '@/components/common/AppBtn.vue'
-import AppCardTitle from '@/components/common/AppCardTitle.vue'*/
-import AppTabs from '@/components/common/AppTabs.vue'
-import EmployeeEdit from '@/components/employee/EmployeeEdit.vue'
-// import EmployeeServices from '@/components/employee/EmployeeServices.vue'
-import EmployeeSchedule from '@/components/employee/EmployeeSchedule.vue'
-import Avatar from '@/components/avatar/Avatar.vue'
-import MainButton from '@/components/common/MainButton.vue'
 
 export default {
   components: {
     Avatar,
-    // AppBtn,
-    // AppCardTitle,
     AppTabs,
     EmployeeEdit,
-    // EmployeeServices,
-    EmployeeSchedule,
+    EmployeeServices,
+    BusinessScheduleEdit,
     MainButton,
     PageLayout
   },
@@ -183,8 +174,8 @@ export default {
         ? { headerText: 'Новый сотрудник', buttonText: '' }
         : { headerText: 'Профиль сотрудника', buttonText: '' }
     },
-    phones () {
-      return this.employee.j && this.employee.j.phones
+    phone () {
+      return this.employee.j && this.employee.j.phone
     }
   },
   watch: {
@@ -217,9 +208,12 @@ export default {
     onImageUpload (payload) {
       this.employee.image = payload
     },
-    onServiceSave (payload) {
+    onScheduleEdit (newWeek) {
+      this.employee.schedule = newWeek
+    },
+    onServicesSelected (payload) {
       this.employee.services = payload
-      this.save()
+      this.activeTab = 2
     },
     save () {
       if (!this.employee_id) return
@@ -239,10 +233,19 @@ export default {
 
 <style lang="scss">
 @import '../assets/styles/infocard';
+@import '../assets/styles/businesscard-form';
 
 .tab-content {
-  @media only screen and (min-width : $desktop) {
-    padding-left: 122px;
+  @media only screen and (min-width: $desktop) {
+    padding-left: 127px;
+  }
+  .infocard._emp-serv {
+    max-width: 100%;
+    width: 100%;
+    padding-right: 40px;
+    .infocard__content {
+      max-width: 100%;
+    }
   }
 }
 </style>

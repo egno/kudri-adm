@@ -4,7 +4,7 @@
       id="checkbox"
       :checked="checked"
       v-bind="$attrs" type="checkbox"
-      class="checkbox"
+      class="tumbler"
       @change="$emit('change', $event.target.checked)"
     >
     <label for="checkbox">{{ label }}</label>
@@ -24,12 +24,12 @@
 </script>
 <style lang="scss" scoped>
 $checkbox-height: 16px;
-  .checkbox {
+  .tumbler {
     position: absolute;
     z-index: -1;
     opacity: 0;
   }
-  .checkbox + label {
+  .tumbler + label {
     position: relative;
     display: block;
     min-width: 24px;
@@ -43,7 +43,7 @@ $checkbox-height: 16px;
     line-height: normal;
     color: #07101C;
   }
-  .checkbox + label:before {
+  .tumbler + label:before {
     content: '';
     position: absolute;
     top: 0;
@@ -54,7 +54,7 @@ $checkbox-height: 16px;
     background: #CDD1DA;
     transition: .2s;
   }
-  .checkbox + label:after {
+  .tumbler + label:after {
     content: '';
     position: absolute;
     top: 1px;
@@ -66,10 +66,10 @@ $checkbox-height: 16px;
     box-shadow: 0px 0px 4px rgba(137, 149, 175, 0.2);
     transition: .2s;
   }
-  .checkbox:checked + label:before {
+  .tumbler:checked + label:before {
     background: #5699FF;
   }
-  .checkbox:checked + label:after {
+  .tumbler:checked + label:after {
     left: 17px;
   }
 </style>

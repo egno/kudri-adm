@@ -200,6 +200,18 @@ class Employee extends ApiObject {
     return this.j && this.j.category
   }
 
+  set services (newVal) {
+    if (newVal) {
+      this.j.services = newVal
+    } else {
+      delete this.j.services
+    }
+  }
+
+  get services () {
+    return this.j && this.j.services
+  }
+
   set schedule (newVal) {
     this.j.schedule_template = new ScheduleTemplate(newVal)
     console.log(this.j.schedule_template.templates)
