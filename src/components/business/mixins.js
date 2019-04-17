@@ -6,7 +6,7 @@ export const businessMixins = {
     id () {
       return this.$route && this.$route.params && this.$route.params.id
     },
-    employee_id () {
+    employeeId () {
       return this.$route && this.$route.params && this.$route.params.employee
     },
     phones () {

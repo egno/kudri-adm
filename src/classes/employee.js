@@ -214,7 +214,6 @@ class Employee extends ApiObject {
 
   set schedule (newVal) {
     this.j.schedule_template = new ScheduleTemplate(newVal)
-    console.log(this.j.schedule_template.templates)
   }
 
   get schedule () {

@@ -37,10 +37,6 @@ import { scheduleMixin} from './mixins'
 export default {
   mixins: [ scheduleMixin ],
   props: {
-    captionClass: {
-      type: String,
-      default: ''
-    },
     expanded: { type: Boolean, default: false }
   },
 }

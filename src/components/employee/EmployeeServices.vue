@@ -83,8 +83,6 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import ServiceCard from '@/components/services/ServiceCard.vue'
-import { serviceInit } from '@/components/business/utils'
-import { fullName } from '@/components/business/utils'
 import AppCheckbox from '@/components/common/AppCheckbox.vue'
 import MainButton from '@/components/common/MainButton.vue'
 import Steps from '@/components/common/Steps.vue'
@@ -112,16 +110,6 @@ export default {
       businessServices: state => state.business.businessServices
     }),
     ...mapGetters(['businessServiceCategories']),
-    employeeServices () {
-      return (
-        this.item &&
-        this.item.j &&
-        this.item.j.services.map((x, n) => ({ ...serviceInit(x), ...{ n: n } }))
-      )
-    },
-    fullName () {
-      return fullName(this.item)
-    }
   },
   methods: {
     onGroupsChange (category, selected) {

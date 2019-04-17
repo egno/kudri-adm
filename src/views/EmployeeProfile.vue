@@ -13,27 +13,30 @@
     @changeMode="isEditMode = $event"
   >
     <template v-if="!isEditMode && !isCreating" slot="content">
-      <div class="infocard _view">
-        <div v-if="employee && employee.j" class="infocard__content">
-          <VLayout align-center justify-center column>
-            <div>
+      <div class="tab-content">
+        <div class="infocard _view">
+          <div v-if="employee && employee.j" class="infocard__content">
+            <VLayout align-center justify-center column>
               <Avatar
                 size="12em"
                 :src="employee.j.avatar"
                 :is-company-avatar="true"
                 :name="employee.j.name"
               />
-            </div>
-            <VLayout column>
-              <div v-if="phone" class="top-bordered">
+              <div class="employee-profile__title">
+                {{ employee.j.name }}
+              </div>
+              <div class="employee-profile__position">
+                {{ employee.j.category }}
+              </div>
+              <div class="top-bordered">
                 <div class="infocard__field-value">
                   <span class=" infocard__phone"> {{ phone | phone }} </span><!--todo -->
                 </div>
               </div>
-              <div v-if="employee.j.schedule">
+              <div v-if="employee.schedule && employee.schedule.data && employee.schedule.data.length">
                 <BusinessSchedule
-                  :caption-class="captionClass"
-                  :week-schedule="employee.j.schedule"
+                  :week-schedule="employee.schedule"
                   :expanded="scheduleExpanded"
                   @toggleSchedule="scheduleExpanded = !scheduleExpanded"
                 />
@@ -47,7 +50,25 @@
                 </div>
               </div>
             </VLayout>
-          </VLayout>
+          </div>
+        </div>
+        <div class="infocard _view">
+          <div class="infocard__content">
+            <div class="employee-profile__title">
+              Услуги
+            </div>
+            <div v-for="(category, catInd) in empServiceGroups" :key="catInd">
+              <div>{{ category }}</div>
+              <div v-for="(service, servInd) in empServices" :key="servInd">
+                <template v-if="service.j && service.j.group === category">
+                  <ServiceCard
+                    :service="service"
+                    :edit-mode="false"
+                  />
+                </template>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </template>
@@ -117,12 +138,14 @@ import AppTabs from '@/components/common/AppTabs.vue'
 import PageLayout from '@/components/common/PageLayout.vue'
 import EmployeeEdit from '@/components/employee/EmployeeEdit.vue'
 import EmployeeServices from '@/components/employee/EmployeeServices.vue'
+import BusinessSchedule from '@/components/business/BusinessSchedule.vue'
 import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue'
 import Avatar from '@/components/avatar/Avatar.vue'
 import MainButton from '@/components/common/MainButton.vue'
+import ServiceCard from '@/components/services/ServiceCard.vue'
 
 import { businessMixins } from '@/components/business/mixins'
-import { mapGetters, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import { fullName } from '@/components/business/utils'
 import Employee from '@/classes/employee'
 
@@ -132,9 +155,20 @@ export default {
     AppTabs,
     EmployeeEdit,
     EmployeeServices,
+    BusinessSchedule,
     BusinessScheduleEdit,
     MainButton,
-    PageLayout
+    PageLayout,
+    ServiceCard
+  },
+  filters: {
+    phone (value) {
+      if (!value) return ''
+      return value.replace(
+        /(\d?)(\d{1,3})(\d{1,3})(\d{1,4})$/g,
+        '+$1($2)$3-$4'
+      )
+    }
   },
   mixins: [businessMixins],
   data () {
@@ -148,7 +182,17 @@ export default {
     }
   },
   computed: {
+    ...mapState({ businessServices: state => state.business.businessServices }),
     ...mapGetters(['businessId']),
+    empServices () {
+      if (!this.businessServices || !this.businessServices.length) {
+        return []
+      }
+      return this.businessServices.filter(s =>  s.j.employees && s.j.employees.includes(this.employeeId))
+    },
+    empServiceGroups () {
+      return [...new Set(this.empServices.map(s => s.j && s.j.group).filter(g => !!g))]
+    },
     fullName () {
       return fullName(this.employee)
     },
@@ -179,7 +223,7 @@ export default {
     }
   },
   watch: {
-    employee_id: 'loadEmployee'
+    employeeId: 'loadEmployee'
   },
   mounted () {
     this.loadEmployee()
@@ -187,23 +231,21 @@ export default {
   methods: {
     ...mapActions(['alert', 'deleteEmployee']),
     deleteItem () {
-      if (this.employee_id && this.employee_id !== 'new') {
-        this.deleteEmployee(this.employee_id)
-        this.exit()
-      } else {
-        this.exit()
+      if (this.employeeId && this.employeeId !== 'new') {
+        this.deleteEmployee(this.employeeId)
       }
+      this.exit()
     },
     exit () {
       this.$router.back()
     },
     loadEmployee () {
-      if (!this.employee_id) return
+      if (!this.employeeId) return
       this.employee = new Employee(
-        this.employee_id === 'new' ? { parent: this.id } : {}
+        this.employeeId === 'new' ? { parent: this.id } : {}
       )
-      if (this.employee && this.employee.id === this.employee_id) return
-      this.employee.load(this.employee_id)
+      // if (this.employee && this.employee.id === this.employeeId) return
+      this.employee.load(this.employeeId)
     },
     onImageUpload (payload) {
       this.employee.image = payload
@@ -216,16 +258,15 @@ export default {
       this.activeTab = 2
     },
     save () {
-      if (!this.employee_id) return
+      if (!this.employeeId) return
       this.employee.save().then(id => {
-        if (this.employee_id === 'new') {
+        if (this.employeeId === 'new') {
           this.$router.replace({
             name: 'employeeProfile',
             params: { id: this.id, employee: id }
           })
         }
       })
-      return
     }
   }
 }
