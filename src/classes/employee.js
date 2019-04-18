@@ -101,6 +101,9 @@ class Employee extends ApiObject {
     this.j = (newVal && newVal.j) || {}
 
     this.schedule = this.j.schedule_template
+    if (!newVal || !newVal.j || !newVal.j.phones) {
+      this.phones = []
+    }
   }
 
   get jsonObject () {
@@ -176,6 +179,18 @@ class Employee extends ApiObject {
     return this.j && this.j.position
   }
 
+  set phones (newVal) {
+    if (newVal) {
+      this.j.phones = newVal
+    } else {
+      this.j.phones = []
+    }
+  }
+
+  get phones () {
+    return this.j && this.j.phones
+  }
+
   set rating (newVal) {
     if (newVal) {
       this.j.rating = newVal
@@ -223,8 +238,8 @@ class Employee extends ApiObject {
   // API methods
 
   load (id) {
-    if (!id || id === 'new') return
-    Api()
+    if (!id || id === 'new') return Promise.resolve()
+    return Api()
       .get(`employee?id=eq.${id}`)
       .then(res => res.data[0])
       .then(res => {
@@ -234,7 +249,6 @@ class Employee extends ApiObject {
   }
 
   save () {
-    console.log(this.jsonObject)
     if (!this.id) {
       delete this.id
       return Api()

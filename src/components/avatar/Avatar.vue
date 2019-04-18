@@ -222,8 +222,10 @@ export default {
 
   .business-avatar {
     width: 140px;
+    height: 140px;
     @media only screen and (min-width : $desktop) {
       width: 170px;
+      height: 170px;
     }
   }
 

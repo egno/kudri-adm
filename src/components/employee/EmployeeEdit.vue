@@ -33,7 +33,7 @@
         :rules="[ rules.required ]"
         class="businesscard-form__field dropdown-select"
       />
-      <PhoneEdit :phone="employee.j.phone" :disabled="!employee.access" :removable="false" class="phone-input" @onEdit="employee.j.phone = $event" />
+      <PhoneEdit :phone="employee.j.phones[0]" :disabled="!employee.access" :removable="false" class="phone-input" @onEdit="employee.j.phones[0] = $event" />
       <v-textarea
         v-model="employee.j.notes"
         counter="500"

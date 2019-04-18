@@ -13,33 +13,32 @@
     @changeMode="isEditMode = $event"
   >
     <template v-if="!isEditMode && !isCreating" slot="content">
-      <div class="tab-content">
+      <div class="tab-content employee-profile">
         <div class="infocard _view">
           <div v-if="employee && employee.j" class="infocard__content">
-            <VLayout align-center justify-center column>
+            <VLayout
+              align-center column
+            >
               <Avatar
-                size="12em"
+                size=""
                 :src="employee.j.avatar"
-                :is-company-avatar="true"
+                :is-company-avatar="false"
+                :is-editing="false"
                 :name="employee.j.name"
+                :avatar-class="'business-avatar'"
               />
-              <div class="employee-profile__title">
+              <div class="infocard__field-value employee-profile__title _name">
                 {{ employee.j.name }}
               </div>
-              <div class="employee-profile__position">
+              <div class="infocard__field-value employee-profile__position">
                 {{ employee.j.category }}
               </div>
-              <div class="top-bordered">
+            </VLayout>
+            <VLayout column>
+              <div v-if="phone" class="top-bordered">
                 <div class="infocard__field-value">
-                  <span class=" infocard__phone"> {{ phone | phone }} </span><!--todo -->
+                  <PhoneView :phone="phone" />
                 </div>
-              </div>
-              <div v-if="employee.schedule && employee.schedule.data && employee.schedule.data.length">
-                <BusinessSchedule
-                  :week-schedule="employee.schedule"
-                  :expanded="scheduleExpanded"
-                  @toggleSchedule="scheduleExpanded = !scheduleExpanded"
-                />
               </div>
               <div v-if="employee.j.notes">
                 <div class="infocard__field-title top-bordered">
@@ -49,10 +48,17 @@
                   {{ employee.j.notes }}
                 </div>
               </div>
+              <div v-if="employee.schedule && employee.schedule.data && employee.schedule.data.length">
+                <BusinessSchedule
+                  :week-schedule="employee.schedule"
+                  :expanded="scheduleExpanded"
+                  @toggleSchedule="scheduleExpanded = !scheduleExpanded"
+                />
+              </div>
             </VLayout>
           </div>
         </div>
-        <div class="infocard _view">
+        <div v-if="empServices.length" class="infocard _view">
           <div class="infocard__content">
             <div class="employee-profile__title">
               Услуги
@@ -138,16 +144,19 @@ import AppTabs from '@/components/common/AppTabs.vue'
 import PageLayout from '@/components/common/PageLayout.vue'
 import EmployeeEdit from '@/components/employee/EmployeeEdit.vue'
 import EmployeeServices from '@/components/employee/EmployeeServices.vue'
+import PhoneView from '@/components/common/PhoneView.vue'
 import BusinessSchedule from '@/components/business/BusinessSchedule.vue'
 import BusinessScheduleEdit from '@/components/business/BusinessScheduleEdit.vue'
 import Avatar from '@/components/avatar/Avatar.vue'
 import MainButton from '@/components/common/MainButton.vue'
 import ServiceCard from '@/components/services/ServiceCard.vue'
+import Api from '@/api/backend'
 
 import { businessMixins } from '@/components/business/mixins'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import { fullName } from '@/components/business/utils'
 import Employee from '@/classes/employee'
+import { makeAlert } from '@/api/utils'
 
 export default {
   components: {
@@ -155,20 +164,12 @@ export default {
     AppTabs,
     EmployeeEdit,
     EmployeeServices,
+    PhoneView,
     BusinessSchedule,
     BusinessScheduleEdit,
     MainButton,
     PageLayout,
     ServiceCard
-  },
-  filters: {
-    phone (value) {
-      if (!value) return ''
-      return value.replace(
-        /(\d?)(\d{1,3})(\d{1,3})(\d{1,4})$/g,
-        '+$1($2)$3-$4'
-      )
-    }
   },
   mixins: [businessMixins],
   data () {
@@ -219,7 +220,7 @@ export default {
         : { headerText: 'Профиль сотрудника', buttonText: '' }
     },
     phone () {
-      return this.employee.j && this.employee.j.phone
+      return this.employee.j && this.employee.j.phones && this.employee.j.phones[0]
     }
   },
   watch: {
@@ -230,6 +231,34 @@ export default {
   },
   methods: {
     ...mapActions(['alert', 'deleteEmployee']),
+    addEmpToServices (employeeId) {
+      let p = []
+
+      this.employee.services.forEach(servId => {
+        const service = this.businessServices.find(s => s.id === servId)
+        let employees = service.j && service.j.employees || []
+
+        employees.push(employeeId)
+        service.j.employees = employees
+
+        p.push(Api()
+          .patch(`business_service?id=eq.${service.id}`, {
+            id: service.id,
+            business_id: this.id,
+            name: service.name,
+            access: true,
+            j: {
+              ...service.j
+            }
+          })
+          .catch(err => {
+            this.alert(makeAlert(err))
+          })
+        )
+      })
+
+      return Promise.all(p)
+    },
     deleteItem () {
       if (this.employeeId && this.employeeId !== 'new') {
         this.deleteEmployee(this.employeeId)
@@ -244,8 +273,9 @@ export default {
       this.employee = new Employee(
         this.employeeId === 'new' ? { parent: this.id } : {}
       )
-      // if (this.employee && this.employee.id === this.employeeId) return
-      this.employee.load(this.employeeId)
+      this.employee.load(this.employeeId).then(() => {
+        console.log('this.employee.services ', this.employee.services)
+      })
     },
     onImageUpload (payload) {
       this.employee.image = payload
@@ -259,14 +289,54 @@ export default {
     },
     save () {
       if (!this.employeeId) return
-      this.employee.save().then(id => {
-        if (this.employeeId === 'new') {
-          this.$router.replace({
-            name: 'employeeProfile',
-            params: { id: this.id, employee: id }
+
+      this.removeEmpServices()
+        .then(() => {
+          this.employee.services = this.employee.services.map(s => s.id)
+
+          this.employee.save().then(id => {
+            if (this.employeeId === 'new') {
+              this.addEmpToServices(id)
+              this.$router.replace({
+                name: 'employeeProfile',
+                params: { id: this.id, employee: id }
+              })
+            } else {
+              this.addEmpToServices(this.employeeId)
+              this.isEditMode = false
+            }
           })
-        }
+        })
+    },
+    removeEmpServices () {
+      let empId = this.employeeId
+      let p = []
+
+      if (!this.empServices.length) {
+        return Promise.resolve()
+      }
+
+      this.empServices.forEach(service => {
+        let employees = service.j && service.j.employees
+
+        employees.splice(employees.indexOf(empId), 1)
+        p.push(Api()
+          .patch(`business_service?id=eq.${service.id}`, {
+            id: service.id,
+            business_id: this.id,
+            name: service.name,
+            access: true,
+            j: {
+              ...service.j
+            }
+          })
+          .catch(err => {
+            this.alert(makeAlert(err))
+          })
+        )
       })
+
+      return Promise.all(p)
     }
   }
 }
@@ -287,6 +357,23 @@ export default {
     .infocard__content {
       max-width: 100%;
     }
+  }
+}
+.employee-profile {
+  color: #07101C;
+
+  .v-avatar {
+    margin-bottom: 24px !important;
+  }
+  &__title {
+    font-size: 24px;
+    &._name {
+      text-align: center;
+    }
+  }
+  &__position {
+    font-size: 14px;
+    color: #8995AF;
   }
 }
 </style>

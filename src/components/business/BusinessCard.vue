@@ -42,9 +42,7 @@
               :key="i"
               class="infocard__field-value"
             >
-              <span class=" infocard__phone">
-                {{ item | phone }}
-              </span>
+              <PhoneView :phone="item" />
             </div>
           </div>
           <div v-if="businessInfo.j && businessInfo.j.schedule">
@@ -94,20 +92,13 @@
 import BusinessSchedule from '@/components/business/BusinessSchedule.vue'
 import Avatar from '@/components/avatar/Avatar.vue'
 import { businessMixins } from '@/components/business/mixins'
+import PhoneView from '@/components/common/PhoneView.vue'
 
 export default {
   components: {
     BusinessSchedule,
+    PhoneView,
     Avatar
-  },
-  filters: {
-    phone (value) {
-      if (!value) return ''
-      return value.replace(
-        /(\d?)(\d{1,3})(\d{1,3})(\d{1,4})$/g,
-        '+$1($2)$3-$4'
-      )
-    }
   },
   mixins: [businessMixins],
   props: {

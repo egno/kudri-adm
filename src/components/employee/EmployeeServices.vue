@@ -125,7 +125,7 @@ export default {
     },
     onNext () {
       if (this.currentStep === this.selectedServiceGroups.length - 1) {
-        this.$emit('selected', this.selectedServices.map(s => s.id))
+        this.$emit('selected', this.selectedServices)
       } else {
         this.currentStep++
       }
