@@ -113,6 +113,8 @@
             <div class="infocard__content">
               <EmployeeServices
                 :item="employee"
+                :employee-services="empServices"
+                :employee-service-groups="empServiceGroups"
                 @selected="onServicesSelected"
               />
             </div>
@@ -274,9 +276,7 @@ export default {
       this.employee = new Employee(
         this.employeeId === 'new' ? { parent: this.id } : {}
       )
-      this.employee.load(this.employeeId).then(() => {
-        console.log('this.employee.services ', this.employee.services)
-      })
+      this.employee.load(this.employeeId)
     },
     onImageUpload (payload) {
       this.employee.image = payload

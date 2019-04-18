@@ -95,6 +95,18 @@ export default {
       default () {
         return {}
       }
+    },
+    employeeServices: {
+      type: Array,
+      default () {
+        return []
+      }
+    },
+    employeeServiceGroups: {
+      type: Array,
+      default () {
+        return []
+      }
     }
   },
   data () {
@@ -111,7 +123,24 @@ export default {
     }),
     ...mapGetters(['businessServiceCategories']),
   },
+  watch: {
+    employeeServiceGroups: {
+      handler: 'init',
+      deep: true
+    },
+    employeeServices: {
+      handler: 'init',
+      deep: true
+    }
+  },
+  created () {
+    this.init()
+  },
   methods: {
+    init () {
+      this.selectedServiceGroups = this.employeeServiceGroups.slice()
+      this.selectedServices = this.employeeServices.slice()
+    },
     onGroupsChange (category, selected) {
       if (selected) {
         this.selectedServiceGroups.push(category)
@@ -120,6 +149,7 @@ export default {
 
         if (i > -1) {
           this.selectedServiceGroups.splice(i, 1)
+          this.selectedServices = this.selectedServices.filter(s => this.selectedServiceGroups.includes(s.j.group))
         }
       }
     },
