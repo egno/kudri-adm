@@ -99,6 +99,7 @@ import Api from '@/api/backend'
 import EmployeeCard from '@/components/employee/EmployeeCard.vue'
 import { mapState, mapActions } from 'vuex'
 import Modal from '@/components/common/Modal'
+import { employeeMixin } from '@/mixins/employee'
 
 export default {
   params: {
@@ -106,6 +107,7 @@ export default {
     search: { type: String, default: '' }
   },
   components: { PageLayout, EmployeeCard, Modal },
+  mixins: [employeeMixin],
   data () {
     return {
       edit: false,
@@ -141,15 +143,19 @@ export default {
   methods: {
     ...mapActions(['setActions', 'loadBusinessEmployees']),
     deleteEmployee () {
-      Api()
-        .delete(`employee?id=eq.${this.empToDelete.id}`)
-        .then(() => {
-          this.deleteModalVisible = false
-          this.loadBusinessEmployees(this.id)
-        })
-        .catch((e) => {
-          console.log('FAILURE!! ', e)
-        })
+      let empServices = this.businessServices.filter(s =>  s.j.employees && s.j.employees.includes(this.empToDelete.id))
+
+      this.removeEmpServices(empServices, this.empToDelete.id).then(() => {
+        Api()
+          .delete(`employee?id=eq.${this.empToDelete.id}`)
+          .then(() => {
+            this.deleteModalVisible = false
+            this.loadBusinessEmployees(this.id)
+          })
+          .catch((e) => {
+            console.log('FAILURE!! ', e)
+          })
+      })
     },
     empServices (empId) {
       if (!this.businessServices || !this.businessServices.length) {

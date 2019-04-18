@@ -153,6 +153,7 @@ import ServiceCard from '@/components/services/ServiceCard.vue'
 import Api from '@/api/backend'
 
 import { businessMixins } from '@/components/business/mixins'
+import { employeeMixin } from '@/mixins/employee'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import { fullName } from '@/components/business/utils'
 import Employee from '@/classes/employee'
@@ -171,7 +172,7 @@ export default {
     PageLayout,
     ServiceCard
   },
-  mixins: [businessMixins],
+  mixins: [businessMixins, employeeMixin],
   data () {
     return {
       activeTab: 0,
@@ -290,7 +291,7 @@ export default {
     save () {
       if (!this.employeeId) return
 
-      this.removeEmpServices()
+      this.removeEmpServices(this.empServices, this.employeeId)
         .then(() => {
           this.employee.services = this.employee.services.map(s => s.id)
 
@@ -308,36 +309,6 @@ export default {
           })
         })
     },
-    removeEmpServices () {
-      let empId = this.employeeId
-      let p = []
-
-      if (!this.empServices.length) {
-        return Promise.resolve()
-      }
-
-      this.empServices.forEach(service => {
-        let employees = service.j && service.j.employees
-
-        employees.splice(employees.indexOf(empId), 1)
-        p.push(Api()
-          .patch(`business_service?id=eq.${service.id}`, {
-            id: service.id,
-            business_id: this.id,
-            name: service.name,
-            access: true,
-            j: {
-              ...service.j
-            }
-          })
-          .catch(err => {
-            this.alert(makeAlert(err))
-          })
-        )
-      })
-
-      return Promise.all(p)
-    }
   }
 }
 </script>
