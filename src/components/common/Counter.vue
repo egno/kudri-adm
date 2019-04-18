@@ -2,7 +2,7 @@
   <div class="counter">
     <div class="counter__control _down" @click="onDecrement" />
 
-    <input :id="id" type="text" :value="quantity" @input.prevent="setNewValue">
+    <input :id="id" type="text" :value="value" @input.prevent="setNewValue">
 
     <div class="counter__control _up" @click="onIncrement" />
   </div>
@@ -33,41 +33,34 @@
         default: 1
       }
     },
-    data () {
-      return {
-        quantity: this.value || this.minValue || 0
-      }
-    },
-    computed: {
-    },
     methods: {
       onIncrement () {
-        if (this.quantity <= this.maxValue - this.interval) {
-          this.quantity += this.interval
-          this.$emit('changeCount', this.quantity)
+        if (this.value <= this.maxValue - this.interval) {
+          this.$emit('changeCount', this.value + this.interval)
         } 
       },
       onDecrement () {
-        if (this.quantity >= this.minValue + this.interval) {
-          this.quantity -= this.interval
-          this.$emit('changeCount', this.quantity)
+        if (this.value >= this.minValue + this.interval) {
+          this.$emit('changeCount', this.value - this.interval)
         }
       },
       setNewValue (event) {
         let value = event.target.value.replace(/\D/g, '')
+        let newVal
+
         value = parseInt(value)
 
         if (!event.target.value) {
-          this.quantity = 0
+          newVal = 0
           event.target.value = ''
         } else if (value <= this.maxValue) {
-          this.quantity = value
+          newVal = value
           event.target.value = value
         } else {
-          this.quantity = this.maxValue
+          newVal = this.maxValue
           event.target.value = this.maxValue
         }
-        this.$emit('changeCount', this.quantity)
+        this.$emit('changeCount', newVal)
       }
     }
   }
