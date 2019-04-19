@@ -193,7 +193,7 @@ export default {
           title: 'Сотрудники',
           count: this.employeesCount,
           route: {
-            name: 'businessCardEmployee',
+            name: 'employeeList',
             params: { id: this.businessId }
           },
           show: this.businessIsFilial && this.loggedIn && !this.isManagerMenu && this.businessIsSalon,

@@ -12,6 +12,9 @@
     "
     @changeMode="isEditMode = $event"
   >
+    <template slot="breadcrumbs">
+      <v-breadcrumbs :items="breadcrumbs" divider=" " />
+    </template>
     <template v-if="!isEditMode && !isCreating" slot="content">
       <div class="tab-content employee-profile">
         <div class="infocard _view">
@@ -58,20 +61,30 @@
             </VLayout>
           </div>
         </div>
-        <div v-if="empServices.length" class="infocard _view">
+        <div v-if="empServices.length" class="infocard _view _services">
           <div class="infocard__content">
             <div class="employee-profile__title">
               Услуги
             </div>
             <div v-for="(category, catInd) in empServiceGroups" :key="catInd">
-              <div>{{ category }}</div>
-              <div v-for="(service, servInd) in empServices" :key="servInd">
-                <template v-if="service.j && service.j.group === category">
-                  <ServiceCard
-                    :service="service"
-                    :edit-mode="false"
-                  />
-                </template>
+              <div>
+                <Accordion>
+                  <template slot="heading">
+                    <div>{{ category }}</div>
+                  </template>
+                  <template slot="content">
+                    <div v-for="(service, servInd) in empServices" :key="servInd">
+                      <template v-if="service.j && service.j.group === category">
+                        <ServiceCard
+                          :service="service"
+                          :edit-mode="false"
+                          :hoverable="false"
+                          :responsive="true"
+                        />
+                      </template>
+                    </div>
+                  </template>
+                </Accordion>
               </div>
             </div>
           </div>
@@ -109,15 +122,13 @@
               </MainButton>
             </div>
           </div>
-          <div v-show="activeTab === 1" class="infocard _edit _emp-serv">
-            <div class="infocard__content">
-              <EmployeeServices
-                :item="employee"
-                :employee-services="empServices"
-                :employee-service-groups="empServiceGroups"
-                @selected="onServicesSelected"
-              />
-            </div>
+          <div v-show="activeTab === 1" class="employee-profile-edit">
+            <EmployeeServices
+              :item="employee"
+              :employee-services="empServices"
+              :employee-service-groups="empServiceGroups"
+              @selected="onServicesSelected"
+            />
           </div>
           <div v-show="activeTab === 2" class="infocard _edit">
             <div class="infocard__content">
@@ -142,6 +153,7 @@
 </template>
 
 <script>
+import Accordion from '@/components/common/Accordion.vue'
 import AppTabs from '@/components/common/AppTabs.vue'
 import PageLayout from '@/components/common/PageLayout.vue'
 import EmployeeEdit from '@/components/employee/EmployeeEdit.vue'
@@ -163,6 +175,7 @@ import { makeAlert } from '@/api/utils'
 
 export default {
   components: {
+    Accordion,
     Avatar,
     AppTabs,
     EmployeeEdit,
@@ -188,6 +201,28 @@ export default {
   computed: {
     ...mapState({ businessServices: state => state.business.businessServices }),
     ...mapGetters(['businessId']),
+    breadcrumbs () {
+      const businessId = this.id
+      const employeeId = this.employeeId
+      const employee = this.employee
+
+      if (!businessId || !employeeId || !employee) {
+        return []
+      }
+
+      return [
+        {
+          text: 'Сотрудники',
+          disabled: false,
+          href: `/businessCard/e/${businessId}`
+        },
+        {
+          text: `${employee.id? employee.name : 'Новый сотрудник' }`,
+          disabled: true,
+          href: `/businessCard/${businessId}//e/${employeeId}`
+        },
+      ]
+    },
     empServices () {
       if (!this.businessServices || !this.businessServices.length) {
         return []
@@ -239,9 +274,15 @@ export default {
 
       this.employee.services.forEach(servId => {
         const service = this.businessServices.find(s => s.id === servId)
-        let employees = service.j && service.j.employees || []
+        let employees
 
+        if (!service) {
+          return
+        }
+
+        employees = service.j && service.j.employees || []
         employees.push(employeeId)
+        !service.j && (service.j = {})
         service.j.employees = employees
 
         p.push(Api()
@@ -323,8 +364,8 @@ export default {
   }
   .infocard._emp-serv {
     max-width: 100%;
-    width: 100%;
-    padding-right: 40px;
+    width: auto;
+    // padding-right: 40px;
     .infocard__content {
       max-width: 100%;
     }
@@ -332,11 +373,13 @@ export default {
 }
 .employee-profile {
   color: #07101C;
-
-  .v-avatar {
-    margin-bottom: 24px !important;
+  @media only screen and (min-width: $tablet) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
-  &__title {
+
+    &__title {
     font-size: 24px;
     &._name {
       text-align: center;
@@ -346,5 +389,34 @@ export default {
     font-size: 14px;
     color: #8995AF;
   }
+  .v-avatar {
+    margin-bottom: 24px !important;
+  }
+  .infocard._view {
+    @media only screen and (min-width: $tablet) {
+      width: 400px;
+      margin: 0 auto 10px;
+    }
+    @media only screen and (min-width: $desktop) {
+      margin: 0 10px 10px 0;
+    }
+  }
+  ._view .infocard__content {
+    @media only screen and (min-width: $desktop) {
+      padding: 40px 60px 60px;
+    }
+  }
+  ._view._services {
+    @media only screen and (min-width: 1350px) {
+      width: 540px;
+    }
+  }
 }
+  .employee-profile-edit {
+    .infocard__content {
+      @media only screen and (min-width: $tablet) {
+
+      }
+    }
+  }
 </style>

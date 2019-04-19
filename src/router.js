@@ -79,7 +79,7 @@ export default new Router({
     },
     {
       path: '/businessCard/e/:id',
-      name: 'businessCardEmployee',
+      name: 'employeeList',
       component: () => import('./views/EmployeeList.vue')
     },
     {

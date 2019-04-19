@@ -55,8 +55,8 @@
     padding-top: 20px;
     margin: 15px 2px 0;
     border-top: 1px solid  rgba(137, 149, 175, 0.1);
-    .infocard__field-title,
-    .infocard__field-value {
+    .infocard__field-title:first-child,
+    .infocard__field-value:first-child {
       padding-top: 0;
     }
   }

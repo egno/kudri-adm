@@ -1,31 +1,33 @@
 <template>
-  <div>
-    <div v-show="!showServices">
-      <h2 class="employee-services__title">
-        Выберите категории услуг, которые вы предоставляете
-      </h2>
-      <div class="employee-services__categories">
-        <AppCheckbox
-          v-for="(category, i) in businessServiceCategories"
-          :id="category"
-          :key="i"
-          :checked="selectedServiceGroups.includes(category)"
-          :label="category"
-          name="service_category"
-          :value="category"
-          @change="onGroupsChange(category, $event)"
-        />
+  <div class="employee-services">
+    <div v-show="!showServices" class="infocard">
+      <div class="infocard__content">
+        <h2 class="employee-services__title">
+          Выберите категории услуг, которые вы предоставляете
+        </h2>
+        <div class="employee-services__categories">
+          <AppCheckbox
+            v-for="(category, i) in businessServiceCategories"
+            :id="category"
+            :key="i"
+            :checked="selectedServiceGroups.includes(category)"
+            :label="category"
+            name="service_category"
+            :value="category"
+            @change="onGroupsChange(category, $event)"
+          />
+        </div>
+        <MainButton
+          color="success"
+          class="businesscard-form__next"
+          :class="{ button_disabled: !selectedServiceGroups.length }"
+          @click.native.prevent="showServices = true"
+        >
+          К услугам
+        </MainButton>
       </div>
-      <MainButton
-        color="success"
-        class="businesscard-form__next"
-        :class="{ button_disabled: !selectedServiceGroups.length }"
-        @click.native.prevent="showServices = true"
-      >
-        К услугам
-      </MainButton>
     </div>
-    <div v-show="showServices">
+    <div v-show="showServices" class="edit-services">
       <div class="employee-services__header">
         <div class="employee-services__left">
           <h2 class="employee-services__title">
@@ -53,21 +55,22 @@
             :service="service"
             :edit-mode="false"
             :is-selected="selectedServices.includes(service)"
+            :responsive="true"
             @click="onSelect(service)"
           />
         </div>
       </div>
-      <div>
+      <div class="employee-services__buttons">
         <MainButton
           color="success"
-          class="businesscard-form__next"
+          class="employee-services__back"
           @click.native.prevent="showServices = false"
         >
           Назад к категориям
         </MainButton>
         <MainButton
           color="success"
-          class="businesscard-form__next"
+          class="employee-services__next"
           :class="{
             button_disabled: !selectedServices.some(s => s.j.group === selectedServiceGroups[currentStep])
           }"
@@ -184,13 +187,20 @@ export default {
       @media only screen and (min-width: $desktop) {
         display: flex;
         justify-content: space-between;
-
+        text-align: left;
       }
     }
     &__title {
+      margin: 0 auto;
       font-weight: bold;
       font-size: 16px;
       color: #07101C;
+      @media only screen and (min-width : $tablet) {
+        max-width: 85%;
+      }
+      @media only screen and (min-width : $desktop) {
+        max-width: 100%;
+      }
     }
     &__subtitle {
       font-weight: normal;
@@ -204,6 +214,47 @@ export default {
     &__services {
       padding: 25px 8px 0;
       border-top: 1px solid rgba(137, 149, 175, 0.1);
+      @media only screen and (min-width : $desktop) {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      }
+    }
+    &__buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 50px;
+      button {
+        @extend %button;
+        margin: 0 30px;
+      }
+    }
+    &__back {
+      color: #8995AF;
+      &:hover {
+        color: #07101C;
+      }
+    }
+    &__next {
+      width: 240px;
+      color: #fff;
+      background-color: #5699FF;
+    }
+    .edit-services {
+      padding: 30px 37px 60px;
+      background: #fff;
+
+      @media only screen and (min-width : $tablet) {
+        max-width: 524px;
+        margin: 0 auto;
+        box-shadow: 0 2px 12px rgba(137, 149, 175, 0.1);
+      }
+      @media only screen and (min-width : $desktop) {
+        max-width: 100%;
+        margin: 0 40px 0 0;
+        padding: 40px 60px 60px;
+      }
     }
   }
 </style>

@@ -80,5 +80,8 @@ export default {
       }
     }
   }
+  &__header {
+    line-height: 24px;
+  }
 }
 </style>

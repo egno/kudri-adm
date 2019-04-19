@@ -53,13 +53,14 @@
                     v-if="employee.j.category === category"
                     :employee="employee"
                     :services-count="empServices(employee.id)"
+                    @delete="showDeleteDialog(employee)"
+                    @calendarClick="openRegistry"
                     @click="
                       $router.push({
                         name: 'employeeProfile',
                         params: { id: id, employee: employee.id }
                       })
                     "
-                    @delete="showDeleteDialog(employee)"
                   />
                 </div>
               </div>
@@ -94,12 +95,13 @@
 </template>
 
 <script>
+import EmployeeCard from '@/components/employee/EmployeeCard.vue'
+import Modal from '@/components/common/Modal'
 import PageLayout from '@/components/common/PageLayout.vue'
 import Api from '@/api/backend'
-import EmployeeCard from '@/components/employee/EmployeeCard.vue'
 import { mapState, mapActions } from 'vuex'
-import Modal from '@/components/common/Modal'
 import { employeeMixin } from '@/mixins/employee'
+import { formatDate } from '@/components/calendar/utils'
 
 export default {
   params: {
@@ -118,7 +120,8 @@ export default {
         rightButton: 'УДАЛИТЬ'
       },
       newEmp: undefined,
-      selectedCategories: []
+      selectedCategories: [],
+      selectedOnStart: false
     }
   },
   computed: {
@@ -136,9 +139,21 @@ export default {
       ].sort((a, b) => (a < b ? -1 : 1))
     },
   },
+  watch: {
+    categories: {
+      handler (newVal) {
+        if (this.selectedOnStart) {
+          return
+        }
+        if (newVal && newVal.length) {
+          this.selectAll()
+          this.selectedOnStart = true
+        }
+      }
+    }
+  },
   mounted () {
     this.setActions()
-    this.selectAll()
   },
   methods: {
     ...mapActions(['setActions', 'loadBusinessEmployees']),
@@ -162,6 +177,15 @@ export default {
         return 0
       }
       return this.businessServices.filter(s => s.j.employees && s.j.employees.includes(empId)).length
+    },
+    openRegistry () {
+      this.$router.push({
+        name: 'businessVisit',
+        params: {
+          id: this.id,
+          date: formatDate(new Date())
+        }
+      })
     },
     onSave (payload) {
       this.sendData(payload)

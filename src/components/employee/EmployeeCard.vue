@@ -17,18 +17,18 @@
       </div>
     </div>
     <div class="employee-card__bottom">
-      <div>
-        <div class="employee-card__info">
-          {{ servicesCount | formatServices }}
-        </div>
+      <div class="employee-card__info">
+        {{ servicesCount | formatServices }}
       </div>
-      <DeleteButton :is-dark="true" @click.native.stop="$emit('delete')" />
+      <div class="employee-card__buttons">
+        <button v-if="servicesCount" type="button" class="employee-registry" @mousedown.stop="$emit('calendarClick')" />
+        <DeleteButton :is-dark="true" @click.native.stop="$emit('delete')" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-// import BusinessSchedule from '@/components/business/BusinessSchedule.vue'
 import Avatar from '@/components/avatar/Avatar.vue'
 import { fullName } from '@/components/business/utils'
 import { imagePath } from '@/components/gallery/utils'
@@ -84,4 +84,14 @@ export default {
 
 <style lang="scss">
   @import '../../assets/styles/employee-card.scss';
+  @import '../../assets/styles/icon';
+  .employee-registry {
+    @include uno-icon();
+    justify-content: center;
+    margin-right: 25px;
+    background: url('../../assets/images/svg/calendar-grey.svg') center no-repeat transparent;
+    &:hover {
+      background-image: url('../../assets/images/svg/calendar-dark.svg');
+    }
+  }
 </style>

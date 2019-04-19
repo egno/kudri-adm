@@ -93,10 +93,12 @@
     min-height: 100%;
     padding-right: 0;
     &__breadcrumbs {
+      display: none;
+      background-color: #fff;
       flex-grow: 0;
-      padding-left: 48px;
+      padding-left: 127px;
       @media only screen and (min-width : $desktop) {
-        padding-left: 127px;
+        display: flex;
       }
     }
     &__header {
