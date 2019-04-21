@@ -22,7 +22,7 @@
         <main-button
           class="button_attractive add-master"
           @click="$router.push({
-            name: 'employeeFull',
+            name: 'employeeProfile',
             params: { id: $route.params.id, employee: 'new' }
           })"
         >

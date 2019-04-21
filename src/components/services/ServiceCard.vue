@@ -1,9 +1,13 @@
 <template>
-  <div class="service-card" :style="{ 'background-image': `url(/images/service_group/${image}` }" @click="$emit('click')">
+  <div
+    :class="['service-card', { '_not-hoverable': !hoverable, '_responsive': responsive }]"
+    :style="{ 'background-image': `url(/images/service_group/${image}` }"
+    @click="$emit('click')"
+  >
     <div class="service-card__top">
       <div class="service-card__left">
         <h2 class="service-card__title">
-          <span>{{ service.name.length > 70? service.name.substring(0, 70) + '...' : service.name }}</span>
+          {{ service.name.length > 70? service.name.substring(0, 70) + '...' : service.name }}
         </h2>
         <div v-if="service.j.duration" class="service-card__subtitle _duration">
           {{ service.j.duration }} мин.
@@ -12,14 +16,16 @@
           {{ service.j.price }} р.
         </div>
       </div>
+      <div :class="['service-card__selection', { _selected: isSelected }]" />
     </div>
     <div class="service-card__bottom">
-      <div>
-        <div v-if="service.j.employees && service.j.employees.length" class="service-card__info">
-          {{ service.j.employees.length | formatMaster }}
-        </div>
+      <div
+        v-if="service.j.employees && service.j.employees.length"
+        class="service-card__info"
+      >
+        {{ service.j.employees.length | formatMaster }}
       </div>
-      <DeleteButton @click.native.stop="$emit('delete')" />
+      <DeleteButton v-if="editMode" @click.native.stop="$emit('delete')" />
     </div>
   </div>
 </template>
@@ -37,19 +43,23 @@ export default {
     }
   },
   props: {
-    access: { type: Boolean, default: false },
     editMode: { type: Boolean, default: false },
     service: {
       type: Object,
       default: () => {
         return {}
       }
-    }
+    },
+    isSelected: { type: Boolean, default: false },
+    hoverable: { type: Boolean, default: true },
+    responsive: { type: Boolean, default: false },
   },
   computed: {
     ...mapGetters(['serviceGroups']),
     image () {
-      const group = this.serviceGroups.find(gr => gr.name === this.service.j.group)
+      const group = this.serviceGroups.find(
+        gr => gr.name === this.service.j.group
+      )
 
       return group && group.j && group.j.image
     }
@@ -72,18 +82,18 @@ export default {
   align-content: space-between;
   padding: 17px 4px 8px 24px;
   margin: 0 10px 20px 0;
-  border-top: 2px solid  transparent;
-  box-shadow: 0px 0px 2px rgba(137, 149, 175, 0.35);
+  border-top: 2px solid transparent;
+  box-shadow: 0 0 2px rgba(137, 149, 175, 0.35);
   transition: border-color 0.4s 0s;
   box-sizing: border-box;
   background-size: cover;
-  background-position: center;
+  background-position: right top;
   background-repeat: no-repeat;
   background-color: #fff;
   &:hover {
-    border-color: #5699FF;
+    border-color: #5699ff;
     cursor: pointer;
-    box-shadow: 2px 12px 12px rgba(137, 149, 175, 0.20);
+    box-shadow: 2px 12px 12px rgba(137, 149, 175, 0.2);
   }
   &__top,
   &__bottom {
@@ -99,13 +109,13 @@ export default {
     align-items: center;
   }
   &__left {
-    max-width: 85%;
+    max-width: calc(100% - 30px);
   }
   &__title {
     margin-bottom: 10px;
     font-weight: bold;
     font-size: 18px;
-    color: #07101C;
+    color: #07101c;
     text-transform: capitalize;
   }
   &__main {
@@ -118,10 +128,11 @@ export default {
     padding-left: 20px;
     font-weight: normal;
     font-size: 12px;
-    color: #8995AF;
-    
+    color: #8995af;
+
     &._duration {
-      background: url('../../assets/images/svg/clock_opacity_1.svg') left center no-repeat;
+      background: url('../../assets/images/svg/clock_opacity_1.svg') left center
+        no-repeat;
     }
     &._price {
       background: url('../../assets/images/svg/rub.svg') 3px center no-repeat;
@@ -133,9 +144,37 @@ export default {
     padding: 2px 0 0;
     background: rgba(137, 149, 175, 0.1);
     border-radius: 12px;
-    color: #8995AF;
+    color: #8995af;
     text-align: center;
+  }
+  &__selection {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    &._selected {
+      background: url('../../assets/images/svg/selection.svg') center no-repeat
+        #5699ff;
+    }
+  }
+  &._responsive {
+    width: 100%;
+    max-width: 420px;
+    height: 110px;
+    margin: 0 auto 20px;
+
+    .service-card__title,
+    .service-card__subtitle {
+      margin-bottom: 7px;
+    }
+
+    .service-card__bottom {
+      display: none;
+    }
+  }
+  &._not-hoverable:hover {
+    border-color: transparent;
+    cursor: default;
+    box-shadow: 0 0 2px rgba(137, 149, 175, 0.35);
   }
 }
 </style>
-

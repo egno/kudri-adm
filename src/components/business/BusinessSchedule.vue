@@ -1,4 +1,5 @@
 <template>
+  <!--todo use Accordion component -->
   <div class="schedule" :class="{_expanded: expanded }">
     <div class="schedule__header" @click="$emit('toggleSchedule')">
       Режим работы
@@ -37,10 +38,6 @@ import { scheduleMixin} from './mixins'
 export default {
   mixins: [ scheduleMixin ],
   props: {
-    captionClass: {
-      type: String,
-      default: ''
-    },
     expanded: { type: Boolean, default: false }
   },
 }
@@ -56,7 +53,7 @@ export default {
     &__header {
       position: relative;
       padding: 11px 17px 10px 36px;
-      min-width: 284px;
+      min-width: 280px;
       border-radius: 20px;
       cursor: pointer;
       background: rgba(137, 149, 175, 0.1);

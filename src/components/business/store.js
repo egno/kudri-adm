@@ -15,7 +15,8 @@ const state = {
     'Барбершоп'
   ],
   dayVisits: [],
-  businessServices: []
+  businessEmployees: [],
+  businessServices: [],
 }
 
 const getters = {
@@ -77,6 +78,9 @@ const mutations = {
   },
   SET_BUSINESS_SERVICES (state, payload) {
     state.businessServices = payload
+  },
+  SET_BUSINESS_EMPLOYEES (state, payload) {
+    state.businessEmployees = payload
   }
 }
 
@@ -109,22 +113,38 @@ const actions = {
       .then(res => {
         commit('SET_BUSINESS_INFO', res)
         dispatch('loadEmployee', businessId)
-        res.parent && dispatch('loadBusinessServices', res.parent)
+        dispatch('loadBusinessServices', businessId)
+        dispatch('loadBusinessEmployees', businessId)
       })
       .catch(err => commit('ADD_ALERT', makeAlert(err)))
   },
-  loadBusinessServices ({ commit }, companyId) {
-    if (!companyId) {
+  loadBusinessServices ({ commit }, branchId) {
+    if (!branchId) {
       return
     }
 
-    const path = `business_service?parent=eq.${companyId}`
+    const path = `business_service?business_id=eq.${branchId}`
 
     Api()
       .get(path)
       .then(res => res.data)
       .then(res => {
         commit('SET_BUSINESS_SERVICES', res)
+      })
+      .catch(err => commit('ADD_ALERT', makeAlert(err)))
+  },
+  loadBusinessEmployees ({ commit }, branchId) {
+    if (!branchId) {
+      return
+    }
+
+    const path = `employee?parent=eq.${branchId}`
+
+    Api()
+      .get(path)
+      .then(res => res.data)
+      .then(res => {
+        commit('SET_BUSINESS_EMPLOYEES', res)
       })
       .catch(err => commit('ADD_ALERT', makeAlert(err)))
   }

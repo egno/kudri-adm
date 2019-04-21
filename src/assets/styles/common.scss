@@ -2,6 +2,7 @@
 // @media only screen and (min-width : $desktop) { ... }
 $tablet: 768px;
 $desktop: 1160px;
+$large: 1552px;
 
 $roboto: Roboto Slab, Times New Roman, Times, serif;
 $lato: Lato, sans-serif;
@@ -13,7 +14,7 @@ $lato: Lato, sans-serif;
 
 %filter-active {
   color: #fff;
-  background: rgba(137, 149, 175, 0.35);
+  background-color: rgba(137, 149, 175, 0.35);
   transition: color, background-color 0.4s 0s;
 }
 

@@ -1,112 +1,57 @@
 <template>
-  <VCard :hover="item.access" :to="{name:'employeeFull', params: {employee: item.id}}">
-    <v-responsive min-height="5em">
-      <div
-        v-if="photo"
-        class="card-image"
-      >
-        <v-img
-          :src="photo"
-          width="5em"
-          aspect-ratio="1"
-        />
-      </div>
-      <v-container
-        v-if="!photo"
-        pa-3
-      >
-        <Avatar
-          class="ma-1"
-          :name="item.j && item.j.name || item.j.email"
-          :src="avatar"
-        />
-      </v-container>
-      <div class="card-title">
-        <v-container
-          fill-height
-          px-1
-          py-2
-        >
-          <VLayout
-            align-left
-            row
-            spacer pl-2
-          >
-            <VFlex xs12>
-              <VLayout
-                column
-                align-space-around
-                fill-height justify-center
-              >
-                <VFlex pa-0>
-                  <div class="caption grey--text text--darken-1">
-                    {{ item.j && item.j.category }}
-                  </div>
-                </VFlex>
-                <VFlex pa-0>
-                  <h4>{{ fullName(item) }}</h4>
-                </VFlex>
-                <VFlex pa-0>
-                  <v-rating
-                    :value="+item.j.rating"
-                    readonly
-                    color="amber"
-                    background-color="grey"
-                    dense
-                    half-increments
-                    size="12"
-                  />
-                </VFlex>
-              </VLayout>
-              <div />
-            </VFlex>
-          </VLayout>
-        </v-container>
-      </div>
-    </v-responsive>
-    <v-divider />
-    <VCardText>
-      <div>
-        <span :class="captionClass">
-          Услуги: {{ servicesCount || '-' }}
-        </span>
-        <div
-          v-for="(service, i) in item.j && item.j.services"
-          v-show="(i < displayItemsCount)"
-          :key="i"
-        >
-          {{ service.name || service }}
-        </div>
-        <div v-if="servicesCount > displayItemsCount">
-          ...
-        </div>
-      </div>
-      <BusinessSchedule
-        v-if="item.j && item.j.schedule"
-        :caption-class="captionClass"
-        :schedule="item.j.schedule"
+  <div class="employee-card" @click="$emit('click')">
+    <div v-if="employee.j" class="employee-card__top">
+      <Avatar
+        class="employee-card__avatar"
+        :name="employee.j.name || employee.j.email"
+        :src="avatar"
+        size="80px"
       />
-      <span />
-      {{ item.j.note }}
-    </VCardText>
-  </VCard>
+      <div class="employee-card__badge">
+        <h2 class="employee-card__title">
+          <span>{{ employee.j.name && employee.j.name.length > 70? employee.j.name.substring(0, 70) + '...' : employee.j.name }}</span>
+        </h2>
+        <div v-if="employee.j.category" class="employee-card__subtitle">
+          {{ employee.j.category }}
+        </div>
+      </div>
+    </div>
+    <div class="employee-card__bottom">
+      <div class="employee-card__info">
+        {{ servicesCount | formatServices }}
+      </div>
+      <div class="employee-card__buttons">
+        <button v-if="servicesCount" type="button" class="employee-registry" @mousedown.stop="$emit('calendarClick')" />
+        <DeleteButton :is-dark="true" @click.native.stop="$emit('delete')" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import BusinessSchedule from '@/components/business/BusinessSchedule.vue'
 import Avatar from '@/components/avatar/Avatar.vue'
 import { fullName } from '@/components/business/utils'
 import { imagePath } from '@/components/gallery/utils'
+import DeleteButton from '@/components/common/DeleteButton'
+import { conjugateServices } from '@/components/utils'
 
 export default {
-  components: { BusinessSchedule, Avatar },
+  components: { Avatar, DeleteButton },
+  filters: {
+    formatServices (n) {
+      return conjugateServices(n)
+    }
+  },
   props: {
-    displayItemsCount: { type: Number, default: 5 },
-    item: {
+    employee: {
       type: Object,
       default: () => {
         return {}
       }
+    },
+    servicesCount: {
+      type: Number,
+      default: 0
     }
   },
   data () {
@@ -117,29 +62,18 @@ export default {
   },
   computed: {
     avatar () {
-      return this.item && (this.item.j && this.item.j.avatar)
+      return this.employee && (this.employee.j && this.employee.j.avatar)
     },
     photo () {
       return (
-        this.item &&
-        imagePath(this.item.j && this.item.j.image, this.item.parent)
+        this.employee &&
+        imagePath(this.employee.j && this.employee.j.image, this.employee.parent)
       )
     },
-    servicesCount () {
-      return (
-        this.item &&
-        this.item.j &&
-        this.item.j.services &&
-        this.item.j.services.length
-      )
-    }
   },
   methods: {
     fullName (emp) {
       return fullName(emp)
-    },
-    onDelete () {
-      this.$emit('onDelete', this.item)
     },
     onSave (payload) {
       this.$emit('onSave', payload)
@@ -148,16 +82,16 @@ export default {
 }
 </script>
 
-<style scoped>
-.card-title {
-  position: absolute;
-  width: calc(100% - 5.5em);
-  top: 0;
-  left: 5.5em;
-  height: 5em;
-}
-.v-rating {
-  height: 1em;
-  margin-bottom: -1em;
-}
+<style lang="scss">
+  @import '../../assets/styles/employee-card.scss';
+  @import '../../assets/styles/icon';
+  .employee-registry {
+    @include uno-icon();
+    justify-content: center;
+    margin-right: 25px;
+    background: url('../../assets/images/svg/calendar-grey.svg') center no-repeat transparent;
+    &:hover {
+      background-image: url('../../assets/images/svg/calendar-dark.svg');
+    }
+  }
 </style>

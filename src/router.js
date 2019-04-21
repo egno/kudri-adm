@@ -79,7 +79,7 @@ export default new Router({
     },
     {
       path: '/businessCard/e/:id',
-      name: 'businessCardEmployee',
+      name: 'employeeList',
       component: () => import('./views/EmployeeList.vue')
     },
     {
@@ -120,8 +120,8 @@ export default new Router({
     },
     {
       path: '/businessCard/:id/e/:employee',
-      name: 'employeeFull',
-      component: () => import('./views/EmployeeFull.vue')
+      name: 'employeeProfile',
+      component: () => import('./views/EmployeeProfile.vue')
     },
     {
       path: '/businessCard/s/:id',

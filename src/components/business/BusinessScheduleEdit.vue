@@ -2,12 +2,12 @@
   <div class="schedule-edit">
     <div>
       <h2 class="schedule-edit__heading">
-        Определите рабочее время компании
+        Определите рабочее время
       </h2>
     </div>
     <VLayout class="schedule-edit__tumbler">
       <VFlex xs12>
-        <Checkbox v-model="forAllDays" label="Для всех дней недели" class="day-schedule__for-all" @change="onToggleForAll" />
+        <Tumbler v-model="forAllDays" label="Для всех дней недели" class="day-schedule__for-all" @change="onToggleForAll" />
       </VFlex>
     </VLayout>
     <VLayout 
@@ -38,11 +38,11 @@
 
 <script>
 import DaySchedule from '@/components/business/DaySchedule.vue'
-import Checkbox from '@/components/common/Checkbox.vue'
+import Tumbler from '@/components/common/Tumbler.vue'
 import { scheduleMixin} from './mixins'
 
 export default {
-  components: { DaySchedule, Checkbox },
+  components: { DaySchedule, Tumbler },
   mixins: [ scheduleMixin ],
   data () {
     return {

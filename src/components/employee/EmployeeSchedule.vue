@@ -2,7 +2,7 @@
   <div>
     <BusinessScheduleEdit
       :schedule="item.j.schedule"
-      @onEdit="scheduleEdit"
+      @editWeek="scheduleEdit"
     />
   </div>
 </template>
@@ -20,7 +20,12 @@ export default {
     }
   },
   methods: {
-    scheduleEdit () {}
+    scheduleEdit (newWeek) {
+      this.item.j.schedule = newWeek
+      this.schedule = newWeek
+      this.hasSchedule = this.checkSchedule()
+      this.$emit('formChange')
+    }
   }
 }
 </script>

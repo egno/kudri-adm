@@ -1,154 +1,191 @@
 <template>
-  <VContainer
-    fluid
-    grid-list-lg
+  <PageLayout
+    :is-button-visible="true"
+    :template="{ headerText: 'Сотрудники', buttonText: 'Новый сотрудник' }"
+    @add="
+      $router.push({
+        name: 'employeeProfile',
+        params: { id: id, employee: 'new' }
+      })
+    "
   >
-    <VLayout column>
-      <VFlex v-if="queryService">
-        <h2>{{ queryService }}</h2>
-      </VFlex>
-      <VFlex>
-        <VTextField
-          key="mainSearch"
-          v-model="searchString"
-          autofocus
-          clearable
-          label="Поиск"
-          single-line
-          type="text"
-        />
-      </VFlex>
-      <VFlex>
-        <VLayout column>
-          <VFlex
-            v-for="(category, ci) in categories"
-            :key="'cat'+ci"
-            xs12
+    <template slot="content">
+      <div class="employees-list">
+        <div class="filters">
+          <div
+            v-for="category in categories"
+            :key="category"
+            @click="toggleFilter(category)"
           >
-            <VLayout column>
-              <VFlex pb-0>
-                <span class="title">
-                  {{ category || 'Прочие' }}
-                </span>
-              </VFlex>
-              <VFlex>
-                <VLayout
-                  row
-                  wrap
-                  fill-height
-                >
-                  <VFlex
-                    v-for="(item, i) in categoryItems(category)"
-                    :key="i"
-                    xs12
-                    md6
-                    lg4
-                    xl2
-                  >
-                    <EmployeeCard
-                      :item="item"
-                      @onSave="onSave"
-                    >
-                      }
-                    </EmployeeCard>
-                  </VFlex>
-                </VLayout>
-              </VFlex>
-            </VLayout>
-          </VFlex>
-        </VLayout>
-      </VFlex>
-    </VLayout>
-  </VContainer>
+            <div
+              v-if="category"
+              class="filters__item"
+              :class="{ _active: selectedCategories.includes(category) }"
+            >
+              {{ category }}
+            </div>
+          </div>
+          <div
+            class="filters__item"
+            :class="{
+              _active:
+                selectedCategories &&
+                selectedCategories.length >= categories.length
+            }"
+            @click="toggleAll"
+          >
+            Все мастера
+          </div>
+        </div>
+        <div class="filter-results">
+          <div
+            v-for="category in selectedCategories"
+            :key="category"
+            class="filter-results__group"
+          >
+            <template v-if="businessEmployees.some(e => e.j && e.j.category === category)">
+              <div class="filter-results__group-name">
+                {{ category ? category : '' }}
+              </div>
+              <div class="filter-results__cards">
+                <div v-for="(employee, i) in businessEmployees" :key="i">
+                  <EmployeeCard
+                    v-if="employee.j.category === category"
+                    :employee="employee"
+                    :services-count="empServices(employee.id)"
+                    @delete="showDeleteDialog(employee)"
+                    @calendarClick="openRegistry"
+                    @click="
+                      $router.push({
+                        name: 'employeeProfile',
+                        params: { id: id, employee: employee.id }
+                      })
+                    "
+                  />
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+      <Modal
+        :visible="deleteModalVisible"
+        :template="deleteTemplate"
+        @close="deleteModalVisible = false"
+        @leftButtonClick="
+          deleteModalVisible = false;
+          empToDelete = null;
+        "
+        @rightButtonClick="deleteEmployee"
+      >
+        <template slot="text">
+          <div
+            v-if="empToDelete && empToDelete.j && empToDelete.j.name"
+            class="uno-modal__text"
+          >
+            Вы точно хотите удалить сотрудника <b>{{ empToDelete.j.name }}?</b>
+          </div>
+          <div v-else class="uno-modal__text">
+            Вы точно хотите удалить сотрудника?
+          </div>
+        </template>
+      </Modal>
+    </template>
+  </PageLayout>
 </template>
 
 <script>
-import Api from '@/api/backend'
 import EmployeeCard from '@/components/employee/EmployeeCard.vue'
-import { mapActions } from 'vuex'
+import Modal from '@/components/common/Modal'
+import PageLayout from '@/components/common/PageLayout.vue'
+import Api from '@/api/backend'
+import { mapState, mapActions } from 'vuex'
+import { employeeMixin } from '@/mixins/employee'
+import { formatDate } from '@/components/calendar/utils'
 
 export default {
   params: {
     items: { type: Array, default: [] },
     search: { type: String, default: '' }
   },
-  components: { EmployeeCard },
+  components: { PageLayout, EmployeeCard, Modal },
+  mixins: [employeeMixin],
   data () {
     return {
-      searchString: '',
       edit: false,
-      data: []
+      empToDelete: undefined,
+      deleteModalVisible: false,
+      deleteTemplate: {
+        leftButton: 'ОТМЕНА',
+        rightButton: 'УДАЛИТЬ'
+      },
+      newEmp: undefined,
+      selectedCategories: [],
+      selectedOnStart: false
     }
   },
   computed: {
+    ...mapState({ businessServices: state => state.business.businessServices }),
+    ...mapState({ businessEmployees: state => state.business.businessEmployees }),
     id () {
       return this.$route.params.id
     },
     categories () {
       return [
-        ...new Set(this.data && this.data.map(x => x.j && x.j.category))
+        ...new Set(
+          this.businessEmployees &&
+            this.businessEmployees.map(x => x.j && x.j.category)
+        )
       ].sort((a, b) => (a < b ? -1 : 1))
     },
-    queryService () {
-      return this.$route && this.$route.query && this.$route.query.service
+  },
+  watch: {
+    categories: {
+      handler (newVal) {
+        if (this.selectedOnStart) {
+          return
+        }
+        if (newVal && newVal.length) {
+          this.selectAll()
+          this.selectedOnStart = true
+        }
+      }
     }
   },
   mounted () {
-    this.fetchData()
     this.setActions()
   },
   methods: {
-    ...mapActions(['setActions']),
-    categoryItems (category) {
-      return (
-        this.data &&
-        this.data.filter(
-          x =>
-            x.j &&
-            x.j.category === category &&
-            (!this.queryService ||
-              (x.j.services &&
-                x.j.services.length > 0 &&
-                x.j.services.some(s => (s.name || s) === this.queryService))) &&
-            (!this.searchString ||
-              (x.j.category &&
-                x.j.category
-                  .toUpperCase()
-                  .indexOf(this.searchString.toUpperCase()) > -1) ||
-              // (x.j.phone &&
-              //   x.j.phone
-              //     .toUpperCase()
-              //     .indexOf(this.searchString.toUpperCase()) > -1) ||
-              // (x.j.email &&
-              //   x.j.email
-              //     .toUpperCase()
-              //     .indexOf(this.searchString.toUpperCase()) > -1) ||
-              (x.j.surname &&
-                x.j.surname
-                  .toUpperCase()
-                  .indexOf(this.searchString.toUpperCase()) > -1) ||
-              (x.j.name &&
-                x.j.name
-                  .toUpperCase()
-                  .indexOf(this.searchString.toUpperCase()) > -1) ||
-              (x.j.services &&
-                x.j.services.length > 0 &&
-                x.j.services.some(
-                  s =>
-                    (s.name || s)
-                      .toUpperCase()
-                      .indexOf(this.searchString.toUpperCase()) > -1
-                )))
-        )
-      )
+    ...mapActions(['setActions', 'loadBusinessEmployees']),
+    deleteEmployee () {
+      let empServices = this.businessServices.filter(s =>  s.j.employees && s.j.employees.includes(this.empToDelete.id))
+
+      this.removeEmpServices(empServices, this.empToDelete.id).then(() => {
+        Api()
+          .delete(`employee?id=eq.${this.empToDelete.id}`)
+          .then(() => {
+            this.deleteModalVisible = false
+            this.loadBusinessEmployees(this.id)
+          })
+          .catch((e) => {
+            console.log('FAILURE!! ', e)
+          })
+      })
     },
-    fetchData () {
-      Api()
-        .get(`employee?parent=eq.${this.id}`)
-        .then(res => res.data)
-        .then(res => {
-          this.data = res
-        })
+    empServices (empId) {
+      if (!this.businessServices || !this.businessServices.length) {
+        return 0
+      }
+      return this.businessServices.filter(s => s.j.employees && s.j.employees.includes(empId)).length
+    },
+    openRegistry () {
+      this.$router.push({
+        name: 'businessVisit',
+        params: {
+          id: this.id,
+          date: formatDate(new Date())
+        }
+      })
     },
     onSave (payload) {
       this.sendData(payload)
@@ -163,10 +200,44 @@ export default {
         Api().patch(`employee?id=eq.${data.id}`, data)
       }
     },
-    setStoreSearchString () {
-      this.setSearchString(this.searchString)
+    selectAll () {
+      if (!this.categories || !this.categories.length) {
+        return
+      }
+      this.selectedCategories = this.categories.slice()
+    },
+    showDeleteDialog (emp) {
+      this.deleteModalVisible = true
+      this.empToDelete = emp
+    },
+    showEditPanel () {},
+    toggleAll () {
+      if (this.selectedCategories.length === this.categories.length) {
+        this.selectedCategories = []
+      } else {
+        this.selectAll()
+      }
+    },
+    toggleFilter (category) {
+      const index = this.selectedCategories.indexOf(category)
+
+      if (index !== -1) {
+        this.selectedCategories.splice(index, 1)
+      } else {
+        this.selectedCategories.push(category)
+      }
     }
   }
 }
 </script>
 
+<style lang="scss">
+  @import '../assets/styles/common';
+
+  .employees-list {
+    padding: 28px 28px 0;
+    @media only screen and (min-width : $desktop) {
+      padding: 38px 40px 0 122px;
+    }
+  }
+</style>

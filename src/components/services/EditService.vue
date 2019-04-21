@@ -81,7 +81,7 @@
             Длительность (мин)
           </div>
           <Counter
-            id="create? 'create-service-duration': 'edit-service-duration'"
+            :id="create? 'create-service-duration': 'edit-service-duration'"
             :value="duration"
             :min-value="15"
             :max-value="720"
@@ -139,11 +139,12 @@
 </template>
 
 <script>
-  import { mapState, mapGetters, mapMutations } from 'vuex'
+  import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
   import Counter from '@/components/common/Counter'
   import SearchSelect from '@/components/common/SearchSelect.vue'
   import { isEqual, debounce } from 'lodash'
   import Api from '@/api/backend'
+  import { makeAlert } from '@/api/utils'
 
   export default {
     components: {
@@ -184,6 +185,7 @@
     },
     data () {
       return {
+        companyServices: [],
         name: '',
         group: '',
         sex: [],
@@ -206,27 +208,29 @@
         businessServices: state => state.business.businessServices,
         serviceList: state => state.service.serviceList
       }),
-      ...mapGetters(['serviceGroups', 'employees']),
+      ...mapGetters(['serviceGroups', 'employees', 'businessInfo']),
       saveDisabled () {
         return !this.name || !this.group || !this.duration
       },
       suggestedServiceNames () {
         const base = this.serviceList.map(s => s.name)
-        const company = this.businessServices.map(s => s.name)
-        const branch = this.businessServices.filter(s => s.business_id === this.branchId).map(s => s.name)
+        const company = this.companyServices.map(s => s.name)
+        const branch = this.businessServices.map(s => s.name)
 
         return [...new Set(base.concat(company))].filter(name => !branch.includes(name))
       }
     },
     watch: {
       'service': 'init',
-      'visible': 'init'
+      'visible': 'init',
+      'businessInfo': 'getCompanyServices'
     },
     created () {
       this.debouncedGetServices = debounce(this.getServices, 250)
     },
     methods: {
       ...mapMutations(['LOAD_SERVICE_LIST']),
+      ...mapActions(['alert']),
       sliceByLength (property, length, val) {
         if (!val) {
           return
@@ -293,6 +297,22 @@
         this.duration = duration || 15
         this.description = description || ''
         this.selectedEmployees = this.employees.filter(e => employees.includes(e.id))
+      },
+      getCompanyServices () {
+        if (!this.businessInfo.parent) {
+          return
+        }
+        const path = `business_service?parent=eq.${this.businessInfo.parent}`
+
+        Api()
+          .get(path)
+          .then(res => res.data)
+          .then(res => {
+            this.companyServices = res
+          })
+          .catch(err => {
+            this.alert(makeAlert(err))
+          })
       },
       getServices () {
         Api()

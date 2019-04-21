@@ -160,7 +160,7 @@
           counter="400"
           height="auto"
           auto-grow
-          rows="3"
+          rows="1"
           placeholder="Описание"
           maxlength="400"
           class="businesscard-form__field"
@@ -300,7 +300,7 @@ export default {
         this.data.j &&
         !!this.data.j.phones &&
         this.data.j.phones.length &&
-          this.data.j.phones.some(phone => phone.length > 10)
+          this.data.j.phones.some(phone => phone.length >= 10)
       )
     },
     hasErrors () {
@@ -496,21 +496,4 @@ export default {
   @import '../../assets/styles/common';
   @import '../../assets/styles/businesscard-form';
   @import '../../assets/styles/dropdown-select';
-
-.businesscard-form .save-info {
-  display: block;
-  width: 240px !important;
-  height: 56px !important;
-  border-radius: 0 !important;
-  margin: 28px auto 0;
-  font-family: $roboto;
-  font-weight: bold;
-  font-size: 18px;
-  text-align: center;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  &:hover {
-    background-color: #07101c;
-  }
-}
 </style>

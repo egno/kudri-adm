@@ -51,3 +51,8 @@ export function conjugateFilial (n) {
   const forms = ["филиал", "филиала", "филиалов", "Нет филиалов"]
   return numberText(n, forms)
 }
+
+export function conjugateServices (n) {
+  const forms = ["услуга", "услуги", "услуг", "Нет услуг"]
+  return numberText(n, forms)
+}

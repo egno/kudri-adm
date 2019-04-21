@@ -1,197 +1,260 @@
 <template>
-  <v-container
-    fluid
-    grid-list-lg
-    pa-0
-    pt-3
-  >
-    <v-layout column>
-      <v-flex>
-        <v-layout
-          row
-          wrap
+  <div class="employee-services">
+    <div v-show="!showServices" class="infocard">
+      <div class="infocard__content">
+        <h2 class="employee-services__title">
+          Выберите категории услуг, которые вы предоставляете
+        </h2>
+        <div class="employee-services__categories">
+          <AppCheckbox
+            v-for="(category, i) in businessServiceCategories"
+            :id="category"
+            :key="i"
+            :checked="selectedServiceGroups.includes(category)"
+            :label="category"
+            name="service_category"
+            :value="category"
+            @change="onGroupsChange(category, $event)"
+          />
+        </div>
+        <MainButton
+          color="success"
+          class="businesscard-form__next"
+          :class="{ button_disabled: !selectedServiceGroups.length }"
+          @click.native.prevent="showServices = true"
         >
-          <v-flex
-            py-0
-            xs12
-            sm7
-            offset-md2
-            md7
-            offset-lg3
-            lg6
-            offset-xl4
-            xl4
-          >
-            <v-text-field
-              v-model="searchString"
-              label="Поиск"
-              prepend-inner-icon="search"
-              clearable
-            />
-          </v-flex>
-          <v-spacer />
-          <div py-1>
-            <v-btn
-              :disabled="!!newService"
-              depressed
-              @click="onNew"
-            >
-              <v-icon>add</v-icon>Добавить услугу
-            </v-btn>
-          </div>
-        </v-layout>
-      </v-flex>
-
-      <v-flex>
-        <v-layout column>
-          <v-flex>
-            <v-layout row>
-              <v-flex
-                v-if="newService"
-                xs12
-                md6
-                lg4
-                xl3
-              >
-                <ServiceCard
-                  :item="newService"
-                  edit-mode
-                  @onDelete="onDelete(-1)"
-                  @onSave="onSave(-1, $event)"
-                />
-              </v-flex>
-            </v-layout>
-          </v-flex>
-
-          <v-flex
-            v-for="group in employeeServiceGroups"
-            :key="group"
-          >
-            <v-layout column>
-              <v-flex>
-                <span class="title">
-                  {{ group || 'Прочие' }}
-                </span>
-              </v-flex>
-              <v-flex>
-                <v-layout
-                  row
-                  wrap
-                  fill-height
-                >
-                  <v-flex
-                    v-for="service in groupServices(group)"
-                    :key="'serv'+service.n"
-                    xs12
-                    md6
-                    lg4
-                    xl3
-                  >
-                    <ServiceCard
-                      :item="service"
-                      :employee="item.id"
-                      :employee-name="fullName"
-                      @onDelete="onDelete(service.n)"
-                      @onSave="onSave(service.n, $event)"
-                    />
-                  </v-flex>
-                </v-layout>
-              </v-flex>
-            </v-layout>
-          </v-flex>
-        </v-layout>
-      </v-flex>
-    </v-layout>
-  </v-container>
+          К услугам
+        </MainButton>
+      </div>
+    </div>
+    <div v-show="showServices" class="edit-services">
+      <div class="employee-services__header">
+        <div class="employee-services__left">
+          <h2 class="employee-services__title">
+            Выберите предоставляемые услуги из категории
+            {{ selectedServiceGroups[currentStep] }}
+          </h2>
+          <h3 class="employee-services__subtitle">
+            Укажите минимум 1 услугу для каждой выбранной категории
+          </h3>
+        </div>
+        <Steps
+          :current-step="currentStep"
+          :length="selectedServiceGroups.length"
+          header="Категория"
+          @changeStep="currentStep = $event"
+        />
+      </div>
+      <div v-for="category in selectedServiceGroups" :key="category">
+        <div v-show="category === selectedServiceGroups[currentStep]" class="employee-services__services">
+          <ServiceCard
+            v-for="(service, servInd) in businessServices.filter(
+              s => s.j.group === category
+            )"
+            :key="servInd"
+            :service="service"
+            :edit-mode="false"
+            :is-selected="selectedServices.includes(service)"
+            :responsive="true"
+            @click="onSelect(service)"
+          />
+        </div>
+      </div>
+      <div class="employee-services__buttons">
+        <MainButton
+          color="success"
+          class="employee-services__back"
+          @click.native.prevent="showServices = false"
+        >
+          Назад к категориям
+        </MainButton>
+        <MainButton
+          color="success"
+          class="employee-services__next"
+          :class="{
+            button_disabled: !selectedServices.some(s => s.j.group === selectedServiceGroups[currentStep])
+          }"
+          @click.native.prevent="onNext"
+        >
+          Далее
+        </MainButton>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import ServiceCard from '@/components/services/ServiceCard.vue'
-import { serviceInit } from '@/components/business/utils'
-import { fullName } from '@/components/business/utils'
+import AppCheckbox from '@/components/common/AppCheckbox.vue'
+import MainButton from '@/components/common/MainButton.vue'
+import Steps from '@/components/common/Steps.vue'
 
 export default {
-  components: { ServiceCard },
+  components: { AppCheckbox, MainButton, ServiceCard, Steps },
   props: {
     item: {
       type: Object,
       default () {
         return {}
       }
+    },
+    employeeServices: {
+      type: Array,
+      default () {
+        return []
+      }
+    },
+    employeeServiceGroups: {
+      type: Array,
+      default () {
+        return []
+      }
     }
   },
   data () {
     return {
-      newService: undefined,
-      searchString: ''
+      selectedServiceGroups: [],
+      selectedServices: [],
+      showServices: false,
+      currentStep: 0
     }
   },
   computed: {
-    ...mapGetters([]),
-    employeeServices () {
-      return (
-        this.item &&
-        this.item.j &&
-        this.item.j.services.map((x, n) => ({ ...serviceInit(x), ...{ n: n } }))
-      )
+    ...mapState({
+      businessServices: state => state.business.businessServices
+    }),
+    ...mapGetters(['businessServiceCategories']),
+  },
+  watch: {
+    employeeServiceGroups: {
+      handler: 'init',
+      deep: true
     },
-    employeeServiceGroups () {
-      return [
-        ...new Set(
-          this.filteredServices && this.filteredServices.map(x => x.group)
-        )
-      ].sort((a, b) => (a < b ? -1 : 1))
-    },
-    filteredServices () {
-      return this.employeeServices.filter(
-        x =>
-          !this.searchString ||
-          (x.name &&
-            x.name.toUpperCase().indexOf(this.searchString.toUpperCase()) >
-              -1) ||
-          (x.group &&
-            x.group.toUpperCase().indexOf(this.searchString.toUpperCase()) >
-              -1) ||
-          (x.notes &&
-            x.notes.toUpperCase().indexOf(this.searchString.toUpperCase()) >
-              -1) ||
-          (x.price && x.price == this.searchString) ||
-          (x.duration && x.duration == this.searchString)
-      )
-    },
-    fullName () {
-      return fullName(this.item)
+    employeeServices: {
+      handler: 'init',
+      deep: true
     }
   },
+  created () {
+    this.init()
+  },
   methods: {
-    groupServices (group) {
-      return this.filteredServices.filter(
-        x => (!group && !x.group) || group === x.group
-      )
+    init () {
+      this.selectedServiceGroups = this.employeeServiceGroups.slice()
+      this.selectedServices = this.employeeServices.slice()
     },
-    onDelete (n) {
-      if (n === -1) {
-        this.newService = undefined
-        return
-      }
-      let services = this.employeeServices
-      services.splice(n, 1)
-      this.$emit('onSave', services)
-    },
-    onNew () {
-      this.newService = serviceInit()
-    },
-    onSave (n, payload) {
-      let services = this.employeeServices
-      if (n === -1) {
-        services.unshift(this.newService)
-        this.newService = undefined
+    onGroupsChange (category, selected) {
+      if (selected) {
+        this.selectedServiceGroups.push(category)
       } else {
-        services.splice(n, 1, payload)
+        const i = this.selectedServiceGroups.indexOf(category)
+
+        if (i > -1) {
+          this.selectedServiceGroups.splice(i, 1)
+          this.selectedServices = this.selectedServices.filter(s => this.selectedServiceGroups.includes(s.j.group))
+        }
       }
-      this.$emit('onSave', services)
+    },
+    onNext () {
+      if (this.currentStep === this.selectedServiceGroups.length - 1) {
+        this.$emit('selected', this.selectedServices)
+      } else {
+        this.currentStep++
+      }
+    },
+    onSelect (service) {
+      const i = this.selectedServices.indexOf(service)
+
+      if (i > -1) {
+        this.selectedServices.splice(i, 1)
+      } else {
+        this.selectedServices.push(service)
+      }
     }
   }
 }
 </script>
+
+<style lang="scss">
+  @import '../../assets/styles/common';
+
+  .employee-services {
+    &__header {
+      font-family: $lato;
+      text-align: center;
+
+      @media only screen and (min-width: $desktop) {
+        display: flex;
+        justify-content: space-between;
+        text-align: left;
+      }
+    }
+    &__title {
+      margin: 0 auto;
+      font-weight: bold;
+      font-size: 16px;
+      color: #07101C;
+      @media only screen and (min-width : $tablet) {
+        max-width: 85%;
+      }
+      @media only screen and (min-width : $desktop) {
+        max-width: 100%;
+      }
+    }
+    &__subtitle {
+      font-weight: normal;
+      font-size: 14px;
+      color: #8995AF;
+    }
+    &__categories,
+    &__services {
+      margin-top: 40px;
+    }
+    &__services {
+      padding: 25px 8px 0;
+      border-top: 1px solid rgba(137, 149, 175, 0.1);
+      @media only screen and (min-width : $desktop) {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      }
+    }
+    &__buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 50px;
+      button {
+        @extend %button;
+        margin: 0 30px;
+      }
+    }
+    &__back {
+      color: #8995AF;
+      &:hover {
+        color: #07101C;
+      }
+    }
+    &__next {
+      width: 240px;
+      color: #fff;
+      background-color: #5699FF;
+    }
+    .edit-services {
+      padding: 30px 37px 60px;
+      background: #fff;
+
+      @media only screen and (min-width : $tablet) {
+        max-width: 524px;
+        margin: 0 auto;
+        box-shadow: 0 2px 12px rgba(137, 149, 175, 0.1);
+      }
+      @media only screen and (min-width : $desktop) {
+        max-width: 100%;
+        margin: 0 40px 0 0;
+        padding: 40px 60px 60px;
+      }
+    }
+  }
+</style>
