@@ -24,7 +24,7 @@
             >
               <Avatar
                 size=""
-                :src="employee.j.avatar"
+                :src="employee.j.image"
                 :is-company-avatar="false"
                 :is-editing="false"
                 :name="employee.j.name"
@@ -110,7 +110,7 @@
               <EmployeeEdit
                 v-if="employee"
                 :employee="employee"
-                @onImageUpload="onImageUpload($event)"
+                @avatarChange="onAvatarChange"
               />
               <MainButton
                 color="success"
@@ -172,6 +172,7 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import { fullName } from '@/components/business/utils'
 import Employee from '@/classes/employee'
 import { makeAlert } from '@/api/utils'
+import axios from 'axios'
 
 export default {
   components: {
@@ -319,8 +320,34 @@ export default {
       )
       this.employee.load(this.employeeId)
     },
-    onImageUpload (payload) {
-      this.employee.image = payload
+    onAvatarChange (img) {
+      if (!img) {
+        return false
+      }
+      let blobBin = atob(img.toDataURL().split(',')[1])
+      let array = []
+
+      for (let i = 0; i < blobBin.length; i++) {
+        array.push(blobBin.charCodeAt(i))
+      }
+      let file = new Blob([new Uint8Array(array)], { type: 'image/png' })
+      let formData = new FormData()
+      let newFileName = `${this.uuidv4()}.png`
+
+      formData.append('file', file, newFileName)
+
+      axios
+        .post(process.env.VUE_APP_UPLOAD, formData, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+          }
+        })
+        .then(() => {
+          this.employee.image = newFileName
+        })
+        .catch(function (e) {
+          console.log('FAILURE!! ', e)
+        })
     },
     onScheduleEdit (newWeek) {
       this.employee.schedule = newWeek
@@ -334,7 +361,9 @@ export default {
 
       this.removeEmpServices(this.empServices, this.employeeId)
         .then(() => {
-          this.employee.services = this.employee.services.map(s => s.id)
+          this.employee.services = this.employee.services && this.employee.services.length
+            ? this.employee.services.map(s => s && s.id)
+            : []
 
           this.employee.save().then(id => {
             if (this.employeeId === 'new') {
