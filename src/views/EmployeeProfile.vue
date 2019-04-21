@@ -51,9 +51,9 @@
                   {{ employee.j.notes }}
                 </div>
               </div>
-              <div v-if="employee.schedule && employee.schedule.data && employee.schedule.data.length">
+              <div v-if="employee.scheduleTemplate && employee.scheduleTemplate.data && employee.scheduleTemplate.data.length">
                 <BusinessSchedule
-                  :week-schedule="employee.schedule"
+                  :week-schedule="employee.scheduleTemplate"
                   :expanded="scheduleExpanded"
                   @toggleSchedule="scheduleExpanded = !scheduleExpanded"
                 />
@@ -133,7 +133,7 @@
           <div v-show="activeTab === 2" class="infocard _edit">
             <div class="infocard__content">
               <BusinessScheduleEdit
-                :week-schedule="employee.schedule"
+                :week-schedule="employee.scheduleTemplate"
                 @editWeek="onScheduleEdit"
               />
               <MainButton
@@ -350,7 +350,7 @@ export default {
         })
     },
     onScheduleEdit (newWeek) {
-      this.employee.schedule = newWeek
+      this.employee.scheduleTemplate = newWeek
     },
     onServicesSelected (payload) {
       this.employee.services = payload
@@ -368,13 +368,18 @@ export default {
           this.employee.save().then(id => {
             if (this.employeeId === 'new') {
               this.addEmpToServices(id)
-              this.$router.replace({
-                name: 'employeeProfile',
-                params: { id: this.id, employee: id }
-              })
+                .then(() => {
+                  this.$router.replace({
+                    name: 'employeeProfile',
+                    params: { id: this.id, employee: id }
+                  })
+                })
             } else {
               this.addEmpToServices(this.employeeId)
-              this.isEditMode = false
+                .then(()=> {
+                  this.isEditMode = false
+                  this.loadEmployee()
+                })
             }
           })
         })
