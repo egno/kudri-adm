@@ -8,7 +8,7 @@
       <div @click="avatarEdit = true">
         <Avatar
           size=""
-          :src="employee.j.avatar"
+          :src="employee.j.avatar || employee.j.image"
           :is-editing="true"
           :is-company-avatar="false"
           :avatar-class="'business-avatar'"
