@@ -24,7 +24,7 @@
           {{ branch.j.employees | formatMaster }}
         </div>
       </div>
-      <DeleteButton :is-dark="true" :visible="isEditable" @click.native.stop="$emit('delete')" />
+      <DeleteButton :is-dark="true" :visible="isEditable" @delete="$emit('delete')" />
     </div>
   </div>
 </template>

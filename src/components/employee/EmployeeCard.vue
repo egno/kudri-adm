@@ -27,7 +27,7 @@
           </template>
           <span>Журнал записей мастера</span>
         </VTooltip>
-        <DeleteButton :is-dark="true" delete-text="Удалить сотрудника" @click.native.stop="$emit('delete')" />
+        <DeleteButton :is-dark="true" delete-text="Удалить сотрудника" @delete="$emit('delete')" />
       </div>
     </div>
   </div>
@@ -36,7 +36,6 @@
 <script>
 import Avatar from '@/components/avatar/Avatar.vue'
 import { fullName } from '@/components/business/utils'
-import { imagePath } from '@/components/gallery/utils'
 import DeleteButton from '@/components/common/DeleteButton'
 import { conjugateServices } from '@/components/utils'
 
@@ -68,12 +67,6 @@ export default {
   computed: {
     avatar () {
       return this.employee && (this.employee.j && this.employee.j.avatar)
-    },
-    photo () {
-      return (
-        this.employee &&
-        imagePath(this.employee.j && this.employee.j.image, this.employee.parent)
-      )
     },
   },
   methods: {

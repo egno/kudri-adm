@@ -24,7 +24,7 @@
       >
         {{ service.j.employees.length | formatMaster }}
       </div>
-      <DeleteButton v-if="editMode" @click.native.stop="$emit('delete')" />
+      <DeleteButton v-if="editMode" @delete="$emit('delete')" />
     </div>
     <div class="service-card__selection" />
   </div>
