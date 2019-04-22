@@ -66,7 +66,7 @@ export default {
   },
   computed: {
     avatar () {
-      return this.employee && (this.employee.j && this.employee.j.avatar)
+      return this.employee && this.employee.j && (this.employee.j.avatar || this.employee.j.image)
     },
   },
   methods: {
