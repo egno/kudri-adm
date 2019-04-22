@@ -31,6 +31,9 @@ class Client extends ApiObject {
     this.lastVisit = newVal && newVal.visit && newVal.visit.last
   }
 
+  get jsonObject () {
+    return super.jsonObject
+  }
 
   get sexList () {
     return [

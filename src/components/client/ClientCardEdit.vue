@@ -32,7 +32,10 @@
         <v-flex>
           <v-select
             v-model="client.filial"
+            :items="filials"
+            item-text="j.name"
             label="Филиал"
+            return-object
           />
         </v-flex>
         <v-flex>
@@ -131,6 +134,12 @@ export default {
       type: Object,
       default () {
         return newClient()
+      }
+    },
+    filials: {
+      type: Array,
+      default () {
+        return []
       }
     }
   },

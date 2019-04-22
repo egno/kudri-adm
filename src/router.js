@@ -69,7 +69,7 @@ export default new Router({
     },
     {
       path: '/businessCard/:id/c',
-      name: 'businessCardClients',
+      name: 'BusinessClientsTable',
       component: () => import('./views/BusinessClientsTable.vue')
     },
     {

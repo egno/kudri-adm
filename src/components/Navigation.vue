@@ -220,7 +220,7 @@ export default {
           title: 'Клиенты',
           count: this.clientsCount,
           route: {
-            name: 'businessCardClients',
+            name: 'BusinessClientsTable',
             params: { id: this.businessId }
           },
           show: this.businessIsFilial && this.loggedIn && !this.isManagerMenu,

@@ -139,6 +139,7 @@
       <ClientCardEdit
         v-if="edit"
         :client="item"
+        :filials="branchesList"
         @onDelete="onDelete(item)"
         @onSave="onSave($event)"
         @close="edit=false"
@@ -224,6 +225,7 @@ import BusinessPhones from '@/components/business/BusinessPhones.vue'
 import ClientCardEdit from '@/components/client/ClientCardEdit.vue'
 import ClientVisits from '@/components/client/ClientVisits.vue'
 import Client from '@/classes/client'
+import { filials} from "../components/business/mixins"
 
 export default {
   components: {
@@ -234,9 +236,11 @@ export default {
     ClientVisits,
     Avatar
   },
+  mixins: [filials],
   data () {
     return {
       deleteConfirm: false,
+      branchesList: [],
       edit: false,
       headers: [
         { text: 'Имя и фамилия', value: 'j->name->>fullname' },
@@ -255,7 +259,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['businessId']),
+    ...mapGetters(['businessId', 'businessInfo', 'businessIsFilial']),
     client_id () {
       return this.$route && this.$route.params && this.$route.params.client
     },
@@ -282,8 +286,11 @@ export default {
     client_id: 'onClientChange',
     edit: 'closeNewEditor'
   },
-  mounted () {
+  created () {
+    this.getFilials()
     this.fetchData()
+  },
+  mounted () {
     if (this.client_id) {
       this.onClientChange()
     }
@@ -308,14 +315,16 @@ export default {
     },
     fetchData () {
       if (!this.businessId) return
-      this.progressQuery = true
-      this.items = []
+
       const { sortBy, descending, page, rowsPerPage } = this.pagination
       let filter = [`business_id.eq.${this.businessId}`, this.querySearchString]
         .filter(x => !!x)
         .join(',')
       let filterString = `and=(${filter})`
       let params = [filterString]
+
+      this.progressQuery = true
+      this.items = []
       if (sortBy) {
         params.push(
           `order=${sortBy}${descending ? '.desc.nullslast' : '.asc.nullsfirst'}`
@@ -340,10 +349,23 @@ export default {
         })
         .then(res => {
           this.items = res.filter(x => !!x.j).map(x => new Client(x))
+        })
+        .catch((e) => {
+          console.error(e)
+        })
+        .finally(() => {
           this.progressQuery = false
         })
-        .catch(() => {
-          this.progressQuery = false
+    },
+    getFilials () {
+      const id = this.businessIsFilial
+        ? this.businessInfo && this.businessInfo.parent
+        : this.businessId
+
+      if (!id) return
+      this.getFilialsOf(id)
+        .then(res => {
+          this.branchesList = res
         })
     },
     onClientChange () {

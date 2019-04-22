@@ -27,7 +27,7 @@
         />
       </VFlex>
 
-      <VFlex v-show="$route.name === 'services' || $route.name === 'employeeList' || $route.name === 'businessCardClients'">
+      <VFlex v-show="$route.name === 'services' || $route.name === 'employeeList' || $route.name === 'BusinessClientsTable'">
         <VTextField
           key="mainSearch"
           v-model="searchString"
