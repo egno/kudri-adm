@@ -1,5 +1,6 @@
 .dropdown-select {
-  overflow: auto;
+  position: relative;
+  overflow: visible;
   .v-list {
     background-color: rgba(137, 149, 175, 0.1);
   }
@@ -26,5 +27,8 @@
   .v-menu__content {
     overflow-x: visible;
     max-width: fit-content;
+  }
+  .v-text-field__details {
+    display: none;
   }
 }

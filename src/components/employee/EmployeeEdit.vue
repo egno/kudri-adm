@@ -40,15 +40,17 @@
       :rules="[ rules.required ]"
       class="businesscard-form__field"
     />
-    <v-select
-      v-model="employee.j.category"
-      label="Должность*"
-      :items="employeeCategories"
-      :disabled="!employee.access"
-      :rules="[ rules.required ]"
-      class="businesscard-form__field"
-      content-class="dropdown-select"
-    />
+    <div class="dropdown-select">
+      <v-select
+        v-model="employee.j.category"
+        label="Должность*"
+        :items="employeeCategories"
+        :disabled="!employee.access"
+        :rules="[ rules.required ]"
+        class="businesscard-form__field"
+        attach=".infocard._edit .dropdown-select"
+      />
+    </div>
     <PhoneEdit :phone="employee.j.phones[0]" :disabled="!employee.access" :removable="false" class="phone-input" @onEdit="employee.j.phones[0] = $event" />
     <v-textarea
       v-model="employee.j.notes"
