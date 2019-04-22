@@ -47,7 +47,7 @@
                 <div class="infocard__field-title top-bordered">
                   Дополнительные сведения
                 </div>
-                <div class="infocard__field-value">
+                <div class="infocard__field-value _description">
                   {{ employee.j.notes }}
                 </div>
               </div>
