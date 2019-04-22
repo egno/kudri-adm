@@ -246,6 +246,7 @@ export default {
       })
         .then(() => {
           this.showEdit = false
+          this.editingService = null
           this.loadBusinessServices(this.businessId)
         })
         .catch((e) => {
