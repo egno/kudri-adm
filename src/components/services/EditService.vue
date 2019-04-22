@@ -259,7 +259,7 @@
 
         if (!isEqual(this.sex.sort(), sex.slice().sort()))
           return true
-        if (!isEqual(this.selectedEmployees.sort(), employees.slice().sort()))
+        if (!isEqual(this.selectedEmployees.map(e => e && e.id).sort(), employees.slice().sort()))
           return true
 
         return this.name !== this.service.name || this.group !== group ||
