@@ -46,7 +46,8 @@
       :items="employeeCategories"
       :disabled="!employee.access"
       :rules="[ rules.required ]"
-      class="businesscard-form__field dropdown-select"
+      class="businesscard-form__field"
+      content-class="dropdown-select"
     />
     <PhoneEdit :phone="employee.j.phones[0]" :disabled="!employee.access" :removable="false" class="phone-input" @onEdit="employee.j.phones[0] = $event" />
     <v-textarea
