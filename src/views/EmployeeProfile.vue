@@ -51,9 +51,9 @@
                   {{ employee.j.notes }}
                 </div>
               </div>
-              <div v-if="employee.scheduleTemplate && employee.scheduleTemplate.data && employee.scheduleTemplate.data.length">
+              <div v-if="employee.schedule && employee.schedule.data && employee.schedule.data.length">
                 <BusinessSchedule
-                  :week-schedule="employee.scheduleTemplate"
+                  :week-schedule="employee.schedule"
                   :expanded="scheduleExpanded"
                   @toggleSchedule="scheduleExpanded = !scheduleExpanded"
                 />
@@ -133,7 +133,7 @@
           <div v-show="activeTab === 2" class="infocard _edit">
             <div class="infocard__content">
               <BusinessScheduleEdit
-                :week-schedule="employee.scheduleTemplate"
+                :week-schedule="employee.schedule"
                 @editWeek="onScheduleEdit"
               />
               <MainButton
@@ -350,7 +350,7 @@ export default {
         })
     },
     onScheduleEdit (newWeek) {
-      this.employee.scheduleTemplate = newWeek
+      this.employee.schedule = newWeek
     },
     onServicesSelected (payload) {
       this.employee.services = payload

@@ -3,7 +3,7 @@ import Api from '@/api/backend'
 import store from '@/store'
 import { makeAlert, responseGetId } from '@/api/utils'
 import { imagePath } from '@/components/gallery/utils'
-import DaySchedule from '@/classes/day_schedule'
+/* import DaySchedule from '@/classes/day_schedule'
 
 class ScheduleTemplate extends ApiObject {
   set jsonObject (newVal) {
@@ -72,7 +72,7 @@ class ScheduleTemplate extends ApiObject {
       }
     ]
   }
-}
+}*/
 
 // class Service extends ApiObject {
 //   set jsonObject (newVal) {
@@ -100,7 +100,7 @@ class Employee extends ApiObject {
     this.parent = (newVal && newVal.parent) || null
     this.j = (newVal && newVal.j) || {}
 
-    this.scheduleTemplate = this.j.scheduleTemplate
+    this.schedule = this.j.schedule || {}
     if (!newVal || !newVal.j || !newVal.j.phones) {
       this.phones = []
     }
@@ -233,14 +233,6 @@ class Employee extends ApiObject {
 
   get schedule () {
     return this.j.schedule
-  }
-
-  set scheduleTemplate (newVal) {
-    this.j.scheduleTemplate = new ScheduleTemplate(newVal)
-  }
-
-  get scheduleTemplate () {
-    return this.j.scheduleTemplate
   }
 
   // API methods

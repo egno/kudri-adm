@@ -73,6 +73,10 @@ export default {
       const filled = this.filledDays()
       let repeated
 
+      if (!this.newWeekSchedule.data.length) {
+        this.newWeekSchedule.data = new Array(7)
+      }
+
       switch (filled.length) {
         case 0:
           this.newWeekSchedule.data.fill({ start: '09:00', end: '21:00' })
