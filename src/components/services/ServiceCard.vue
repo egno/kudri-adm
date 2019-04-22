@@ -18,13 +18,17 @@
       </div>
     </div>
     <div class="service-card__bottom">
-      <div
-        v-if="service.j.employees && service.j.employees.length"
-        class="service-card__info"
-      >
-        {{ service.j.employees.length | formatMaster }}
+      <div>
+        <div
+          v-if="service.j.employees && service.j.employees.length"
+          class="service-card__info"
+        >
+          {{ service.j.employees.length | formatMaster }}
+        </div>
       </div>
-      <DeleteButton v-if="editMode" @delete="$emit('delete')" />
+      <template v-show="editMode">
+        <DeleteButton @delete="$emit('delete')" />
+      </template>
     </div>
     <div class="service-card__selection" />
   </div>
@@ -74,6 +78,7 @@ export default {
 }
 
 .service-card {
+  position: relative;
   width: 312px;
   height: 160px;
   display: flex;
@@ -151,6 +156,7 @@ export default {
     position: absolute;
     bottom: 13px;
     right: 9px;
+    display: none;
     width: 24px;
     height: 24px;
     border-radius: 50%;
@@ -176,11 +182,11 @@ export default {
     box-shadow: 0 0 2px rgba(137, 149, 175, 0.35);
   }
   &._selected {
-    position: relative;
     padding-right: 33px;
     border-color: #5699ff;
 
     .service-card__selection {
+      display: block;
       background: url('../../assets/images/svg/selection.svg') center no-repeat #5699ff;
     }
   }
