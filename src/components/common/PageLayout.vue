@@ -4,6 +4,7 @@
       <slot name="breadcrumbs" />
     </v-layout>
     <v-layout
+      :class="{ _bordered: !isEditMode}"
       class="page-layout__header"
       row
       fill-height
@@ -105,6 +106,9 @@
       flex-grow: 0;
       padding: 44px 0;
       background: #fff;
+      &._bordered {
+        border-bottom: 1px solid rgba(137, 149, 175, 0.1);
+      }
     }
     &__heading {
       padding-left: 48px;

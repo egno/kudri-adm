@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="['service-card', { '_not-hoverable': !hoverable, '_responsive': responsive }]"
+    :class="['service-card', { '_not-hoverable': !hoverable, '_responsive': responsive, '_selected': isSelected }]"
     :style="{ 'background-image': `url(/images/service_group/${image}` }"
     @click="$emit('click')"
   >
@@ -16,7 +16,6 @@
           {{ service.j.price }} р.
         </div>
       </div>
-      <div :class="['service-card__selection', { _selected: isSelected }]" />
     </div>
     <div class="service-card__bottom">
       <div
@@ -27,6 +26,7 @@
       </div>
       <DeleteButton v-if="editMode" @click.native.stop="$emit('delete')" />
     </div>
+    <div class="service-card__selection" />
   </div>
 </template>
 
@@ -80,7 +80,7 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   align-content: space-between;
-  padding: 17px 4px 8px 24px;
+  padding: 17px 4px 8px 17px;
   margin: 0 10px 20px 0;
   border-top: 2px solid transparent;
   box-shadow: 0 0 2px rgba(137, 149, 175, 0.35);
@@ -90,6 +90,9 @@ export default {
   background-position: right top;
   background-repeat: no-repeat;
   background-color: #fff;
+  @media only screen and (min-width : 1160px) {
+    padding-left: 24px;
+  }
   &:hover {
     border-color: #5699ff;
     cursor: pointer;
@@ -107,9 +110,6 @@ export default {
   }
   &__bottom {
     align-items: center;
-  }
-  &__left {
-    max-width: calc(100% - 30px);
   }
   &__title {
     margin-bottom: 10px;
@@ -148,13 +148,12 @@ export default {
     text-align: center;
   }
   &__selection {
+    position: absolute;
+    bottom: 13px;
+    right: 9px;
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    &._selected {
-      background: url('../../assets/images/svg/selection.svg') center no-repeat
-        #5699ff;
-    }
   }
   &._responsive {
     width: 100%;
@@ -175,6 +174,15 @@ export default {
     border-color: transparent;
     cursor: default;
     box-shadow: 0 0 2px rgba(137, 149, 175, 0.35);
+  }
+  &._selected {
+    position: relative;
+    padding-right: 33px;
+    border-color: #5699ff;
+
+    .service-card__selection {
+      background: url('../../assets/images/svg/selection.svg') center no-repeat #5699ff;
+    }
   }
 }
 </style>

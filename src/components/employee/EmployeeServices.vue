@@ -1,6 +1,6 @@
 <template>
   <div class="employee-services">
-    <div v-show="!showServices" class="infocard">
+    <div v-show="!showServices" class="infocard _edit">
       <div class="infocard__content">
         <h2 class="employee-services__title">
           Выберите категории услуг, которые вы предоставляете
