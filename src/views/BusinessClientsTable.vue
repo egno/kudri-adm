@@ -8,7 +8,8 @@
       :rows-per-page-items="[5, 10, 25]"
       rows-per-page-text="Записей на страницу:"
       :total-items="totalItems"
-      class="elevation-0"
+      class="elevation-0 clients"
+      sort-icon="mdi-menu-down"
     >
       <v-progress-linear
         slot="progress"
@@ -21,47 +22,39 @@
       >
         <td>
           <v-layout
-            row
-            align-center
-            fill-height
-            justify-start
+            align-center justify-space-between row fill-height
+            class="clients__first-cell"
           >
-            <v-btn
-              fab
-              flat
-              right
-              small
-              @click="clientEdit(props.item)"
-            >
-              <Avatar
-                class="ma-1"
-                :name="props.item.name.fullName || props.item.email"
-                size="2.4em"
-                :src="props.item.j.avatar"
-              />
-            </v-btn>
-            <v-layout column>
-              <v-flex
-                align-self-center
-                justify-start
+            <v-layout align-center row fill-height class="clients__badge">
+              <v-btn
+                fab
+                flat
+                small
+                class="clients__avatar"
+                @click="clientEdit(props.item)"
               >
-                <span
-                  class="hidden-button"
+                <Avatar
+                  class="ma-1"
+                  :name="props.item.name.fullName || props.item.email"
+                  size="2.4em"
+                  :src="props.item.j.avatar"
+                />
+              </v-btn>
+              <div class="clients__name-phone">
+                <div
+                  class="hidden-button clients__name"
                   @click="clientEdit(props.item)"
                 >
                   {{ props.item.name.fullName }}
-                </span>
-              </v-flex>
-              <v-flex
-                align-self-center
-                justify-start
-              >
-                <BusinessPhones
-                  title=""
-                  :phones="[props.item.phone]"
-                />
-              </v-flex>
+                </div>
+                <div>
+                  {{ props.item.phone | phoneFormat }}
+                </div>
+              </div>
             </v-layout>
+            <div>
+              <a :href="`tel:+${props.item.phone}`" class="clients__phone-button" />
+            </div>
           </v-layout>
         </td>
         <td>
@@ -105,7 +98,7 @@
           {{ props.item.visit.visits.check }}
         </td>
         <td>
-          -
+          {{ getFilialName(props.item.business_id) }}
         </td>
         <td>
           <v-layout
@@ -221,7 +214,6 @@ import { mapActions, mapGetters } from 'vuex'
 import Avatar from '@/components/avatar/Avatar.vue'
 import AppBtn from '@/components/common/AppBtn.vue'
 import AppCardTitle from '@/components/common/AppCardTitle.vue'
-import BusinessPhones from '@/components/business/BusinessPhones.vue'
 import ClientCardEdit from '@/components/client/ClientCardEdit.vue'
 import ClientVisits from '@/components/client/ClientVisits.vue'
 import Client from '@/classes/client'
@@ -231,10 +223,18 @@ export default {
   components: {
     AppBtn,
     AppCardTitle,
-    BusinessPhones,
     ClientCardEdit,
     ClientVisits,
     Avatar
+  },
+  filters: {
+    phoneFormat (value) {
+      if (!value) return ''
+      return value.replace(
+        /(\d?)(\d{1,3})(\d{1,3})(\d{1,2})(\d{1,2})$/g,
+        '+$1 $2 $3 $4 $5'
+      )
+    }
   },
   mixins: [filials],
   data () {
@@ -243,11 +243,11 @@ export default {
       branchesList: [],
       edit: false,
       headers: [
-        { text: 'Имя и фамилия', value: 'j->name->>fullname' },
-        { text: 'Визиты', value: 'visit->visits->>total' },
-        { text: 'Статус', value: 'visit->last->>ts_begin' },
-        { text: 'Средний чек', value: 'visit->visits->>check' },
-        { text: 'Филиал', value: '' },
+        { text: 'Имя и фамилия', value: 'j->name->>fullname', width: '330px' },
+        { text: 'Визиты', value: 'visit->visits->>total', width: '100px' },
+        { text: 'Статус последнего визита', value: 'visit->last->>ts_begin', width: '200px' },
+        { text: 'Средний чек', value: 'visit->visits->>check', width: '170px' },
+        { text: 'Филиал', value: '', width: '200px' },
         { text: '', value: '', sortable: false, width: '1' }
       ],
       item: {},
@@ -284,7 +284,8 @@ export default {
     searchString: 'fetchData',
     businessId: 'fetchData',
     client_id: 'onClientChange',
-    edit: 'closeNewEditor'
+    edit: 'closeNewEditor',
+    businessIsFilial: 'getFilials'
   },
   created () {
     this.getFilials()
@@ -357,6 +358,14 @@ export default {
           this.progressQuery = false
         })
     },
+    getFilialName (id) {
+      if (!this.branchesList.length) {
+        return ''
+      }
+      const f = this.branchesList.find(b => b.id === id)
+
+      return f? f.j && f.j.name : ''
+    },
     getFilials () {
       const id = this.businessIsFilial
         ? this.businessInfo && this.businessInfo.parent
@@ -414,7 +423,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss">
 .badge-inline {
   display: inline-block;
   line-height: 0px;
@@ -436,4 +445,48 @@ export default {
   color: grey;
   font-size: 0.8em;
 }
+  .clients {
+    color: #07101c;
+    thead tr:first-child {
+      height: 40px;
+      background: rgba(137, 149, 175, 0.1);
+      th {
+        color: #8995AF;
+      }
+    }
+    th {
+      padding: 5px 10px!important;
+      &:first-child {
+        padding-right: 20px !important;
+        padding-left: 56px !important;
+      }
+    }
+    td {
+      padding: 0 10px !important;
+    }
+    &__first-cell {
+      padding: 9px 0 9px 51px;
+    }
+    &__badge {
+    }
+    &__avatar {
+      margin: 0;
+    }
+    &__name-phone {
+      padding-left: 5px;
+    }
+    &__name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    &__phone-button {
+      display: block;
+      width: 40px;
+      height: 40px;
+      margin: 0 5px;
+      background: url('../assets/images/svg/phone.svg') center no-repeat;
+      border: 1px solid rgba(137, 149, 175, 0.1);
+      border-radius: 50%;
+    }
+  }
 </style>

@@ -26,7 +26,7 @@
     methods: {
       phoneLink (value) {
         if (!value) return ''
-        return `tel:+7${value}`
+        return `tel:+${value}`
       }
     }
   }
