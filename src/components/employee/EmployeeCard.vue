@@ -21,8 +21,13 @@
         {{ servicesCount | formatServices }}
       </div>
       <div class="employee-card__buttons">
-        <button v-if="servicesCount" type="button" class="employee-registry" @mousedown.stop="$emit('calendarClick')" />
-        <DeleteButton :is-dark="true" @click.native.stop="$emit('delete')" />
+        <VTooltip v-if="servicesCount" bottom>
+          <template v-slot:activator="{ on }">
+            <button type="button" class="employee-registry" v-on="on" @mousedown.stop="$emit('calendarClick')" />
+          </template>
+          <span>Журнал записей мастера</span>
+        </VTooltip>
+        <DeleteButton :is-dark="true" delete-text="Удалить сотрудника" @click.native.stop="$emit('delete')" />
       </div>
     </div>
   </div>
