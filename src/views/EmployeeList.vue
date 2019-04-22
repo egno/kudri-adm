@@ -99,7 +99,7 @@ import EmployeeCard from '@/components/employee/EmployeeCard.vue'
 import Modal from '@/components/common/Modal'
 import PageLayout from '@/components/common/PageLayout.vue'
 import Api from '@/api/backend'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 import { employeeMixin } from '@/mixins/employee'
 import { formatDate } from '@/components/calendar/utils'
 
@@ -125,8 +125,11 @@ export default {
     }
   },
   computed: {
-    ...mapState({ businessServices: state => state.business.businessServices }),
-    ...mapState({ businessEmployees: state => state.business.businessEmployees }),
+    ...mapState({
+      businessServices: state => state.business.businessServices,
+      businessEmployees: state => state.business.businessEmployees
+    }),
+    ...mapGetters(['searchString']),
     id () {
       return this.$route.params.id
     },
@@ -150,6 +153,11 @@ export default {
           this.selectedOnStart = true
         }
       }
+    },
+    searchString (val) {
+      this.selectedCategories = this.businessEmployees
+        .filter(emp => emp.j.name.toLowerCase().includes(val))
+        .map(s => s.j.category)
     }
   },
   mounted () {
