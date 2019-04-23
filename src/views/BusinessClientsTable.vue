@@ -1,21 +1,15 @@
 <template>
-  <div>
+  <div class="clients">
     <v-data-table
       :headers="headers"
       :items="items"
       :loading="progressQuery"
       :pagination.sync="pagination"
-      :rows-per-page-items="[5, 10, 25]"
-      rows-per-page-text="Записей на страницу:"
       :total-items="totalItems"
-      class="elevation-0 clients"
+      class="elevation-0"
       sort-icon="mdi-menu-down"
+      hide-actions
     >
-      <v-progress-linear
-        slot="progress"
-        color="blue"
-        indeterminate
-      />
       <template
         slot="items"
         slot-scope="props"
@@ -70,9 +64,7 @@
               v-if="props.item.visit.visits.unvisited"
               class="badge-inline red"
             >
-              <span>
-                {{ props.item.visit.visits.unvisited }}
-              </span>
+              {{ props.item.visit.visits.unvisited }}
             </span>
           </div>
         </td>
@@ -107,50 +99,34 @@
             fill-height
             justify-start
           >
-            <v-btn
-              flat
-              icon
-              small
-              color="grey"
-              @click="onDelete(props.item)"
-            >
-              <v-icon>
-                delete
-              </v-icon>
-            </v-btn>
+            <DeleteButton :is-dark="true" @delete="onDelete(props.item)" />
           </v-layout>
         </td>
       </template>
     </v-data-table>
-    <v-navigation-drawer
-      v-model="edit"
-      right
-      temporary
-      fixed
-      width="400"
-    >
-      <ClientCardEdit
-        v-if="edit"
-        :client="item"
-        :filials="branchesList"
-        @onDelete="onDelete(item)"
-        @onSave="onSave($event)"
-        @close="edit=false"
-      />
-    </v-navigation-drawer>
-    <v-navigation-drawer
-      v-model="visitsPanel"
-      right
-      temporary
-      fixed
-      width="400"
+    <div class="text-xs-right">
+      <v-pagination v-model="pagination.page" :length="pages" :total-visible="6" circle color="rgba(137, 149, 175, 0.35)" />
+    </div>
+    <ClientCardEdit
+      :visible="edit"
+      :client="item"
+      :filials="branchesList"
+      :create="!item.id"
+      @onDelete="onDelete(item)"
+      @onSave="onSave($event)"
+      @close="edit=false"
+    />
+    <v-dialog
+      :value="visitsPanel"
+      transition="slide"
+      content-class="client-modal"
+      @input="visitsPanel = false"
     >
       <ClientVisits
-        v-if="visitsPanel"
         :client="item"
         @close="visitsPanel=false"
       />
-    </v-navigation-drawer>
+    </v-dialog>
     <v-dialog
       v-model="deleteConfirm"
       width="400"
@@ -218,6 +194,7 @@ import ClientCardEdit from '@/components/client/ClientCardEdit.vue'
 import ClientVisits from '@/components/client/ClientVisits.vue'
 import Client from '@/classes/client'
 import { filials} from "../components/business/mixins"
+import DeleteButton from '@/components/common/DeleteButton'
 
 export default {
   components: {
@@ -225,16 +202,17 @@ export default {
     AppCardTitle,
     ClientCardEdit,
     ClientVisits,
-    Avatar
+    Avatar,
+    DeleteButton
   },
   filters: {
     phoneFormat (value) {
       if (!value) return ''
       return value.replace(
         /(\d?)(\d{1,3})(\d{1,3})(\d{1,2})(\d{1,2})$/g,
-        '+$1 $2 $3 $4 $5'
+        '+$1 ($2) $3-$4-$5'
       )
-    }
+    } // todo make a mixin
   },
   mixins: [filials],
   data () {
@@ -252,7 +230,7 @@ export default {
       ],
       item: {},
       items: [],
-      pagination: { rowsPerPage: 10 },
+      pagination: { rowsPerPage: 20 },
       progressQuery: false,
       totalItems: 0,
       visitsPanel: false
@@ -272,6 +250,12 @@ export default {
       }*,j->>inn.ilike.${this.searchString}*,j->>address.ilike.*${
         this.searchString
       }*))`
+    },
+    pages () {
+      if (!this.pagination.rowsPerPage || !this.totalItems)
+        return 0
+
+      return Math.ceil(this.totalItems / this.pagination.rowsPerPage)
     }
   },
   watch: {
@@ -424,60 +408,146 @@ export default {
 </script>
 
 <style lang="scss">
-.badge-inline {
-  display: inline-block;
-  line-height: 0px;
+  @import '../assets/styles/common';
+  $first-column: 270px;
+  $first-column-desktop: 330px;
+  $max-width: 1126px;
+  $left-panel: 240px;
 
-  border-radius: 50%;
-  border: 0px solid;
-}
-.badge-inline span {
-  color: white;
-  display: inline-block;
+  .slide-enter, .slide-leave-to {
+    right: -440px !important;
+  }
 
-  padding-top: 50%;
-  padding-bottom: 50%;
+  .badge-inline {
+    display: inline-block;
+    line-height: 0px;
 
-  margin-left: 4px;
-  margin-right: 4px;
-}
-.second-row {
-  color: grey;
-  font-size: 0.8em;
-}
+    border-radius: 50%;
+    border: 0px solid;
+  }
+  .badge-inline span {
+    color: white;
+    display: inline-block;
+
+    padding-top: 50%;
+    padding-bottom: 50%;
+
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+  .second-row {
+    color: grey;
+    font-size: 0.8em;
+  }
   .clients {
+    position: relative;
     color: #07101c;
-    thead tr:first-child {
-      height: 40px;
-      background: rgba(137, 149, 175, 0.1);
-      th {
-        color: #8995AF;
+    padding-left:  $first-column;
+    background: #fff;
+    overflow-x: auto;
+
+    @media only screen and (min-width : $desktop) {
+      padding-left: $first-column-desktop;
+    }
+
+    @media only screen and (min-width : ($left-panel+$max-width)) {
+      padding-left: 0;
+    }
+
+    table.v-table {
+      min-width: 729px;
+      padding-left: 0;
+      @media only screen and (min-width : ($left-panel+$max-width)) {
+        width: 100%;
       }
     }
-    th {
-      padding: 5px 10px!important;
-      &:first-child {
-        padding-right: 20px !important;
-        padding-left: 56px !important;
+
+    /* styles for table header */
+    thead tr:first-child {
+      height: 40px;
+      background: #f3f4f7;
+      th {
+        height: 40px;
+        padding: 10px!important;
+        background: #f3f4f7;
+        color: #8995AF;
+        &:first-child {
+          padding-right: 20px !important;
+          padding-left: 56px !important;
+        }
+      }
+    }/* end of styles for table header */
+
+
+    tr {
+      height: 88px;
+      border-bottom: none !important;
+      &:hover {
+        background-color: transparent !important;
       }
     }
     td {
       padding: 0 10px !important;
+      border-bottom: 1px solid #f3f4f7;
+    }
+
+    /* styles for first column */
+    tr th:first-child,
+    tr td:first-child {
+      position: absolute;
+      width: $first-column;
+      height: 88px;
+      left: 0;
+      top: auto;
+      background: #fff;
+      margin-top: 1px;
+      @media only screen and (min-width : $desktop) {
+        width: $first-column-desktop;
+      }
+      @media only screen and (min-width : ($left-panel+$max-width)) {
+        position: static;
+      }
+    }
+    tr th:first-child {
+      margin-top: 0;
+    }
+    @-moz-document url-prefix() {
+      tr th:first-child,
+      tr td:first-child {
+        margin-top: 0;
+      }
+    }
+    /* end of styles for first column */
+
+
+
+    .v-datatable__progress {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      th:first-child {
+        width: 100%;
+      }
     }
     &__first-cell {
-      padding: 9px 0 9px 51px;
-    }
-    &__badge {
+      padding: 9px 0 9px 25px;
+      @media only screen and (min-width : $desktop) {
+        padding-left: 51px;
+      }
     }
     &__avatar {
       margin: 0;
     }
     &__name-phone {
       padding-left: 5px;
+      flex-grow: 1;
+      overflow: hidden;
     }
     &__name {
+      text-transform: capitalize;
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
     }
     &__phone-button {
       display: block;
@@ -487,6 +557,9 @@ export default {
       background: url('../assets/images/svg/phone.svg') center no-repeat;
       border: 1px solid rgba(137, 149, 175, 0.1);
       border-radius: 50%;
+    }
+    .v-datatable__actions__select {
+      display: none;
     }
   }
 </style>

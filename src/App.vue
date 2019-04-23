@@ -379,6 +379,27 @@ export default {
       flex-wrap: wrap;
     }
   }
+  .v-pagination__navigation {
+    box-shadow: none;
+    background: transparent;
+    &--disabled i{
+      color: rgba(137, 149, 175, 0.1);
+    }
+
+    i {
+      font-size: 16px;
+    }
+  }
+  .v-pagination__item {
+    min-width: 20px;
+    height: 20px;
+    box-shadow: none;
+    color: #8995AF;
+    background: transparent;
+    &--active {
+      color: #07101C;
+    }
+  }
 }
 .filters {
   display: flex;

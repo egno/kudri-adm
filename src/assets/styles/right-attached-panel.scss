@@ -1,0 +1,237 @@
+%button {
+  display: block;
+  height: 56px;
+  padding: 0 28px;
+  margin: 0 auto;
+  font-family: $roboto;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: normal;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: background-color 0.4s 0s, color 0.4s 0s;
+  outline: none;
+}
+
+.right-attached-panel {
+  position: fixed;
+  right: -400px;
+  margin: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 440px;
+  height: 100vh;
+  max-height: 100vh !important;
+  background-color: #fff;
+  text-align: center;
+  font-family: $lato;
+  z-index: 1000;
+  overflow-y: auto;
+  transition: right 0.3s linear;
+
+  &.v-dialog--active {
+    right: 0;
+  }
+
+  &__container {
+    position: relative;
+    padding: 53px 62px 56px;
+    text-align: center;
+  }
+  &__close {
+    position: absolute;
+    top: 21px;
+    left: 21px;
+    width: 14px;
+    height: 14px;
+    background: url('../../assets/images/svg/cross.svg') center no-repeat;
+    outline: none;
+  }
+  &__header {
+    font-family: Roboto Slab, serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 24px;
+    text-align: center;
+    color: #07101C;
+  }
+  &__field-block {
+    margin-top: 28px;
+    padding-top: 20px;
+    &._select .v-input__slot {
+      margin-bottom: 0;
+    }
+  }
+  & &__field-block .v-input__control > .v-input__slot:before {
+    border-color: #8995af;
+  }
+  & .error--text .v-input__control > .v-input__slot:before {
+    border-color: currentColor;
+  }
+  textarea {
+    font-weight: 400;
+    text-align: center;
+  }
+  input {
+    text-align: center;
+    padding-bottom: 6px;
+    font-weight: 400;
+  }
+  .counter input {
+    padding-bottom: 0;
+  }
+  &__sex {
+    display: none;
+  }
+
+  &__field-name {
+    margin-bottom: 14px;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  &__sex-label {
+    @extend %filter;
+    display: inline-block;
+    height: 28px;
+    padding: 0 12px;
+    margin: 0 12px 15px;
+  }
+  &__from {
+    margin-right: 19px;
+    margin-bottom: 0;
+    font-weight: 400;
+  }
+  input[type="checkbox"]:checked + label {
+    @extend %filter-active
+  }
+  &__row {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    @extend %placeholder;
+  }
+  &__price {
+    max-width: 100px;
+    margin-right: 5px;
+    input::placeholder {
+      font-size: 14px;
+    }
+  }
+  &__buttons {
+    margin-top: 15px;
+  }
+  &__save {
+    @extend %button;
+    width: 240px;
+    color: #FFFFFF;
+    background: linear-gradient(270deg, #C9A15D -9.86%, #BA9462 103.49%);
+    &:hover {
+      background: #07101C;
+    }
+    &._disabled {
+      @extend %button-disabled
+    }
+  }
+  &__cancel {
+    @extend %button;
+    color: #8995AF;
+    margin-top: 40px;
+    &:hover {
+      color: #07101C;
+    }
+  }
+  &__error {
+    width: 80%;
+    margin: 29px auto 0;
+    font-family: $lato;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: normal;
+    text-align: center;
+    color: #EF4D37;
+  }
+  .counter {
+    width: 122px;
+    margin: 0 auto;
+    &._invalid {
+      .counter__control {
+        background-color: #EF4D37;
+      }
+      input {
+        color: #EF4D37;
+      }
+    }
+  }
+  .v-text-field {
+    padding-top: 0;
+  }
+  .v-input {
+    margin-top: 0;
+  }
+  .v-messages {
+    display: none;
+  }
+  .v-label {
+    @extend %placeholder;
+    max-width: 100%;
+    &.v-label--active {
+      top: 0;
+    }
+  }
+  .error--text {
+    label {
+      color: rgba(7, 16, 28, 0.35) !important;
+    }
+  }
+  .v-input__slot {
+    margin-bottom: 5px;
+  }
+  .v-counter {
+    color: rgba(137, 149, 175, 0.35);
+  }
+  .v-select__selections>div{
+    text-align: right;
+    justify-content: flex-end;
+    flex-grow: 1;
+  }
+
+  ._employees {
+    position: relative;
+    .v-select__selections>div {
+      @extend %placeholder;
+    }
+    .filters__item {
+      display: inline-block;
+      width: auto;
+      margin: 0 12px 16px 0;
+      padding: 0 25px 0 12px;
+      background: url('../../assets/images/svg/cross.svg') right center no-repeat rgba(137, 149, 175, 0.1);
+    }
+    .v-menu__content {
+      top: 100% !important;
+    }
+  }
+  ._groups {
+    position: relative;
+    .v-menu__content {
+      top: 100% !important;
+    }
+  }
+  .v-select__selection {
+    font-size: 14px;
+  }
+  .v-select--chips .v-select__selections {
+    min-height: auto;
+  }
+
+
+}
+

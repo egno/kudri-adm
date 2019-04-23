@@ -1,40 +1,40 @@
 <template>
-  <v-dialog :value="visible" :content-class="`edit-service ${create? 'create': 'edit'}`" persistent transition="slide" @input="onClose">
-    <VForm ref="form" :value="!saveDisabled" class="edit-service__container" @input="$event && (error = '')">
-      <button type="button" class="edit-service__close" @click="onClose" />
-      <div class="edit-service__content">
-        <div class="edit-service__header">
+  <v-dialog :value="visible" :content-class="`right-attached-panel ${create? 'create': 'edit'}`" persistent transition="slide" @input="onClose">
+    <VForm ref="form" :value="!saveDisabled" class="right-attached-panel__container" @input="$event && (error = '')">
+      <button type="button" class="right-attached-panel__close" @click="onClose" />
+      <div class="right-attached-panel__content">
+        <div class="right-attached-panel__header">
           {{ create? 'Создать услугу' : 'Редактировать услугу' }}
         </div>
 
-        <div class="edit-service__field-block _select">
+        <div class="right-attached-panel__field-block _select">
           <SearchSelect
             :searching-value="name"
             :options="suggestedServiceNames"
             :required="true"
             :max-length="150"
             label="НАЗВАНИЕ УСЛУГИ"
-            attach=".edit-service__field-block._select"
+            attach=".right-attached-panel__field-block._select"
             @input="onInputName"
             @select="name = $event"
             @error="error = $event"
           />
         </div>
 
-        <div class="edit-service__field-block _groups dropdown-select">
+        <div class="right-attached-panel__field-block _groups dropdown-select">
           <VSelect
             v-model="group"
             :items="serviceGroups"
             :item-text="servGr => servGr.name"
             placeholder="КАТЕГОРИЯ"
             :rules="[ rules.required ]"
-            :attach="create? '.create .edit-service__field-block._groups' : '.edit .edit-service__field-block._groups'"
+            :attach="create? '.create .right-attached-panel__field-block._groups' : '.edit .right-attached-panel__field-block._groups'"
             @blur="!group && (error = 'Необходимо заполнить все обязательные поля')"
           />
         </div>
 
-        <div class="edit-service__field-block">
-          <div class="edit-service__field-name">
+        <div class="right-attached-panel__field-block">
+          <div class="right-attached-panel__field-name">
             Пол
           </div>
           <input
@@ -42,46 +42,46 @@
             v-model="sex"
             type="checkbox"
             value="male"
-            class="filters__item edit-service__sex"
+            class="filters__item right-attached-panel__sex"
           >
-          <label :for="create? 'male' : 'male2'" class="edit-service__sex-label">Муж</label>
+          <label :for="create? 'male' : 'male2'" class="right-attached-panel__sex-label">Муж</label>
           <input
             :id="create? 'female' : 'female2'"
             v-model="sex"
             type="checkbox"
             value="female"
-            class="filters__item edit-service__sex"
+            class="filters__item right-attached-panel__sex"
           >
-          <label :for="create? 'female' : 'female2'" class="edit-service__sex-label">Жен</label>
+          <label :for="create? 'female' : 'female2'" class="right-attached-panel__sex-label">Жен</label>
           <input
             :id="create? 'child' : 'child2'"
             v-model="sex"
             type="checkbox"
             value="child"
-            class="filters__item edit-service__sex"
+            class="filters__item right-attached-panel__sex"
           >
-          <label :for="create? 'child' : 'child2'" class="edit-service__sex-label">Дети</label>
+          <label :for="create? 'child' : 'child2'" class="right-attached-panel__sex-label">Дети</label>
         </div>
 
-        <div class="edit-service__field-block">
-          <div class="edit-service__field-name">
+        <div class="right-attached-panel__field-block">
+          <div class="right-attached-panel__field-name">
             Цена
           </div>
-          <div class="edit-service__row">
-            <div class="edit-service__from">
+          <div class="right-attached-panel__row">
+            <div class="right-attached-panel__from">
               от
             </div>
-            <VTextField v-model="price" mask="#####" placeholder="0" class="edit-service__price" />
+            <VTextField v-model="price" mask="#####" placeholder="0" class="right-attached-panel__price" />
             рублей
           </div>
         </div>
 
-        <div class="edit-service__field-block">
-          <div class="edit-service__field-name">
+        <div class="right-attached-panel__field-block">
+          <div class="right-attached-panel__field-name">
             Длительность (мин)
           </div>
           <Counter
-            :id="create? 'create-service-duration': 'edit-service-duration'"
+            :id="create? 'create-service-duration': 'right-attached-panel-duration'"
             :value="duration"
             :min-value="15"
             :max-value="720"
@@ -91,7 +91,7 @@
           />
         </div>
 
-        <div class="edit-service__field-block _employees dropdown-select">
+        <div class="right-attached-panel__field-block _employees dropdown-select">
           <v-combobox
             v-model="selectedEmployees"
             :items="employees"
@@ -101,11 +101,11 @@
             return-object
             chips
             deletable-chips
-            :attach="create?'.create .edit-service__field-block._employees': '.edit .edit-service__field-block._employees'"
+            :attach="create?'.create .right-attached-panel__field-block._employees': '.edit .right-attached-panel__field-block._employees'"
           />
         </div>
 
-        <div class="edit-service__field-block">
+        <div class="right-attached-panel__field-block">
           <VTextarea
             v-model="description"
             placeholder="ОПИСАНИЕ"
@@ -115,20 +115,20 @@
           />
         </div>
 
-        <div v-if="error" class="edit-service__error">
+        <div v-if="error" class="right-attached-panel__error">
           {{ error }}
         </div>
 
-        <div v-if="errorMessage" class="edit-service__error">
+        <div v-if="errorMessage" class="right-attached-panel__error">
           {{ errorMessage }}
         </div>
 
-        <div class="edit-service__buttons">
-          <button type="button" class="edit-service__save" :class="{ _disabled: saveDisabled }" @click="onSave">
+        <div class="right-attached-panel__buttons">
+          <button type="button" class="right-attached-panel__save" :class="{ _disabled: saveDisabled }" @click="onSave">
             Сохранить
           </button>
           <template v-if="!create">
-            <button type="button" class="edit-service__cancel" @click="onClose">
+            <button type="button" class="right-attached-panel__cancel" @click="onClose">
               Отмена
             </button>
           </template>
@@ -372,245 +372,10 @@
 
 <style lang="scss">
   @import "../../assets/styles/common";
+  @import "../../assets/styles/right-attached-panel";
 
   .slide-enter, .slide-leave-to {
     right: -440px !important;
   }
 
-  %button {
-    display: block;
-    height: 56px;
-    padding: 0 28px;
-    margin: 0 auto;
-    font-family: $roboto;
-    font-style: normal;
-    font-weight: bold;
-    font-size: 18px;
-    line-height: normal;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    transition: background-color 0.4s 0s, color 0.4s 0s;
-    outline: none;
-  }
-
-  .edit-service {
-    position: fixed;
-    right: -400px;
-    margin: 0;
-    top: 0;
-    bottom: 0;
-    width: 100%;
-    max-width: 440px;
-    height: 100vh;
-    max-height: 100vh !important;
-    background-color: #fff;
-    text-align: center;
-    font-family: $lato;
-    z-index: 1000;
-    overflow-y: auto;
-    transition: right 0.3s linear;
-
-    &.v-dialog--active {
-      right: 0;
-    }
-
-    &__container {
-      position: relative;
-      padding: 53px 62px 56px;
-      text-align: center;
-    }
-    &__close {
-      position: absolute;
-      top: 21px;
-      left: 21px;
-      width: 14px;
-      height: 14px;
-      background: url('../../assets/images/svg/cross.svg') center no-repeat;
-      outline: none;
-    }
-    &__header {
-      font-family: Roboto Slab, serif;
-      font-style: normal;
-      font-weight: normal;
-      font-size: 18px;
-      line-height: 24px;
-      text-align: center;
-      color: #07101C;
-    }
-    &__field-block {
-      margin-top: 28px;
-      padding-top: 20px;
-      &._select .v-input__slot {
-        margin-bottom: 0;
-      }
-    }
-    & &__field-block .v-input__control > .v-input__slot:before {
-      border-color: #8995af;
-    }
-    & .error--text .v-input__control > .v-input__slot:before {
-      border-color: currentColor;
-    }
-    textarea {
-      font-weight: 400;
-      text-align: center;
-    }
-    input {
-      text-align: center;
-      padding-bottom: 6px;
-      font-weight: 400;
-    }
-    .counter input {
-      padding-bottom: 0;
-    }
-    &__sex {
-      display: none;
-    }
-
-    &__field-name {
-      margin-bottom: 14px;
-      font-weight: bold;
-      font-size: 16px;
-    }
-    &__sex-label {
-      @extend %filter;
-      display: inline-block;
-      height: 28px;
-      padding: 0 12px;
-      margin: 0 12px 15px;
-    }
-    &__from {
-      margin-right: 19px;
-      margin-bottom: 0;
-      font-weight: 400;
-    }
-    input[type="checkbox"]:checked + label {
-      @extend %filter-active
-    }
-    &__row {
-      display: flex;
-      justify-content: center;
-      align-items: baseline;
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      @extend %placeholder;
-    }
-    &__price {
-      max-width: 100px;
-      margin-right: 5px;
-      input::placeholder {
-        font-size: 14px;
-      }
-    }
-    &__buttons {
-      margin-top: 15px;
-    }
-    &__save {
-      @extend %button;
-      width: 240px;
-      color: #FFFFFF;
-      background: linear-gradient(270deg, #C9A15D -9.86%, #BA9462 103.49%);
-      &:hover {
-        background: #07101C;
-      }
-      &._disabled {
-        @extend %button-disabled
-      }
-    }
-    &__cancel {
-      @extend %button;
-      color: #8995AF;
-      margin-top: 40px;
-      &:hover {
-        color: #07101C;
-      }
-    }
-    &__error {
-      width: 80%;
-      margin: 29px auto 0;
-      font-family: $lato;
-      font-style: normal;
-      font-weight: normal;
-      font-size: 14px;
-      line-height: normal;
-      text-align: center;
-      color: #EF4D37;
-    }
-    .counter {
-      width: 122px;
-      margin: 0 auto;
-      &._invalid {
-        .counter__control {
-          background-color: #EF4D37;
-        }
-        input {
-          color: #EF4D37;
-        }
-      }
-    }
-    .v-text-field {
-      padding-top: 0;
-    }
-    .v-input {
-      margin-top: 0;
-    }
-    .v-messages {
-      display: none;
-    }
-    .v-label {
-      @extend %placeholder;
-      max-width: 100%;
-      &.v-label--active {
-        top: 0;
-      }
-    }
-    .error--text {
-      label {
-        color: rgba(7, 16, 28, 0.35) !important;
-      }
-    }
-    .v-input__slot {
-      margin-bottom: 5px;
-    }
-    .v-counter {
-      color: rgba(137, 149, 175, 0.35);
-    }
-    .v-select__selections>div{
-      text-align: right;
-      justify-content: flex-end;
-      flex-grow: 1;
-    }
-
-    ._employees {
-      position: relative;
-      .v-select__selections>div {
-        @extend %placeholder;
-      }
-      .filters__item {
-        display: inline-block;
-        width: auto;
-        margin: 0 12px 16px 0;
-        padding: 0 25px 0 12px;
-        background: url('../../assets/images/svg/cross.svg') right center no-repeat rgba(137, 149, 175, 0.1);
-      }
-      .v-menu__content {
-        top: 100% !important;
-      }
-    }
-    ._groups {
-      position: relative;
-      .v-menu__content {
-        top: 100% !important;
-      }
-    }
-    .v-select__selection {
-      font-size: 14px;
-    }
-    .v-select--chips .v-select__selections {
-      min-height: auto;
-    }
-
-
-  }
 </style>
