@@ -2,26 +2,30 @@
   <v-hover>
     <v-layout
       slot-scope="{ hover }"
-      row
-      fluid
       :class="{'row-hover': hover}"
     >
       <v-flex
         xs3
-        class="grey--text text-xs-right timeline-date "
         pr-2
         py-2
+        class="text-xs-right timeline-date "
       >
-        {{ visit.date }}
-        <div class="circle" :style="{color: statusColor}" />
+        <div class="client-visit-date">
+          {{ visit.date }}
+        </div>
+        <div :style="{color: statusColor}">
+          {{ visit.displayStatus }}
+        </div>
+        <!--<div class="circle" :style="{color: statusColor}" />-->
       </v-flex>
       <v-flex
         xs9
         px-3
         py-2
+        class="text-xs-left"
       >
         <v-layout column>
-          <v-flex class="grey--text">
+          <v-flex>
             {{ visit.time }}
           </v-flex>
           <v-flex v-if="services">
@@ -30,22 +34,17 @@
                 v-for="(service, si) in services"
                 :key="'s'+si"
               >
-                <v-layout row>
-                  <v-flex xs8>
+                <v-layout row justify-space-between>
+                  <v-flex>
                     {{ service.name }}
                   </v-flex>
-                  <v-flex
+                  <div
                     v-if="service.price"
-                    xs4
-                    class="text-xs-right"
+                    class="visit-service-price"
+                    :class="{'service-undone': isUndone}"
                   >
-                    <div
-                      :class="{'service-undone': isUndone}"
-                      class="badge-inline"
-                    >
-                      <span>{{ service.price }} ₽</span>
-                    </div>
-                  </v-flex>
+                    {{ service.price }} ₽
+                  </div>
                 </v-layout>
               </v-flex>
             </v-layout>
@@ -62,11 +61,6 @@
                 {{ master }}
               </v-flex>
             </v-layout>
-          </v-flex>
-          <v-flex>
-            <span :style="{color: statusColor}">
-              {{ visit.displayStatus }}
-            </span>
           </v-flex>
         </v-layout>
       </v-flex>
@@ -100,7 +94,7 @@ export default {
       return this.visit && this.visit.master && this.visit.master.name
     },
     services () {
-      return this.visit && this.visit.client && this.visit.client.services
+      return this.visit && this.visit.j && this.visit.j.services
     }
   }
 }
@@ -121,18 +115,18 @@ export default {
   border-right: solid 2px;
   border-color: rgba(0.5, 0.5, 0.5, 0.1);
 }
-.badge-inline {
-  display: inline-block;
-  border-radius: 1em;
-  padding: 0;
-  height: 1.5em;
-  background-color: grey;
-}
-.badge-inline span {
-  color: white;
-  display: inline-block;
-  margin-left: 0.75em;
-  margin-right: 0.75em;
+.visit-service-price {
+  height: 18px;
+  padding: 0 10px;
+  background: rgba(137, 149, 175, 0.35);
+  border-radius: 12px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+  color: #fff;
+  white-space: nowrap;
 }
 .row-hover {
   background-color: #eee;

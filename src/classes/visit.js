@@ -8,7 +8,7 @@ class Visit {
   // Main object
 
   /**
-   * @param {{ id: String; access: Boolean; business_id: String; client: Object; ts_begin: String; ts_end: String}} newVal
+   * @param {{ id: String; access: Boolean; business_id: String; j: Object; ts_begin: String; ts_end: String}} newVal
    */
   set jsonObject (newVal) {
     this.id = (newVal && newVal.id) || null
@@ -18,8 +18,7 @@ class Visit {
     this.ts_begin = (newVal && newVal.ts_begin) || null
     this.ts_end = (newVal && newVal.ts_end) || null
     this.status = (newVal && newVal.status) || null
-    this.price = (newVal && newVal.price) || null
-    this.client = (newVal && newVal.client) || {}
+    this.j = (newVal && newVal.j) || {}
     this.master = (newVal && newVal.master) || {}
 
     // set calculated properties
@@ -64,15 +63,15 @@ class Visit {
   get currentStatus () {
     const now = new Date()
     const t1 = new Date(Date.parse(this.ts_begin))
-    const t2 = new Date(Date.parse(this.ts_end))
+    const t2 = this.ts_end? new Date(Date.parse(this.ts_end)) : 0
 
     return (
-      this.statuses.filter(x => x.code === this.status)[0] ||
-      (now > t2
+      this.statuses.find(x => x.code === this.status) ||
+      (now < t1
+        ? this.statuses[4]
+        : t2
         ? this.statuses[2]
-        : now > t1
-        ? this.statuses[3]
-        : this.statuses[4])
+        : this.statuses[3])
     )
   }
 

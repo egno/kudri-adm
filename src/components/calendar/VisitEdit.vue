@@ -11,7 +11,7 @@
         <v-layout column>
           <v-flex>Услуга</v-flex>
           <v-flex class="caption text-none grey--text">
-            {{ item.client.services && item.client.services[0] && item.client.services[0].name }}
+            {{ item.j.services && item.j.services[0] && item.j.services[0].name }}
           </v-flex>
         </v-layout>
       </v-tab>
@@ -68,7 +68,7 @@
                     class="table-select"
                     py-2
                     px-1
-                    @click="item.client.services=[service]"
+                    @click="item.j.services=[service]"
                   >
                     <v-layout row>
                       <v-flex xs10>
@@ -124,14 +124,14 @@
         <VCard flat>
           <v-card-text>
             <VTextField
-              v-model="item.client.name"
+              v-model="item.j.client.name"
               label="Имя"
               prepend-icon="account_box"
-              :rules="[() => !!item.client.name || 'Это поле обязательно для заполнения']"
+              :rules="[() => !!item.j.client.name || 'Это поле обязательно для заполнения']"
               required
             />
             <PhoneEdit
-              :phone="item.client.phone"
+              :phone="item.j.client.phone"
               @onEdit="onPhoneEdit($event)"
             />
           </v-card-text>
@@ -211,7 +211,7 @@ export default {
       return [...new Set(this.services.map(x => x.category))]
     },
     displayClient () {
-      return this.item.client.name || this.item.client.phone
+      return this.item.j.client.name || this.item.j.client.phone
     },
     displaySelectedTime () {
       if (!this.selectedDate) {
@@ -224,9 +224,9 @@ export default {
     duration () {
       return (
         this.item &&
-        this.item.client &&
-        this.item.client.services &&
-        this.item.client.services.reduce(
+        this.item.j &&
+        this.item.j.services &&
+        this.item.j.services.reduce(
           (acc, val) => parseInt(val.duration) || 60,
           0
         )
@@ -283,7 +283,7 @@ export default {
       }
     },
     onPhoneEdit (payload) {
-      this.item.client.phone = payload
+      this.item.j.client.phone = payload
     },
     onSave () {
       const duration = this.duration
@@ -293,7 +293,7 @@ export default {
       let ts2 = new Date()
       ts2.setTime(ts1.getTime() + 60000 * duration)
       this.item.business_id = this.employee || this.businessInfo.id
-      this.item.client.duration = duration
+      this.item.j.duration = duration
       this.item.ts_begin = ts1.toJSON().slice(0, -1)
       this.item.ts_end = ts2.toJSON().slice(0, -1)
       this.$emit('onSave', this.item)

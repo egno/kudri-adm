@@ -7,6 +7,7 @@
       justify-start
       class="right-attached-panel__container"
     >
+      <button type="button" class="right-attached-panel__close" @click="$emit('close')" />
       <div class="right-attached-panel__header">
         {{ create? 'Добавить клиента' : 'Информация о клиенте' }}
       </div>
@@ -18,11 +19,11 @@
           required
         />
       </div>
-      <div class="">
+      <div>
         <div
           v-for="(phone, i) in client.phones"
           :key="i"
-          class="businesscard-form__field phone-input"
+          class="phone-input"
         >
           <PhoneEdit
             :phone="phone"
@@ -46,15 +47,6 @@
         </button>
       </div>
       <div class="businesscard-form__field">
-        <v-select
-          v-model="client.filial"
-          :items="filials"
-          item-text="j.name"
-          label="Филиал"
-          return-object
-        />
-      </div>
-      <div class="businesscard-form__field">
         <v-text-field
           v-model="client.birth_date"
           label="Дата рождения"
@@ -63,7 +55,7 @@
         />
       </div>
       <div class="businesscard-form__field">
-        <div>
+        <div class="right-attached-panel__field-name">
           Пол
         </div>
         <v-btn-toggle v-model="client.sex">
@@ -142,11 +134,9 @@ export default {
       default: false,
       required: true
     },
-    filials: {
-      type: Array,
-      default () {
-        return []
-      }
+    filial: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -159,6 +149,7 @@ export default {
       this.$emit('onDelete', this.client)
     },
     onSave () {
+      this.client.filial = this.filial
       this.$emit('onSave', this.client)
     }
   }
@@ -179,6 +170,8 @@ export default {
     .v-btn-toggle {
       button {
         @extend %filter;
+        padding: 0 12px;
+        margin: 0 12px 15px;
         border-radius: 14px !important;
         text-transform: capitalize;
         &:hover {

@@ -1,187 +1,188 @@
 <template>
-  <div class="clients">
-    <v-data-table
-      :headers="headers"
-      :items="items"
-      :loading="progressQuery"
-      :pagination.sync="pagination"
-      :total-items="totalItems"
-      class="elevation-0"
-      sort-icon="mdi-menu-down"
-      hide-actions
-    >
-      <template
-        slot="items"
-        slot-scope="props"
-      >
-        <td>
-          <v-layout
-            align-center justify-space-between row fill-height
-            class="clients__first-cell"
+  <PageLayout
+    :is-button-visible="isEditorUser"
+    :template="{
+      headerText: 'Клиенты',
+      buttonText: 'Добавить клиента'
+    }"
+    @add="$router.push({
+      name: 'businessCardClient',
+      params: { id: businessId, client: 'new' }
+    })"
+  >
+    <template slot="content">
+      <div class="clients">
+        <v-data-table
+          :headers="headers"
+          :items="items"
+          :loading="progressQuery"
+          :pagination.sync="pagination"
+          :total-items="totalItems"
+          class="elevation-0"
+          sort-icon="mdi-menu-down"
+          hide-actions
+        >
+          <template
+            slot="items"
+            slot-scope="props"
           >
-            <v-layout align-center row fill-height class="clients__badge">
-              <v-btn
-                fab
-                flat
-                small
-                class="clients__avatar"
-                @click="clientEdit(props.item)"
+            <td>
+              <v-layout
+                align-center justify-space-between row fill-height
+                class="clients__first-cell"
               >
-                <Avatar
-                  class="ma-1"
-                  :name="props.item.name.fullName || props.item.email"
-                  size="2.4em"
-                  :src="props.item.j.avatar"
-                />
-              </v-btn>
-              <div class="clients__name-phone">
-                <div
-                  class="hidden-button clients__name"
-                  @click="clientEdit(props.item)"
-                >
-                  {{ props.item.name.fullName }}
-                </div>
+                <v-layout align-center row fill-height class="clients__badge" @click="clientEdit(props.item)">
+                  <div class="clients__avatar">
+                    <Avatar
+                      class="ma-1"
+                      :name="props.item.name.fullName || props.item.email"
+                      size="2.4em"
+                      :src="props.item.j.avatar"
+                    />
+                  </div>
+                  <div class="clients__name-phone">
+                    <div
+                      class="hidden-button clients__name"
+                      @click="clientEdit(props.item)"
+                    >
+                      {{ props.item.name.fullName }}
+                    </div>
+                    <!--todo выводить основной тел-->
+                    <div>
+                      {{ props.item.phones[0] | phoneFormat }}
+                    </div>
+                  </div>
+                </v-layout>
                 <div>
-                  {{ props.item.phone | phoneFormat }}
+                  <a :href="`tel:+${props.item.phone}`" class="clients__phone-button" />
                 </div>
-              </div>
-            </v-layout>
-            <div>
-              <a :href="`tel:+${props.item.phone}`" class="clients__phone-button" />
-            </div>
-          </v-layout>
-        </td>
-        <td>
-          <div
-            v-if="props.item.visit.visits.total"
-            class="hidden-button"
-            @click="clientVisits(props.item)"
-          >
-            <span>
-              {{ props.item.visit.visits.total }}
-            </span>
-            <span
-              v-if="props.item.visit.visits.unvisited"
-              class="badge-inline red"
-            >
-              {{ props.item.visit.visits.unvisited }}
-            </span>
-          </div>
-        </td>
-        <td>
-          <v-layout v-if="props.item.lastVisit.ts_begin" column="">
-            <v-flex>
-              <span>
-                {{ props.item.lastVisit.date }}
-              </span>
-              <span> - </span>
-              <span>
-                {{ props.item.lastVisit.displayStatus }}
-              </span>
-            </v-flex>
-            <v-flex>
-              <span class="second-row">
-                {{ props.item.lastVisit.timeInterval }}
-              </span>
-            </v-flex>
-          </v-layout>
-        </td>
-        <td>
-          {{ props.item.visit.visits.check }}
-        </td>
-        <td>
-          {{ getFilialName(props.item.business_id) }}
-        </td>
-        <td>
-          <v-layout
-            row
-            align-center
-            fill-height
-            justify-start
-          >
-            <DeleteButton :is-dark="true" @delete="onDelete(props.item)" />
-          </v-layout>
-        </td>
-      </template>
-    </v-data-table>
-    <div class="text-xs-right">
-      <v-pagination v-model="pagination.page" :length="pages" :total-visible="6" circle color="rgba(137, 149, 175, 0.35)" />
-    </div>
-    <ClientCardEdit
-      :visible="edit"
-      :client="item"
-      :filials="branchesList"
-      :create="!item.id"
-      @onDelete="onDelete(item)"
-      @onSave="onSave($event)"
-      @close="edit=false"
-    />
-    <v-dialog
-      :value="visitsPanel"
-      transition="slide"
-      content-class="client-modal"
-      @input="visitsPanel = false"
-    >
-      <ClientVisits
-        :client="item"
-        @close="visitsPanel=false"
-      />
-    </v-dialog>
-    <v-dialog
-      v-model="deleteConfirm"
-      width="400"
-    >
-      <v-card>
-        <AppCardTitle @close="deleteConfirm = false" />
-        <v-card-text>
-          <v-layout
-            column
-            align-center
-            justify-center
-          >
-            <v-flex>
-              Удалить клиента
-              <span class="font-weight-bold">{{ item.fullName }}</span>
-              ?
-            </v-flex>
-            <v-flex>
-              <span>Все данные будут удалены.</span>
-            </v-flex>
-          </v-layout>
-        </v-card-text>
-        <v-card-actions>
-          <v-layout
-            row
-            align-center
-            justify-center
-            pb-3
-          >
-            <v-flex
-              shrink
-              align-self-center
-              px-1
-            >
-              <AppBtn @click="deleteConfirm = false">
-                Отмена
-              </AppBtn>
-            </v-flex>
-            <v-flex
-              shrink
-              align-self-center
-              px-1
-            >
-              <AppBtn
-                primary
-                @click="deleteItem()"
+              </v-layout>
+            </td>
+            <td @click="clientVisits(props.item)">
+              <!--v-if="props.item.visit.visits.total"-->
+              <div
+
+                class="hidden-button"
               >
-                Удалить
-              </AppBtn>
-            </v-flex>
-          </v-layout>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+                <!--<span class="clients__visit-total">{{ props.item.visit.visits.total }}</span>-->
+                <span class="clients__visit-total">10</span>
+                <span class="clients__unvisited">2</span>
+                <!--<span
+                  v-if="props.item.visit.visits.unvisited"
+                  class="clients__visit-unvisited"
+                >
+                  {{ props.item.visit.visits.unvisited }}
+                </span>-->
+              </div>
+            </td>
+            <td>
+              <!-- v-if="props.item.lastVisit.ts_begin"-->
+              <v-layout column>
+                <v-flex>
+                  <span>2019-04-21</span>
+                  <!--<span>{{ props.item.lastVisit.date }}</span>-->
+                  <span> — </span>
+                  <span>Завершен</span>
+                  <!--<span>{{ props.item.lastVisit.displayStatus }}</span>-->
+                </v-flex>
+                <v-flex>
+                  <span>13:00 — 17:30</span>
+                  <!--<span class="second-row">{{ props.item.lastVisit.timeInterval }}</span>-->
+                </v-flex>
+              </v-layout>
+            </td>
+            <td>
+              <!--{{ props.item.visit.visits.check }}-->
+              5000 рублей
+            </td>
+            <td>
+              <div>{{ getFilialName(props.item.business_id) }}</div>
+              <div>Новосибирск, ул. Сибиряков- Гвардейцев, 183</div>
+            </td>
+            <td>
+              <v-layout
+                row
+                align-center
+                fill-height
+                justify-start
+              >
+                <DeleteButton :is-dark="true" @delete="onDelete(props.item)" />
+              </v-layout>
+            </td>
+          </template>
+        </v-data-table>
+        <div class="text-xs-right">
+          <v-pagination v-model="pagination.page" :length="pages" :total-visible="6" circle color="rgba(137, 149, 175, 0.35)" />
+        </div>
+        <ClientCardEdit
+          :visible="edit"
+          :client="item"
+          :filial="businessId"
+          :create="!item.id"
+          @onDelete="onDelete(item)"
+          @onSave="onSave($event)"
+          @close="edit=false"
+        />
+        <ClientVisits
+          :value="visitsPanel"
+          :client="item"
+          @close="visitsPanel=false"
+        />
+        <v-dialog
+          v-model="deleteConfirm"
+          width="400"
+        >
+          <v-card>
+            <AppCardTitle @close="deleteConfirm = false" />
+            <v-card-text>
+              <v-layout
+                column
+                align-center
+                justify-center
+              >
+                <v-flex>
+                  Удалить клиента <span class="font-weight-bold">{{ item.fullName }}</span>?
+                </v-flex>
+                <v-flex>
+                  <span>Все данные будут удалены.</span>
+                </v-flex>
+              </v-layout>
+            </v-card-text>
+            <v-card-actions>
+              <v-layout
+                row
+                align-center
+                justify-center
+                pb-3
+              >
+                <v-flex
+                  shrink
+                  align-self-center
+                  px-1
+                >
+                  <AppBtn @click="deleteConfirm = false">
+                    Отмена
+                  </AppBtn>
+                </v-flex>
+                <v-flex
+                  shrink
+                  align-self-center
+                  px-1
+                >
+                  <AppBtn
+                    primary
+                    @click="deleteItem()"
+                  >
+                    Удалить
+                  </AppBtn>
+                </v-flex>
+              </v-layout>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </div>
+    </template>
+  </PageLayout>
 </template>
 
 <script>
@@ -195,6 +196,8 @@ import ClientVisits from '@/components/client/ClientVisits.vue'
 import Client from '@/classes/client'
 import { filials} from "../components/business/mixins"
 import DeleteButton from '@/components/common/DeleteButton'
+import Users from '@/mixins/users'
+import PageLayout from '@/components/common/PageLayout.vue'
 
 export default {
   components: {
@@ -203,7 +206,8 @@ export default {
     ClientCardEdit,
     ClientVisits,
     Avatar,
-    DeleteButton
+    DeleteButton,
+    PageLayout
   },
   filters: {
     phoneFormat (value) {
@@ -214,7 +218,7 @@ export default {
       )
     } // todo make a mixin
   },
-  mixins: [filials],
+  mixins: [filials, Users],
   data () {
     return {
       deleteConfirm: false,
@@ -238,7 +242,7 @@ export default {
   },
   computed: {
     ...mapGetters(['businessId', 'businessInfo', 'businessIsFilial']),
-    client_id () {
+    clientId () {
       return this.$route && this.$route.params && this.$route.params.client
     },
     querySearchString () {
@@ -267,7 +271,7 @@ export default {
     },
     searchString: 'fetchData',
     businessId: 'fetchData',
-    client_id: 'onClientChange',
+    clientId: 'onClientChange',
     edit: 'closeNewEditor',
     businessIsFilial: 'getFilials'
   },
@@ -276,7 +280,7 @@ export default {
     this.fetchData()
   },
   mounted () {
-    if (this.client_id) {
+    if (this.clientId) {
       this.onClientChange()
     }
   },
@@ -291,9 +295,9 @@ export default {
       this.visitsPanel = true
     },
     closeNewEditor () {
-      if (!this.edit && this.client_id === 'new') {
+      if (!this.edit && this.clientId === 'new') {
         this.$router.push({
-          name: 'businessCardClients',
+          name: 'BusinessClientsTable',
           params: { id: this.businessId }
         })
       }
@@ -362,9 +366,9 @@ export default {
         })
     },
     onClientChange () {
-      if (!this.client_id || !this.businessId) return
+      if (!this.clientId || !this.businessId) return
       this.item = new Client({ business_id: this.businessId })
-      this.item.load(this.client_id)
+      this.item.load(this.clientId)
       this.edit = true
     },
     onDelete (item) {
@@ -409,6 +413,7 @@ export default {
 
 <style lang="scss">
   @import '../assets/styles/common';
+
   $first-column: 270px;
   $first-column-desktop: 330px;
   $max-width: 1126px;
@@ -478,7 +483,6 @@ export default {
       }
     }/* end of styles for table header */
 
-
     tr {
       height: 88px;
       border-bottom: none !important;
@@ -520,7 +524,6 @@ export default {
     /* end of styles for first column */
 
 
-
     .v-datatable__progress {
       position: absolute;
       left: 0;
@@ -534,6 +537,9 @@ export default {
       @media only screen and (min-width : $desktop) {
         padding-left: 51px;
       }
+    }
+    &__badge {
+      cursor: pointer;
     }
     &__avatar {
       margin: 0;
@@ -556,6 +562,18 @@ export default {
       margin: 0 5px;
       background: url('../assets/images/svg/phone.svg') center no-repeat;
       border: 1px solid rgba(137, 149, 175, 0.1);
+      border-radius: 50%;
+    }
+    &__unvisited {
+      display: inline-block;
+      vertical-align: baseline;
+      margin-left: 11px;
+      width: 16px;
+      height: 16px;
+      text-align: center;
+      font-size: 12px;
+      color: #FFFFFF;
+      background: #EF4D37;
       border-radius: 50%;
     }
     .v-datatable__actions__select {

@@ -223,7 +223,7 @@ export default {
             name: 'BusinessClientsTable',
             params: { id: this.businessId }
           },
-          show: this.businessIsFilial && this.loggedIn && !this.isManagerMenu,
+          show: this.businessIsFilial && this.isEditorUser,
           action: {
             label: 'Добавить клиента',
             action: 'newClient',
