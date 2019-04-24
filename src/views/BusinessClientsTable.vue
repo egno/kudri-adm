@@ -36,7 +36,7 @@
                     <Avatar
                       class="ma-1"
                       :name="props.item.name.fullName || props.item.email"
-                      size="2.4em"
+                      size="24px"
                       :src="props.item.j.avatar"
                     />
                   </div>
@@ -48,7 +48,7 @@
                       {{ props.item.name.fullName }}
                     </div>
                     <!--todo выводить основной тел-->
-                    <div>
+                    <div class="clients__add-info _phone">
                       {{ props.item.phones[0] | phoneFormat }}
                     </div>
                   </div>
@@ -86,18 +86,22 @@
                   <!--<span>{{ props.item.lastVisit.displayStatus }}</span>-->
                 </v-flex>
                 <v-flex>
-                  <span>13:00 — 17:30</span>
+                  <span class="clients__add-info">13:00 — 17:30</span>
                   <!--<span class="second-row">{{ props.item.lastVisit.timeInterval }}</span>-->
                 </v-flex>
               </v-layout>
             </td>
             <td>
               <!--{{ props.item.visit.visits.check }}-->
-              5000 рублей
+              {{ 5000 | numberFormat }} рублей
             </td>
             <td>
-              <div>{{ getFilialName(props.item.business_id) }}</div>
-              <div>Новосибирск, ул. Сибиряков- Гвардейцев, 183</div>
+              <div class="clients__filial">
+                {{ getFilialName(props.item.business_id) }}
+              </div>
+              <div class="clients__add-info">
+                Новосибирск, ул. Сибиряков- Гвардейцев, 183
+              </div>
             </td>
             <td>
               <v-layout
@@ -181,6 +185,9 @@
           </v-card>
         </v-dialog>
       </div>
+      <v-tooltip bottom :value="tooltip" attach=".clients__question" content-class="clients__tooltip">
+        Для просмотра всей истории посещений кликните по статусу клиента
+      </v-tooltip>
     </template>
   </PageLayout>
 </template>
@@ -216,7 +223,10 @@ export default {
         /(\d?)(\d{1,3})(\d{1,3})(\d{1,2})(\d{1,2})$/g,
         '+$1 ($2) $3-$4-$5'
       )
-    } // todo make a mixin
+    }, // todo make a mixin
+    numberFormat (value) {
+      return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+    }
   },
   mixins: [filials, Users],
   data () {
@@ -227,7 +237,7 @@ export default {
       headers: [
         { text: 'Имя и фамилия', value: 'j->name->>fullname', width: '330px' },
         { text: 'Визиты', value: 'visit->visits->>total', width: '100px' },
-        { text: 'Статус последнего визита', value: 'visit->last->>ts_begin', width: '200px' },
+        { text: 'Статус последнего визита', value: 'visit->last->>ts_begin', width: '200px', class: 'clients__question' },
         { text: 'Средний чек', value: 'visit->visits->>check', width: '170px' },
         { text: 'Филиал', value: '', width: '200px' },
         { text: '', value: '', sortable: false, width: '1' }
@@ -237,7 +247,8 @@ export default {
       pagination: { rowsPerPage: 20 },
       progressQuery: false,
       totalItems: 0,
-      visitsPanel: false
+      visitsPanel: false,
+      tooltip: false
     }
   },
   computed: {
@@ -283,6 +294,12 @@ export default {
     if (this.clientId) {
       this.onClientChange()
     }
+    this.$el.querySelector('.clients__question').addEventListener('mouseenter', this.onHover)
+    this.$el.querySelector('.clients__question').addEventListener('mouseleave', this.onLeave)
+  },
+  beforeDestroy () {
+    this.$el.querySelector('.clients__question').removeEventListener('mouseenter', this.onHover)
+    this.$el.querySelector('.clients__question').removeEventListener('mouseleave', this.onLeave)
   },
   methods: {
     ...mapActions(['addClientsCounter']),
@@ -376,6 +393,12 @@ export default {
         this.item = item
       }
       this.deleteConfirm = true
+    },
+    onHover () {
+      this.tooltip = true
+    },
+    onLeave () {
+      this.tooltip = false
     },
     deleteItem () {
       this.deleteConfirm = false
@@ -478,7 +501,14 @@ export default {
         color: #8995AF;
         &:first-child {
           padding-right: 20px !important;
-          padding-left: 56px !important;
+          padding-left: 35px !important;
+          @media only screen and (min-width : ($left-panel+$max-width)) {
+            padding-left: 56px !important;
+          }
+
+        }
+        i {
+          vertical-align: top;
         }
       }
     }/* end of styles for table header */
@@ -493,6 +523,19 @@ export default {
     td {
       padding: 0 10px !important;
       border-bottom: 1px solid #f3f4f7;
+    }
+
+    div {
+      font-size: 14px;
+      color: #07101C;
+    }
+
+    .clients__add-info {
+      font-size: 12px;
+      color: #8995AF;
+      &._phone {
+        font-size: 14px;
+      }
     }
 
     /* styles for first column */
@@ -535,7 +578,7 @@ export default {
     &__first-cell {
       padding: 9px 0 9px 25px;
       @media only screen and (min-width : $desktop) {
-        padding-left: 51px;
+        padding-left: 46px;
       }
     }
     &__badge {
@@ -576,8 +619,32 @@ export default {
       background: #EF4D37;
       border-radius: 50%;
     }
+    &__question {
+      position: relative;
+      &:after {
+        display: inline-block;
+        vertical-align: middle;
+        content: '';
+        width: 14px;
+        height: 14px;
+        background: url('../assets/images/svg/question.svg') center no-repeat;
+      }
+    }
+    .clients__tooltip {
+      max-width: 175px;
+      top: 100% !important;
+      white-space: normal;
+      color: #fff;
+      font-size: 13px;
+    }
+    &__filial {
+      font-weight: bold;
+    }
     .v-datatable__actions__select {
       display: none;
+    }
+    .avatar-letters {
+      color: #fff;
     }
   }
 </style>
