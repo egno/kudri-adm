@@ -181,12 +181,6 @@ export default {
       }
     },
     page: { type: Number, default: null },
-    master: {
-      type: Object,
-      default () {
-        return {}
-      }
-    }
   },
   data () {
     return {
@@ -292,7 +286,6 @@ export default {
       this.visit.j.duration = duration
       this.visit.ts_begin = ts1.toJSON().slice(0, -1)
       this.visit.ts_end = ts2.toJSON().slice(0, -1)
-      this.visit.j.master = this.master.id
       this.$emit('onSave', this.visit)
     },
     setPage () {
@@ -302,7 +295,6 @@ export default {
       }
     },
     setSelectedValues () {
-      // console.log(this.tz);
       if (this.visit.ts_begin) {
         let ts1 = new Date(this.visit.ts_begin)
         this.selectedDate = formatDate(ts1)

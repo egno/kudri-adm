@@ -151,10 +151,9 @@
       <VisitEdit
         :id="currentVisit.id"
         :business-info="businessInfo"
-        :employee="currentEmployee"
+        :employee="'7abf57ca-6666-11e9-9e07-7f8af87678ec'"
         :visit="currentVisit"
         :page="editVisitPage"
-        :master="{ id: '7abf57ca-6666-11e9-9e07-7f8af87678ec' }"
         @onSave="onVisitSave(-1, $event)"
         @onDelete="onDelete(-1)"
       />

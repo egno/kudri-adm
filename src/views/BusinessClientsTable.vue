@@ -59,41 +59,33 @@
               </v-layout>
             </td>
             <td @click="clientVisits(props.item)">
-              <!--v-if="props.item.visit.visits.total"-->
               <div
-
+                v-if="props.item.visit.visits.total"
                 class="hidden-button"
               >
-                <!--<span class="clients__visit-total">{{ props.item.visit.visits.total }}</span>-->
-                <span class="clients__visit-total">10</span>
-                <span class="clients__unvisited">2</span>
-                <!--<span
+                <span class="clients__visit-total">{{ props.item.visit.visits.total }}</span>
+                <span
                   v-if="props.item.visit.visits.unvisited"
                   class="clients__visit-unvisited"
                 >
                   {{ props.item.visit.visits.unvisited }}
-                </span>-->
+                </span>
               </div>
             </td>
             <td>
-              <!-- v-if="props.item.lastVisit.ts_begin"-->
-              <v-layout column>
+              <v-layout v-if="props.item.lastVisit.ts_begin" column>
                 <v-flex>
-                  <span>2019-04-21</span>
-                  <!--<span>{{ props.item.lastVisit.date }}</span>-->
+                  <span>{{ props.item.lastVisit.date }}</span>
                   <span> — </span>
-                  <span>Завершен</span>
-                  <!--<span>{{ props.item.lastVisit.displayStatus }}</span>-->
+                  <span>{{ props.item.lastVisit.displayStatus }}</span>
                 </v-flex>
                 <v-flex>
-                  <span class="clients__add-info">13:00 — 17:30</span>
-                  <!--<span class="second-row">{{ props.item.lastVisit.timeInterval }}</span>-->
+                  <span class="second-row">{{ props.item.lastVisit.timeInterval }}</span>
                 </v-flex>
               </v-layout>
             </td>
             <td>
-              <!--{{ props.item.visit.visits.check }}-->
-              {{ 5000 | numberFormat }} рублей
+              <span v-if="props.item.visit.visits.check">{{ props.item.visit.visits.check | numberFormat }} рублей</span>
             </td>
             <td>
               <div class="clients__filial">
@@ -225,6 +217,9 @@ export default {
       )
     }, // todo make a mixin
     numberFormat (value) {
+      if (!value) {
+        return ''
+      }
       return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
     }
   },
@@ -490,6 +485,9 @@ export default {
       }
     }
 
+    thead {
+      background-color: #f3f4f7;
+    }
     /* styles for table header */
     thead tr:first-child {
       height: 40px;
