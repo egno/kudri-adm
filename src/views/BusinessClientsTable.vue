@@ -87,14 +87,14 @@
             <td>
               <span v-if="props.item.visit.visits.check">{{ props.item.visit.visits.check | numberFormat }} рублей</span>
             </td>
-            <td>
+            <!--<td>
               <div class="clients__filial">
                 {{ getFilialName(props.item.business_id) }}
               </div>
               <div class="clients__add-info">
                 Новосибирск, ул. Сибиряков- Гвардейцев, 183
               </div>
-            </td>
+            </td>-->
             <td>
               <v-layout
                 row
@@ -230,11 +230,11 @@ export default {
       branchesList: [],
       edit: false,
       headers: [
-        { text: 'Имя и фамилия', value: 'j->name->>fullname', width: '330px' },
+        { text: 'Имя и фамилия', value: 'j->name->>fullname' },
         { text: 'Визиты', value: 'visit->visits->>total', width: '100px' },
         { text: 'Статус последнего визита', value: 'visit->last->>ts_begin', width: '200px', class: 'clients__question' },
         { text: 'Средний чек', value: 'visit->visits->>check', width: '170px' },
-        { text: 'Филиал', value: '', width: '200px' },
+        /*{ text: 'Филиал', value: '', width: '200px' },*/
         { text: '', value: '', sortable: false, width: '1' }
       ],
       item: {},
@@ -434,7 +434,7 @@ export default {
 
   $first-column: 270px;
   $first-column-desktop: 330px;
-  $max-width: 1126px;
+  $max-width: 926px;
   $left-panel: 240px;
 
   .slide-enter, .slide-leave-to {
@@ -478,7 +478,7 @@ export default {
     }
 
     table.v-table {
-      min-width: 729px;
+      min-width: 529px;
       padding-left: 0;
       @media only screen and (min-width : ($left-panel+$max-width)) {
         width: 100%;
@@ -492,6 +492,7 @@ export default {
     thead tr:first-child {
       height: 40px;
       background: #f3f4f7;
+      border-bottom: none !important;
       th {
         height: 40px;
         padding: 10px!important;
@@ -511,16 +512,18 @@ export default {
       }
     }/* end of styles for table header */
 
-    tr {
+    tbody tr {
       height: 88px;
-      border-bottom: none !important;
+      border-bottom-color: #f3f4f7 !important;
       &:hover {
         background-color: transparent !important;
+      }
+      &:last-child {
+        border-bottom: 1px solid #f3f4f7;
       }
     }
     td {
       padding: 0 10px !important;
-      border-bottom: 1px solid #f3f4f7;
     }
 
     div {
@@ -562,17 +565,11 @@ export default {
         margin-top: 0;
       }
     }
-    /* end of styles for first column */
-
-
-    .v-datatable__progress {
-      position: absolute;
-      left: 0;
-      width: 100%;
-      th:first-child {
-        width: 100%;
-      }
+    tbody td:first-child  {
+      border-bottom: 1px solid #f3f4f7;
     }
+    /* end of styles for first column */
+    
     &__first-cell {
       padding: 9px 0 9px 25px;
       @media only screen and (min-width : $desktop) {
