@@ -1,71 +1,51 @@
 <template>
-  <v-hover>
-    <v-layout
-      slot-scope="{ hover }"
-      :class="{'row-hover': hover}"
+  <v-layout class="client-visit-log" :class="{ [visit.status]: visit.status, done: visit.currentStatus.done }">
+    <div
+      class="client-visit-log__left"
     >
-      <v-flex
-        xs3
-        pr-2
-        py-2
-        class="text-xs-right timeline-date "
-      >
-        <div class="client-visit-date">
-          {{ visit.date }}
-        </div>
-        <div :style="{color: statusColor}">
-          {{ visit.displayStatus }}
-        </div>
-        <!--<div class="circle" :style="{color: statusColor}" />-->
-      </v-flex>
-      <v-flex
-        xs9
-        px-3
-        py-2
-        class="text-xs-left"
-      >
-        <v-layout column>
-          <v-flex>
-            {{ visit.time }}
-          </v-flex>
-          <v-flex v-if="services">
-            <v-layout column>
-              <v-flex
-                v-for="(service, si) in services"
-                :key="'s'+si"
-              >
-                <v-layout row justify-space-between>
-                  <v-flex>
-                    {{ service.name }}
-                  </v-flex>
-                  <div
-                    v-if="service.price"
-                    class="visit-service-price"
-                    :class="{'service-undone': isUndone}"
-                  >
-                    {{ service.price }} ₽
-                  </div>
-                </v-layout>
-              </v-flex>
-            </v-layout>
-          </v-flex>
-          <v-flex v-if="master">
-            <v-layout
-              column
-              py-1
-            >
-              <v-flex>
-                <span class="font-weight-bold">Мастер</span>
-              </v-flex>
-              <v-flex>
-                {{ master }}
-              </v-flex>
-            </v-layout>
-          </v-flex>
+      <div class="client-visit-log__date">
+        {{ visit.date }}
+      </div>
+      <div class="client-visit-log__status">
+        {{ visit.displayStatus }}
+      </div>
+    </div>
+    <div
+      class="client-visit-log__right"
+    >
+      <div class="client-visit-log__time">
+        {{ visit.time }}
+      </div>
+      <div v-if="services">
+        <v-layout
+          v-for="(service, si) in services"
+          :key="'s'+si"
+          align-center
+          fill-height
+          justify-space-between
+          class="client-visit-log__service"
+        >
+          <div class="client-visit-log__service-name">
+            {{ service.name }}
+          </div>
+          <div
+            v-if="service.price"
+            class="client-visit-log__price"
+          >
+            {{ service.price }} ₽
+          </div>
         </v-layout>
-      </v-flex>
-    </v-layout>
-  </v-hover>
+      </div>
+      <div v-if="master">
+        <div class="client-visit-log__master">
+          Мастер
+        </div>
+        <div>
+          {{ master }}
+        </div>
+      </div>
+    </div>
+  </v-layout>
 </template>
 
 <script>
@@ -84,12 +64,6 @@ export default {
     return {}
   },
   computed: {
-    isUndone () {
-      return !this.visit.currentStatus.done
-    },
-    statusColor () {
-      return this.visit.currentStatus.color || 'grey'
-    },
     master () {
       return this.visit && this.visit.master && this.visit.master.name
     },
@@ -100,39 +74,108 @@ export default {
 }
 </script>
 
-<style scoped>
-.circle {
-  position: relative;
-  left: 94px;
-  top: -15px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 5px solid ;
-  text-align: center;
-}
-.timeline-date {
-  border-right: solid 2px;
-  border-color: rgba(0.5, 0.5, 0.5, 0.1);
-}
-.visit-service-price {
-  height: 18px;
-  padding: 0 10px;
-  background: rgba(137, 149, 175, 0.35);
-  border-radius: 12px;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 14px;
-  line-height: 18px;
-  text-align: center;
-  color: #fff;
-  white-space: nowrap;
-}
-.row-hover {
-  background-color: #eee;
-}
-.service-undone {
-  background-color: #ccc;
-}
+<style lang="scss" scoped>
+  $log-top-gap: 24px;
+  $log-bottom-gap: 24px;
+  $date-line-gap: 10px;
+  $future-color: #5699FF;
+  $cancel-color: rgba(137, 149, 175, 0.35);
+  $unvisited-color: #EF4D37;
+  $done-color: #8995AF;
+
+  // todo make hover effects when editing is possible
+  .visit-service-price .row-hover {
+    background-color: #eee;
+  }
+
+  .client-visit-log {
+
+    &__left {
+      width: 102px;
+      flex-shrink: 0;
+      padding: $log-top-gap 0 $log-bottom-gap;
+      border-right: solid 2px rgba(137, 149, 175, 0.2);
+      text-align: right;
+    }
+    &__right {
+      flex-grow: 1;
+      padding: $log-top-gap 40px $log-bottom-gap 47px;
+      text-align: left;
+      color: #07101C;
+    }
+    &__date {
+      position: relative;
+      padding-right: $date-line-gap;
+      font-size: 12px;
+      color: #8995AF;
+      &:after {
+        position: absolute;
+        top: 6px;
+        right: -5px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        content: '';
+        background-color: $future-color;
+      }
+    }
+    &__status {
+      padding: 4px $date-line-gap 0 0;
+      font-size: 14px;
+      color: $future-color;
+    }
+    &__time {
+      font-size: 12px;
+      color: #8995AF;
+    }
+    &__service {
+      padding: 5px 0 0;
+    }
+    &__service-name {
+      padding-right: 10px;
+    }
+    &__price {
+      height: 18px;
+      padding: 0 10px;
+      background: rgba(137, 149, 175, 0.35);
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 18px;
+      text-align: center;
+      color: #fff;
+      white-space: nowrap;
+    }
+    &__master {
+      margin-top: 7px;
+      font-weight: bold;
+      text-transform: capitalize;
+    }
+    
+    &.unvisited {
+      .client-visit-log__date:after {
+        background-color: $unvisited-color;
+      }
+      .client-visit-log__status {
+        color: $unvisited-color;
+      }
+    }
+    &.canceled {
+      .client-visit-log__date:after {
+        background-color: $done-color;
+      }
+      .client-visit-log__status {
+        color: $cancel-color;
+      }
+    }
+    &.done {
+      .client-visit-log__date:after {
+        background-color: $done-color;
+      }
+      .client-visit-log__status {
+        color: $done-color;
+      }
+    }
+  }
+
 </style>
 

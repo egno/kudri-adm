@@ -116,7 +116,9 @@ export default {
 
 <style lang="scss">
   @import './assets/styles/common';
-
+.application {
+  line-height: normal;
+}
 #app {
   .main-cont {
     padding: 40px 56px;

@@ -60,6 +60,15 @@
     text-align: center;
     color: #07101C;
   }
+  &__subheader {
+    margin: 6px 0 28px;
+    font-family: $lato;
+    font-size: 14px;
+    line-height: 17px;
+    text-align: center;
+    color: #8995AF;
+    text-transform: capitalize;
+  }
   &__field-block {
     margin-top: 28px;
     padding-top: 20px;

@@ -1,49 +1,34 @@
 <template>
-  <v-dialog :value="value" content-class="right-attached-panel" transition="slide" @input="$emit('close')">
-    <v-card
-      flat
-      style="height: 100vh"
-    >
-      <div class="fixed-title">
-        <AppCardTitle @close="$emit('close')">
-          <v-layout column>
-            <v-flex>
-              <span class="title">
-                История записей
-              </span>
-            </v-flex>
-            <v-flex>
-              {{ client.fullName }}
-            </v-flex>
-          </v-layout>
-        </AppCardTitle>
+  <v-dialog :value="value" content-class="right-attached-panel _client-visits" transition="slide" @input="$emit('close')">
+    <button type="button" class="right-attached-panel__close" @click="$emit('close')" />
+    <div class="right-attached-panel__header">
+      История записей
+    </div>
+    <div class="right-attached-panel__subheader">
+      {{ client.fullName }}
+    </div>
+    <div class="scrollable">
+      <div
+        v-for="(visit) in visits"
+        :key="visit.id"
+      >
+        <!--todo сортировка по ts_begin -->
+        <VisitTimeLineRow :visit="visit" />
       </div>
-      <div class="scrollable">
-        <v-layout column>
-          <v-flex
-            v-for="(visit) in visits"
-            :key="visit.id"
-          >
-            <!--todo сортировка по ts_begin -->
-            <VisitTimeLineRow :visit="visit" />
-          </v-flex>
-        </v-layout>
-      </div>
-    </v-card>
+    </div>
   </v-dialog>
 </template>
 
 <script>
 import Visit from '@/classes/visit'
 import { newClient } from '@/components/client/utils'
-import AppCardTitle from '@/components/common/AppCardTitle.vue'
 import VisitTimeLineRow from '@/components/client/VisitTimeLineRow.vue'
 // import Api from '@/api/backend'
 import { mapActions, mapGetters } from 'vuex'
 // import { makeAlert } from '@/api/utils'
 
 export default {
-  components: { AppCardTitle, VisitTimeLineRow },
+  components: { VisitTimeLineRow },
   model: {
     prop: 'value',
     event: 'close'
@@ -99,7 +84,7 @@ export default {
             client: this.client.id,
             services: [{
               price: 312,
-              name: 'Коррекция Формы Бровей Пинцетом'
+              name: 'Коррекция на которую не пришли'
             }]
           },
         }),
@@ -132,7 +117,7 @@ export default {
             client: this.client.id,
             services: [{
               price: 2312,
-              name: 'Медовый массаж'
+              name: 'Услугу отменили (и название забыли)'
             }]
           },
         }),
@@ -148,11 +133,28 @@ export default {
             client: this.client.id,
             services: [{
               price: 2312,
-              name: 'Коррекция Формы Бровей Пинцетом'
+              name: 'Какая-то из этих услуг'
             },
             {
               price: 312,
-              name: 'Окрашивание бровей хной'
+              name: 'В процессе оказания'
+            }]
+          },
+        }),
+        new Visit({
+          id: 5,
+          business_id: this.businessId,
+          ts_begin: '2019-04-24T10:30:00.000',
+          ts_end: '2019-04-24T11:30:00.000',
+          master:  {
+            id: '7abf57ca-6666-11e9-9e07-7f8af87678ec',
+            name: 'Ирина Михайлова'
+          },
+          j: {
+            client: this.client.id,
+            services: [{
+              price: 2312,
+              name: 'Эта услуга завершена'
             }]
           },
         })
@@ -189,8 +191,13 @@ export default {
     overflow: hidden;
   }
   .scrollable {
-    height: calc(100vh - 80px);
+    height: calc(100vh - 128px);
     overflow: auto;
+  }
+  .right-attached-panel._client-visits {
+    .right-attached-panel__header {
+      margin: 53px 0 0;
+    }
   }
 </style>
 
