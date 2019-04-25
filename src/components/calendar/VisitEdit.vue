@@ -181,7 +181,12 @@ export default {
       }
     },
     page: { type: Number, default: null },
-    master: { type: String, default: '' }
+    master: {
+      type: Object,
+      default () {
+        return {}
+      }
+    }
   },
   data () {
     return {
