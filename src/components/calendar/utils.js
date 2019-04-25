@@ -134,16 +134,16 @@ export function monthDates (year, month) {
 
 export function visitInit (visit) {
   return {
-    ...{
-      business_id: null,
+    business_id: null,
+    j: {
+      services: [],
       client: {
         name: '',
         phone: '',
-        services: []
-      },
-      ts_begin: null,
-      ts_end: null
+      }
     },
+    ts_begin: null,
+    ts_end: null,
     ...visit
   }
 }

@@ -237,7 +237,7 @@ export default {
         {
           title: 'Журнал записи',
           route: {
-            name: 'businessVisit',
+            name: 'visitCalendar',
             params: { id: this.businessId, date: this.date }
           },
           show: this.businessIsFilial && this.loggedIn && !this.isManagerMenu,

@@ -130,7 +130,7 @@ export default new Router({
     },
     {
       path: '/businessCard/v/:id/:date',
-      name: 'businessVisit',
+      name: 'visitCalendar',
       component: () => import('./views/VisitCalendar.vue')
     },
     {

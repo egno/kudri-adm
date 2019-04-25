@@ -188,7 +188,7 @@ export default {
     },
     openRegistry () {
       this.$router.push({
-        name: 'businessVisit',
+        name: 'visitCalendar',
         params: {
           id: this.id,
           date: formatDate(new Date())

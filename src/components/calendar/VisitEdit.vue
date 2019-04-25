@@ -11,7 +11,7 @@
         <v-layout column>
           <v-flex>Услуга</v-flex>
           <v-flex class="caption text-none grey--text">
-            {{ item.j.services && item.j.services[0] && item.j.services[0].name }}
+            {{ visit.j && visit.j.services && visit.j.services[0] && visit.j.services[0].name }}
           </v-flex>
         </v-layout>
       </v-tab>
@@ -46,7 +46,7 @@
                   <v-flex>
                     <VSelect
                       v-model="selectedCategory"
-                      :items="categories"
+                      :items="businessServiceCategories"
                       clearable
                       label="Категория"
                     />
@@ -68,7 +68,7 @@
                     class="table-select"
                     py-2
                     px-1
-                    @click="item.j.services=[service]"
+                    @click="visit.j.services=[service]"
                   >
                     <v-layout row>
                       <v-flex xs10>
@@ -124,14 +124,16 @@
         <VCard flat>
           <v-card-text>
             <VTextField
-              v-model="item.j.client.name"
+              v-if="visit.j"
+              v-model="visit.j.client.name"
               label="Имя"
               prepend-icon="account_box"
-              :rules="[() => !!item.j.client.name || 'Это поле обязательно для заполнения']"
+              :rules="[() => !!visit.j.client.name || 'Это поле обязательно для заполнения']"
               required
             />
             <PhoneEdit
-              :phone="item.j.client.phone"
+              v-if="visit.j"
+              :phone="visit.j.client.phone"
               @onEdit="onPhoneEdit($event)"
             />
           </v-card-text>
@@ -159,7 +161,7 @@ import {
   formatTime,
   visitInit
 } from '@/components/calendar/utils'
-import { mapGetters } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   components: { AppTabs, PhoneEdit },
@@ -172,13 +174,14 @@ export default {
       }
     },
     employee: { type: String, default: '' },
-    item: {
+    visit: {
       type: Object,
       default () {
         return visitInit()
       }
     },
-    page: { type: Number, default: null }
+    page: { type: Number, default: null },
+    master: { type: String, default: '' }
   },
   data () {
     return {
@@ -202,16 +205,18 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['apiTimeZone']),
+    ...mapState({
+      businessServices: state => state.business.businessServices,
+    }),
+    ...mapGetters(['apiTimeZone', 'businessServiceCategories']),
     isLastTab () {
       return this.active === this.tabsLength - 1
     },
-    categories () {
-      if (!this.services) return
-      return [...new Set(this.services.map(x => x.category))]
-    },
     displayClient () {
-      return this.item.j.client.name || this.item.j.client.phone
+      if (!this.visit.j) {
+        return ''
+      }
+      return this.visit.j.client.name || this.visit.j.client.phone
     },
     displaySelectedTime () {
       if (!this.selectedDate) {
@@ -223,35 +228,21 @@ export default {
     },
     duration () {
       return (
-        this.item &&
-        this.item.j &&
-        this.item.j.services &&
-        this.item.j.services.reduce(
+        this.visit &&
+        this.visit.j &&
+        this.visit.j.services &&
+        this.visit.j.services.reduce(
           (acc, val) => parseInt(val.duration) || 60,
           0
         )
       )
     },
     filteredServices () {
-      return this.services && this.services.filter(
+      return this.businessServices && this.businessServices.filter(
         x =>
           (!this.selectedCategory || x.category === this.selectedCategory) &&
           (!this.serviceFilter ||
             x.name.toUpperCase().indexOf(this.serviceFilter.toUpperCase()) + 1)
-      )
-    },
-    services () {
-      if (!(this.businessInfo && this.businessInfo.j)) {
-        return []
-      }
-      return (
-        this.businessInfo &&
-        this.businessInfo.j &&
-        this.businessInfo.j.services &&
-        this.businessInfo.j.services.map(x => {
-          x.category = x.category || this.categoryOthersName
-          return x
-        })
       )
     },
     tabButtonCaption () {
@@ -264,7 +255,7 @@ export default {
     }
   },
   watch: {
-    item: 'setSelectedValues',
+    visit: 'setSelectedValues',
     page: 'setPage'
   },
   mounted () {
@@ -283,7 +274,7 @@ export default {
       }
     },
     onPhoneEdit (payload) {
-      this.item.j.client.phone = payload
+      this.visit.j.client.phone = payload
     },
     onSave () {
       const duration = this.duration
@@ -292,11 +283,12 @@ export default {
       )
       let ts2 = new Date()
       ts2.setTime(ts1.getTime() + 60000 * duration)
-      this.item.business_id = this.employee || this.businessInfo.id
-      this.item.j.duration = duration
-      this.item.ts_begin = ts1.toJSON().slice(0, -1)
-      this.item.ts_end = ts2.toJSON().slice(0, -1)
-      this.$emit('onSave', this.item)
+      this.visit.business_id = this.employee || this.businessInfo.id
+      this.visit.j.duration = duration
+      this.visit.ts_begin = ts1.toJSON().slice(0, -1)
+      this.visit.ts_end = ts2.toJSON().slice(0, -1)
+      this.visit.j.master = this.master.id
+      this.$emit('onSave', this.visit)
     },
     setPage () {
       if (this.page !== undefined) {
@@ -306,8 +298,8 @@ export default {
     },
     setSelectedValues () {
       // console.log(this.tz);
-      if (this.item.ts_begin) {
-        let ts1 = new Date(this.item.ts_begin)
+      if (this.visit.ts_begin) {
+        let ts1 = new Date(this.visit.ts_begin)
         this.selectedDate = formatDate(ts1)
         this.selectedTime = formatTime(ts1)
       } else {

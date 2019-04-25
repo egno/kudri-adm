@@ -18,7 +18,10 @@ class Visit {
     this.ts_begin = (newVal && newVal.ts_begin) || null
     this.ts_end = (newVal && newVal.ts_end) || null
     this.status = (newVal && newVal.status) || null
-    this.j = (newVal && newVal.j) || {}
+    this.j = (newVal && newVal.j) || {
+      client: {},
+      services: []
+    }
     this.master = (newVal && newVal.master) || {}
 
     // set calculated properties

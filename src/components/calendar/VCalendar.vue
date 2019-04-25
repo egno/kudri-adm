@@ -134,7 +134,7 @@
             :display-from="showTimes[0]"
             :display-to="showTimes[1]"
             @onClickDate="goDate($event)"
-            @onTimeBlockClick="onTimeBlockClick($event)"
+            @onTimeBlockClick="onTimeBlockClick"
             @onVisitEdit="onVisitEdit($event)"
             @onVisitDelete="onVisitDelete($event)"
             @onDayEdit="onDayEdit($event)"
@@ -147,12 +147,14 @@
       v-model="edit"
       max-width="50em"
     >
+      <!--todo add master selection, remove mock data -->
       <VisitEdit
         :id="currentVisit.id"
         :business-info="businessInfo"
         :employee="currentEmployee"
-        :item="currentVisit"
+        :visit="currentVisit"
         :page="editVisitPage"
+        :master="{ id: '7abf57ca-6666-11e9-9e07-7f8af87678ec' }"
         @onSave="onVisitSave(-1, $event)"
         @onDelete="onDelete(-1)"
       />
@@ -387,7 +389,7 @@ export default {
     goDate (dt) {
       this.setActualDate(dt)
       router.push({
-        name: 'businessVisit',
+        name: 'visitCalendar',
         params: { id: this.businessId, date: dt }
       })
     },

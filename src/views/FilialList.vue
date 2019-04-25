@@ -267,7 +267,7 @@ export default {
     },
     checkoutTo (id) {
       this.$router.push({
-        name: 'businessVisit',
+        name: 'visitCalendar',
         params: {
           id,
           date: formatDate(new Date())

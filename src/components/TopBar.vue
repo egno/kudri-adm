@@ -106,7 +106,7 @@ export default {
       return isBusinessRoute(this.$route.name)
     },
     showEmployee () {
-      const list = ['businessVisit']
+      const list = ['visitCalendar']
       return list.some(x => x === this.$route.name) && this.employees.length
     },
     target () {
