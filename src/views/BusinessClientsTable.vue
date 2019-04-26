@@ -102,7 +102,7 @@
                 fill-height
                 justify-start
               >
-                <DeleteButton :is-dark="true" @delete="onDelete(props.item)" />
+                <DeleteButton :is-dark="true" @click.native.stop="onDelete(props.item)" />
               </v-layout>
             </td>
           </template>
@@ -111,71 +111,42 @@
           <v-pagination v-model="pagination.page" :length="pages" :total-visible="6" circle color="rgba(137, 149, 175, 0.35)" />
         </div>
         <ClientCardEdit
+          v-if="edit"
           :visible="edit"
           :client="item"
           :filial="businessId"
           :create="!item.id"
           @onDelete="onDelete(item)"
-          @onSave="onSave($event)"
-          @close="edit=false"
+          @onSave="onSave"
+          @close="edit=false; item={}"
         />
         <ClientVisits
           :value="visitsPanel"
           :client="item"
           @close="visitsPanel=false"
         />
-        <v-dialog
-          v-model="deleteConfirm"
-          width="400"
+        <Modal
+          :visible="deleteConfirm"
+          :template="{
+            leftButton: 'ОТМЕНА',
+            rightButton: 'УДАЛИТЬ'
+          }"
+          @rightButtonClick="deleteItem"
+          @leftButtonClick="deleteConfirm = false; item = {}"
+          @close="deleteConfirm = false; item = {}"
         >
-          <v-card>
-            <AppCardTitle @close="deleteConfirm = false" />
-            <v-card-text>
-              <v-layout
-                column
-                align-center
-                justify-center
-              >
-                <v-flex>
-                  Удалить клиента <span class="font-weight-bold">{{ item.fullName }}</span>?
-                </v-flex>
-                <v-flex>
-                  <span>Все данные будут удалены.</span>
-                </v-flex>
-              </v-layout>
-            </v-card-text>
-            <v-card-actions>
-              <v-layout
-                row
-                align-center
-                justify-center
-                pb-3
-              >
-                <v-flex
-                  shrink
-                  align-self-center
-                  px-1
-                >
-                  <AppBtn @click="deleteConfirm = false">
-                    Отмена
-                  </AppBtn>
-                </v-flex>
-                <v-flex
-                  shrink
-                  align-self-center
-                  px-1
-                >
-                  <AppBtn
-                    primary
-                    @click="deleteItem()"
-                  >
-                    Удалить
-                  </AppBtn>
-                </v-flex>
-              </v-layout>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+          <template slot="text">
+            <div
+              v-if="item.fullName"
+              class="uno-modal__text"
+            >
+              Удалить клиента <span class="font-weight-bold">{{ item.fullName }}</span>? Все данные клиента будут удалены.
+            </div>
+            <div v-else class="uno-modal__text">
+              Удалить клиента? Все данные клиента будут удалены.
+            </div>
+          </template>
+        </Modal>
       </div>
       <v-tooltip bottom :value="tooltip" attach=".clients__question" content-class="clients__tooltip">
         Для просмотра всей истории посещений кликните по статусу клиента
@@ -188,8 +159,6 @@
 import Api from '@/api/backend'
 import { mapActions, mapGetters } from 'vuex'
 import Avatar from '@/components/avatar/Avatar.vue'
-import AppBtn from '@/components/common/AppBtn.vue'
-import AppCardTitle from '@/components/common/AppCardTitle.vue'
 import ClientCardEdit from '@/components/client/ClientCardEdit.vue'
 import ClientVisits from '@/components/client/ClientVisits.vue'
 import Client from '@/classes/client'
@@ -197,16 +166,17 @@ import { filials} from "../components/business/mixins"
 import DeleteButton from '@/components/common/DeleteButton'
 import Users from '@/mixins/users'
 import PageLayout from '@/components/common/PageLayout.vue'
+import Modal from '@/components/common/Modal'
+import { cloneDeep } from 'lodash'
 
 export default {
   components: {
-    AppBtn,
-    AppCardTitle,
     ClientCardEdit,
     ClientVisits,
     Avatar,
     DeleteButton,
-    PageLayout
+    PageLayout,
+    Modal
   },
   filters: {
     phoneFormat (value) {
@@ -299,7 +269,7 @@ export default {
   methods: {
     ...mapActions(['addClientsCounter']),
     clientEdit (item) {
-      this.item = new Client(item)
+      this.item = new Client(cloneDeep(item))
       this.edit = true
     },
     clientVisits (item) {
@@ -358,14 +328,14 @@ export default {
           this.progressQuery = false
         })
     },
-    getFilialName (id) {
+   /* getFilialName (id) {
       if (!this.branchesList.length) {
         return ''
       }
       const f = this.branchesList.find(b => b.id === id)
 
       return f? f.j && f.j.name : ''
-    },
+    },*/
     getFilials () {
       const id = this.businessIsFilial
         ? this.businessInfo && this.businessInfo.parent
@@ -401,16 +371,13 @@ export default {
         this.edit = false
         return
       }
-      this.onItemDelete(this.item.id)
-    },
-    onItemDelete (payload) {
-      if (!payload) return
       Api()
-        .delete(`client?id=eq.${payload}`)
+        .delete(`client?id=eq.${this.item.id}`)
         .then(() => {
           this.addClientsCounter(-1)
           this.fetchData()
           this.edit = false
+          this.item = {}
         })
     },
     onSave (item) {
@@ -423,6 +390,7 @@ export default {
           this.items.splice(idx, 1, item)
         }
         this.item = {}
+        this.fetchData()
       })
     }
   }
@@ -569,7 +537,7 @@ export default {
       border-bottom: 1px solid #f3f4f7;
     }
     /* end of styles for first column */
-    
+
     &__first-cell {
       padding: 9px 0 9px 25px;
       @media only screen and (min-width : $desktop) {

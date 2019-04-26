@@ -37,7 +37,7 @@
       label="Имя и Фамилия*"
       required
       :disabled="!employee.access"
-      :rules="[ rules.required ]"
+      :rules="[ rules.required, rules.maxLength(50) ]"
       class="businesscard-form__field"
     />
     <div class="dropdown-select">
