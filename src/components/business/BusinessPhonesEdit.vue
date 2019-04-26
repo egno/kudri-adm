@@ -8,7 +8,6 @@
       <PhoneEdit
         :phone="phone"
         :removable="i !== 0"
-        :required="i === 0"
         :label="i === 0? 'Телефон*' : 'Телефон'"
         @onEdit="onEdit(i, $event)"
         @deletePhone="deletePhone(i)"

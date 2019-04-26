@@ -115,6 +115,7 @@
           :visible="edit"
           :client="item"
           :filial="businessId"
+          :company-id="businessInfo.parent? businessInfo.parent : businessId"
           :create="!item.id"
           @onDelete="onDelete(item)"
           @onSave="onSave"

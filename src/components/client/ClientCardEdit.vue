@@ -29,13 +29,16 @@
           <PhoneEdit
             :phone="phone"
             :removable="i !== 0"
-            :required="i === 0"
             :label="i === 0? 'Телефон*' : 'Телефон'"
             placeholder=""
-            @onEdit="client.phones[i] = $event; checkPhones()"
+            @onEdit="client.phones[i] = $event; checkPhones($event)"
           />
         </div>
+        <div v-if="clientWithSamePhone" class="error--text">
+          Найден 1 клиент с данным номером телефона
+        </div>
         <button
+          v-show="!clientWithSamePhone"
           type="button"
           class="businesscard-form__add-field"
           :disabled="!hasPhone || hasEmptyPhone || client.phones.length >= 4"
@@ -46,6 +49,41 @@
           </svg>
           <span>Добавить телефон</span>
         </button>
+        <Accordion v-if="clientWithSamePhone">
+          <template slot="heading">
+            <div>{{ clientWithSamePhone.fullName }}</div>
+          </template>
+          <template slot="content">
+            <div>
+              <div
+                v-for="(phone, i) in clientWithSamePhone.phones"
+                :key="i"
+                class="phone-input"
+              >
+                <PhoneEdit
+                  :class="{'error-color': phone === samePhone}"
+                  :disabled="true"
+                  :phone="phone"
+                  :removable="phone === samePhone"
+                  label=""
+                  placeholder=""
+                />
+              </div>
+              <div>
+                <v-layout v-if="clientWithSamePhone.lastVisit" column>
+                  <v-flex>
+                    <span>{{ clientWithSamePhone.lastVisit.date }}</span>
+                    <span> — </span>
+                    <span>{{ clientWithSamePhone.lastVisit.displayStatus }}</span>
+                  </v-flex>
+                  <v-flex>
+                    <span class="second-row">{{ clientWithSamePhone.lastVisit.timeInterval }}</span>
+                  </v-flex>
+                </v-layout>
+              </div>
+            </div>
+          </template>
+        </Accordion>
       </div>
       <div class="businesscard-form__field">
         <v-text-field
@@ -91,7 +129,7 @@
       <div>
         <MainButton
           class="button save-info"
-          :class="{ button_disabled: !hasPhone }"
+          :class="{ button_disabled: !hasPhone || clientWithSamePhone }"
           @click="onSave"
         >
           Сохранить
@@ -102,12 +140,15 @@
 </template>
 
 <script>
+import Accordion from '@/components/common/Accordion.vue'
 import { newClient } from '@/components/client/utils'
 import MainButton from '@/components/common/MainButton.vue'
 import PhoneEdit from '@/components/common/PhoneEdit.vue'
+import Api from '@/api/backend'
+import Client from '@/classes/client'
 
 export default {
-  components: { MainButton, PhoneEdit },
+  components: { Accordion, MainButton, PhoneEdit },
   model: {
     prop: 'visible',
     event: 'close'
@@ -133,23 +174,29 @@ export default {
       type: String,
       default: ''
     },
+    companyId: {
+      type: String,
+      default: ''
+    },
   },
   data () {
     return {
       active: 0,
+      clientWithSamePhone: undefined,
       hasPhone: undefined,
       hasEmptyPhone: undefined,
       rules: {
         required: value => !!value || 'Это поле обязательно для заполнения',
         maxLength: length => (value) => value && (value.length <= length || 'Слишком длинный текст') || true
-      }
+      },
+      samePhone: ''
     }
   },
   beforeMount () {
     this.checkPhones()
   },
   methods: {
-    checkPhones () {
+    checkPhones (newPhone) {
       if (!this.client.phones || !this.client.phones.length) {
         this.hasPhone = false
         this.hasEmptyPhone = true
@@ -157,6 +204,27 @@ export default {
       }
       this.hasPhone = this.client.phones.some(phone => phone.length >= 10)
       this.hasEmptyPhone = this.client.phones.some(x => (!x || x.length < 10))
+
+      this.samePhone = ''
+      this.clientWithSamePhone = null
+      if (!newPhone) {
+        return
+      }
+      if (newPhone && newPhone.length >= 10) {
+        Api()
+          .get(`/client_phone?and=(company_id.eq.${this.companyId},phone.eq.7${newPhone})`)
+          .then(({ data }) => {
+            console.log(data)
+            let companyClients = data.filter(c => (c.company_id === this.companyId) && (c.id !== this.client.id))
+
+            if (companyClients.length) {
+              this.clientWithSamePhone = new Client(companyClients[0])
+              this.samePhone = '7' + newPhone
+            }
+
+          })
+          .catch(e => console.log(e))
+      }
     },
     onDelete () {
       this.$emit('onDelete', this.client)
@@ -194,6 +262,27 @@ export default {
     }
     .v-btn-toggle--selected {
       box-shadow: none;
+    }
+
+    .error--text {
+      font-size: 12px;
+    }
+    .phone-input .v-input--is-disabled .v-input__slot:before {
+      display: none;
+    }
+    .accordion {
+      text-align: left;
+      .v-text-field__prefix {
+        padding-left: 0;
+      }
+      ._phone.v-text-field > .v-input__control > .v-input__slot > .v-text-field__slot {
+        padding-left: 0;
+      }
+      /*.error-color {
+        .v-text-field__prefix, input {
+          color: #EF4D37;
+        }
+      }*/
     }
   }
 </style>

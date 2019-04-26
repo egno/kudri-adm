@@ -245,9 +245,9 @@
   .v-text-field__prefix {
     padding-bottom: 4px;
   }
-  ._phone .v-text-field__slot {
-    padding-left: 86px !important;
-    background-image: none !important;
+  ._phone.v-text-field > .v-input__control > .v-input__slot > .v-text-field__slot {
+    padding-left: 86px;
+    background-image: none;
     &:after {
       display: none;
     }
