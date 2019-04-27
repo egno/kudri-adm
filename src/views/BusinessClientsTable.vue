@@ -47,8 +47,10 @@
                     >
                       {{ props.item.name.fullName }}
                     </div>
-                    <!--todo выводить основной тел-->
-                    <div class="clients__add-info _phone">
+                    <div v-if="props.item.phone" class="clients__add-info _phone">
+                      {{ props.item.phone | phoneFormat }}
+                    </div>
+                    <div v-else class="clients__add-info _phone">
                       {{ props.item.phones[0] | phoneFormat }}
                     </div>
                   </div>
