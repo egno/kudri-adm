@@ -50,6 +50,14 @@
             placeholder=""
             @onEdit="client.phones[i] = $event; checkPhones($event)"
           />
+          <template v-if="phone">
+            <div v-if="client.phone && (client.phone === phone)">
+              Основной телефон
+            </div>
+            <button v-else type="button" @click="client.phone = phone">
+              Сделать основным
+            </button>
+          </template>
         </div>
         <div v-if="clientWithSamePhone" class="error--text">
           Найден 1 клиент с данным номером телефона
