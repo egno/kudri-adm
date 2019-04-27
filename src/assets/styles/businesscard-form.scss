@@ -42,6 +42,10 @@
       padding-left: 12px;
     }
 
+    &._select {
+      position: relative;
+    }
+
     .v-input__append-inner {
       display: none;
     }

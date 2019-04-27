@@ -382,7 +382,7 @@ export default {
         })
     },
     onSave (item) {
-      const newItem = new Client(item)
+      const newItem = item instanceof Client? item : new Client(item)
       newItem.save().then(res => {
         if (!res) return
         this.edit = false

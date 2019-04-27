@@ -20,7 +20,7 @@
           maxlength="50"
           return-object
           required
-          attach=".businesscard-form__field._select"
+          attach="._clients .businesscard-form__field._select"
           @update:searchInput="onInputName"
           @change="selectClient"
         >
@@ -240,7 +240,7 @@ export default {
     },
     getClientsByName (val) {
       Api()
-        .get(`client?j->name->>fullname=ilike.*${val}*`)
+        .get(`client?company_id.eq.${this.companyId}&j->name->>fullname=ilike.*${val}*`)
         .then(({ data }) => {
           this.suggestedClients = data.filter(c => c.business_id !== this.filial)
         })
@@ -287,26 +287,26 @@ export default {
       }
     },
     onInputName (val) {
-      if (val < 2) {
+      val && (val = val.trim())
+      if (!val || val.length < 3) {
+        this.suggestedClients = []
         return
       }
 
       this.debouncedGetClients(val)
     },
     onSave () {
-      this.client.filial = this.filial
+      this.client.business_id = this.filial
       this.$emit('onSave', this.client)
     },
     selectClient (client) {
       if (client && (typeof client === 'object')) {
         const {
           id,
-          business_id,
           visit,
           j
         } = client
         this.client.id = id
-        this.client.business_id = business_id
         this.client.visit = visit
         this.client.fullName = j.name.fullname
         this.client.phone = j.phone
@@ -329,6 +329,7 @@ export default {
   @import '../../assets/styles/businesscard-form';
   @import '../../assets/styles/phone-input';
   @import "../../assets/styles/right-attached-panel";
+  @import "../../assets/styles/dropdown-select";
 
   .right-attached-panel._clients {
 
