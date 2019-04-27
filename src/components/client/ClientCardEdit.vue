@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="visible" content-class="right-attached-panel businesscard-form" transition="slide" @input="$emit('close')">
+  <v-dialog :value="visible" content-class="right-attached-panel businesscard-form _clients" transition="slide" @input="$emit('close')">
     <v-layout
       v-if="client"
       column
@@ -11,14 +11,31 @@
       <div class="right-attached-panel__header">
         {{ create? 'Добавить клиента' : 'Информация о клиенте' }}
       </div>
-      <div class="businesscard-form__field">
-        <v-text-field
-          v-model="client.fullName"
+      <div class="businesscard-form__field _select dropdown-select">
+        <v-combobox
+          :value="client.fullName"
+          :items="suggestedClients"
+          :item-text="clientDisplay"
           label="ИМЯ И ФАМИЛИЯ КЛИЕНТА"
           maxlength="50"
-          :rules="[rules.maxLength(50)]"
+          return-object
           required
-        />
+          attach=".businesscard-form__field._select"
+          @update:searchInput="onInputName"
+          @change="selectClient"
+        >
+          <template v-slot:selection="{ item, parent, selected }">
+            {{ item.j? item.j.name.fullname: item }}
+          </template>
+          <template v-slot:item="{ index, item }">
+            <div>
+              {{ item.j.name.fullname }}
+            </div>
+            <div>
+              {{ item.j.phone? item.j.phone : item.j.phones[0] }}
+            </div>
+          </template>
+        </v-combobox>
       </div>
       <div class="businesscard-form__field">
         <div
@@ -146,6 +163,7 @@ import MainButton from '@/components/common/MainButton.vue'
 import PhoneEdit from '@/components/common/PhoneEdit.vue'
 import Api from '@/api/backend'
 import Client from '@/classes/client'
+import { debounce } from 'lodash'
 
 export default {
   components: { Accordion, MainButton, PhoneEdit },
@@ -183,8 +201,12 @@ export default {
     return {
       active: 0,
       clientWithSamePhone: undefined,
+      clientDisplay (c) {
+        return `${ c.j.name.fullname }${ c.j.phone? c.j.phone : c.j.phones[0] }`
+      },
       hasPhone: undefined,
       hasEmptyPhone: undefined,
+      suggestedClients: [],
       rules: {
         required: value => !!value || 'Это поле обязательно для заполнения',
         maxLength: length => (value) => value && (value.length <= length || 'Слишком длинный текст') || true
@@ -194,6 +216,9 @@ export default {
   },
   beforeMount () {
     this.checkPhones()
+  },
+  created () {
+    this.debouncedGetClients = debounce(this.getClientsByName, 350)
   },
   methods: {
     checkPhones (newPhone) {
@@ -210,6 +235,16 @@ export default {
       if (!newPhone) {
         return
       }
+      this.getClientsByPhone(newPhone)
+    },
+    getClientsByName (val) {
+      Api()
+        .get(`client?j->name->>fullname=ilike.*${val}*`)
+        .then(({ data }) => {
+          this.suggestedClients = data.filter(c => c.business_id !== this.filial)
+        })
+    },
+    getClientsByPhone (newPhone) {
       if (newPhone && newPhone.length >= 10) {
         Api()
           .get(`/client_phone?and=(company_id.eq.${this.companyId},phone.eq.7${newPhone})`)
@@ -229,10 +264,41 @@ export default {
     onDelete () {
       this.$emit('onDelete', this.client)
     },
+    onInputName (val) {
+      if (val < 2) {
+        return
+      }
+
+      this.debouncedGetClients(val)
+    },
     onSave () {
       this.client.filial = this.filial
       this.$emit('onSave', this.client)
     },
+    selectClient (client) {
+      if (client && (typeof client === 'object')) {
+        const {
+          id,
+          business_id,
+          visit,
+          j
+        } = client
+        this.client.id = id
+        this.client.business_id = business_id
+        this.client.visit = visit
+        this.client.fullName = j.name.fullname
+        this.client.phone = j.phone
+        this.client.phones = j.phones
+        this.client.birth_date = j.birth_date
+        this.client.discount = j.discount
+        this.client.sex = j.sex
+        this.client.notes = j.notes
+
+        this.checkPhones()
+      } else {
+        this.client.fullName = client
+      }
+    }
   }
 }
 </script>
@@ -242,7 +308,7 @@ export default {
   @import '../../assets/styles/phone-input';
   @import "../../assets/styles/right-attached-panel";
 
-  .right-attached-panel {
+  .right-attached-panel._clients {
 
     .businesscard-form__field {
       margin-top: 28px;
@@ -283,6 +349,9 @@ export default {
           color: #EF4D37;
         }
       }*/
+    }
+    .dropdown-select .v-menu__content {
+      top: 100% !important;
     }
   }
 </style>

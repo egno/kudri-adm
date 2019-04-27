@@ -38,6 +38,7 @@
       required
       :disabled="!employee.access"
       :rules="[ rules.required, rules.maxLength(50) ]"
+      maxlength="50"
       class="businesscard-form__field"
     />
     <div class="dropdown-select">

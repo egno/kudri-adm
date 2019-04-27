@@ -226,7 +226,7 @@
       'businessInfo': 'getCompanyServices'
     },
     created () {
-      this.debouncedGetServices = debounce(this.getServices, 250)
+      this.debouncedGetServices = debounce(this.getServices, 350)
     },
     methods: {
       ...mapMutations(['LOAD_SERVICE_LIST']),

@@ -172,6 +172,7 @@ export default {
   @import '../../assets/styles/common';
 
   .v-avatar {
+    flex-shrink: 0;
     margin: 0 !important;
     background: linear-gradient(180deg, #C9A15D 0%, #BA9462 100%);
     .new-message {

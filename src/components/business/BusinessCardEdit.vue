@@ -33,6 +33,7 @@
           :rules="[() => !!data.name || 'Это поле обязательно для заполнения',
                    () => !!data.name && data.name.length <= 50 || 'Слишком длинное наименование']"
           required
+          maxlength="50"
           class="businesscard-form__field"
           @change="$emit('formChange')"
         />
@@ -110,6 +111,7 @@
               class="businesscard-form__field"
               placeholder="Инстаграм"
               :rules="[rules.uriLength]"
+              maxlength="150"
               @change="$emit('formChange')"
             />
           </div>
@@ -119,6 +121,7 @@
               class="businesscard-form__field"
               placeholder="Вконтакте"
               :rules="[rules.uriLength]"
+              maxlength="150"
               @change="$emit('formChange')"
             />
           </div>
@@ -131,6 +134,7 @@
               v-model="site.uri"
               class="businesscard-form__field"
               :rules="[rules.uriLength]"
+              maxlength="150"
               placeholder="Веб-сайт"
               @input="site.uri = $event.slice(0,150); debouncedCheckAddLink()"
               @focus="focusedOtherLink = i"

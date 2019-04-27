@@ -5,6 +5,7 @@
       :value="searchingValue"
       :label="label"
       :rules="required? [ rules.required, rules.maxLength(maxLength) ] : [ rules.maxLength(maxLength) ]"
+      :maxlength="maxLength"
       class="dropdown-select"
       :attach="attach"
       @input.native="onInput"
