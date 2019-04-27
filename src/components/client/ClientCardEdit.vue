@@ -108,6 +108,7 @@
           label="Дата рождения"
           mask="##.##.####"
           placeholder="ДД.ММ.ГГГГ"
+          :rules="[onInputDate]"
         />
       </div>
       <div class="businesscard-form__field">
@@ -263,6 +264,27 @@ export default {
     },
     onDelete () {
       this.$emit('onDelete', this.client)
+    },
+    onInputDate (value) {
+      const birthDateFormat = /^(0?[1-9]|[12][0-9]|3[01])(0?[1-9]|1[012])(19\d{2}|20\d{2})$/
+      const currentYear = (new Date()).getFullYear()
+      let match
+
+      if (!value || value.length < 8) {
+        return true
+      }
+
+      match = value.match(birthDateFormat)
+
+      if (!match) {
+        return 'Неправильная дата рождения'
+      }
+      const age = currentYear - match[3]
+      if ((age >= 0) && (age < 121)) {
+        return true
+      } else {
+        return 'Неправильная дата рождения'
+      }
     },
     onInputName (val) {
       if (val < 2) {
