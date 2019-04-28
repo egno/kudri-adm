@@ -8,7 +8,7 @@ class Name {
   }
 
   set fullName (val) {
-    if (typeof val === 'object') {
+    if (val && (typeof val === 'object')) {
       this.forename = val.forename
       this.surname = val.surname
       this.fullname = val.fullname
@@ -17,14 +17,21 @@ class Name {
     if (typeof val === 'string') {
       [this.forename, this.surname] = val.split(' ')
       this.fullname = val
-      return
+    } else {
+      this.forename = ''
+      this.surname = ''
+      this.fullname = ''
     }
   }
 
   get fullName () {
-    return (
-      [this.forename, this.surname].filter(x => !!x).join(' ') || this.fullname
-    )
+    if (this.forename && this.surname) {
+      return `${this.forename} ${this.surname}`
+    } else if (this.forename) {
+      return this.forename
+    } else {
+      return this.fullname
+    }
   }
 }
 

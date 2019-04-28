@@ -22,7 +22,7 @@ class Client extends ApiObject {
     // set calculated properties
     this.birth_date = newVal && newVal.j && newVal.j.birth_date
     this.discount = newVal && newVal.j && newVal.j.discount
-    this.name = newVal && newVal.j && newVal.j.name
+    this.name = newVal && newVal.j && newVal.j.name || ''
     this.email = newVal && newVal.j && newVal.j.email
     this.phone = newVal && newVal.j && newVal.j.phone
     this.phones = newVal && newVal.j && newVal.j.phones || ['']
@@ -107,29 +107,28 @@ class Client extends ApiObject {
   }
 
   /**
-   * @param {String} newVal
+   * @param {any} newVal
    */
   set fullName (newVal) {
-    if (!newVal) return
-    let name = new Name(newVal)
-    this.j = { ...this.j, ...{ name: name } }
+    this.name = newVal
   }
 
   get fullName () {
-    const n = new Name(this.j.name)
-    return n.fullName
+    return this.name.fullName
   }
   /**
    * @param {any} newVal
    */
   set name (newVal) {
-    if (!newVal) return
-    let name = new Name(newVal)
-    this.j = { ...this.j, ...{ name: name } }
+    if (this.j.name instanceof Name) {
+      this.name.fullName = newVal
+      return
+    }
+    this.j.name = new Name(newVal)
   }
 
   get name () {
-    return new Name(this.j.name)
+    return this.j.name
   }
 
   /**

@@ -22,10 +22,10 @@
           required
           attach="._clients .businesscard-form__field._select"
           @update:searchInput="onInputName"
-          @change="selectClient"
+          @input="selectClient"
         >
           <template v-slot:selection="{ item, parent, selected }">
-            {{ item.j? item.j.name.fullname: item }}
+            {{ item }}
           </template>
           <template v-slot:item="{ index, item }">
             <div>
@@ -304,8 +304,10 @@ export default {
       this.debouncedGetClients(val)
     },
     onSave () {
-      this.client.business_id = this.filial
-      this.$emit('onSave', this.client)
+      setTimeout(() => {
+        this.client.business_id = this.filial
+        this.$emit('onSave', this.client)
+      }, 100)
     },
     selectClient (client) {
       if (client && (typeof client === 'object')) {
