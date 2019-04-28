@@ -31,8 +31,8 @@
             <div>
               {{ item.j.name.fullname }}
             </div>
-            <div>
-              {{ item.j.phone? item.j.phone : item.j.phones[0] }}
+            <div class="phone-number">
+              {{ item.j.phone? item.j.phone : item.j.phones[0] | phoneFormat }}
             </div>
           </template>
         </v-combobox>
@@ -48,13 +48,14 @@
             :removable="i !== 0"
             :label="i === 0? 'Телефон*' : 'Телефон'"
             placeholder=""
+            :class="{ 'no-default': !client.phone && (filledPhones.length > 1) }"
             @onEdit="client.phones[i] = $event; checkPhones($event)"
           />
-          <template v-if="phone">
-            <div v-if="client.phone && (client.phone === phone)">
+          <template v-if="phone && (filledPhones.length > 1)">
+            <div v-if="client.phone && (client.phone.substr(-10) === phone.substr(-10))" class="default">
               Основной телефон
             </div>
-            <button v-else type="button" @click="client.phone = phone">
+            <button v-else-if="phone.length >= 10" type="button" class="make-default" @click="client.phone = phone">
               Сделать основным
             </button>
           </template>
@@ -176,6 +177,15 @@ import { debounce } from 'lodash'
 
 export default {
   components: { Accordion, MainButton, PhoneEdit },
+  filters: {
+    phoneFormat (value) {
+      if (!value) return ''
+      return value.replace(
+        /(\d?)(\d{1,3})(\d{1,3})(\d{1,2})(\d{1,2})$/g,
+        '+$1 ($2) $3-$4-$5'
+      )
+    }
+  },
   model: {
     prop: 'visible',
     event: 'close'
@@ -215,6 +225,7 @@ export default {
       },
       hasPhone: undefined,
       hasEmptyPhone: undefined,
+      filledPhones: [],
       suggestedClients: [],
       rules: {
         required: value => !!value || 'Это поле обязательно для заполнения',
@@ -231,16 +242,19 @@ export default {
   },
   methods: {
     checkPhones (newPhone) {
+      this.samePhone = ''
+      this.clientWithSamePhone = null
+
       if (!this.client.phones || !this.client.phones.length) {
         this.hasPhone = false
         this.hasEmptyPhone = true
+        this.filledPhones = []
         return
       }
       this.hasPhone = this.client.phones.some(phone => phone.length >= 10)
       this.hasEmptyPhone = this.client.phones.some(x => (!x || x.length < 10))
+      this.filledPhones = this.client.phones.filter(p => p && (p.length >= 10))
 
-      this.samePhone = ''
-      this.clientWithSamePhone = null
       if (!newPhone) {
         return
       }
@@ -306,6 +320,9 @@ export default {
     onSave () {
       setTimeout(() => {
         this.client.business_id = this.filial
+        if (!this.client.phone && this.filledPhones.length) {
+          this.client.phone = this.client.phones.find(p => p && p.length >= 10)
+        }
         this.$emit('onSave', this.client)
       }, 100)
     },
@@ -362,7 +379,6 @@ export default {
     .v-btn-toggle--selected {
       box-shadow: none;
     }
-
     .error--text {
       font-size: 12px;
     }
@@ -383,8 +399,50 @@ export default {
         }
       }*/
     }
-    .dropdown-select .v-menu__content {
-      top: 100% !important;
+    .dropdown-select {
+      .v-menu__content {
+        top: 100% !important;
+      }
+      .v-list__tile {
+        display: block;
+        padding: 5px 16px 5px 37px;
+        text-align: left;
+        text-transform: capitalize;
+        color: #8995AF;
+        font-size: 14px;
+        &:hover {
+          background-color: rgba(137, 149, 175, 0.2);
+        }
+        .phone-number {
+          font-weight: normal;
+          font-size: 12px;
+        }
+      }
+    }
+    .no-default {
+      .v-text-field__slot {
+        background: url('../../assets/images/svg/attention.svg') 10% center no-repeat transparent !important;
+      }
+    }
+    .default {
+      position: relative;
+      margin-top: 8px;
+      font-size: 14px;
+      color: #8995AF;
+      &:before {
+        content: '';
+        display: inline-block;
+        vertical-align: baseline;
+        width: 12px;
+        height: 12px;
+        margin-right: 3px;
+        background: url('../../assets/images/svg/selection-grey.svg') center no-repeat transparent;
+      }
+    }
+    .make-default {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #5699FF;
     }
   }
 </style>
