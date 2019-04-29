@@ -250,7 +250,6 @@ export default {
       handler: 'onClientChange',
       deep: true
     },
-    clientId: 'onClientChange',
     edit: 'closeClientEditor',
     businessIsFilial: 'getFilials'
   },
@@ -353,8 +352,8 @@ export default {
         })
     },
     onClientChange () {
-      if (!this.clientId || !this.businessId) return
-      this.item = new Client({ business_id: this.businessId, id: this.clientId })
+      if (!this.clientId) return
+      this.item = new Client({ id: this.clientId })
       this.item.load(this.clientId)
         .then(() => {
           this.edit = true

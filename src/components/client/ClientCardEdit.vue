@@ -50,7 +50,7 @@
             placeholder=""
             :class="{ 'no-default': !client.phone && (filledPhones.length > 1) }"
             @onEdit="client.phones[i] = $event; checkPhones($event)"
-            @deletePhone="client.phones.splice(i,1); checkPhones()"
+            @deletePhone="client.phones.splice(i,1)"
           />
           <template v-if="phone && (filledPhones.length > 1)">
             <div v-if="client.phone && (client.phone.substr(-10) === phone.substr(-10))" class="default">
@@ -245,7 +245,11 @@ export default {
     }
   },
   watch: {
-    'client.id': 'reset'
+    'client.id': 'checkPhones',
+    'client.phones': {
+      handler: 'checkPhones',
+      deep: true
+    }
   },
   beforeMount () {
     this.checkPhones()
@@ -268,10 +272,9 @@ export default {
       this.hasEmptyPhone = this.client.phones.some(x => (!x || x.length < 10))
       this.filledPhones = this.client.phones.filter(p => p && (p.length >= 10))
 
-      if (!newPhone) {
-        return
+      if (newPhone && (typeof newPhone === 'string') && newPhone.length >= 10 && newPhone.length < 12) {
+        this.getClientsByPhone(newPhone)
       }
-      this.getClientsByPhone(newPhone)
     },
     getClientsByName (val) {
       Api()
@@ -358,8 +361,6 @@ export default {
         this.client.discount = j.discount
         this.client.sex = j.sex
         this.client.notes = j.notes
-
-        this.checkPhones()
       } else {
         this.client.fullName = client
       }
