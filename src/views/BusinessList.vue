@@ -179,6 +179,7 @@ export default {
       this.data = []
       const { sortBy, descending, page, rowsPerPage } = this.pagination
       let params = [this.querySearchString]
+      params.push('parent=is.null')
       if (sortBy) {
         params.push(
           `order=${sortBy}${descending ? '.desc.nullslast' : '.asc.nullsfirst'}`
