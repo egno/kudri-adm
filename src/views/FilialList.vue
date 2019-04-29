@@ -45,7 +45,7 @@
             {{ city }}
           </div>
         </div>
-        <div class="branches__city" :class="{_active: selectedCity === 'Другие'}" @click="selectedCity = 'Другие'">
+        <div v-if="branchesByCities['Другие'].length" class="branches__city" :class="{_active: selectedCity === 'Другие'}" @click="selectedCity = 'Другие'">
           Другие
         </div>
         <div class="branches__city" :class="{_active: !selectedCity}" @click="selectedCity = null">
@@ -87,7 +87,7 @@
           </VLayout>
         </template>
       </div>
-      <div v-show="selectedCity === 'Другие' || !selectedCity" class="branches__group">
+      <div v-show="branchesByCities['Другие'].length && (selectedCity === 'Другие' || !selectedCity)" class="branches__group">
         <div class="city-branch">
           <div class="city-branch__city">
             Другие
