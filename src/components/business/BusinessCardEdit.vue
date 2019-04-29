@@ -456,7 +456,7 @@ export default {
       this.$emit('formChange')
     },
     onAvatarSave (img) {
-      this.saveImage(img).then(() => {
+      this.saveImage(img, this.id).then(() => {
         this.data.save().then(() => {
           this.setBusinessInfo(this.data)
         })
