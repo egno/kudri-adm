@@ -123,11 +123,13 @@
       </div>
       <div class="businesscard-form__field">
         <v-text-field
-          v-model="client.birth_date"
+          :value="client.birth_date"
           label="Дата рождения"
           mask="##.##.####"
           placeholder="ДД.ММ.ГГГГ"
-          :rules="[onInputDate]"
+          :rules="[validateBirthDay]"
+          validate-on-blur
+          @input="onInputBirthDate"
         />
       </div>
       <div class="businesscard-form__field">
@@ -302,22 +304,44 @@ export default {
     onDelete () {
       this.$emit('onDelete', this.client)
     },
-    onInputDate (value) {
-      const birthDateFormat = /^(0?[1-9]|[12][0-9]|3[01])(0?[1-9]|1[012])(19\d{2}|20\d{2})$/
+    onInputBirthDate (newVal) {
+      if (this.validateBirthDay(newVal) === true) {
+        this.client.birth_date = newVal
+      } else {
+        this.client.birth_date = ''
+      }
+    },
+    validateBirthDay (value) {
+      const dateFormat = /^(0?[1-9]|[12][0-9]|3[01])(0?[1-9]|1[012])(19\d{2}|20\d{2})$/
       const currentYear = (new Date()).getFullYear()
       let match
 
-      if (!value || value.length < 8) {
+      if (!value) {
         return true
       }
 
-      match = value.match(birthDateFormat)
+      match = value.match(dateFormat)
 
       if (!match) {
         return 'Неправильная дата рождения'
       }
-      const age = currentYear - match[3]
-      if ((age >= 0) && (age < 121)) {
+      const day = match[1]
+      const month = match[2]
+      const year = match[3]
+      const age = currentYear - year
+      let monthLength = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ]
+
+      // Adjust for leap years
+      if(year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) {
+        monthLength[1] = 29
+      }
+
+      // Check the range of the day
+      if (day > monthLength[month - 1]) {
+        return 'Неправильная дата рождения'
+      }
+
+      if ((age >= 0) && (age < 101)) {
         return true
       } else {
         return 'Неправильная дата рождения'
