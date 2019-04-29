@@ -6,6 +6,9 @@
     <div v-show="expanded" class="accordion__container">
       <slot name="content" />
     </div>
+    <div v-show="$slots.footer && expanded" class="accordion__footer">
+      <slot name="footer" />
+    </div>
   </div>
 </template>
 
@@ -27,7 +30,6 @@
     &__header {
       position: relative;
       padding: 11px 17px 10px 36px;
-      min-width: 280px;
       border-radius: 20px;
       cursor: pointer;
       background: rgba(137, 149, 175, 0.1);
@@ -49,12 +51,20 @@
 
     &__container {
       padding: 17px 23px 26px 36px;
-      border-bottom-left-radius: 20px;
-      border-bottom-right-radius: 20px;
       background: rgba(137, 149, 175, 0.1);
     }
 
+    &__footer {
+      padding: 11px 17px 10px 36px;
+      background: rgba(137, 149, 175, 0.1);
+      border-top: 1px solid #fff;
+    }
+
     &._expanded {
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      overflow: hidden;
+
       .accordion__header {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;

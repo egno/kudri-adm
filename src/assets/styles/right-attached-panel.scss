@@ -39,7 +39,7 @@
 
   &__container {
     position: relative;
-    padding: 53px 62px 56px;
+    padding: 53px 80px 56px;
     text-align: center;
   }
   &__close {
@@ -246,7 +246,7 @@
     padding-bottom: 4px;
   }
   ._phone.v-text-field > .v-input__control > .v-input__slot > .v-text-field__slot {
-    padding-left: 86px;
+    padding-left: calc(50% - 69px);
     background-image: none;
     &:after {
       display: none;

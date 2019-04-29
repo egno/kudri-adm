@@ -191,8 +191,8 @@ class Client extends ApiObject {
   // API methods
 
   load (id) {
-    if (!id || id === 'new') return
-    Api()
+    if (!id || id === 'new') return Promise.resolve()
+    return Api()
       .get(`client?id=eq.${id}`)
       .then(res => res.data[0])
       .then(res => {
@@ -202,7 +202,8 @@ class Client extends ApiObject {
 
   save () {
     if (!this.business_id) return
-    if (!this.id) {
+    if (!this.id || this.id === 'new') {
+      this.id = null
       return Api()
         .post(`client?`, this.jsonObject)
         .then(res => responseGetId(res))

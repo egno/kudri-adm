@@ -41,10 +41,7 @@
                     />
                   </div>
                   <div class="clients__name-phone">
-                    <div
-                      class="hidden-button clients__name"
-                      @click="clientEdit(props.item)"
-                    >
+                    <div class="clients__name">
                       {{ props.item.name.fullName }}
                     </div>
                     <div v-if="props.item.phone" class="clients__add-info _phone">
@@ -170,7 +167,6 @@ import DeleteButton from '@/components/common/DeleteButton'
 import Users from '@/mixins/users'
 import PageLayout from '@/components/common/PageLayout.vue'
 import Modal from '@/components/common/Modal'
-import { cloneDeep } from 'lodash'
 
 export default {
   components: {
@@ -250,8 +246,12 @@ export default {
     },
     searchString: 'fetchData',
     businessId: 'fetchData',
+    '$route.params': {
+      handler: 'onClientChange',
+      deep: true
+    },
     clientId: 'onClientChange',
-    edit: 'closeNewEditor',
+    edit: 'closeClientEditor',
     businessIsFilial: 'getFilials'
   },
   created () {
@@ -272,15 +272,17 @@ export default {
   methods: {
     ...mapActions(['addClientsCounter']),
     clientEdit (item) {
-      this.item = new Client(cloneDeep(item))
-      this.edit = true
+      this.$router.push({
+        name: 'businessCardClient',
+        params: { id: this.businessId, client: item.id }
+      })
     },
     clientVisits (item) {
       this.item = new Client(item)
       this.visitsPanel = true
     },
-    closeNewEditor () {
-      if (!this.edit && this.clientId === 'new') {
+    closeClientEditor () {
+      if (!this.edit) {
         this.$router.push({
           name: 'BusinessClientsTable',
           params: { id: this.businessId }
@@ -352,9 +354,11 @@ export default {
     },
     onClientChange () {
       if (!this.clientId || !this.businessId) return
-      this.item = new Client({ business_id: this.businessId })
+      this.item = new Client({ business_id: this.businessId, id: this.clientId })
       this.item.load(this.clientId)
-      this.edit = true
+        .then(() => {
+          this.edit = true
+        })
     },
     onDelete (item) {
       if (item) {

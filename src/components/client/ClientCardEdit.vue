@@ -50,19 +50,21 @@
             placeholder=""
             :class="{ 'no-default': !client.phone && (filledPhones.length > 1) }"
             @onEdit="client.phones[i] = $event; checkPhones($event)"
+            @deletePhone="client.phones.splice(i,1); checkPhones()"
           />
           <template v-if="phone && (filledPhones.length > 1)">
             <div v-if="client.phone && (client.phone.substr(-10) === phone.substr(-10))" class="default">
               Основной телефон
             </div>
-            <button v-else-if="phone.length >= 10" type="button" class="make-default" @click="client.phone = phone">
+            <button v-else-if="!clientWithSamePhone && (phone.length >= 10)" type="button" class="make-default" @click="client.phone = phone">
               Сделать основным
             </button>
           </template>
+          <div v-if="clientWithSamePhone && clientWithSamePhone.phones.find(p => p.substr(-10) === phone.substr(-10))" class="error--text">
+            Найден 1 клиент с данным номером телефона
+          </div>
         </div>
-        <div v-if="clientWithSamePhone" class="error--text">
-          Найден 1 клиент с данным номером телефона
-        </div>
+
         <button
           v-show="!clientWithSamePhone"
           type="button"
@@ -90,24 +92,32 @@
                   :class="{'error-color': phone === samePhone}"
                   :disabled="true"
                   :phone="phone"
-                  :removable="phone === samePhone"
+                  :removable="false"
                   label=""
                   placeholder=""
                 />
               </div>
               <div>
-                <v-layout v-if="clientWithSamePhone.lastVisit" column>
-                  <v-flex>
+                <v-layout v-if="clientWithSamePhone.lastVisit" column class="visit">
+                  <v-flex>Визит</v-flex>
+                  <v-flex class="visit__date">
                     <span>{{ clientWithSamePhone.lastVisit.date }}</span>
                     <span> — </span>
                     <span>{{ clientWithSamePhone.lastVisit.displayStatus }}</span>
                   </v-flex>
-                  <v-flex>
-                    <span class="second-row">{{ clientWithSamePhone.lastVisit.timeInterval }}</span>
+                  <v-flex v-if="clientWithSamePhone.lastVisit.timeInterval">
+                    <span class="visit__interval">{{ clientWithSamePhone.lastVisit.timeInterval.replace('-', '—') }}</span>
                   </v-flex>
                 </v-layout>
               </div>
             </div>
+          </template>
+          <template slot="footer">
+            <router-link
+              :to="{ name: 'businessCardClient', params: { id: clientWithSamePhone.business_id, client: clientWithSamePhone.id }}"
+            >
+              Перейти в полную карту клиента
+            </router-link>
           </template>
         </Accordion>
       </div>
@@ -234,6 +244,9 @@ export default {
       samePhone: ''
     }
   },
+  watch: {
+    'client.id': 'reset'
+  },
   beforeMount () {
     this.checkPhones()
   },
@@ -272,7 +285,6 @@ export default {
         Api()
           .get(`/client_phone?and=(company_id.eq.${this.companyId},phone.eq.7${newPhone})`)
           .then(({ data }) => {
-            console.log(data)
             let companyClients = data.filter(c => (c.company_id === this.companyId) && (c.id !== this.client.id))
 
             if (companyClients.length) {
@@ -325,6 +337,10 @@ export default {
         }
         this.$emit('onSave', this.client)
       }, 100)
+    },
+    reset () {
+      this.clientWithSamePhone = null
+      this.samePhone = ''
     },
     selectClient (client) {
       if (client && (typeof client === 'object')) {
@@ -387,17 +403,46 @@ export default {
     }
     .accordion {
       text-align: left;
+      &__container {
+        padding-top: 15px;
+      }
+      &__footer a {
+        font-size: 13px;
+        text-decoration: none;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
       .v-text-field__prefix {
         padding-left: 0;
       }
       ._phone.v-text-field > .v-input__control > .v-input__slot > .v-text-field__slot {
         padding-left: 0;
       }
-      /*.error-color {
-        .v-text-field__prefix, input {
+      input {
+        color: #07101C;
+      }
+      .error-color {
+        .v-text-field__prefix,
+        input {
           color: #EF4D37;
         }
-      }*/
+      }
+      .businesscard-form__field {
+        margin-top: 5px;
+        padding-top: 0;
+      }
+      .visit {
+        margin-top: 22px;
+        color: #8995AF;
+        &__date {
+          margin-top: 7px;
+          color: #07101C;
+        }
+        &__interval {
+          font-size: 12px;
+        }
+      }
     }
     .dropdown-select {
       .v-menu__content {
