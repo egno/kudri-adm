@@ -228,6 +228,13 @@
     }
     .v-menu__content {
       top: 100% !important;
+      max-width: 100%;
+    }
+    .v-list__tile__content {
+      padding-left: 0;
+    }
+    .v-list__tile__action {
+      min-width: 40px;
     }
   }
   ._groups {

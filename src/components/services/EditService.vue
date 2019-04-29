@@ -92,7 +92,7 @@
         </div>
 
         <div class="right-attached-panel__field-block _employees dropdown-select">
-          <v-combobox
+          <VSelect
             v-model="selectedEmployees"
             :items="employees"
             :item-text="employeeFullName"
