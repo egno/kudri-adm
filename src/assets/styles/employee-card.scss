@@ -37,7 +37,7 @@
     width: 80px;
   }
   &__badge {
-    max-width: 85%;
+    max-width: 184px;
     padding-left: 20px;
   }
   &__title {
@@ -45,6 +45,8 @@
     font-size: 18px;
     color: #07101C;
     text-transform: capitalize;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   &__main {
     display: inline-block;
@@ -65,7 +67,7 @@
   }
   &__info {
     height: 24px;
-    padding: 2px 20px 0;
+    padding: 4px 20px 0;
     background: rgba(137, 149, 175, 0.1);
     border-radius: 12px;
     color: #8995AF;

@@ -116,6 +116,8 @@ export default {
       font-weight: bold;
       font-size: 18px;
       color: #07101C;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     &__main {
@@ -140,7 +142,7 @@ export default {
     &__info {
       width: 125px;
       height: 24px;
-      padding: 2px 0 0;
+      padding: 4px 0 0;
       background: rgba(137, 149, 175, 0.1);
       border-radius: 12px;
       color: #8995AF;

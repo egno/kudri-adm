@@ -116,12 +116,17 @@ export default {
   &__bottom {
     align-items: center;
   }
+  &__left {
+    overflow: hidden;
+  }
   &__title {
     margin-bottom: 10px;
     font-weight: bold;
     font-size: 18px;
     color: #07101c;
     text-transform: capitalize;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   &__main {
     display: inline-block;
@@ -146,7 +151,7 @@ export default {
   &__info {
     width: 125px;
     height: 24px;
-    padding: 2px 0 0;
+    padding: 4px 0 0;
     background: rgba(137, 149, 175, 0.1);
     border-radius: 12px;
     color: #8995af;
