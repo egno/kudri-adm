@@ -148,10 +148,13 @@
       </div>
       <div class="businesscard-form__field">
         <v-text-field
-          v-model="client.discount"
+          :value="client.discount"
+          mask="###"
           label="Персональная скидка"
-          maxlength="100"
-          :rules="[rules.maxLength(100)]"
+          maxlength="3"
+          suffix="%"
+          :rules="[ rules.discount ]"
+          @input="onInputPercent"
         />
       </div>
       <div class="businesscard-form__field">
@@ -241,7 +244,8 @@ export default {
       suggestedClients: [],
       rules: {
         required: value => !!value || 'Это поле обязательно для заполнения',
-        maxLength: length => (value) => value && (value.length <= length || 'Слишком длинный текст') || true
+        maxLength: length => (value) => value && (value.length <= length || 'Слишком длинный текст') || true,
+        discount: val => !val || ((val > 0) && (val <= 100)|| 'Неверное количество процентов')
       },
       samePhone: ''
     }
@@ -355,6 +359,13 @@ export default {
       }
 
       this.debouncedGetClients(val)
+    },
+    onInputPercent (val) {
+      if (this.rules.discount(val) === true) {
+        this.client.discount = val
+      } else {
+        this.client.discount = null
+      }
     },
     onSave () {
       setTimeout(() => {
