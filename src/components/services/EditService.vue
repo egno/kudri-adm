@@ -71,7 +71,7 @@
             <div class="right-attached-panel__from">
               от
             </div>
-            <VTextField v-model="price" mask="#####" placeholder="0" class="right-attached-panel__price" />
+            <VTextField v-model="price" mask="#####" placeholder="0" :rules="[rules.required]" class="right-attached-panel__price" />
             рублей
           </div>
         </div>
@@ -210,7 +210,7 @@
       }),
       ...mapGetters(['serviceGroups', 'employees', 'businessInfo']),
       saveDisabled () {
-        return !this.name || !this.group || !this.duration
+        return !this.name || !this.group || !this.duration || !this.price
       },
       suggestedServiceNames () {
         const base = this.serviceList.map(s => s.name)
