@@ -24,6 +24,7 @@
               <div class="filter-results__cards">
                 <ServiceCard
                   v-for="(service, i) in groupedBranchServices[group]"
+                  v-show="!searchString || service.name.toLowerCase().includes(searchString)"
                   :key="i" :service="service"
                   :edit-mode="true"
                   @click="showEditPanel(service)"
