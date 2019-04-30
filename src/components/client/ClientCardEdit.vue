@@ -13,6 +13,7 @@
       </div>
       <div class="businesscard-form__field _select dropdown-select">
         <v-combobox
+          ref="fullName"
           :value="client.fullName"
           :items="suggestedClients"
           :item-text="clientDisplay"
@@ -352,12 +353,19 @@ export default {
       }
     },
     onInputName (val) {
-      val && (val = val.trim())
-      if (!val || val.length < 3) {
+      if (!val) {
         this.suggestedClients = []
         return
       }
 
+      const match = val.match(/[а-яА-ЯёЁ ]+/g)
+
+      val = match? match[0] : ''
+      this.$refs.fullName.lazySearch = val
+      if (!val || val.length < 3) {
+        this.suggestedClients = []
+        return
+      }
       this.debouncedGetClients(val)
     },
     onInputPercent (val) {
