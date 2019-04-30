@@ -48,6 +48,7 @@
             :phone="phone"
             :removable="i !== 0"
             :label="i === 0? 'Телефон*' : 'Телефон'"
+            :error="client.phones.filter(p => p.substr(-10) === phone.substr(-10)).length > 1"
             placeholder=""
             :class="{ 'no-default': !client.phone && (filledPhones.length > 1) }"
             @onEdit="client.phones[i] = $event; checkPhones($event)"
@@ -67,7 +68,7 @@
         </div>
 
         <button
-          v-show="!clientWithSamePhone"
+          v-show="!clientWithSamePhone && !duplicatedPhone"
           type="button"
           class="businesscard-form__add-field"
           :disabled="!hasPhone || hasEmptyPhone || client.phones.length >= 4"
@@ -172,7 +173,7 @@
       <div>
         <MainButton
           class="button save-info"
-          :class="{ button_disabled: !hasPhone || clientWithSamePhone }"
+          :class="{ button_disabled: !hasPhone || clientWithSamePhone || duplicatedPhone }"
           @click="onSave"
         >
           Сохранить
@@ -239,6 +240,7 @@ export default {
       clientDisplay (c) {
         return `${ c.j.name.fullname }${ c.j.phone? c.j.phone : c.j.phones[0] }`
       },
+      duplicatedPhone: '',
       hasPhone: undefined,
       hasEmptyPhone: undefined,
       filledPhones: [],
@@ -250,6 +252,9 @@ export default {
       },
       samePhone: ''
     }
+  },
+  computed: {
+
   },
   watch: {
     'client.id': 'checkPhones',
@@ -266,22 +271,38 @@ export default {
   },
   methods: {
     checkPhones (newPhone) {
+      const phones = this.client.phones
+
       this.samePhone = ''
       this.clientWithSamePhone = null
+      this.duplicatedPhone = ''
 
-      if (!this.client.phones || !this.client.phones.length) {
+      if (!phones || !phones.length) {
         this.hasPhone = false
         this.hasEmptyPhone = true
         this.filledPhones = []
         return
       }
-      this.hasPhone = this.client.phones.some(phone => phone.length >= 10)
-      this.hasEmptyPhone = this.client.phones.some(x => (!x || x.length < 10))
-      this.filledPhones = this.client.phones.filter(p => p && (p.length >= 10))
+      this.hasPhone = phones.some(phone => phone.length >= 10)
+      this.hasEmptyPhone = phones.some(x => (!x || x.length < 10))
+      this.filledPhones = phones.filter(p => p && (p.length >= 10))
 
       if (newPhone && (typeof newPhone === 'string') && newPhone.length >= 10 && newPhone.length < 12) {
         this.getClientsByPhone(newPhone)
       }
+
+      phones.forEach((p, i) => {
+        if (i === (phones.length - 1) || !p) {
+          return
+        }
+
+        for (let j = i + 1; j < phones.length; j++) {
+          if (phones[j] && (p.substr(-10) === phones[j].substr(-10))) {
+            this.duplicatedPhone = p
+            return
+          }
+        }
+      })
     },
     getClientsByName (val) {
       Api()
@@ -380,7 +401,7 @@ export default {
         this.client.business_id = this.filial
         if (!this.client.phone && this.filledPhones.length) {
           this.client.phone = this.client.phones.find(p => p && p.length >= 10)
-        }
+        } 
         this.$emit('onSave', this.client)
       }, 100)
     },

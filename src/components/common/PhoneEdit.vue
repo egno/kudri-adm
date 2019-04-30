@@ -7,6 +7,7 @@
         :label="label"
         :placeholder="placeholder"
         :disabled="disabled"
+        :error="error"
         mask="phone"
         prefix="+7"
         :rules="[rules.counter]"
@@ -38,6 +39,7 @@ export default {
       }
     },
     removable: { type: Boolean, default: true },
+    error: { type: Boolean, default: false }
   },
   data () {
     return {
