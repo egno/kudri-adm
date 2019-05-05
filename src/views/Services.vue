@@ -53,6 +53,7 @@
         @save="editService"
       /><!--todo remove the second EditService, combine creating and editing in one -->
       <Modal
+        v-if="deletingService"
         :visible="showDelete"
         :template="deleteModalTemplate"
         @rightButtonClick="deleteService(deletingService)"
@@ -61,13 +62,13 @@
       >
         <template slot="text">
           <div
-            v-if="deletingService && deletingService.name && deletingService.j && deletingService.j.employees && deletingService.j.employees.length"
+            v-if="deletingService.name && deletingService.j && deletingService.j.employees && deletingService.j.employees.length"
             class="uno-modal__text"
           >
-            Это приведет к удалению услуги <b>{{ deletingService.name }}</b>. <b>{{ deletingService.j.employees.length }} мастеров</b> больше не будут оказывать данную услугу.
+            Это приведет к удалению услуги <b>{{ deletingService.name }}</b>. <b>{{ deletingService.j.employees.length | formatMaster }} </b> больше не будут оказывать данную услугу.
           </div>
           <div v-else class="uno-modal__text">
-            Это приведет к удалению услуги.
+            Это приведет к удалению услуги <b>{{ deletingService.name }}</b>.
           </div>
         </template>
       </Modal>
@@ -95,6 +96,7 @@ import ServiceCard from '@/components/services/ServiceCard.vue'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import Api from '@/api/backend'
 import Modal from '@/components/common/Modal'
+import { conjugateEmployee } from '@/components/utils'
 
 export default {
   components: {
@@ -102,6 +104,11 @@ export default {
     ServiceCard,
     EditService,
     Modal
+  },
+  filters: {
+    formatMaster (n) {
+      return conjugateEmployee(n)
+    }
   },
   data () {
     return {
@@ -227,6 +234,7 @@ export default {
       Api().delete(`business_service?id=eq.${service.id}`)
         .then(() => {
           this.showEdit = false
+          this.deletingService = null
           this.loadBusinessServices(this.businessId)
         })
         .catch((e) => {
