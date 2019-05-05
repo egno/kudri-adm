@@ -31,17 +31,49 @@
       interval: {
         type: Number,
         default: 1
+      },
+      roundCounter: {
+        type: Boolean,
+        default: false
       }
     },
     methods: {
+      findResult (realResult) {
+        const quotient = realResult/this.interval
+
+        const res1 = Math.ceil(quotient) * this.interval
+        const diff1 = Math.abs(realResult - res1)
+        const res2 = Math.floor(quotient) * this.interval
+        const diff2 = Math.abs(realResult - res2)
+
+        return diff1 < diff2? res1 : res2
+      },
       onIncrement () {
-        if (this.value <= this.maxValue - this.interval) {
-          this.$emit('changeCount', this.value + this.interval)
-        } 
+        const realResult = this.value + this.interval
+        let res
+
+        if (this.roundCounter) {
+          res = this.findResult(realResult)
+        } else {
+          res = realResult
+        }
+
+        if (res <= this.maxValue) {
+          this.$emit('changeCount', res)
+        }
       },
       onDecrement () {
-        if (this.value >= this.minValue + this.interval) {
-          this.$emit('changeCount', this.value - this.interval)
+        const realResult = this.value - this.interval
+        let res
+
+        if (this.roundCounter) {
+          res = this.findResult(realResult)
+        } else {
+          res = realResult
+        }
+
+        if (res >= this.minValue) {
+          this.$emit('changeCount', res)
         }
       },
       setNewValue (event) {

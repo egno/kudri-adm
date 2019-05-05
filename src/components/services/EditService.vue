@@ -82,11 +82,12 @@
           </div>
           <Counter
             :id="create? 'create-service-duration': 'right-attached-panel-duration'"
+            :round-counter="true"
             :value="duration"
             :min-value="15"
             :max-value="720"
             :interval="15"
-            :class="{ _invalid: duration < 15 }"
+            :class="{ _invalid: duration < 15 || duration > 720}"
             @changeCount="duration = $event"
           />
         </div>
