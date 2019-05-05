@@ -331,7 +331,7 @@ export default {
   },
   created () {
     this.fetchData()
-    this.debouncedCheckAddLink = debounce(this.checkAddLink, 150)
+    this.debouncedCheckAddLink = debounce(this.checkAddLink, 350)
     this.debouncedSave = debounce(this.saveData)
   },
   methods: {

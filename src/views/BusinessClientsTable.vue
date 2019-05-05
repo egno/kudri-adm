@@ -167,6 +167,7 @@ import DeleteButton from '@/components/common/DeleteButton'
 import Users from '@/mixins/users'
 import PageLayout from '@/components/common/PageLayout.vue'
 import Modal from '@/components/common/Modal'
+import { debounce } from 'lodash'
 
 export default {
   components: {
@@ -212,23 +213,20 @@ export default {
       progressQuery: false,
       totalItems: 0,
       visitsPanel: false,
-      tooltip: false
+      tooltip: false,
+      lastQuery: ''
     }
   },
   computed: {
-    ...mapGetters(['businessId', 'businessInfo', 'businessIsFilial']),
+    ...mapGetters(['businessId', 'businessInfo', 'businessIsFilial', 'searchString']),
     clientId () {
       return this.$route && this.$route.params && this.$route.params.client
     },
     querySearchString () {
-      if (!this.searchString) {
+      if (!this.searchString || this.searchString.trim().length < 3) {
         return ''
       }
-      return `(or.(j->>email.ilike.*${this.searchString}*,j->>name.ilike.*${
-        this.searchString
-      }*,j->>inn.ilike.${this.searchString}*,j->>address.ilike.*${
-        this.searchString
-      }*))`
+      return `j->name->>fullname.ilike.*${this.searchString.trim()}*`
     },
     pages () {
       if (!this.pagination.rowsPerPage || !this.totalItems)
@@ -244,7 +242,11 @@ export default {
       },
       deep: true
     },
-    searchString: 'fetchData',
+    searchString: {
+      handler () {
+        this.debouncedFetch()
+      }
+    },
     businessId: 'fetchData',
     '$route.params': {
       handler: 'onClientChange',
@@ -256,6 +258,7 @@ export default {
   created () {
     this.getFilials()
     this.fetchData()
+    this.debouncedFetch = debounce(this.fetchData, 350)
   },
   mounted () {
     if (this.clientId) {
@@ -298,8 +301,6 @@ export default {
       let filterString = `and=(${filter})`
       let params = [filterString]
 
-      this.progressQuery = true
-      this.items = []
       if (sortBy) {
         params.push(
           `order=${sortBy}${descending ? '.desc.nullslast' : '.asc.nullsfirst'}`
@@ -311,26 +312,33 @@ export default {
       if (page > 1) {
         params.push(`offset=${(page - 1) * rowsPerPage}`)
       }
-      Api()
-        .get(`client?${params.filter(x => !!x).join('&')}`)
-        .then(res => {
-          if (res.headers && res.headers['content-range']) {
-            const r = res.headers['content-range'].match(/^\d*-\d*\/(\d*)$/)
-            if (r) {
-              this.totalItems = +r[1]
+      if (this.lastQuery !== params.filter(x => !!x).join('&')) {
+        this.lastQuery = params.filter(x => !!x).join('&')
+
+        this.progressQuery = true
+        this.items = []
+
+        Api()
+          .get(`client?${this.lastQuery}`)
+          .then(res => {
+            if (res.headers && res.headers['content-range']) {
+              const r = res.headers['content-range'].match(/^\d*-\d*\/(\d*)$/)
+              if (r) {
+                this.totalItems = +r[1]
+              }
             }
-          }
-          return res.data
-        })
-        .then(res => {
-          this.items = res.filter(x => !!x.j).map(x => new Client(x))
-        })
-        .catch((e) => {
-          console.error(e)
-        })
-        .finally(() => {
-          this.progressQuery = false
-        })
+            return res.data
+          })
+          .then(res => {
+            this.items = res.filter(x => !!x.j).map(x => new Client(x))
+          })
+          .catch((e) => {
+            console.error(e)
+          })
+          .finally(() => {
+            this.progressQuery = false
+          })
+      }
     },
    /* getFilialName (id) {
       if (!this.branchesList.length) {
@@ -557,9 +565,10 @@ export default {
       margin: 0;
     }
     &__name-phone {
-      padding-left: 5px;
+      padding-left: 12px;
       flex-grow: 1;
       overflow: hidden;
+      line-height: 1.6;
     }
     &__name {
       text-transform: capitalize;
@@ -614,6 +623,7 @@ export default {
     }
     .avatar-letters {
       color: #fff;
+      font-size: 11px;
     }
   }
 </style>
