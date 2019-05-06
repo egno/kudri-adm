@@ -102,10 +102,15 @@
                   <v-flex>
                     {{ currentProvider.name }}
                   </v-flex>
-                  <v-flex v-if="currentProvider">
-                    {{ businessSettings.notifications.provider }}
+                  <v-flex v-if="currentProvider.j && currentProvider.j.site">
+                    <div class="caption">
+                      <a :href="currentProvider.j.site">{{ currentProvider.j.site }}</a>
+                    </div>
                   </v-flex>
-                  <v-flex v-for="param in params" :key="param.code">
+                  <v-flex
+                    v-for="param in params"
+                    :key="param.code"
+                  >
                     <v-text-field
                       v-model="businessSettings.notifications.provider[param.code]"
                       :label="param.title"
@@ -240,7 +245,7 @@ export default {
     },
     loadProviders () {
       Api()
-        .get('sms_providers')
+        .get('sms_providers?order=name')
         .then(res => {
           this.providers = res.data
         })
