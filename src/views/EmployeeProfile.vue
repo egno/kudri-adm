@@ -362,7 +362,7 @@ export default {
       this.removeEmpServices(this.empServices, this.employeeId)
         .then(() => {
           this.employee.services = this.employee.services && this.employee.services.length
-            ? this.employee.services.map(s => s && s.id)
+            ? this.employee.services.map(s => s && (typeof s === 'object')? s.id : s).filter(s => !!s)
             : []
 
           this.employee.save().then(id => {
