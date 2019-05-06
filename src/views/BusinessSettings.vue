@@ -1,74 +1,133 @@
 <template>
-  <v-container>
-    <v-layout row>
-      <v-flex
-        xs12
-        sm10
-        offset-sm1
-        md8
-        offset-md2
-      >
-        <v-layout column>
-          <v-flex>
-            <h2>Оповещения</h2>
-          </v-flex>
-          <v-flex>
-            Провайдер SMS:
-            {{ businessSettings.notifications.provider.name }}
-          </v-flex>
-          <v-flex>
-            <v-text-field
-              v-model="businessSettings.notifications.provider.key"
-              label="Ключ"
-            />
-          </v-flex>
-          <v-flex>
-            <h3>События</h3>
-          </v-flex>
-          <v-flex
-            v-for="(event, i) in businessSettings.notifications.events"
-            :key="i"
+  <PageLayout
+    :is-edit-mode="true"
+    :is-edit-visible="false"
+    :template="{ headerText: 'Настройки', buttonText: '' }"
+    class="businesscard-form"
+  >
+    <template slot="content">
+      <AppTabs v-model="activeTab">
+        <v-tab
+          :key="0"
+          ripple
+        >
+          Уведомления
+        </v-tab>
+        <v-tab
+          :key="1"
+          ripple
+        >
+          Оператор рассылки
+        </v-tab>
+      </AppTabs>
+      <div class="tab-content">
+        <v-form ref="form">
+          <div
+            v-show="activeTab === 0"
+            class="infocard _edit"
           >
-            <v-layout
-              row
-              wrap
-            >
-              <v-flex xs12 md8>
-                <v-switch
-                  v-model="event.enabled"
-                  :label="event.title"
-                />
-              </v-flex>
-              <v-flex xs12 md4>
-                <PhoneEdit
-                  v-if="typeof event.phone !== 'undefined'"
-                  :phone="event.phone"
-                  @onEdit="event.phone = $event"
-                />
-              </v-flex>
-            </v-layout>
-          </v-flex>
-          <v-flex>
-            <v-btn @click="save">
-              Сохранить
-            </v-btn>
-          </v-flex>
-        </v-layout>
-      </v-flex>
-    </v-layout>
-  </v-container>
+            <div class="infocard__content">
+              <v-layout align-left column>
+                <v-flex pb-3>
+                  <h3>Настройте необходимые вам события рассылки уведомлений</h3>
+                </v-flex>
+                <v-flex
+                  v-for="(event, i) in businessSettings.notifications.events"
+                  :key="i"
+                >
+                  <v-layout
+                    row
+                    wrap
+                  >
+                    <v-flex
+                      xs12
+                      md8
+                    >
+                      <v-switch
+                        v-model="event.enabled"
+                        :label="event.title"
+                        color="blue"
+                      />
+                    </v-flex>
+                    <v-flex
+                      v-if="event.enabled "
+                      offset-xs1
+                      xs11
+                      sm8
+                    >
+                      <v-card flat>
+                        <v-card-text
+                          v-if="event.template"
+                          class="caption grey--text"
+                        >
+                          <div class="pb-1">
+                            Шаблон уведомления:
+                          </div>
+                          {{ event.template }}
+                        </v-card-text>
+                        <v-card-text v-if="typeof event.phone !== 'undefined'">
+                          <PhoneEdit
+                            :phone="event.phone"
+                            label="Телефон для уведомлений"
+                            @onEdit="event.phone = $event"
+                          />
+                        </v-card-text>
+                      </v-card>
+                    </v-flex>
+                  </v-layout>
+                </v-flex>
+              </v-layout>
+              <MainButton
+                color="success"
+                class="button save-info"
+                @click.native.prevent="save"
+              >
+                Сохранить
+              </MainButton>
+            </div>
+          </div>
+          <div
+            v-show="activeTab === 1"
+            class="infocard _edit"
+          >
+            <div class="infocard__content">
+              <v-layout align-left column>
+                <v-flex>
+                  Провайдер SMS:
+                  {{ businessSettings.notifications.provider.name }}
+                </v-flex>
+                <v-flex>
+                  <v-text-field
+                    v-model="businessSettings.notifications.provider.key"
+                    label="Ключ"
+                  />
+                </v-flex>
+              </v-layout>
+            </div>
+          </div>
+        </v-form>
+      </div>
+    </template>
+  </PageLayout>
 </template>
 
 <script>
 import BusinessSettings from '@/classes/business_settings'
 import { mapGetters } from 'vuex'
 import PhoneEdit from '@/components/common/PhoneEdit.vue'
+import MainButton from '@/components/common/MainButton.vue'
+import AppTabs from '@/components/common/AppTabs.vue'
+import PageLayout from '@/components/common/PageLayout.vue'
+import Api from '@/api/backend'
+
 
 export default {
-  components: { PhoneEdit },
+  components: { AppTabs, PhoneEdit, MainButton, PageLayout },
   data () {
     return {
-      businessSettings: new BusinessSettings()
+      activeTab: 0,
+      businessSettings: new BusinessSettings(),
+      providers: []
     }
   },
   computed: {
@@ -79,8 +138,16 @@ export default {
   },
   mounted () {
     this.load()
+    this.loadProviders()
   },
   methods: {
+    loadProviders () {
+      Api()
+      .get('sms_providers')
+      .then(res=>{
+        this.providers = res.data
+      })
+    },
     load () {
       if (!this.businessId) return
       this.businessSettings.load(this.businessId)
@@ -91,3 +158,70 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+@import '../assets/styles/infocard';
+@import '../assets/styles/businesscard-form';
+
+.tab-content {
+  @media only screen and (min-width: $desktop) {
+    padding-left: 127px;
+  }
+  .infocard._emp-serv {
+    max-width: 100%;
+    width: auto;
+    // padding-right: 40px;
+    .infocard__content {
+      max-width: 100%;
+    }
+  }
+}
+.employee-profile {
+  color: #07101C;
+  @media only screen and (min-width: $tablet) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+    &__title {
+    font-size: 24px;
+    &._name {
+      text-align: center;
+    }
+  }
+  &__position {
+    font-size: 14px;
+    color: #8995AF;
+  }
+  .v-avatar {
+    margin-bottom: 24px !important;
+  }
+  .infocard._view {
+    @media only screen and (min-width: $tablet) {
+      width: 400px;
+      margin: 0 auto 10px;
+    }
+    @media only screen and (min-width: $desktop) {
+      margin: 0 10px 10px 0;
+    }
+  }
+  ._view .infocard__content {
+    @media only screen and (min-width: $desktop) {
+      padding: 40px 60px 60px;
+    }
+  }
+  ._view._services {
+    @media only screen and (min-width: 1350px) {
+      width: 540px;
+    }
+  }
+}
+  .employee-profile-edit {
+    .infocard__content {
+      @media only screen and (min-width: $tablet) {
+
+      }
+    }
+  }
+</style>
