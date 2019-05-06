@@ -27,7 +27,10 @@
             class="infocard _edit"
           >
             <div class="infocard__content">
-              <v-layout align-left column>
+              <v-layout
+                align-left
+                column
+              >
                 <v-flex pb-3>
                   <h3>Настройте необходимые вам события рассылки уведомлений</h3>
                 </v-flex>
@@ -91,16 +94,66 @@
             class="infocard _edit"
           >
             <div class="infocard__content">
-              <v-layout align-left column>
+              <v-layout
+                align-left
+                column
+              >
+                <template v-if="businessSettings.notifications && currentProvider">
+                  <v-flex>
+                    {{ currentProvider.name }}
+                  </v-flex>
+                  <v-flex v-if="currentProvider">
+                    {{ businessSettings.notifications.provider }}
+                  </v-flex>
+                  <v-flex v-for="param in params" :key="param.code">
+                    <v-text-field
+                      v-model="businessSettings.notifications.provider[param.code]"
+                      :label="param.title"
+                    />
+                  </v-flex>
+                </template>
+
                 <v-flex>
-                  Провайдер SMS:
-                  {{ businessSettings.notifications.provider.name }}
-                </v-flex>
-                <v-flex>
-                  <v-text-field
-                    v-model="businessSettings.notifications.provider.key"
-                    label="Ключ"
-                  />
+                  <v-card
+                    flat
+                    color="grey lighten-3"
+                  >
+                    <v-card-title>
+                      <v-switch
+                        v-model="showProviders"
+                        label="Показать список операторов рассылки"
+                        color="blue"
+                      />
+                      <v-card-text v-if="showProviders">
+                        <v-layout
+                          row
+                          wrap
+                        >
+                          <v-flex
+                            v-for="provider in providers"
+                            :key="provider.name"
+                            pa-2
+                          >
+                            <v-card
+                              :hover="true"
+                              class="text-xs-center"
+                              flat
+                              ripple
+                              @click="businessSettings.notifications.provider.name = provider.name"
+                            >
+                              <v-card-text>{{ provider.name }}</v-card-text>
+                              <v-responsive>
+                                <v-img
+                                  :src="logo(provider)"
+                                  :alt="provider.name"
+                                />
+                              </v-responsive>
+                            </v-card>
+                          </v-flex>
+                        </v-layout>
+                      </v-card-text>
+                    </v-card-title>
+                  </v-card>
                 </v-flex>
               </v-layout>
             </div>
@@ -120,18 +173,52 @@ import AppTabs from '@/components/common/AppTabs.vue'
 import PageLayout from '@/components/common/PageLayout.vue'
 import Api from '@/api/backend'
 
-
 export default {
   components: { AppTabs, PhoneEdit, MainButton, PageLayout },
   data () {
     return {
       activeTab: 0,
       businessSettings: new BusinessSettings(),
-      providers: []
+      providers: [],
+      showProviders: false,
+      paramsInfo: {
+        login: {
+          title: 'Логин'
+        },
+        password: {
+          title: 'Пароль'
+        },
+        key: {
+          title: 'Ключ API'
+        }
+      }
     }
   },
   computed: {
-    ...mapGetters(['businessId'])
+    ...mapGetters(['businessId']),
+    currentProvider () {
+      return (
+        this.businessSettings &&
+        this.businessSettings.notifications &&
+        this.businessSettings.notifications.provider &&
+        this.businessSettings.notifications.provider.name &&
+        this.providers &&
+        this.providers.find(
+          x => x.name === this.businessSettings.notifications.provider.name
+        )
+      )
+    },
+    params () {
+      return (
+        this.currentProvider &&
+        this.currentProvider.j &&
+        this.currentProvider.j.services &&
+        this.currentProvider.j.services.sms &&
+        this.currentProvider.j.services.sms.params.map(x => {
+          return { ...{ code: x.name }, ...this.paramsInfo[x.name] }
+        })
+      )
+    }
   },
   watch: {
     businessId: 'load'
@@ -141,12 +228,22 @@ export default {
     this.loadProviders()
   },
   methods: {
+    logo (provider) {
+      return (
+        provider &&
+        provider.j &&
+        provider.j.logo &&
+        provider.j.logo !== '' &&
+        provider.j.logo !== null &&
+        `${process.env.VUE_APP_IMAGES}providers/${provider.j.logo}`
+      )
+    },
     loadProviders () {
       Api()
-      .get('sms_providers')
-      .then(res=>{
-        this.providers = res.data
-      })
+        .get('sms_providers')
+        .then(res => {
+          this.providers = res.data
+        })
     },
     load () {
       if (!this.businessId) return
@@ -177,14 +274,14 @@ export default {
   }
 }
 .employee-profile {
-  color: #07101C;
+  color: #07101c;
   @media only screen and (min-width: $tablet) {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
   }
 
-    &__title {
+  &__title {
     font-size: 24px;
     &._name {
       text-align: center;
@@ -192,7 +289,7 @@ export default {
   }
   &__position {
     font-size: 14px;
-    color: #8995AF;
+    color: #8995af;
   }
   .v-avatar {
     margin-bottom: 24px !important;
@@ -217,11 +314,10 @@ export default {
     }
   }
 }
-  .employee-profile-edit {
-    .infocard__content {
-      @media only screen and (min-width: $tablet) {
-
-      }
+.employee-profile-edit {
+  .infocard__content {
+    @media only screen and (min-width: $tablet) {
     }
   }
+}
 </style>
