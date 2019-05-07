@@ -1,20 +1,20 @@
 <template>
-  <v-card
-    :hover="true"
-    class="text-xs-center"
-    flat
-    ripple
-    @click="$emit('click')"
-  >
-    <v-card-text>{{ provider.name }}</v-card-text>
-    <v-responsive>
-      <v-img
-        class="ma-2"
-        :src="logo(provider)"
-        :alt="provider.name"
-      />
-    </v-responsive>
-  </v-card>
+  <v-layout justify-center>
+    <v-card-actions class="justify-center">
+      <v-btn
+        flat
+        ripple
+        @click="$emit('click')"
+      >
+        <v-img
+          :src="logo(provider)"
+          :alt="provider.name"
+          :height="40"
+          :width="170"
+        />
+      </v-btn>
+    </v-card-actions>
+  </v-layout>
 </template>
 
 <script>
