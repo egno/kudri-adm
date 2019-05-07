@@ -94,34 +94,10 @@
             class="infocard _edit"
           >
             <div class="infocard__content">
-              <v-layout
-                align-left
-                column
-              >
-                <template v-if="businessSettings.notifications && currentProvider">
-                  <v-flex>
-                    {{ currentProvider.name }}
-                  </v-flex>
-                  <v-flex v-if="currentProvider.j && currentProvider.j.site">
-                    <div class="caption">
-                      <a :href="currentProvider.j.site">{{ currentProvider.j.site }}</a>
-                    </div>
-                  </v-flex>
-                  <v-flex
-                    v-for="param in params"
-                    :key="param.code"
-                  >
-                    <v-text-field
-                      v-model="businessSettings.notifications.provider[param.code]"
-                      :label="param.title"
-                    />
-                  </v-flex>
-                </template>
-
-                <v-flex>
-                  <ProviderList :providers="providers" @change="setProvider($event)" />
-                </v-flex>
-              </v-layout>
+              <ProviderSettings
+                :provider="businessSettings && businessSettings.notifications && businessSettings.notifications.provider"
+                @change="businessSettings.notifications.provider = $event"
+              />
             </div>
           </div>
         </v-form>
@@ -137,83 +113,32 @@ import PhoneEdit from '@/components/common/PhoneEdit.vue'
 import MainButton from '@/components/common/MainButton.vue'
 import AppTabs from '@/components/common/AppTabs.vue'
 import PageLayout from '@/components/common/PageLayout.vue'
-import ProviderList from '@/components/provider/ProviderList.vue'
-import Api from '@/api/backend'
-import { logo } from '@/components/provider/utils'
+import ProviderSettings from '@/components/provider/ProviderSettings.vue'
 
 export default {
-  components: { AppTabs, PhoneEdit, MainButton, PageLayout, ProviderList },
+  components: { AppTabs, PhoneEdit, MainButton, PageLayout, ProviderSettings },
   data () {
     return {
       activeTab: 0,
-      businessSettings: new BusinessSettings(),
-      providers: [],
-      paramsInfo: {
-        login: {
-          title: 'Логин'
-        },
-        password: {
-          title: 'Пароль'
-        },
-        key: {
-          title: 'Ключ API'
-        }
-      }
+      businessSettings: new BusinessSettings()
     }
   },
   computed: {
-    ...mapGetters(['businessId']),
-    currentProvider () {
-      return (
-        this.businessSettings &&
-        this.businessSettings.notifications &&
-        this.businessSettings.notifications.provider &&
-        this.businessSettings.notifications.provider.name &&
-        this.providers &&
-        this.providers.find(
-          x => x.name === this.businessSettings.notifications.provider.name
-        )
-      )
-    },
-    params () {
-      return (
-        this.currentProvider &&
-        this.currentProvider.j &&
-        this.currentProvider.j.services &&
-        this.currentProvider.j.services.sms &&
-        this.currentProvider.j.services.sms.params.map(x => {
-          return { ...{ code: x.name }, ...this.paramsInfo[x.name] }
-        })
-      )
-    }
+    ...mapGetters(['businessId'])
   },
   watch: {
     businessId: 'load'
   },
   mounted () {
     this.load()
-    this.loadProviders()
   },
   methods: {
-    logo (provider) {
-      return logo(provider)
-    },
-    loadProviders () {
-      Api()
-        .get('sms_providers?order=name')
-        .then(res => {
-          this.providers = res.data
-        })
-    },
     load () {
       if (!this.businessId) return
       this.businessSettings.load(this.businessId)
     },
     save () {
       this.businessSettings.save()
-    },
-    setProvider (payload) {
-      this.businessSettings.notifications.provider.name = payload.name
     }
   }
 }
