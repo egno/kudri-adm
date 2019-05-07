@@ -332,14 +332,7 @@ export default {
           })
       }
     },
-   /* getFilialName (id) {
-      if (!this.branchesList.length) {
-        return ''
-      }
-      const f = this.branchesList.find(b => b.id === id)
 
-      return f? f.j && f.j.name : ''
-    },*/
     getFilials () {
       const id = this.businessIsFilial
         ? this.businessInfo && this.businessInfo.parent

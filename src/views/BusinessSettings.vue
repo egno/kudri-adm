@@ -59,15 +59,6 @@
                       sm8
                     >
                       <v-card flat>
-                        <v-card-text
-                          v-if="event.template"
-                          class="caption grey--text"
-                        >
-                          <div class="pb-1">
-                            Шаблон уведомления:
-                          </div>
-                          {{ event.template }}
-                        </v-card-text>
                         <v-card-text v-if="typeof event.phone !== 'undefined'">
                           <PhoneEdit
                             :phone="event.phone"

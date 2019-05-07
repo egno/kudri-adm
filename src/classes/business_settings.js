@@ -71,9 +71,7 @@ class Events extends ApiObject {
     })
     this.cancel_visit = new Event({
       ...(newVal && newVal.cancel_visit),
-      ...{ title: 'Об отмене онлайн-записи', phone: null },
-      ...{
-        template: 'klient <номер телефона> otmenil zapis k-masteru-na<Мастер> на <время записи>' }
+      ...{ title: 'Об отмене онлайн-записи', phone: null }
     })
     this.account_state = new Event({
       ...{
@@ -84,7 +82,6 @@ class Events extends ApiObject {
     })
     this.confirm_phone = new Event({
       ...{ title: 'Запрос Клиенту на подтверждение номера телефона' },
-      ...{ template: 'Код подтверждения онлайн записи <код>' },
       ...(newVal && newVal.confirm_phone)
     })
     this.new_visit_client = new Event({
