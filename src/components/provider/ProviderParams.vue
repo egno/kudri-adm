@@ -18,7 +18,7 @@
       </v-layout>
     </v-card-text>
 
-    <v-layout row>
+    <v-layout row class="pb-3">
       <v-spacer />
       <v-btn
         large
