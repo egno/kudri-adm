@@ -1,0 +1,15 @@
+@import './infocard';
+
+.infocard {
+  @media only screen and (min-width : $tablet) {
+    width: 724px;
+  }
+
+  &._edit {
+    .infocard__content {
+      @media only screen and (min-width : $desktop) {
+        max-width: 724px;
+      }
+    }
+  }
+}

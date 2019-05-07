@@ -3,22 +3,31 @@
     align-left
     column
   >
-    <template v-if="currentProvider">
-      <v-flex>
-        {{ currentProvider.name }}
-      </v-flex>
-      <v-flex v-if="currentProvider.j && currentProvider.j.site">
-        <div class="caption">
-          <a :href="currentProvider.j.site">{{ currentProvider.j.site }}</a>
-        </div>
-      </v-flex>
-      <v-flex>
-        <ProviderParams
-          :values="provider"
-          :provider="currentProvider"
-        />
-      </v-flex>
-    </template>
+    <v-flex pb-4>
+      <v-layout
+        row
+        wrap
+        fill-height
+      >
+        <v-flex
+          xs12
+          sm6
+        >
+          <SelectedProviderInfoCard :provider="currentProvider" />
+        </v-flex>
+        <v-flex
+          xs12
+          sm6
+        >
+          <ProviderParams
+            v-show="currentProvider"
+            :values="provider"
+            :provider="currentProvider"
+            @save="setProvider(provider)"
+          />
+        </v-flex>
+      </v-layout>
+    </v-flex>
     <v-flex>
       <ProviderList
         :providers="providers"
@@ -31,11 +40,12 @@
 
 <script>
 import Api from '@/api/backend'
+import SelectedProviderInfoCard from '@/components/provider/SelectedProviderInfoCard.vue'
 import ProviderParams from '@/components/provider/ProviderParams.vue'
 import ProviderList from '@/components/provider/ProviderList.vue'
 
 export default {
-    components: { ProviderList, ProviderParams },
+  components: { ProviderList, ProviderParams, SelectedProviderInfoCard },
   props: {
     provider: {
       type: Object,
@@ -55,9 +65,7 @@ export default {
         this.provider &&
         this.provider.name &&
         this.providers &&
-        this.providers.find(
-          x => x.name === this.provider.name
-        )
+        this.providers.find(x => x.name === this.provider.name)
       )
     }
   },

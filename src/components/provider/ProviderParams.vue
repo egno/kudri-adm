@@ -1,7 +1,10 @@
 <template>
   <v-card>
     <v-card-text>
-      <v-layout column>
+      <v-layout
+        column
+        justify-start
+      >
         <v-flex
           v-for="param in params"
           :key="param.code"
@@ -9,10 +12,26 @@
           <v-text-field
             v-model="values[param.code]"
             :label="param.title"
+            :type="param.code"
           />
         </v-flex>
       </v-layout>
     </v-card-text>
+
+    <v-layout row>
+      <v-spacer />
+      <v-btn
+        large
+        ripple
+        class="px-5 styled-button"
+        height="50"
+        color="primary"
+        @click="$emit('save')"
+      >
+        Сохранить
+      </v-btn>
+      <v-spacer />
+    </v-layout>
   </v-card>
 </template>
 
@@ -63,3 +82,10 @@ export default {
 }
 </script>
 
+<style scoped>
+.styled-button {
+  font-family: Roboto Slab, Times New Roman, Times, serif;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+}
+</style>

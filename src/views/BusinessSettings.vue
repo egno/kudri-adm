@@ -96,7 +96,7 @@
             <div class="infocard__content">
               <ProviderSettings
                 :provider="businessSettings && businessSettings.notifications && businessSettings.notifications.provider"
-                @change="businessSettings.notifications.provider = $event"
+                @change="businessSettings.notifications.provider = $event; save()"
               />
             </div>
           </div>
@@ -145,7 +145,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../assets/styles/infocard';
+@import '../assets/styles/settings';
 @import '../assets/styles/businesscard-form';
 
 .tab-content {
