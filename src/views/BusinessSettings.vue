@@ -119,46 +119,7 @@
                 </template>
 
                 <v-flex>
-                  <v-card
-                    flat
-                    color="grey lighten-3"
-                  >
-                    <v-card-title>
-                      <v-switch
-                        v-model="showProviders"
-                        label="Показать список операторов рассылки"
-                        color="blue"
-                      />
-                      <v-card-text v-if="showProviders">
-                        <v-layout
-                          row
-                          wrap
-                        >
-                          <v-flex
-                            v-for="provider in providers"
-                            :key="provider.name"
-                            pa-2
-                          >
-                            <v-card
-                              :hover="true"
-                              class="text-xs-center"
-                              flat
-                              ripple
-                              @click="businessSettings.notifications.provider.name = provider.name"
-                            >
-                              <v-card-text>{{ provider.name }}</v-card-text>
-                              <v-responsive>
-                                <v-img
-                                  :src="logo(provider)"
-                                  :alt="provider.name"
-                                />
-                              </v-responsive>
-                            </v-card>
-                          </v-flex>
-                        </v-layout>
-                      </v-card-text>
-                    </v-card-title>
-                  </v-card>
+                  <ProviderList :providers="providers" @change="setProvider($event)" />
                 </v-flex>
               </v-layout>
             </div>
@@ -176,16 +137,17 @@ import PhoneEdit from '@/components/common/PhoneEdit.vue'
 import MainButton from '@/components/common/MainButton.vue'
 import AppTabs from '@/components/common/AppTabs.vue'
 import PageLayout from '@/components/common/PageLayout.vue'
+import ProviderList from '@/components/provider/ProviderList.vue'
 import Api from '@/api/backend'
+import { logo } from '@/components/provider/utils'
 
 export default {
-  components: { AppTabs, PhoneEdit, MainButton, PageLayout },
+  components: { AppTabs, PhoneEdit, MainButton, PageLayout, ProviderList },
   data () {
     return {
       activeTab: 0,
       businessSettings: new BusinessSettings(),
       providers: [],
-      showProviders: false,
       paramsInfo: {
         login: {
           title: 'Логин'
@@ -234,14 +196,7 @@ export default {
   },
   methods: {
     logo (provider) {
-      return (
-        provider &&
-        provider.j &&
-        provider.j.logo &&
-        provider.j.logo !== '' &&
-        provider.j.logo !== null &&
-        `${process.env.VUE_APP_IMAGES}providers/${provider.j.logo}`
-      )
+      return logo(provider)
     },
     loadProviders () {
       Api()
@@ -256,6 +211,9 @@ export default {
     },
     save () {
       this.businessSettings.save()
+    },
+    setProvider (payload) {
+      this.businessSettings.notifications.provider.name = payload.name
     }
   }
 }
