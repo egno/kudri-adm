@@ -16,7 +16,8 @@ const businessCards = [
   'companyServicesGallery',
   'companyEmployeesGallery',
   'employeeGallery',
-  'serviceAlbum'
+  'serviceAlbum',
+  'businessUsers'
 ]
 
 export function isBusinessRoute (routeName) {

@@ -176,6 +176,14 @@ export default {
           }
         },
         {
+          title: 'Пользователи',
+          route: {
+            name: 'businessUsers',
+            params: { id: this.businessId }
+          },
+          show: (!this.businessIsFilial || this.parentFilialsCount > 1) && this.loggedIn && !this.isManagerMenu && this.businessIsSalon
+        },
+        {
           title: 'Услуги',
           count: this.businessServiceCount,
           route: {
