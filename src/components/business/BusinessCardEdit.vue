@@ -233,6 +233,7 @@ import MainButton from '@/components/common/MainButton.vue'
 import Business from '@/classes/business'
 import BusinessSchedule from '@/classes/businessSchedule'
 import { debounce } from 'lodash'
+import { uuidv4 } from '@/components/utils'
 
 export default {
   components: {
@@ -392,14 +393,14 @@ export default {
       this.$emit('tabChange')
     },
     fetchData () {
-      if (this.businessInfo.id === 'new') {
+      if (!this.businessInfo.id || this.businessInfo.id === 'new') {
+        this.data.id = uuidv4()
         this.addLink()
         if (this.businessInfo.j && this.businessInfo.j.schedule) {
           this.data.schedule = new BusinessSchedule(this.businessInfo.j.schedule)
           this.schedule = this.data.j.schedule
           this.hasSchedule = this.checkSchedule()
         }
-
         return
       }
       this.data
@@ -456,7 +457,7 @@ export default {
       this.$emit('formChange')
     },
     onAvatarSave (img) {
-      this.saveImage(img, this.id).then(() => {
+      this.saveImage(img, this.data.id).then(() => {
         this.data.save().then(() => {
           this.setBusinessInfo(this.data)
         })
@@ -467,10 +468,6 @@ export default {
       this.$emit('formChange')
     },
     saveData () {
-      if (this.businessInfo.id === 'new') {
-        this.$emit('save', this.data)
-        return
-      }
       let schedule = this.data.j.schedule.data
       for (let i = 0; i < 7; i++) {
         !schedule[i] && (schedule[i] = {start: '', end: ''})

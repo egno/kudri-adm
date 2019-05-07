@@ -315,7 +315,7 @@ export default {
       'setNavigationMini'
     ]),
     loadBusiness () {
-      if (!this.businessId) {
+      if (!this.businessId || this.businessId==='new') {
         return
       }
       this.setBusiness(this.businessId)

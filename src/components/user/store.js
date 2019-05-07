@@ -89,7 +89,7 @@ const actions = {
       })
       .catch(err => commit('ADD_ALERT', makeAlert(err)))
   },
-  login ({ commit, dispatch }, payload) {
+  login ({ commit }, payload) {
     const loginPath = 'rpc/login'
     localStorage.removeItem('accessToken')
     Api()
@@ -99,7 +99,6 @@ const actions = {
       .then(res => res.token)
       .then(token => {
         commit('SET_TOKEN', token)
-        dispatch('loadUserInfo')
       })
       .catch(err => {
         commit('ADD_ALERT', makeAlert(err))

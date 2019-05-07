@@ -13,7 +13,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo']),
+    ...mapGetters(['userInfo','userRole']),
     role () {
       return this.userInfo && this.userInfo.role
     },
@@ -35,6 +35,12 @@ export default {
         .then(res => res.data)
         .then(res => {
           this.businessCount = res.length
+          if (!this.businessCount && this.userRole==='business') {
+            this.$router.push({
+              name: 'businessCard',
+              params: { id: 'new' }
+            })
+          }
           if (this.businessCount === 1 && res[0].id) {
             this.$router.push({
               name: 'businessCard',
