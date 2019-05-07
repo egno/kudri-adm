@@ -2,7 +2,7 @@
   <v-layout>
     <v-flex class="address">
       <v-combobox
-        v-model="address"
+        :value="address.name"
         allow-overflow
         auto-select-first
         browser-autocomplete
@@ -20,6 +20,7 @@
         attach=".address .dropdown-select"
         class="businesscard-form__field dropdown-select"
         @blur="edited = true"
+        @input="$emit('inputAddress', (items && items[0]) || search)"
       />
     </v-flex>
   </v-layout>

@@ -142,7 +142,7 @@ class Business extends ApiObject {
 
   set name (newVal) {
     if (newVal) {
-      this.j.name = newVal.slice(0, 50)
+      this.j.name = newVal.slice(0,50)
     } else {
       delete this.j.name
     }
@@ -239,18 +239,22 @@ class Business extends ApiObject {
   }
 
   save () {
-    function post (data) {
+    if (!this.id) {
       return Api()
-        .post(`business?`, data)
+        .post(`business?`, this.jsonObject)
         .then(res => responseGetId(res))
         .catch(err => {
           store.dispatch('alert', makeAlert(err))
           return false
         })
+    } else {
+      return Api()
+        .patch(`business?id=eq.${this.id}`, this.jsonObject)
+        .catch(err => {
+          store.dispatch('alert', makeAlert(err))
+          return false
+        })
     }
-
-    let data = this.jsonObject
-    return post(data)
   }
 }
 
