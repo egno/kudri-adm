@@ -17,9 +17,10 @@ export default {
   computed: {},
   mounted () {
     this.setActions(null)
+    this.logout()
   },
   methods: {
-    ...mapActions(['setActions'])
+    ...mapActions(['setActions','logout'])
   }
 }
 </script>

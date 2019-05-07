@@ -265,7 +265,6 @@ export default {
             })
             this.fcode = ''
             this.badCode = ''
-            this.$refs.formCode.resetValidation()
             this.codeTries = res.data.attempts
             if (res.data.seconds) {
               this.alert({
@@ -274,8 +273,8 @@ export default {
               })
             }
           })
-          .catch(function () {
-            console.log('FAILURE!!')
+          .catch(res => {
+            console.log('FAILURE!!', res)
           })
       }
     },
