@@ -35,20 +35,17 @@
                   <div class="clients__avatar">
                     <Avatar
                       class="ma-1"
-                      :name="props.item.name.fullName || props.item.email"
+                      :name="props.item.fullName || props.item.email"
                       size="24px"
                       :src="props.item.j.avatar"
                     />
                   </div>
                   <div class="clients__name-phone">
                     <div class="clients__name">
-                      {{ props.item.name.fullName }}
+                      {{ props.item.fullName }}
                     </div>
                     <div v-if="props.item.phone" class="clients__add-info _phone">
-                      {{ props.item.phone | phoneFormat }}
-                    </div>
-                    <div v-else class="clients__add-info _phone">
-                      {{ props.item.phones[0] | phoneFormat }}
+                      {{ props.item.phone }}
                     </div>
                   </div>
                 </v-layout>
@@ -57,34 +54,23 @@
                 </div>
               </v-layout>
             </td>
-            <td @click="clientVisits(props.item)">
-              <div
-                v-if="props.item.visit.visits.total"
-                class="hidden-button"
-              >
-                <span class="clients__visit-total">{{ props.item.visit.visits.total }}</span>
-                <span
-                  v-if="props.item.visit.visits.unvisited"
-                  class="clients__visit-unvisited"
-                >
-                  {{ props.item.visit.visits.unvisited }}
-                </span>
+            <td>
+              <div>
+                <span class="clients__visit-total">{{ props.item.role }}</span>
               </div>
             </td>
             <td>
-              <v-layout v-if="props.item.lastVisit.ts_begin" column>
+              <v-layout v-if="props.item.business" column>
                 <v-flex>
-                  <span>{{ props.item.lastVisit.date }}</span>
-                  <span> — </span>
-                  <span>{{ props.item.lastVisit.displayStatus }}</span>
+                  <span>{{ props.item.business[0].name }}</span>
                 </v-flex>
                 <v-flex>
-                  <span class="second-row">{{ props.item.lastVisit.timeInterval }}</span>
+                  <span class="second-row">{{ props.item.business.length }}</span>
                 </v-flex>
               </v-layout>
             </td>
             <td>
-              <span v-if="props.item.visit.visits.check">{{ props.item.visit.visits.check | numberFormat }} рублей</span>
+              <span v-if="props.item.j.note">{{ props.item.j.note }}</span>
             </td>
             <td>
               <v-layout
@@ -112,11 +98,6 @@
           @onSave="onSave"
           @close="edit=false; item={}"
         />
-        <ClientVisits
-          :value="visitsPanel"
-          :client="item"
-          @close="visitsPanel=false"
-        />
         <Modal
           :visible="deleteConfirm"
           :template="{
@@ -132,17 +113,14 @@
               v-if="item.fullName"
               class="uno-modal__text"
             >
-              Удалить клиента <span class="font-weight-bold">{{ item.fullName }}</span>? Все данные клиента будут удалены.
+              Удалить пользователя <span class="font-weight-bold">{{ item.fullName }}</span>?
             </div>
             <div v-else class="uno-modal__text">
-              Удалить клиента? Все данные клиента будут удалены.
+              Удалить пользователя?
             </div>
           </template>
         </Modal>
       </div>
-      <v-tooltip bottom :value="tooltip" attach=".clients__question" content-class="clients__tooltip">
-        Для просмотра всей истории посещений кликните по статусу клиента
-      </v-tooltip>
     </template>
   </PageLayout>
 </template>
@@ -152,8 +130,7 @@ import Api from '@/api/backend'
 import { mapActions, mapGetters } from 'vuex'
 import Avatar from '@/components/avatar/Avatar.vue'
 import ClientCardEdit from '@/components/client/ClientCardEdit.vue'
-import ClientVisits from '@/components/client/ClientVisits.vue'
-import Client from '@/classes/client'
+import User from '@/classes/user'
 import { filials} from "../components/business/mixins"
 import DeleteButton from '@/components/common/DeleteButton'
 import Users from '@/mixins/users'
@@ -164,7 +141,6 @@ import { debounce } from 'lodash'
 export default {
   components: {
     ClientCardEdit,
-    ClientVisits,
     Avatar,
     DeleteButton,
     PageLayout,
@@ -192,11 +168,10 @@ export default {
       branchesList: [],
       edit: false,
       headers: [
-        { text: 'Имя и фамилия', value: 'j->name->>fullname' },
-        { text: 'Визиты', value: 'visit->visits->>total', width: '100px' },
-        { text: 'Статус последнего визита', value: 'visit->last->>ts_begin', width: '200px', class: 'clients__question' },
-        { text: 'Средний чек', value: 'visit->visits->>check', width: '170px' },
-        /*{ text: 'Филиал', value: '', width: '200px' },*/
+        { text: 'Имя и фамилия', value: 'j->>name' },
+        { text: 'Роль пользователя', value: '', sortable: false },
+        { text: 'Филиал', value: '', sortable: false },
+        { text: 'Комментарий', value: '', sortable: false },
         { text: '', value: '', sortable: false, width: '1' }
       ],
       item: {},
@@ -256,12 +231,10 @@ export default {
     if (this.userId) {
       this.onClientChange()
     }
-    this.$el.querySelector('.clients__question').addEventListener('mouseenter', this.onHover)
-    this.$el.querySelector('.clients__question').addEventListener('mouseleave', this.onLeave)
+  
   },
   beforeDestroy () {
-    this.$el.querySelector('.clients__question').removeEventListener('mouseenter', this.onHover)
-    this.$el.querySelector('.clients__question').removeEventListener('mouseleave', this.onLeave)
+
   },
   methods: {
     ...mapActions(['addClientsCounter']),
@@ -272,7 +245,7 @@ export default {
       })
     },
     clientVisits (item) {
-      this.item = new Client(item)
+      this.item = new User(item)
       this.visitsPanel = true
     },
     closeuserEditor () {
@@ -287,7 +260,7 @@ export default {
       if (!this.businessId) return
 
       const { sortBy, descending, page, rowsPerPage } = this.pagination
-      let filter = [`business_id.eq.${this.businessId}`, this.querySearchString]
+      let filter = [`company_id.eq.${this.businessId}`, this.querySearchString]
         .filter(x => !!x)
         .join(',')
       let filterString = `and=(${filter})`
@@ -311,7 +284,7 @@ export default {
         this.items = []
 
         Api()
-          .get(`client?${this.lastQuery}`)
+          .get(`user?${this.lastQuery}`)
           .then(res => {
             if (res.headers && res.headers['content-range']) {
               const r = res.headers['content-range'].match(/^\d*-\d*\/(\d*)$/)
@@ -322,7 +295,7 @@ export default {
             return res.data
           })
           .then(res => {
-            this.items = res.filter(x => !!x.j).map(x => new Client(x))
+            this.items = res.filter(x => !!x.j).map(x => new User(x))
           })
           .catch((e) => {
             console.error(e)
@@ -346,7 +319,7 @@ export default {
     },
     onClientChange () {
       if (!this.userId) return
-      this.item = new Client({ id: this.userId })
+      this.item = new User({ id: this.userId })
       this.item.load(this.userId)
         .then(() => {
           this.edit = true
@@ -371,7 +344,7 @@ export default {
         return
       }
       Api()
-        .delete(`client?id=eq.${this.item.id}`)
+        .delete(`user?id=eq.${this.item.id}`)
         .then(() => {
           this.addClientsCounter(-1)
           this.fetchData()
@@ -380,7 +353,7 @@ export default {
         })
     },
     onSave (item) {
-      const newItem = item instanceof Client? item : new Client(item)
+      const newItem = item instanceof User? item : new User(item)
       newItem.save().then(res => {
         if (!res) return
         this.edit = false
