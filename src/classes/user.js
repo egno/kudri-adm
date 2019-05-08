@@ -38,6 +38,9 @@ class User extends ApiObject {
     return (this.business.some(x => x.id === this.company_id)) ? 'Администратор компании' : 'Менеджер филиала'
   }
 
+  get filialCount () {
+    return this.business.length
+  }
 
   /**
    * @param {String} newVal

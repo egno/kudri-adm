@@ -93,6 +93,11 @@ export default new Router({
       component: () => import('./views/UserList.vue')
     },
     {
+      path: '/businessUsers/f/:id/u/:user',
+      name: 'businessUser',
+      component: () => import('./views/UserList.vue')
+    },
+    {
       path: '/gallery/:id',
       name: 'companyGallery',
       component: () => import('./views/gallery/_id/index.vue')

@@ -64,8 +64,8 @@
                 <v-flex>
                   <span>{{ props.item.business[0].name }}</span>
                 </v-flex>
-                <v-flex>
-                  <span class="second-row">{{ props.item.business.length }}</span>
+                <v-flex v-if="props.item.filialCount && (props.item.filialCount - 1)">
+                  <span class="second-row">{{ props.item.filialCount - 1 }}</span>
                 </v-flex>
               </v-layout>
             </td>
@@ -240,8 +240,8 @@ export default {
     ...mapActions(['addClientsCounter']),
     userEdit (item) {
       this.$router.push({
-        name: 'businessCardClient',
-        params: { id: this.businessId, client: item.id }
+        name: 'businessUser',
+        params: { id: this.businessId, user: item.id }
       })
     },
     clientVisits (item) {
