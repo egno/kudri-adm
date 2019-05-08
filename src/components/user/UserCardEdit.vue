@@ -1,0 +1,497 @@
+<template>
+  <v-dialog
+    :value="visible"
+    content-class="right-attached-panel businesscard-form _clients"
+    transition="slide"
+    @input="$emit('close')"
+  >
+    <v-layout
+      v-if="client"
+      column
+      align-space-around
+      justify-start
+      class="right-attached-panel__container"
+    >
+      <button
+        type="button"
+        class="right-attached-panel__close"
+        @click="$emit('close')"
+      />
+      <div class="right-attached-panel__header">
+        {{ create? 'Добавить пользователя' : 'Информация о пользователе' }}
+      </div>
+      <div class="businesscard-form__field">
+        <div class="phone-input">
+          <PhoneEdit
+            :phone="client.phone"
+            :removable="false"
+            label="Телефон"
+            placeholder=""
+            :class="{ 'no-default': !client.phone && (filledPhones.length > 1) }"
+            @onEdit="client.phones[i] = $event; checkPhones($event)"
+          />
+          <template v-if="phone && (filledPhones.length > 1)">
+            <div
+              v-if="client.phone && (client.phone.substr(-10) === phone.substr(-10))"
+              class="default"
+            >
+              Основной телефон
+            </div>
+            <button
+              v-else-if="!clientWithSamePhone && (phone.length >= 10)"
+              type="button"
+              class="make-default"
+              @click="client.phone = phone"
+            >
+              Сделать основным
+            </button>
+          </template>
+          <div
+            v-if="clientWithSamePhone && clientWithSamePhone.phones.find(p => p.substr(-10) === phone.substr(-10))"
+            class="error--text"
+          >
+            Найден 1 клиент с данным номером телефона
+          </div>
+        </div>
+
+        <div class="businesscard-form__field _select dropdown-select">
+          <v-combobox
+            ref="fullName"
+            :value="client.fullName"
+            :items="suggestedClients"
+            :item-text="clientDisplay"
+            label="ИМЯ И ФАМИЛИЯ"
+            maxlength="50"
+            return-object
+            required
+            attach="._clients .businesscard-form__field._select"
+            @update:searchInput="onInputName"
+            @input="selectClient"
+          >
+            <template v-slot:selection="{ item, parent, selected }">
+              {{ item }}
+            </template>
+            <template v-slot:item="{ index, item }">
+              <div>
+                {{ item.j.name.fullname }}
+              </div>
+              <div class="phone-number">
+                {{ item.j.phone? item.j.phone : item.j.phones[0] | phoneFormat }}
+              </div>
+            </template>
+          </v-combobox>
+        </div>
+      </div>
+      <div class="businesscard-form__field">
+        <v-textarea
+          v-model="client.notes"
+          label="Комментарий"
+          maxlength="500"
+          :rules="[rules.maxLength(500)]"
+          counter="500"
+          auto-grow
+          rows="1"
+        />
+      </div>
+      <div>
+        <MainButton
+          class="button save-info"
+          :class="{ button_disabled: !hasPhone || clientWithSamePhone || duplicatedPhone }"
+          @click="onSave"
+        >
+          Сохранить
+        </MainButton>
+      </div>
+    </v-layout>
+  </v-dialog>
+</template>
+
+<script>
+import MainButton from '@/components/common/MainButton.vue'
+import PhoneEdit from '@/components/common/PhoneEdit.vue'
+import Api from '@/api/backend'
+import User from '@/classes/user'
+import { debounce } from 'lodash'
+
+export default {
+  components: { MainButton, PhoneEdit },
+  filters: {
+    phoneFormat (value) {
+      if (!value) return ''
+      return value.replace(
+        /(\d?)(\d{1,3})(\d{1,3})(\d{1,2})(\d{1,2})$/g,
+        '+$1 ($2) $3-$4-$5'
+      )
+    }
+  },
+  model: {
+    prop: 'visible',
+    event: 'close'
+  },
+  props: {
+    visible: {
+      type: Boolean,
+      default: false,
+      required: true
+    },
+    client: {
+      type: Object,
+      default () {
+        return new User()
+      }
+    },
+    create: {
+      type: Boolean,
+      default: false,
+      required: true
+    },
+    filial: {
+      type: String,
+      default: ''
+    },
+    companyId: {
+      type: String,
+      default: ''
+    }
+  },
+  data () {
+    return {
+      active: 0,
+      clientWithSamePhone: undefined,
+      clientDisplay (c) {
+        return `${c.j.name.fullname}${c.j.phone ? c.j.phone : c.j.phones[0]}`
+      },
+      duplicatedPhone: '',
+      hasPhone: undefined,
+      hasEmptyPhone: undefined,
+      filledPhones: [],
+      suggestedClients: [],
+      rules: {
+        required: value => !!value || 'Это поле обязательно для заполнения',
+        maxLength: length => value =>
+          (value && (value.length <= length || 'Слишком длинный текст')) ||
+          true,
+        discount: val =>
+          !val || ((val > 0 && val <= 100) || 'Неверное количество процентов')
+      },
+      samePhone: ''
+    }
+  },
+  computed: {},
+  watch: {
+    'client.id': 'checkPhones',
+    'client.phones': {
+      handler: 'checkPhones',
+      deep: true
+    }
+  },
+  beforeMount () {
+    this.checkPhones()
+  },
+  created () {
+    this.debouncedGetClients = debounce(this.getClientsByName, 350)
+  },
+  methods: {
+    checkPhones (newPhone) {
+      const phones = this.client.phones
+
+      this.samePhone = ''
+      this.clientWithSamePhone = null
+      this.duplicatedPhone = ''
+
+      if (!phones || !phones.length) {
+        this.hasPhone = false
+        this.hasEmptyPhone = true
+        this.filledPhones = []
+        return
+      }
+      this.hasPhone = phones.some(phone => phone.length >= 10)
+      this.hasEmptyPhone = phones.some(x => !x || x.length < 10)
+      this.filledPhones = phones.filter(p => p && p.length >= 10)
+
+      if (
+        newPhone &&
+        typeof newPhone === 'string' &&
+        newPhone.length >= 10 &&
+        newPhone.length < 12
+      ) {
+        this.getClientsByPhone(newPhone)
+      }
+
+      phones.forEach((p, i) => {
+        if (i === phones.length - 1 || !p) {
+          return
+        }
+
+        for (let j = i + 1; j < phones.length; j++) {
+          if (phones[j] && p.substr(-10) === phones[j].substr(-10)) {
+            this.duplicatedPhone = p
+            return
+          }
+        }
+      })
+    },
+    getClientsByName (val) {
+      Api()
+        .get(
+          `client?company_id.eq.${
+            this.companyId
+          }&j->name->>fullname=ilike.*${val}*`
+        )
+        .then(({ data }) => {
+          this.suggestedClients = data.filter(
+            c => c.business_id !== this.filial
+          )
+        })
+    },
+    getClientsByPhone (newPhone) {
+      if (newPhone && newPhone.length >= 10) {
+        Api()
+          .get(
+            `/client_phone?and=(company_id.eq.${
+              this.companyId
+            },phone.eq.7${newPhone})`
+          )
+          .then(({ data }) => {
+            let companyClients = data.filter(
+              c => c.company_id === this.companyId && c.id !== this.client.id
+            )
+
+            if (companyClients.length) {
+              this.clientWithSamePhone = new User(companyClients[0])
+              this.samePhone = '7' + newPhone
+            }
+          })
+          .catch(e => console.log(e))
+      }
+    },
+    onDelete () {
+      this.$emit('onDelete', this.client)
+    },
+    onInputBirthDate (newVal) {
+      if (this.validateBirthDay(newVal) === true) {
+        this.client.birth_date = newVal
+      } else {
+        this.client.birth_date = ''
+      }
+    },
+    validateBirthDay (value) {
+      const dateFormat = /^(0?[1-9]|[12][0-9]|3[01])(0?[1-9]|1[012])(19\d{2}|20\d{2})$/
+      const currentYear = new Date().getFullYear()
+      let match
+
+      if (!value) {
+        return true
+      }
+
+      match = value.match(dateFormat)
+
+      if (!match) {
+        return 'Неправильная дата рождения'
+      }
+      const day = match[1]
+      const month = match[2]
+      const year = match[3]
+      const age = currentYear - year
+      let monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+      // Adjust for leap years
+      if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) {
+        monthLength[1] = 29
+      }
+
+      // Check the range of the day
+      if (day > monthLength[month - 1]) {
+        return 'Неправильная дата рождения'
+      }
+
+      if (age >= 0 && age < 101) {
+        return true
+      } else {
+        return 'Неправильная дата рождения'
+      }
+    },
+    onInputName (val) {
+      if (!val) {
+        this.suggestedClients = []
+        return
+      }
+
+      const match = val.match(/[а-яА-ЯёЁ ]+/g)
+
+      val = match ? match[0] : ''
+      this.$refs.fullName.lazySearch = val
+      if (!val || val.length < 3) {
+        this.suggestedClients = []
+        return
+      }
+      this.debouncedGetClients(val)
+    },
+    onInputPercent (val) {
+      if (this.rules.discount(val) === true) {
+        this.client.discount = val
+      } else {
+        this.client.discount = null
+      }
+    },
+    onSave () {
+      setTimeout(() => {
+        this.client.business_id = this.filial
+        if (!this.client.phone && this.filledPhones.length) {
+          this.client.phone = this.client.phones.find(p => p && p.length >= 10)
+        }
+        this.$emit('onSave', this.client)
+      }, 100)
+    },
+    reset () {
+      this.clientWithSamePhone = null
+      this.samePhone = ''
+    },
+    selectClient (client) {
+      if (client && typeof client === 'object') {
+        const { id, visit, j } = client
+        this.client.id = id
+        this.client.visit = visit
+        this.client.fullName = j.name.fullname
+        this.client.phone = j.phone
+        this.client.phones = j.phones
+        this.client.birth_date = j.birth_date
+        this.client.discount = j.discount
+        this.client.sex = j.sex
+        this.client.notes = j.notes
+      } else {
+        this.client.fullName = client
+      }
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+@import '../../assets/styles/businesscard-form';
+@import '../../assets/styles/phone-input';
+@import '../../assets/styles/right-attached-panel';
+@import '../../assets/styles/dropdown-select';
+
+.right-attached-panel._clients {
+  .businesscard-form__field {
+    margin-top: 28px;
+    padding-top: 20px;
+  }
+  .v-btn-toggle {
+    button {
+      @extend %filter;
+      padding: 0 12px;
+      margin: 0 12px 15px;
+      border-radius: 14px !important;
+      text-transform: capitalize;
+      &:hover {
+        @extend %filter-active;
+      }
+    }
+  }
+  .v-btn-toggle--selected {
+    box-shadow: none;
+  }
+  .error--text {
+    font-size: 12px;
+  }
+  .phone-input .v-input--is-disabled .v-input__slot:before {
+    display: none;
+  }
+  .accordion {
+    text-align: left;
+    &__container {
+      padding-top: 15px;
+    }
+    &__footer a {
+      font-size: 13px;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+    .v-text-field__prefix {
+      padding-left: 0;
+    }
+    ._phone.v-text-field
+      > .v-input__control
+      > .v-input__slot
+      > .v-text-field__slot {
+      padding-left: 0;
+    }
+    input {
+      color: #07101c;
+    }
+    .error-color {
+      .v-text-field__prefix,
+      input {
+        color: #ef4d37;
+      }
+    }
+    .businesscard-form__field {
+      margin-top: 5px;
+      padding-top: 0;
+    }
+    .visit {
+      margin-top: 22px;
+      color: #8995af;
+      &__date {
+        margin-top: 7px;
+        color: #07101c;
+      }
+      &__interval {
+        font-size: 12px;
+      }
+    }
+  }
+  .dropdown-select {
+    .v-menu__content {
+      top: 100% !important;
+    }
+    .v-list__tile {
+      display: block;
+      padding: 5px 16px 5px 37px;
+      text-align: left;
+      text-transform: capitalize;
+      color: #8995af;
+      font-size: 14px;
+      &:hover {
+        background-color: rgba(137, 149, 175, 0.2);
+      }
+      .phone-number {
+        font-weight: normal;
+        font-size: 12px;
+      }
+    }
+  }
+  .no-default {
+    .v-text-field__slot {
+      background: url('../../assets/images/svg/attention.svg') 10% center
+        no-repeat transparent !important;
+    }
+  }
+  .default {
+    position: relative;
+    margin-top: 8px;
+    font-size: 14px;
+    color: #8995af;
+    &:before {
+      content: '';
+      display: inline-block;
+      vertical-align: baseline;
+      width: 12px;
+      height: 12px;
+      margin-right: 3px;
+      background: url('../../assets/images/svg/selection-grey.svg') center
+        no-repeat transparent;
+    }
+  }
+  .make-default {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #5699ff;
+  }
+}
+</style>
+

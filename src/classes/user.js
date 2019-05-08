@@ -11,8 +11,8 @@ class User extends ApiObject {
    * @param {{ id: String; access: Boolean; parent: String; j: Object; }} newVal
    */
   set jsonObject (newVal) {
-    this.id = (newVal && newVal.id) || null
     this.company_id = (newVal && newVal.company_id) || null
+    this.id = (newVal && newVal.user_id) || null
     this.user_id = (newVal && newVal.user_id) || null
     this.j = (newVal && newVal.j) || {}
     this.phone = (newVal && newVal.phone) || null
@@ -62,7 +62,7 @@ class User extends ApiObject {
   load (id) {
     if (!id || id === 'new') return Promise.resolve()
     return Api()
-      .get(`user?id=eq.${id}`)
+      .get(`user?user_id=eq.${id}`)
       .then(res => res.data[0])
       .then(res => {
         this.jsonObject = res

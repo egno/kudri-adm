@@ -6,7 +6,7 @@
       buttonText: 'Добавить'
     }"
     @add="$router.push({
-      name: 'businessUsers',
+      name: 'businessUser',
       params: { id: businessId, user: 'new' }
     })"
   >
@@ -87,7 +87,7 @@
         <div class="text-xs-right">
           <v-pagination v-model="pagination.page" :length="pages" :total-visible="6" circle color="rgba(137, 149, 175, 0.35)" />
         </div>
-        <ClientCardEdit
+        <UserCardEdit
           v-if="edit"
           :visible="edit"
           :client="item"
@@ -129,7 +129,7 @@
 import Api from '@/api/backend'
 import { mapActions, mapGetters } from 'vuex'
 import Avatar from '@/components/avatar/Avatar.vue'
-import ClientCardEdit from '@/components/client/ClientCardEdit.vue'
+import UserCardEdit from '@/components/user/UserCardEdit.vue'
 import User from '@/classes/user'
 import { filials} from "../components/business/mixins"
 import DeleteButton from '@/components/common/DeleteButton'
@@ -140,7 +140,7 @@ import { debounce } from 'lodash'
 
 export default {
   components: {
-    ClientCardEdit,
+    UserCardEdit,
     Avatar,
     DeleteButton,
     PageLayout,
@@ -187,7 +187,7 @@ export default {
   computed: {
     ...mapGetters(['businessId', 'businessInfo', 'businessIsFilial', 'searchString']),
     userId () {
-      return this.$route && this.$route.params && this.$route.params.client
+      return this.$route && this.$route.params && this.$route.params.user
     },
     querySearchString () {
       if (!this.searchString || this.searchString.trim().length < 3) {
@@ -241,17 +241,17 @@ export default {
     userEdit (item) {
       this.$router.push({
         name: 'businessUser',
-        params: { id: this.businessId, user: item.id }
+        params: { id: this.businessId, user: item.user_id }
       })
     },
     clientVisits (item) {
       this.item = new User(item)
       this.visitsPanel = true
     },
-    closeuserEditor () {
+    closeUserEditor () {
       if (!this.edit) {
         this.$router.push({
-          name: 'BusinessClientsTable',
+          name: 'businessUsers',
           params: { id: this.businessId }
         })
       }
@@ -344,7 +344,7 @@ export default {
         return
       }
       Api()
-        .delete(`user?id=eq.${this.item.id}`)
+        .delete(`user?user_id=eq.${this.item.id}`)
         .then(() => {
           this.addClientsCounter(-1)
           this.fetchData()
