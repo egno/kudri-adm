@@ -412,7 +412,7 @@ export default {
   }
 }
 .menu-button {
-  width: 40px;
+  width: 55px;
   height: 55px;
   margin: 0 !important;
   border-radius: 0;

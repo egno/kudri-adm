@@ -1,5 +1,6 @@
 import Api from '@/api/backend'
 import { makeAlert } from '@/api/utils'
+import { sortBy } from 'lodash'
 
 const state = {
   businessInfo: {},
@@ -144,7 +145,7 @@ const actions = {
       .get(path)
       .then(res => res.data)
       .then(res => {
-        commit('SET_BUSINESS_EMPLOYEES', res)
+        commit('SET_BUSINESS_EMPLOYEES', sortBy(res, e => e.j.name ))
       })
       .catch(err => commit('ADD_ALERT', makeAlert(err)))
   }

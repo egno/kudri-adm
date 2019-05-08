@@ -208,6 +208,13 @@
   .v-counter {
     color: rgba(137, 149, 175, 0.35);
   }
+  .v-select__selections {
+    max-width: 100%;
+    overflow-x: hidden;
+    .v-chip {
+      text-overflow: ellipsis;
+    }
+  }
   .v-select__selections>div{
     text-align: right;
     justify-content: flex-end;

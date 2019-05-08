@@ -14,21 +14,16 @@
         pa-1
       >
         <v-flex>
-          <v-layout row>
-            <v-flex body-2>
-              {{ dow }}
-            </v-flex>
+          <v-layout column>
             <v-flex
               title
               pl-1
             >
               {{ day.display }}
             </v-flex>
-          </v-layout>
-        </v-flex>
-        <v-flex caption>
-          <v-layout column>
-            <v-flex>{{ displaySchedule }}</v-flex>
+            <v-flex body-2>
+              {{ dow }}
+            </v-flex>
           </v-layout>
         </v-flex>
       </v-layout>
@@ -43,33 +38,34 @@
       >
         <div
           v-if="displayTimeStamp(i)"
-          class="item-caption"
+          class="time-mark"
         >
           <div>{{ time.begin.display }}</div>
+        </div>
+        <div v-if="time.visit">
+          <VisitCard
+            :selected="selectVisit"
+            :visit="time.visit"
+            :services="time.visit.client && time.visit.client.services"
+            @onDelete="onVisitDelete(time.visit.id)"
+            @onEdit="onVisitEdit(time.visit)"
+          />
         </div>
         <div
-          :class="['time-block', {working: isWorkingTime(i)}]"
-          @click="onTimeBlockClick(time)"
+          v-else
+          :class="['slot', {working: isWorkingTime(i)}]"
+          @click="onSlotClick(time)"
         >
-          <div>{{ dow }}, {{ day.display }}</div>
-          <div>{{ time.begin.display }}</div>
+          <div class="slot__time">
+            {{ time.begin.display }}
+          </div>
+          <div v-show="time === selectedTime" class="slot__wrapper">
+            <div @click="$emit('onSlotClick', time.begin.date)">
+              +
+            </div>
+            <div>Cup</div>
+          </div>
         </div>
-        <CalendarVisit
-          v-for="(visit, iv) in visitsInTime(i)"
-          :id="visit.id"
-          :key="`visit-${iv}`"
-          :container-height="calcVisitHeight(visit)"
-          :container-offset="calcVisitOffset(visit)"
-          :selected="selectVisit"
-          :time-start="formatTime(visit.ts_begin)"
-          :time-end="formatTime(visit.ts_end)"
-          :duration="+visit.client.duration"
-          :name="visit.client && visit.client.name"
-          :phone="visit.client && visit.client.phone"
-          :services="visit.client && visit.client.services"
-          @onDelete="onVisitDelete(visit.id)"
-          @onEdit="onVisitEdit(visit)"
-        />
       </div>
     </div>
   </v-flex>
@@ -77,7 +73,7 @@
 
 
 <script>
-import CalendarVisit from '@/components/calendar/CalendarVisit.vue'
+import VisitCard from '@/components/calendar/VisitCard.vue'
 import {
   dowDisplay,
   formatTime,
@@ -86,7 +82,7 @@ import {
 import { mapGetters } from 'vuex'
 
 export default {
-  components: { CalendarVisit },
+  components: { VisitCard },
   props: {
     day: {
       type: Object,
@@ -121,11 +117,12 @@ export default {
     return {
       hours: 24,
       minutes: 60,
-      duration: 30,
+      duration: 15,
       displayStep: 2,
       rowHeightInEm: 3,
       selectVisit: false,
-      timeEditBlock: false
+      timeEditBlock: false,
+      selectedTime: undefined
     }
   },
   computed: {
@@ -162,21 +159,22 @@ export default {
     times () {
       let times = [...Array((this.hours * this.minutes) / this.duration)].map(
         (x, i) => {
-          const d1 = new Date(
-            this.day.date.getTime() + 60000 * (i * this.duration)
-          )
-          const d2 = new Date(
-            this.day.date.getTime() + 60000 * ((i + 1) * this.duration)
-          )
+          const dateTime = this.day.date.getTime()
+          const d1 = new Date(dateTime + 60000 * (i * this.duration))
+          const d2 = new Date(dateTime + 60000 * ((i + 1) * this.duration))
+          const displayTime1 = this.timeDisplay(d1)
+          const displayTime2 = this.timeDisplay(d2)
+
           return {
             begin: {
               date: d1,
-              display: this.timeDisplay(d1)
+              display: displayTime1
             },
             end: {
               date: d2,
-              display: this.timeDisplay(d2)
-            }
+              display: displayTime2
+            },
+            visit: this.visits.find(v => v.time === displayTime1)
           }
         }
       )
@@ -215,12 +213,6 @@ export default {
     displayTimeStamp (i) {
       return this.showTime && !(i % this.displayStep)
     },
-    displayVisit (visit, i) {
-      return (
-        getRESTTime(visit.ts_begin) >= this.times[i].begin.display &&
-        getRESTTime(visit.ts_begin) < this.times[i].end.display
-      )
-    },
     formatTime (ts) {
       return getRESTTime(ts)
     },
@@ -244,8 +236,8 @@ export default {
     onClickDate (dt) {
       this.$emit('onClickDate', dt)
     },
-    onTimeBlockClick (time) {
-      this.$emit('onTimeBlockClick', time.begin.date)
+    onSlotClick (time) {
+      this.selectedTime = time
     },
     onDayEdit () {
       this.$emit('onDayEdit', this.day)
@@ -256,56 +248,68 @@ export default {
     onVisitEdit (item) {
       this.$emit('onVisitEdit', item)
     },
-    onWorkTimeEdit () {},
     timeDisplay (date) {
       return formatTime(date)
     },
-    visitsInTime (i) {
-      return this.visits.filter(x => this.displayVisit(x, i))
-    }
   }
 }
 </script>
 
-<style scoped>
-.item-caption {
-  font-size: 0.7em;
-  color: #bbb;
-  margin-left: -3em;
-  margin-top: -1.5em;
-  width: 3em;
-  position: absolute;
-  border-bottom: 1px solid #ccc;
-}
-.item {
-  height: 3em;
-  position: relative;
-}
-.item:hover .item-caption {
-  color: #555;
-}
+<style lang="scss" scoped>
 .header {
   border: 1px solid #ccc;
   border-top: 0;
   border-left: 0;
   height: 4.5em;
 }
-.time-block {
-  font-size: 0.75em;
+.item {
+  position: relative;
+  height: 56px;
+}
+.time-mark {
+  position: absolute;
+  right: 100%;
+  top: 0;
+  font-size: 12px;
+  color: #8995AF;
+  margin-right: 8px;
+}
+.slot {
+  position: absolute;
   height: 100%;
   width: 100%;
-  border: 1px solid #ccc;
+  border: 1px solid rgba(137, 149, 175, .20);
+  font-size: 0.75em;
   border-top: 0;
   border-left: 0;
-  background: #d6d6d6;
-  position: absolute;
-  padding: 0.5em;
-  color: rgba(100, 100, 100, 0);
-  transition: all 0.5s ease;
-}
-.time-block:hover {
-  box-shadow: inset 0 0 1em 0 rgba(0, 0, 0, 0.1);
-  color: rgba(100, 100, 100, 0.5);
+  background: #fff;
+
+  &__time {
+    position: absolute;
+    z-index: 1;
+    top: 0; left: 0;
+    display: none;
+    padding: 20px 14px 0;
+    color: transparent;
+    font-size: 12px;
+  }
+
+  &__wrapper {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: nowrap;
+    height: 100%;
+    & > div {
+      width: 50%;
+      height: 100%;
+    }
+  }
+
+  &:hover &__time {
+    display: block;
+    color: rgba(137, 149, 175, .35)
+  }
 }
 .time-edit {
   display: block;

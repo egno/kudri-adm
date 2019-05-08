@@ -12,6 +12,7 @@ class Visit {
    */
   set jsonObject (newVal) {
     this.id = (newVal && newVal.id) || null
+    // ATTENTION!!! business_id should contain employee's id!!!
     this.business_id = (newVal && newVal.business_id) || null
     this.client_id = (newVal && newVal.client_id) || null
     this.salon_id = (newVal && newVal.salon_id) || null
@@ -22,9 +23,6 @@ class Visit {
       client: {},
       services: []
     }
-    this.master = (newVal && newVal.master) || {}
-
-    // set calculated properties
   }
 
   get jsonObject () {
@@ -37,6 +35,9 @@ class Visit {
     return this.ts_begin && displayRESTDate(this.ts_begin)
   }
 
+  get clientName () {
+    return this.j.client.name
+  }
   get statuses () {
     return [
       { display: 'Не пришел', code: 'unvisited', color: '#ef4d37' },

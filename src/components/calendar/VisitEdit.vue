@@ -1,170 +1,133 @@
 <template>
-  <VCard flat>
-    <AppTabs
-      v-model="active"
-      fixed-tabs
-    >
-      <v-tab
-        key="t-0"
-        ripple
-      >
-        <v-layout column>
-          <v-flex>Услуга</v-flex>
-          <v-flex class="caption text-none grey--text">
-            {{ visit.j && visit.j.services && visit.j.services[0] && visit.j.services[0].name }}
-          </v-flex>
-        </v-layout>
-      </v-tab>
-      <v-tab
-        key="t-1"
-        ripple
-      >
-        <v-layout column>
-          <v-flex>Дата и время</v-flex>
-          <v-flex class="caption text-none grey--text">
-            {{ displaySelectedTime }}
-          </v-flex>
-        </v-layout>
-      </v-tab>
-      <v-tab
-        key="t-2"
-        ripple
-      >
-        <v-layout column>
-          <v-flex>Клиент</v-flex>
-          <v-flex class="caption text-none grey--text">
-            {{ displayClient }}
-          </v-flex>
-        </v-layout>
-      </v-tab>
-      <v-tab-item key="ti-0">
-        <VCard flat>
-          <v-card-text>
-            <v-layout column>
-              <v-flex>
-                <v-layout row>
-                  <v-flex>
-                    <VSelect
-                      v-model="selectedCategory"
-                      :items="businessServiceCategories"
-                      clearable
-                      label="Категория"
-                    />
-                  </v-flex>
-                  <v-flex>
-                    <VTextField
-                      v-model="serviceFilter"
-                      label="Поиск услуги"
-                      clearable
-                    />
-                  </v-flex>
-                </v-layout>
-              </v-flex>
-              <v-flex class="scrolled">
-                <v-layout column>
-                  <v-flex
-                    v-for="(service, i) in filteredServices"
-                    :key="i"
-                    class="table-select"
-                    py-2
-                    px-1
-                    @click="visit.j.services=[service]"
-                  >
-                    <v-layout row>
-                      <v-flex xs10>
-                        {{ service.name }}
-                      </v-flex>
-                      <v-flex
-                        xs1
-                        text-xs-center
-                      >
-                        {{ service.duration ? service.duration + ' мин.' : '-' }}
-                      </v-flex>
-                      <v-flex
-                        xs1
-                        text-xs-right
-                      >
-                        {{ service.price }}
-                      </v-flex>
-                    </v-layout>
-                  </v-flex>
-                </v-layout>
-              </v-flex>
-            </v-layout>
-          </v-card-text>
-        </VCard>
-      </v-tab-item>
-      <v-tab-item key="ti-1">
-        <VCard flat>
-          <v-card-text>
-            <v-layout row>
-              <v-flex>
-                <v-date-picker
-                  v-model="selectedDate"
-                  locale="ru-RU"
-                  no-title
-                  first-day-of-week="1"
-                />
-              </v-flex>
-              <v-flex>
-                <v-time-picker
-                  v-model="selectedTime"
-                  format="24hr"
-                />
-              </v-flex>
-              <v-flex />
-            </v-layout>
-          </v-card-text>
-          <v-card-text v-if="message">
-            {{ message }}
-          </v-card-text>
-        </VCard>
-      </v-tab-item>
-      <v-tab-item key="ti-2">
-        <VCard flat>
-          <v-card-text>
-            <VTextField
-              v-if="visit.j"
-              v-model="visit.j.client.name"
-              label="Имя"
-              prepend-icon="account_box"
-              :rules="[() => !!visit.j.client.name || 'Это поле обязательно для заполнения']"
-              required
-            />
-            <PhoneEdit
-              v-if="visit.j"
-              :phone="visit.j.client.phone"
-              @onEdit="onPhoneEdit($event)"
-            />
-          </v-card-text>
-        </VCard>
-      </v-tab-item>
-    </AppTabs>
-    <VCardActions>
-      <VSpacer />
-      <VBtn
-        color="primary"
-        @click="onNextButton"
-      >
-        {{ tabButtonCaption }}
-      </VBtn>
-    </VCardActions>
-  </VCard>
+  <VDialog
+    :value="visible"
+    content-class="right-attached-panel businesscard-form" transition="slide"
+    @input="$emit('close')"
+  >
+    <VForm class="right-attached-panel__container">
+      <button type="button" class="right-attached-panel__close" @click="$emit('close')" />
+      <div class="right-attached-panel__header">
+        Создать запись
+      </div>
+      <div class="right-attached-panel__field-block">
+        <VSelect
+          v-model="type"
+          :items="types"
+          label="Тип записи"
+        />
+      </div>
+      <template v-if="type === 'К мастеру'">
+        <div class="right-attached-panel__field-block">
+          <VSelect
+            v-model="position"
+            :items="empCategories"
+            label="Должность"
+          />
+        </div>
+        <div v-if="type === 'К мастеру'" class="right-attached-panel__field-block">
+          <VSelect
+            v-model="selectedEmployee"
+            :items="position? employees.filter(e => e.j.category === position) : employees"
+            :item-text="e => e.j.name"
+            return-object
+            label="имя и фамилия мастера"
+          />
+        </div>
+      </template>
+      <div v-if="type==='На услугу' || selectedEmployee " class="right-attached-panel__field-block _service">
+        <VSelect
+          v-model="selectedServices"
+          :items="selectedEmployee? selectedEmployee.j.services : businessServices"
+          :item-text="service => service.name.length > 30? service.name.substring(0, 30) + '...' : service.name"
+          :required="true"
+          return-object
+          multiple
+          chips
+          deletable-chips
+          label="ВЫБЕРИТЕ УСЛУГУ"
+          attach=".right-attached-panel__field-block._service"
+          @select="selectedServices = $event"
+        />
+      </div>
+      <div class="right-attached-panel__field-block">
+        <div class="right-attached-panel__field-name">
+          Дата и время начала визита
+        </div>
+        <v-menu>
+          <template v-slot:activator="{ on }">
+            <button
+              type="button"
+              v-on="on"
+            >
+              {{ selectedDayFormatted }}
+            </button>
+          </template>
+          <v-date-picker
+            v-model="selectedDate"
+            locale="ru-RU"
+            no-title
+            first-day-of-week="1"
+          />
+        </v-menu>
+      </div>
+      <div class="right-attached-panel__field-block">
+        <TimeEdit
+          enabled="!showSwitch || switchValue"
+          :time="selectedTime"
+          @onEdit="selectedTime = $event"
+        />
+      </div>
+
+      <div v-if="message">
+        {{ message }}
+      </div>
+      <div class="right-attached-panel__field-block">
+        <VTextField
+          v-if="visit.j"
+          v-model="visit.j.client.name"
+          label="Имя"
+          prepend-icon="account_box"
+          :rules="[() => !!visit.j.client.name || 'Это поле обязательно для заполнения']"
+          required
+        />
+      </div>
+      <div class="right-attached-panel__field-block">
+        <PhoneEdit
+          v-if="visit.j"
+          :phone="visit.j.client.phone"
+          @onEdit="onPhoneEdit($event)"
+        />
+      </div>
+      <div class="right-attached-panel__buttons">
+        <button type="button" class="right-attached-panel__save" :class="{ _disabled: false }" @click="onSave">
+          Сохранить
+        </button>
+        <button type="button" class="right-attached-panel__cancel" @click="$emit('close')">
+          Отмена
+        </button>
+      </div>
+    </VForm>
+  </VDialog>
 </template>
 
 <script>
 import PhoneEdit from '@/components/common/PhoneEdit.vue'
-import AppTabs from '@/components/common/AppTabs.vue'
+import TimeEdit from '@/components/TimeEdit.vue'
 import {
   dateInLocalTimeZone,
   formatDate,
   formatTime,
-  visitInit
+  visitInit,
+  hyphensStringToDate
 } from '@/components/calendar/utils'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
-  components: { AppTabs, PhoneEdit },
+  components: { PhoneEdit, TimeEdit },
+  model: {
+    prop: 'visible',
+    event: 'close'
+  },
   props: {
     id: { type: String, default: '' },
     businessInfo: {
@@ -174,6 +137,11 @@ export default {
       }
     },
     employee: { type: String, default: '' },
+    visible: {
+      type: Boolean,
+      default: false,
+      required: true
+    },
     visit: {
       type: Object,
       default () {
@@ -181,6 +149,11 @@ export default {
       }
     },
     page: { type: Number, default: null },
+    employees: { type: Array,
+      default () {
+        return []
+      }
+    }
   },
   data () {
     return {
@@ -190,17 +163,21 @@ export default {
         save: 'Сохранить'
       },
       categoryOthersName: 'Прочие',
-      tabsLength: 3,
+      error: '',
       message: '',
-      selectedCategory: '',
+      position: null,
+      selectedEmployee: null,
       selectedDate: null,
+      selectedServices: [],
       selectedTime: null,
       serviceFilter: '',
       serviceHeaders: [
         { text: 'Услуга', value: 'name' },
         { text: 'Продолжительность', value: 'duration' },
         { text: 'Стоимость', value: 'price' }
-      ]
+      ],
+      type: null,
+      types: ['К мастеру', 'На услугу']
     }
   },
   computed: {
@@ -208,49 +185,32 @@ export default {
       businessServices: state => state.business.businessServices,
     }),
     ...mapGetters(['apiTimeZone', 'businessServiceCategories']),
-    isLastTab () {
-      return this.active === this.tabsLength - 1
-    },
-    displayClient () {
-      if (!this.visit.j) {
-        return ''
-      }
-      return this.visit.j.client.name || this.visit.j.client.phone
-    },
-    displaySelectedTime () {
-      if (!this.selectedDate) {
-        return null
-      }
-      return `${this.selectedDate} ${
-        this.selectedTime ? this.selectedTime : ''
-      }`
+    empCategories () {
+      return [
+        ...new Set(
+          this.employees &&
+          this.employees.map(x => x.j && x.j.category)
+        )
+      ].filter(c => !!c).sort((a, b) => (a < b ? -1 : 1))
     },
     duration () {
-      return (
-        this.visit &&
-        this.visit.j &&
-        this.visit.j.services &&
-        this.visit.j.services.reduce(
-          (acc, val) => parseInt(val.duration) || 60,
-          0
-        )
-      )
-    },
-    filteredServices () {
-      return this.businessServices && this.businessServices.filter(
-        x =>
-          (!this.selectedCategory || x.category === this.selectedCategory) &&
-          (!this.serviceFilter ||
-            x.name.toUpperCase().indexOf(this.serviceFilter.toUpperCase()) + 1)
-      )
-    },
-    tabButtonCaption () {
-      return this.isLastTab
-        ? this.buttonCaptions.save
-        : this.buttonCaptions.next
+      const services = this.businessServices.filter(s => this.selectedServices.includes(s.id))
+      const reducer = (accumulator, currentService) => accumulator + currentService.j.duration
+
+      return services.reduce(reducer, 0)
     },
     tz () {
       return this.apiTimeZone
+    },
+    selectedDayFormatted () {
+      if (!this.selectedDate) return ''
+      const options = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        weekday: 'short',
+      }
+      return hyphensStringToDate(this.selectedDate).toLocaleString("ru",options)
     }
   },
   watch: {
@@ -261,17 +221,6 @@ export default {
     this.setSelectedValues()
   },
   methods: {
-    nextTab () {
-      const active = parseInt(this.active)
-      this.active = (active + 1) % this.tabsLength
-    },
-    onNextButton () {
-      if (this.isLastTab) {
-        this.onSave()
-      } else {
-        this.nextTab()
-      }
-    },
     onPhoneEdit (payload) {
       this.visit.j.client.phone = payload
     },
@@ -282,10 +231,13 @@ export default {
       )
       let ts2 = new Date()
       ts2.setTime(ts1.getTime() + 60000 * duration)
-      this.visit.business_id = this.employee || this.businessInfo.id
+      this.visit.business_id = this.selectedEmployee.id
       this.visit.j.duration = duration
       this.visit.ts_begin = ts1.toJSON().slice(0, -1)
       this.visit.ts_end = ts2.toJSON().slice(0, -1)
+
+      this.visit.j.services = this.selectedServices
+
       this.$emit('onSave', this.visit)
     },
     setPage () {
@@ -309,8 +261,10 @@ export default {
 }
 </script>
 
-<style>
-.table-select {
+<style lang="scss">
+  @import "../../assets/styles/right-attached-panel";
+
+  .table-select {
   color: #555;
   transition: all 0.5s ease-out;
 }

@@ -1,20 +1,17 @@
 <template>
   <div
-    :style="`max-height: ${actualContainerHight}; top:${containerOffset}`"
-    :class="['visit-container', {active: isSelected}]"
-    @click="selectVisit(isSelected ? null : id)"
+    :style="`height: ${actualContainerHight}px; background: ${bgColor}; color: #eee; font-size: 0.9em;`"
+    :class="['visit-container']"
+    @click="selectVisit(id)"
   >
     <div>
       <v-tooltip
         left
-        :disabled="isSelected"
       >
         <div
           slot="activator"
-          :style="`background: ${bgColor}; color: #eee; height: auto; font-size: 0.9em;`"
         >
           <div
-            :style="`max-height: ${isSelected ? '10em': '0em'}`"
             class="visit-bar"
           >
             <v-btn
@@ -47,16 +44,16 @@
               {{ timeStart }} - {{ timeEnd }}
             </div>
             <div class="visit-duration">
-              {{ duration }} мин.
+              {{ visit.j.duration }} мин.
             </div>
             <div class="visit-name">
-              {{ name }}
+              {{ visit.clientName }}
             </div>
             <BusinessPhones
-              v-if="phone"
+              v-if="visit.client.phone"
               title
               light
-              :phones="[phone]"
+              :phones="[visit.client.phone]"
             />
             <div
               v-for="(service,n) in services"
@@ -71,16 +68,16 @@
             {{ timeStart }} - {{ timeEnd }}
           </div>
           <div class="visit-duration">
-            {{ duration }} мин.
+            {{ visit.j.duration }} мин.
           </div>
           <div class="visit-name">
-            {{ name }}
+            {{ visit.clientName }}
           </div>
           <BusinessPhones
-            v-if="phone"
+            v-if="visit.client.phone"
             title
             light
-            :phones="[phone]"
+            :phones="[visit.client.phone]"
           />
           <div
             v-for="(service,n) in services"
@@ -102,21 +99,18 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   components: { BusinessPhones },
   props: {
-    color: { type: String, default: '' },
-    duration: { type: Number, default: 0 },
-    containerHeight: { type: String, default: '' },
-    containerOffset: { type: String, default: '' },
-    timeStart: { type: String, default: '' },
-    timeEnd: { type: String, default: '' },
     id: { type: String, default: undefined },
-    name: { type: String, default: '' },
-    phone: { type: String, default: '' },
-    email: { type: String, default: '' },
     selected: { type: Boolean, default: false },
     services: {
       type: Array,
       default () {
         return []
+      }
+    },
+    visit: {
+      type: Object,
+      default () {
+        return {}
       }
     },
     visitor: {
@@ -127,30 +121,33 @@ export default {
     }
   },
   data () {
-    return {}
+    return {
+      slotDuration: 15, /* smallest slot duration in minutes  */
+      slotHeight: 55 /* smallest slot height in px */
+    }
   },
   computed: {
     ...mapGetters(['selectedVisit']),
     bgColor () {
       return (
         this.color ||
-        (this.name || this.phone || this.email
-          ? hashColor(`${this.name}${this.phone}${this.email}`, 30, 40)
+        (this.visit.clientName || this.visit.client.phone || this.email
+          ? hashColor(`${this.visit.clientName}${this.visit.client.phone}${this.email}`, 30, 40)
           : 'grey')
       )
     },
     actualContainerHight () {
-      return this.isSelected ? '20em' : this.containerHeight || 'em'
+      return this.visit.j.duration / this.slotDuration * this.slotHeight
     },
-    isSelected () {
-      return this.id && this.id === this.selectedVisit
-    }
+    timeEnd () {
+      return this.visit.timeEnd
+    },
+    timeStart () {
+      return this.visit.time
+    },
   },
   methods: {
     ...mapActions(['selectVisit']),
-    load () {
-      this.isSelected = this.selected
-    },
     onDelete () {
       this.$emit('onDelete')
     },

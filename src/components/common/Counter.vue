@@ -2,7 +2,7 @@
   <div class="counter">
     <div class="counter__control _down" @click="onDecrement" />
 
-    <input :id="id" type="text" :value="value" @input.prevent="setNewValue">
+    <input :id="id" type="text" :value="value" :disabled="inputDisabled" @input.prevent="setNewValue">
 
     <div class="counter__control _up" @click="onIncrement" />
   </div>
@@ -15,6 +15,10 @@
       id: {
         type: String,
         required: true
+      },
+      inputDisabled: {
+        type: Boolean,
+        default: false
       },
       value: {
         type: Number,

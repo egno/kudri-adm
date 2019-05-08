@@ -36,6 +36,7 @@ export function valueDate (value) {
   return value ? Date.parse(value) : undefined
 }
 
+// converts Date instance to yyyy-mm-dd String
 export function formatDate (date) {
   if (!date) return
   let d = date
@@ -46,6 +47,7 @@ export function formatDate (date) {
   ].join('-')
 }
 
+// converts Date instance to dd.mm.yyyy String
 function displayDate (date) {
   if (!date) return
   let d = date
@@ -59,7 +61,7 @@ function displayDate (date) {
 export function formatTime (date) {
   if (!date) return
   let d = date
-  // console.log(date, d);
+
   return [
     ('0' + d.getHours()).slice(-2),
     ('0' + d.getMinutes()).slice(-2)
@@ -74,7 +76,7 @@ export function areSameDates (date1, date2) {
   )
 }
 
-function chunkArray (inputArray, chunkSize) {
+function splitArray (inputArray, chunkSize) {
   const results = []
   while (inputArray.length) {
     results.push(inputArray.splice(0, chunkSize))
@@ -99,12 +101,13 @@ export function displayRESTTime (s) {
   return formatTime(d)
 }
 
-export function monthDates (year, month) {
+export function getWeeks (year, month) {
   const days = []
   const date = new Date(year, month, 1)
   const today = new Date()
   // append prev month dates
   const startDay = date.getDay() || 7
+
   if (startDay > 1) {
     for (let i = startDay - 2; i >= 0; i--) {
       const prevDate = new Date(date)
@@ -116,6 +119,7 @@ export function monthDates (year, month) {
     days.push({ date: new Date(date) })
     date.setDate(date.getDate() + 1)
   }
+
   // append next month dates
   const daysLeft = 7 - (days.length % 7)
   for (let i = 1; i <= daysLeft; i++) {
@@ -129,7 +133,15 @@ export function monthDates (year, month) {
     day.display = day.date.getDate()
     day.dateKey = formatDate(day.date)
   })
-  return chunkArray(days, 7)
+
+  return splitArray(days, 7)
+}
+
+export function getWeek (year, month, dd) {
+  const monthWeeks = getWeeks(year, month)
+  const includesDay = day => day.display === dd && day.date.getMonth() === month
+
+  return monthWeeks.find(week => week.some(includesDay))
 }
 
 export function visitInit (visit) {
@@ -173,4 +185,38 @@ export function visitStatus (status, time) {
   const t = new Date(Date.parse(time))
 
   return s[status] || t - now > 0 ? 'Запись' : 'Завершен'
+}
+
+// converts yyyy-mm-dd String to Date instance
+export function hyphensStringToDate (str) {
+  if (!str) return
+
+  const arr = str.split('-')
+  const year = arr[0]
+  const month = arr[1] - 1
+  const day = arr[2]
+
+  return new Date(year, month, day)
+}
+
+/* converts yyyy-mm-dd String to {
+    date: Date,
+    today: Boolean,
+    display: Number,
+    dateKey: String
+  } Object
+*/
+export function hyphenStrToDay (str) {
+  if (!str) return
+
+  const today = new Date()
+  let day = {
+    date: hyphensStringToDate(str)
+  }
+
+  day.today = areSameDates(day.date, today)
+  day.display = day.date.getDate() // day of month
+  day.dateKey = formatDate(day.date) // yyyy-mm-dd
+
+  return day
 }

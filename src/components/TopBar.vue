@@ -15,18 +15,6 @@
       align-center
       justify-start
     >
-      <VFlex v-if="showEmployee">
-        <v-select
-          v-model="selectedEmployee"
-          clearable
-          :items="employeeList"
-          item-value="id"
-          item-text="name"
-          label="Мастер"
-          @input="onSelectEmployee"
-        />
-      </VFlex>
-
       <VFlex v-show="$route.name === 'services' || $route.name === 'employeeList' || $route.name === 'BusinessClientsTable'">
         <VTextField
           key="mainSearch"
@@ -69,19 +57,12 @@ export default {
   data () {
     return {
       searchString: '',
-      selectedEmployee: null,
-      name: 'Salon name',
-      type: 'salon',
-      logo:
-        'http://files.softicons.com/download/internet-icons/adorable-twitter-icons-by-naldz-graphics/png/128/cute_twitter1.png'
     }
   },
   computed: {
     ...mapGetters([
       'actions',
-      'businessId',
       'businessInfo',
-      'employees',
       'navigationVisible',
       'userID'
     ]),
@@ -91,11 +72,6 @@ export default {
       }
       return this.actions.filter(x => x['default'])[0]
     },
-    employeeList () {
-      return this.employees.map(x => {
-        return { id: x.id, name: x.j.name || '<имя не указано>' }
-      })
-    },
     href () {
       if (this.defaultAction) {
         return this.defaultAction.href
@@ -104,10 +80,6 @@ export default {
     },
     isBusinessCard () {
       return isBusinessRoute(this.$route.name)
-    },
-    showEmployee () {
-      const list = ['visitCalendar']
-      return list.some(x => x === this.$route.name) && this.employees.length
     },
     target () {
       if (this.defaultAction) {
@@ -124,16 +96,12 @@ export default {
   },
   methods: {
     ...mapActions([
-      'navBar',
       'setActions',
       'setNavigationVisible',
       'setSearchString'
     ]),
     goHome () {
       router.push({ name: 'home' })
-    },
-    onSelectEmployee () {
-      this.$root.$emit('onSelectEmployee', [this.selectedEmployee])
     },
     setStoreSearchString (newVal) {
       this.setSearchString(newVal && newVal.toLowerCase())

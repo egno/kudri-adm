@@ -343,7 +343,6 @@ export default {
       this.$router.push({name: 'businessCardFilial',params:{id: parentId}})
     },
     onAction (action) {
-      console.log(action)
       if (action && action.to) {
         this.$router.push(action.to)
         return

@@ -7,7 +7,7 @@
     <v-card-title>
       <div>{{ day.display }}</div>
     </v-card-title>
-    <CalendarVisit
+    <VisitCard
       v-for="(visit, i) in visits"
       :key="i"
       :time-start="timeFmt(visit.ts_begin)"
@@ -19,10 +19,10 @@
 
 <script>
 import { getRESTTime } from '@/components/calendar/utils'
-import CalendarVisit from '@/components/calendar/CalendarVisit.vue'
+import VisitCard from '@/components/calendar/VisitCard.vue'
 
 export default {
-  components: { CalendarVisit },
+  components: { VisitCard },
   props: {
     day: {
       type: Object,

@@ -129,12 +129,12 @@
             :show-time="!i"
             :day="day"
             :holiday="isHoliday(day.dateKey)"
-            :visits="dayVisits(day.dateKey, employee[0])"
+            :visits="dayVisits(day.dateKey, employee)"
             :schedule="getDateSchedule(day.dateKey)"
             :display-from="showTimes[0]"
             :display-to="showTimes[1]"
             @onClickDate="goDate($event)"
-            @onTimeBlockClick="onTimeBlockClick"
+            @onSlotClick="onSlotClick"
             @onVisitEdit="onVisitEdit($event)"
             @onVisitDelete="onVisitDelete($event)"
             @onDayEdit="onDayEdit($event)"
@@ -142,22 +142,7 @@
         </VLayout>
       </VContainer>
     </VFlex>
-    <VDialog
-      v-if="kind !== 'mini'"
-      v-model="edit"
-      max-width="50em"
-    >
-      <!--todo add master selection, remove mock data -->
-      <VisitEdit
-        :id="currentVisit.id"
-        :business-info="businessInfo"
-        :employee="'7abf57ca-6666-11e9-9e07-7f8af87678ec'"
-        :visit="currentVisit"
-        :page="editVisitPage"
-        @onSave="onVisitSave(-1, $event)"
-        @onDelete="onDelete(-1)"
-      />
-    </VDialog>
+
     <VDialog
       v-if="kind !== 'mini'"
       v-model="timeEdit"
@@ -176,33 +161,27 @@
 import CalendarDayBtn from '@/components/calendar/CalendarDayBtn.vue'
 import CalendarDayCard from '@/components/calendar/CalendarDayCard.vue'
 import CalendarDayColumn from '@/components/calendar/CalendarDayColumn.vue'
-import VisitEdit from '@/components/calendar/VisitEdit.vue'
 import DayScheduleEdit from '@/components/calendar/DayScheduleEdit.vue'
-import {
-  formatDate,
-  getRESTTime,
-  monthDates,
-  monthDisplay
-} from '@/components/calendar/utils'
 import { visitInit } from '@/components/calendar/utils'
 import { mapActions, mapGetters } from 'vuex'
 import Api from '@/api/backend'
-import router from '@/router'
-import { makeAlert } from '@/api/utils'
+//import { makeAlert } from '@/api/utils'
+import calendarMixin from '@/mixins/calendar'
+import { formatDate } from '@/components/calendar/utils'
 
 export default {
   components: {
     CalendarDayBtn,
     CalendarDayCard,
     CalendarDayColumn,
-    DayScheduleEdit,
-    VisitEdit
+    DayScheduleEdit
   },
+  mixins: [ calendarMixin ],
   props: {
     employee: {
-      type: Array,
+      type: Object,
       default () {
-        return []
+        return {}
       }
     },
     newVisit: { type: Boolean, default: false },
@@ -211,13 +190,17 @@ export default {
     showHeader: { type: Boolean, default: true }
   },
   data () {
+    const today = new Date()
+
     return {
-      currentDay: { dt: '2019-02-01', j: { holiday: false } },
+      currentDay: {
+        date: today,
+        dateKey: formatDate(today)
+      },
       currentVisit: visitInit(),
       dates: undefined,
       days: [],
       edit: false,
-      editVisitPage: undefined,
       expanded: true,
       timeEdit: false,
       visits: [],
@@ -227,19 +210,14 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'actualDate',
       'businessInfo',
       'businessId',
       'calendar',
       'businessDayVisits',
       'schedule'
     ]),
-    dateMonthHeader () {
-      const d = new Date(this.workDate)
-      return monthDisplay(d)
-    },
     currentEmployee () {
-      return this.employee[0] || this.businessId
+      return this.employee || this.businessId
     },
     curSchedule () {
       if (!(this.schedule && this.minDate && this.maxDate)) {
@@ -257,145 +235,24 @@ export default {
       if (!this.dates) return
       return this.dates[0][0]
     },
-    showTimes () {
-      if (!this.curSchedule) {
-        return ['', '']
-      }
-      const workTimes = this.curSchedule
-        .map(d => d.j.schedule || ['', ''])
-        .reduce(
-          (res, cur) => {
-            if (cur[0] && (res[0] || cur[0]) >= cur[0]) {
-              res[0] = cur[0]
-            }
-            if (res[1] < cur[1]) {
-              res[1] = cur[1]
-            }
-            return res
-          },
-          ['', '']
-        )
-      if (!this.visits) {
-        return workTimes
-      }
-      const visitTimes = this.visits
-        .map(x => {
-          return [getRESTTime(x.ts_begin), getRESTTime(x.ts_end)]
-        })
-        .reduce(
-          (res, cur) => {
-            if (cur[0] && (res[0] || cur[0]) >= cur[0]) {
-              res[0] = cur[0]
-            }
-            if (res[1] < cur[1]) {
-              res[1] = cur[1]
-            }
-            return res
-          },
-          ['', '']
-        )
-      return [
-        workTimes[0] > (visitTimes[0] || workTimes[0])
-          ? visitTimes[0]
-          : workTimes[0],
-        (workTimes[1] || visitTimes[1]) < visitTimes[1]
-          ? visitTimes[1]
-          : workTimes[1]
-      ]
-    },
-    workDate () {
-      return this.$route.params.date || this.actualDate
-    },
-    workMonth () {
-      return +this.workDate.slice(5, 7) - 1
-    },
-    workYear () {
-      return +this.workDate.slice(0, 4)
-    }
+
+
   },
   watch: {
-    workDate: 'fetchData',
     newVisit: 'onNewVisit',
     edit: 'onCloseEdit'
   },
   mounted () {
-    this.fetchData()
     this.setDates() //это для мока
   },
   methods: {
-    ...mapActions(['alert', 'loadCalendar', 'setActualDate']),
-    addMonth (i) {
-      let dt = new Date(this.actualDate)
-      dt.setMonth(dt.getMonth() + i)
-      this.goDate(formatDate(dt))
-    },
+    ...mapActions(['loadCalendar']),
     getBusinessDayVisits (dt) {
       const cnt =
         this.businessDayVisits &&
         this.businessDayVisits.filter(x => x.dt === dt)[0] &&
         this.businessDayVisits.filter(x => x.dt === dt)[0].count
       return cnt
-    },
-    getDateSchedule (dt) {
-      if (!this.curSchedule) return
-      const d = this.curSchedule.filter(d => d.dt === dt)[0]
-      return d && d.j && d.j.schedule
-    },
-    fetchData () {
-      if (!this.businessId) return
-      if (this.workDate) {
-        this.setActualDate(this.workDate)
-      }
-      const path = `visit?salon_id=eq.${this.businessId}`
-      Api()
-        .get(path)
-        .then(res => res.data)
-        .then(res => {
-          this.visits = res
-          this.setDateVisits()
-        })
-    },
-    dayVisits (dt, employee) {
-      if (!this.visits.length) {
-        return []
-      }
-      return this.visits
-        .filter(
-          v =>
-            v.ts_begin && v.ts_begin.slice(0, 10) === dt &&
-            (employee
-              ? v.business_id === employee
-              : v.business_id === this.businessId)
-        )
-        .sort((a, b) => (a.ts_begin < b.ts_begin ? -1 : 1))
-        .map(x => {
-          let ts1 = new Date(x.ts_begin)
-          let ts2 = new Date(x.ts_end)
-          if (!x.client) {
-            x.client = { services: [] }
-          }
-          x.client.duration = (ts2.getTime() - ts1.getTime()) / 60000
-          return x
-        })
-    },
-    deleteVisit (id) {
-      Api()
-        .delete(`visit?id=eq.${id}`)
-        .then(() => {
-          this.fetchData()
-        })
-    },
-    goDate (dt) {
-      this.setActualDate(dt)
-      router.push({
-        name: 'visitCalendar',
-        params: { id: this.businessId, date: dt }
-      })
-    },
-    isHoliday (dt) {
-      if (!(this.calendar && this.calendar.filter(d => d.dt === dt).length))
-        return
-      return this.calendar.filter(d => d.dt === dt)[0].j.holiday
     },
     onCloseEdit () {
       if (!this.edit) {
@@ -432,37 +289,16 @@ export default {
           })
         })
     },
-    onDelete () {
-      this.edit = false
-      this.sendData()
-    },
     onNewVisit () {
       if (this.newVisit) {
         this.currentVisit = visitInit()
         this.edit = true
       }
     },
-    onVisitSave (i, payload) {
-      this.editVisitPage = undefined
-      this.sendData(payload)
-        .then(() => {
-          this.edit = false
-        })
-        .catch(err => {
-          this.alert(makeAlert(err))
-          if (
-            err.response &&
-            err.response.data &&
-            err.response.data.code === '23P01'
-          ) {
-            this.editVisitPage = 1
-          }
-        })
-    },
-    onTimeBlockClick (date) {
-      this.currentVisit = visitInit()
+    onSlotClick () {
+      /*this.currentVisit = visitInit()
       this.currentVisit.ts_begin = date.toISOString()
-      this.edit = true
+      this.edit = true*/
     },
     onVisitDelete (item) {
       this.deleteVisit(item)
@@ -470,25 +306,6 @@ export default {
     onVisitEdit (item) {
       this.currentVisit = item
       this.edit = true
-    },
-    sendData (data) {
-      if (data.id) {
-        return Api()
-          .patch(`visit?id=eq.${data.id}`, data)
-          .then(() => this.fetchData())
-      } else {
-        return Api()
-          .post('visit', data)
-          .then(() => this.fetchData())
-      }
-    },
-    setDates () {
-      this.dates = monthDates(this.workYear, this.workMonth)
-      if (this.period === 'week') {
-        this.dates = this.dates.filter(w =>
-          w.some(d => d.dateKey === this.workDate)
-        )
-      }
     },
     setDateVisits () {
       this.setDates()
@@ -513,7 +330,6 @@ export default {
   text-align: center;
   color: #fff;
   text-transform: capitalize;
-  text-align: center;
   &.weekend {
     color: #8995af;
   }

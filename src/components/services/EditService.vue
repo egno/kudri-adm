@@ -82,6 +82,7 @@
           </div>
           <Counter
             :id="create? 'create-service-duration': 'right-attached-panel-duration'"
+            :input-disabled="true"
             :round-counter="true"
             :value="duration"
             :min-value="15"
