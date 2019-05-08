@@ -242,7 +242,9 @@ const actions = {
     const registerPath = 'rpc/register'
     Api()
       .post(registerPath, payload)
-      .then(res => res.data)
+      .then(res => {
+        return res.data
+      })
       .then(res => res[0])
       .then(res => res.token)
       .then(token => {

@@ -196,6 +196,16 @@ export default {
         this.$route.name === 'home'
       ) {
         this.$router.push({ name: 'myBusinessList' })
+        return
+      }
+      if (
+        newVal &&
+        newVal.role === 'business' &&
+        newVal.role !== (oldVal && oldVal.role) &&
+        this.$route.name === 'register'
+      ) {
+        this.$router.push({ name: 'home' })
+        return
       }
     }
   },
