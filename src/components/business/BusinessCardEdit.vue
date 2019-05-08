@@ -233,7 +233,6 @@ import MainButton from '@/components/common/MainButton.vue'
 import Business from '@/classes/business'
 import BusinessSchedule from '@/classes/businessSchedule'
 import { debounce } from 'lodash'
-import { uuidv4 } from '@/components/utils'
 
 export default {
   components: {
@@ -394,7 +393,7 @@ export default {
     },
     fetchData () {
       if (!this.businessInfo.id || this.businessInfo.id === 'new') {
-        this.data.id = uuidv4()
+        this.data.id = undefined
         this.addLink()
         if (this.businessInfo.j && this.businessInfo.j.schedule) {
           this.data.schedule = new BusinessSchedule(this.businessInfo.j.schedule)
