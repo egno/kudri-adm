@@ -53,7 +53,7 @@
             label="e-mail"
             type="email"
             disabled
-            :rules="[required, email]"
+            :rules="[email]"
             browser-autocomplete="username"
           />
         </VFlex>
@@ -154,7 +154,7 @@ export default {
         this.isPersonalMaster || this.isManager || !!v || 'Обязательное поле',
       email: value => {
         const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        return pattern.test(value) || 'Введите действительный e-mail.'
+        return !value || pattern.test(value) || 'Введите действительный e-mail.'
       }
     }
   },
