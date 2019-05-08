@@ -1,7 +1,9 @@
 export function logo (provider) {
+    if (!provider) return
     return (
         provider &&
         provider.j &&
+        provider.j !== null &&
         provider.j.logo &&
         provider.j.logo !== '' &&
         provider.j.logo !== null &&
@@ -10,12 +12,16 @@ export function logo (provider) {
 }
 
 export function avatar (provider) {
+    if (!provider) return
     return (
-        provider &&
-        (provider.j &&
+        (
+            provider &&
+            provider.j &&
+            provider.j !== null &&
             provider.j.avatar &&
             provider.j.avatar !== '' &&
             provider.j.avatar !== null &&
-            `${process.env.VUE_APP_IMAGES}providers/${provider.j.avatar}`) || logo(provider)
+            `${process.env.VUE_APP_IMAGES}providers/${provider.j.avatar}`
+        ) || logo(provider)
     )
 }
