@@ -118,70 +118,35 @@
             </VLayout>
           </VFlex>
         </VLayout>
-        <VLayout
-          v-if="period==='week'"
-          row
-          pl-3
-        >
-          <CalendarDayColumn
-            v-for="(day,i) in dates[0]"
-            :key="i"
-            :show-time="!i"
-            :day="day"
-            :holiday="isHoliday(day.dateKey)"
-            :visits="dayVisits(day.dateKey, employee)"
-            :schedule="getDateSchedule(day.dateKey)"
-            :display-from="showTimes[0]"
-            :display-to="showTimes[1]"
-            @onClickDate="goDate($event)"
-            @onSlotClick="onSlotClick"
-            @onVisitEdit="onVisitEdit($event)"
-            @onVisitDelete="onVisitDelete($event)"
-            @onDayEdit="onDayEdit($event)"
-          />
-        </VLayout>
       </VContainer>
     </VFlex>
-
-    <VDialog
-      v-if="kind !== 'mini'"
-      v-model="timeEdit"
-      max-width="50em"
-    >
-      <DayScheduleEdit
-        :day="currentDay.date"
-        :schedule="getDateSchedule(currentDay.dateKey)"
-        @onEdit="onDayScheduleEdit"
-      />
-    </VDialog>
   </VLayout>
 </template>
 
 <script>
 import CalendarDayBtn from '@/components/calendar/CalendarDayBtn.vue'
 import CalendarDayCard from '@/components/calendar/CalendarDayCard.vue'
-import CalendarDayColumn from '@/components/calendar/CalendarDayColumn.vue'
-import DayScheduleEdit from '@/components/calendar/DayScheduleEdit.vue'
+import {
+  formatDate,
+  getRESTTime,
+  getWeeks,
+  monthDisplay
+} from '@/components/calendar/utils'
 import { visitInit } from '@/components/calendar/utils'
 import { mapActions, mapGetters } from 'vuex'
 import Api from '@/api/backend'
-//import { makeAlert } from '@/api/utils'
-import calendarMixin from '@/mixins/calendar'
-import { formatDate } from '@/components/calendar/utils'
+import router from '@/router'
 
 export default {
   components: {
     CalendarDayBtn,
-    CalendarDayCard,
-    CalendarDayColumn,
-    DayScheduleEdit
+    CalendarDayCard, 
   },
-  mixins: [ calendarMixin ],
   props: {
     employee: {
-      type: Object,
+      type: Array,
       default () {
-        return {}
+        return []
       }
     },
     newVisit: { type: Boolean, default: false },
@@ -190,13 +155,7 @@ export default {
     showHeader: { type: Boolean, default: true }
   },
   data () {
-    const today = new Date()
-
     return {
-      currentDay: {
-        date: today,
-        dateKey: formatDate(today)
-      },
       currentVisit: visitInit(),
       dates: undefined,
       days: [],
@@ -210,14 +169,19 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'actualDate',
       'businessInfo',
       'businessId',
       'calendar',
       'businessDayVisits',
       'schedule'
     ]),
+    dateMonthHeader () {
+      const d = new Date(this.workDate)
+      return monthDisplay(d)
+    },
     currentEmployee () {
-      return this.employee || this.businessId
+      return this.employee[0] || this.businessId
     },
     curSchedule () {
       if (!(this.schedule && this.minDate && this.maxDate)) {
@@ -235,18 +199,78 @@ export default {
       if (!this.dates) return
       return this.dates[0][0]
     },
-
-
+    showTimes () {
+      if (!this.curSchedule) {
+        return ['', '']
+      }
+      const workTimes = this.curSchedule
+        .map(d => d.j.schedule || ['', ''])
+        .reduce(
+          (res, cur) => {
+            if (cur[0] && (res[0] || cur[0]) >= cur[0]) {
+              res[0] = cur[0]
+            }
+            if (res[1] < cur[1]) {
+              res[1] = cur[1]
+            }
+            return res
+          },
+          ['', '']
+        )
+      if (!this.visits) {
+        return workTimes
+      }
+      const visitTimes = this.visits
+        .map(x => {
+          return [getRESTTime(x.ts_begin), getRESTTime(x.ts_end)]
+        })
+        .reduce(
+          (res, cur) => {
+            if (cur[0] && (res[0] || cur[0]) >= cur[0]) {
+              res[0] = cur[0]
+            }
+            if (res[1] < cur[1]) {
+              res[1] = cur[1]
+            }
+            return res
+          },
+          ['', '']
+        )
+      return [
+        workTimes[0] > (visitTimes[0] || workTimes[0])
+          ? visitTimes[0]
+          : workTimes[0],
+        (workTimes[1] || visitTimes[1]) < visitTimes[1]
+          ? visitTimes[1]
+          : workTimes[1]
+      ]
+    },
+    workDate () {
+      return this.$route.params.date || this.actualDate
+    },
+    workMonth () {
+      return +this.workDate.slice(5, 7) - 1
+    },
+    workYear () {
+      return +this.workDate.slice(0, 4)
+    }
   },
   watch: {
+    workDate: 'fetchData',
     newVisit: 'onNewVisit',
     edit: 'onCloseEdit'
   },
   mounted () {
+    this.fetchData()
     this.setDates() //это для мока
   },
   methods: {
-    ...mapActions(['loadCalendar']),
+    ...mapActions(['setActualDate']),
+    addMonth (i) {
+      let dt = new Date(this.actualDate)
+      dt.setMonth(dt.getMonth() + i)
+      this.goDate(formatDate(dt))
+    },
     getBusinessDayVisits (dt) {
       const cnt =
         this.businessDayVisits &&
@@ -254,40 +278,60 @@ export default {
         this.businessDayVisits.filter(x => x.dt === dt)[0].count
       return cnt
     },
+    fetchData () {
+      if (!this.businessId) return
+      if (this.workDate) {
+        this.setActualDate(this.workDate)
+      }
+      const path = `visit?salon_id=eq.${this.businessId}`
+      Api()
+        .get(path)
+        .then(res => res.data)
+        .then(res => {
+          this.visits = res
+          this.setDateVisits()
+        })
+    },
+    dayVisits (dt, employee) {
+      if (!this.visits.length) {
+        return []
+      }
+      return this.visits
+        .filter(
+          v =>
+            v.ts_begin && v.ts_begin.slice(0, 10) === dt &&
+            (employee
+              ? v.business_id === employee
+              : v.business_id === this.businessId)
+        )
+        .sort((a, b) => (a.ts_begin < b.ts_begin ? -1 : 1))
+        .map(x => {
+          let ts1 = new Date(x.ts_begin)
+          let ts2 = new Date(x.ts_end)
+          if (!x.client) {
+            x.client = { services: [] }
+          }
+          x.client.duration = (ts2.getTime() - ts1.getTime()) / 60000
+          return x
+        })
+    },
+    goDate (dt) {
+      this.setActualDate(dt)
+      router.push({
+        name: 'visitCalendar',
+        params: { id: this.businessId, date: dt }
+      })
+    },
+    isHoliday (dt) {
+      if (!(this.calendar && this.calendar.filter(d => d.dt === dt).length))
+        return
+      return this.calendar.filter(d => d.dt === dt)[0].j.holiday
+    },
     onCloseEdit () {
       if (!this.edit) {
         this.$emit('closeEdit')
         this.currentVisit = visitInit()
       }
-    },
-    onDayEdit (day) {
-      this.currentDay = day
-      this.timeEdit = true
-    },
-    onDayScheduleEdit (payload) {
-      if (!this.currentDay) {
-        return
-      }
-      if (!this.businessId) {
-        return
-      }
-      let dt = this.currentDay.dateKey
-      let data = {
-        j: { schedule: payload }
-      }
-      Api()
-        .patch(
-          `business_calendar?and=(business_id.eq.${this.businessId},dt.eq.${dt})`,
-          data
-        )
-        .then(() => {
-          this.timeEdit = false
-          this.currentDay = {}
-          this.loadCalendar({
-            business: this.businessId,
-            dates: [dt, dt]
-          })
-        })
     },
     onNewVisit () {
       if (this.newVisit) {
@@ -295,17 +339,17 @@ export default {
         this.edit = true
       }
     },
-    onSlotClick () {
-      /*this.currentVisit = visitInit()
-      this.currentVisit.ts_begin = date.toISOString()
-      this.edit = true*/
-    },
-    onVisitDelete (item) {
-      this.deleteVisit(item)
-    },
     onVisitEdit (item) {
       this.currentVisit = item
       this.edit = true
+    },
+    setDates () {
+      this.dates = getWeeks(this.workYear, this.workMonth)
+      if (this.period === 'week') {
+        this.dates = this.dates.filter(w =>
+          w.some(d => d.dateKey === this.workDate)
+        )
+      }
     },
     setDateVisits () {
       this.setDates()
@@ -330,6 +374,7 @@ export default {
   text-align: center;
   color: #fff;
   text-transform: capitalize;
+  text-align: center;
   &.weekend {
     color: #8995af;
   }
