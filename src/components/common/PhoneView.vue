@@ -8,15 +8,6 @@
 
 <script>
   export default {
-    filters: {
-      phoneFormat (value) {
-        if (!value) return ''
-        return value.replace(
-          /(\d?)(\d{1,3})(\d{1,3})(\d{1,2})(\d{1,2})$/g,
-          '+$1 ($2) $3-$4-$5'
-        )
-      }
-    },
     props: {
       phone: {
         type: String,

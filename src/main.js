@@ -15,6 +15,15 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 Vue.config.productionTip = false
 Vue.use(Meta)
 
+Vue.filter('phoneFormat', function (value) {
+  if (!value) return ''
+  return value.replace(
+    /(\d?)(\d{1,3})(\d{1,3})(\d{1,2})(\d{1,2})$/g,
+    '+$1 ($2) $3-$4-$5'
+  )
+})
+
+
 new Vue({
   router,
   store,
