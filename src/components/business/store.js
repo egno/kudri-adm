@@ -59,7 +59,8 @@ const getters = {
     state.businessIndividualCategories.includes(getters.businessCategory),
   businessIsSalon: (state, getters) =>
     state.businessCategories.includes(getters.businessCategory),
-  businessIsFilial: state => state.businessInfo && !!state.businessInfo.parent
+  businessIsFilial: state => state.businessInfo && !!state.businessInfo.parent,
+  businessSchedule: state => state.businessInfo  && state.businessInfo.j && state.businessInfo.j.schedule
 }
 
 const mutations = {

@@ -1,103 +1,86 @@
 <template>
-  <div
-    :style="`height: ${actualContainerHight}px; background: ${bgColor}; color: #eee; font-size: 0.9em;`"
-    :class="['visit-container']"
+  <v-tooltip
+    v-if="visit.j.duration < 45"
+    right
+  >
+    <div
+      slot="activator"
+    >
+      <div
+        :style="`height: ${actualContainerHight}px; background: ${bgColor};`"
+        :class="['visit']"
+        @click="selectVisit(id)"
+      >
+        <div class="visit__top">
+          <div class="visit__time">
+            {{ timeStart }} – {{ timeEnd }}
+          </div>
+        </div>
+        <div class="visit__status">
+          {{ visit.currentStatus.display }}
+        </div>
+      </div>
+    </div>
+    <div class="visit">
+      <div class="visit__top">
+        <div class="visit__time">
+          {{ timeStart }} – {{ timeEnd }}
+        </div>
+        <div class="visit__name">
+          {{ visit.clientName }}
+        </div>
+        <div class="visit__phone">
+          {{ visit.clientPhone | phoneFormat }}
+        </div>
+        <div
+          v-for="(service,n) in services"
+          :key="n"
+          class="visit__service"
+        >
+          {{ service.name }}
+        </div>
+      </div>
+      <div class="visit__status">
+        {{ visit.currentStatus.display }}
+      </div>
+    </div>
+  </v-tooltip>  
+    
+  <div 
+    v-else
+    :style="`height: ${actualContainerHight}px; background: ${bgColor};`"
+    :class="['visit']"
     @click="selectVisit(id)"
   >
-    <div>
-      <v-tooltip
-        left
+    <div class="visit__top">
+      <div class="visit__time">
+        {{ timeStart }} – {{ timeEnd }}
+      </div>
+      <div class="visit__name">
+        {{ visit.clientName }}
+      </div>
+      <div class="visit__phone">
+        {{ visit.clientPhone | phoneFormat }}
+      </div>
+      <div
+        v-for="(service,n) in services"
+        :key="n"
+        class="visit__service"
       >
-        <div
-          slot="activator"
-        >
-          <div
-            class="visit-bar"
-          >
-            <v-btn
-              small
-              flat
-              icon
-              dark
-              ripple
-              @click="onEdit"
-            >
-              <v-icon small>
-                edit
-              </v-icon>
-            </v-btn>
-            <v-btn
-              small
-              flat
-              icon
-              dark
-              ripple
-              @click="onDelete"
-            >
-              <v-icon small>
-                delete
-              </v-icon>
-            </v-btn>
-          </div>
-          <div class="visit-content">
-            <div class="visit-time">
-              {{ timeStart }} - {{ timeEnd }}
-            </div>
-            <div class="visit-duration">
-              {{ visit.j.duration }} мин.
-            </div>
-            <div class="visit-name">
-              {{ visit.clientName }}
-            </div>
-            <BusinessPhones
-              v-if="visit.client.phone"
-              title
-              light
-              :phones="[visit.client.phone]"
-            />
-            <div
-              v-for="(service,n) in services"
-              :key="n"
-            >
-              {{ service.name }}
-            </div>
-          </div>
-        </div>
-        <div>
-          <div class="visit-time">
-            {{ timeStart }} - {{ timeEnd }}
-          </div>
-          <div class="visit-duration">
-            {{ visit.j.duration }} мин.
-          </div>
-          <div class="visit-name">
-            {{ visit.clientName }}
-          </div>
-          <BusinessPhones
-            v-if="visit.client.phone"
-            title
-            light
-            :phones="[visit.client.phone]"
-          />
-          <div
-            v-for="(service,n) in services"
-            :key="n"
-          >
-            {{ service.name }}
-          </div>
-        </div>
-      </v-tooltip>
+        {{ service.name }}
+      </div>
+    </div>
+    <div class="visit__status">
+      {{ visit.currentStatus.display }}
     </div>
   </div>
 </template>
 
 <script>
-import BusinessPhones from '@/components/business/BusinessPhones.vue'
 import { hashColor } from '@/components/utils'
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  components: { BusinessPhones },
   props: {
     id: { type: String, default: undefined },
     selected: { type: Boolean, default: false },
@@ -148,12 +131,6 @@ export default {
   },
   methods: {
     ...mapActions(['selectVisit']),
-    onDelete () {
-      this.$emit('onDelete')
-    },
-    onEdit () {
-      this.$emit('onEdit')
-    },
     onSelect () {
       this.$emit('unselectOthers')
     }
@@ -161,50 +138,58 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss">
 .v-btn {
   float: right;
   margin: 0;
   border-radius: 0;
 }
-.visit-bar {
-  display: flex;
-  opacity: 0.6;
-  background: #333;
-  width: 100%;
-  overflow: hidden;
-  height: auto;
-  transition: all 1s ease 0s;
-}
-.active .visit-bar {
-  transition: all 1s ease 0s;
-}
-.visit-container {
+
+.visit {
   position: relative;
-  display: block;
+  top: 1px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-between;
   overflow: hidden;
+  padding: 9px 12px;  
+  font-size: 12px;
+  color: #fff;
   transition: all 0.5s ease 0s;
   z-index: 1;
-  height: auto;
-  max-height: 30em;
+  border-radius: 4px;
+  text-align: left;
+  &__top {
+    width: 100%;
+  }
+  &__time {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  &__duration {
+    opacity: 0.7;
+  }
+  &__name {
+    margin-top: 7px;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: capitalize;
+  }
+  &__phone {
+    margin-top: 2px;
+  }
+  &__service {
+    margin-top: 12px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  &__status {
+    color: rgba(255, 255, 255, 0.35);
+  }
+  .active {
+    z-index: 2;
+  }
 }
-.visit-container:hover {
-  height: auto;
-}
-.visit-content {
-  padding: 0.5em;
-  box-shadow: inset 0 0 3em 0 rgba(0, 0, 0, 0.5);
-}
-.visit-time {
-  opacity: 1;
-}
-.visit-duration {
-  opacity: 0.7;
-}
-.visit-name {
-  font-weight: bolder;
-}
-.active {
-  z-index: 2;
+.v-tooltip__content .visit {
+  min-height: 115px;
+  padding: 0;
 }
 </style>

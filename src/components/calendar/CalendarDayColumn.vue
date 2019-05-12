@@ -1,8 +1,7 @@
 <template>
   <v-flex
     pt-1
-    xs3
-    :class="[{'day-off': isDayOff}]"
+    :class="['day-column', {'day-off': isDayOff}]"
   >
     <div
       class="header"
@@ -31,40 +30,36 @@
     <div
       v-for="(time, i) in times"
       :key="i"
+      class="item"
     >
       <div
-        v-if="displayTimeBlock(i)"
-        class="item"
+        v-if="displayTimeStamp(i)"
+        class="time-mark"
       >
-        <div
-          v-if="displayTimeStamp(i)"
-          class="time-mark"
-        >
-          <div>{{ time.begin.display }}</div>
+        <div>{{ time.begin.display }}</div>
+      </div>
+      <template v-if="time.visit">
+        <VisitCard
+          :selected="selectVisit"
+          :visit="time.visit"
+          :services="time.visit.services" 
+          @onDelete="onVisitDelete(time.visit.id)"
+          @onEdit="onVisitEdit(time.visit)"
+        />
+      </template>
+      <div
+        v-else
+        :class="['slot', {working: isWorkingTime(i)}]"
+        @click="onSlotClick(time)"
+      >
+        <div class="slot__time">
+          {{ time.begin.display }}
         </div>
-        <div v-if="time.visit">
-          <VisitCard
-            :selected="selectVisit"
-            :visit="time.visit"
-            :services="time.visit.client && time.visit.client.services"
-            @onDelete="onVisitDelete(time.visit.id)"
-            @onEdit="onVisitEdit(time.visit)"
-          />
-        </div>
-        <div
-          v-else
-          :class="['slot', {working: isWorkingTime(i)}]"
-          @click="onSlotClick(time)"
-        >
-          <div class="slot__time">
-            {{ time.begin.display }}
+        <div v-show="time === selectedTime" class="slot__wrapper">
+          <div @click="$emit('onSlotClick', time.begin.date)">
+            +
           </div>
-          <div v-show="time === selectedTime" class="slot__wrapper">
-            <div @click="$emit('onSlotClick', time.begin.date)">
-              +
-            </div>
-            <div>Cup</div>
-          </div>
+          <div>Cup</div>
         </div>
       </div>
     </div>
@@ -76,8 +71,7 @@
 import VisitCard from '@/components/calendar/VisitCard.vue'
 import {
   dowDisplay,
-  formatTime,
-  getRESTTime
+  formatTime
 } from '@/components/calendar/utils'
 import { mapGetters } from 'vuex'
 
@@ -118,7 +112,7 @@ export default {
       hours: 24,
       minutes: 60,
       duration: 15,
-      displayStep: 2,
+      displayStep: 4,
       rowHeightInEm: 3,
       selectVisit: false,
       timeEditBlock: false,
@@ -130,23 +124,6 @@ export default {
     isDayOff () {
       return this.holiday
     },
-    displaySchedule () {
-      if (!this.schedule || !this.schedule[0]) {
-        return 'выходной'
-      }
-      if (this.schedule[0] === '00:00' && this.schedule[1] === '00:00') {
-        return 'круглосуточно'
-      }
-      if (this.schedule.length === 2) {
-        return `${this.schedule[0]}-${this.schedule[1]}`
-      }
-      if (this.schedule.length === 4) {
-        return `${this.schedule[0]}-${this.schedule[3]} (${this.schedule[1]}-${
-          this.schedule[2]
-        })`
-      }
-      return '-'
-    },
     dow () {
       return dowDisplay(this.day.date, 1)
     },
@@ -157,6 +134,12 @@ export default {
       return []
     },
     times () {
+      const isVisible = time => {
+        if (!(this.displayFrom || this.displayTo)) return true
+
+        return this.displayFrom <= time.end.display && this.displayTo >= time.begin.display
+      }
+
       let times = [...Array((this.hours * this.minutes) / this.duration)].map(
         (x, i) => {
           const dateTime = this.day.date.getTime()
@@ -178,43 +161,13 @@ export default {
           }
         }
       )
-      return times
+
+      return times.filter(isVisible)
     }
   },
   methods: {
-    calcVisitHeight (visit) {
-      if (!visit) {
-        return
-      }
-      let h = (visit.client.duration / this.duration) * this.rowHeightInEm
-      return `${h}em`
-    },
-    calcVisitOffset (visit) {
-      if (!visit) {
-        return
-      }
-      const start = new Date(visit.ts_begin)
-      let h =
-        (((this.minutes * start.getHours() + start.getMinutes()) %
-          this.duration) /
-          this.duration) *
-        this.rowHeightInEm
-      return `${h}em`
-    },
-    displayTimeBlock (i) {
-      if (!(this.displayFrom || this.displayTo)) {
-        return true
-      }
-      return (
-        this.displayFrom <= this.times[i].end.display &&
-        this.displayTo >= this.times[i].begin.display
-      )
-    },
     displayTimeStamp (i) {
       return this.showTime && !(i % this.displayStep)
-    },
-    formatTime (ts) {
-      return getRESTTime(ts)
     },
     isWorkingTime (i) {
       if (!this.schedule) {
@@ -237,7 +190,9 @@ export default {
       this.$emit('onClickDate', dt)
     },
     onSlotClick (time) {
-      this.selectedTime = time
+      if (time.begin.date.getTime() > Date.now() ) {
+        this.selectedTime = time
+      }
     },
     onDayEdit () {
       this.$emit('onDayEdit', this.day)
@@ -265,6 +220,11 @@ export default {
 .item {
   position: relative;
   height: 56px;
+  &:nth-child(even) {
+    .slot {
+      border-bottom: 1px solid rgba(137, 149, 175, .20);
+    }
+  }
 }
 .time-mark {
   position: absolute;
@@ -278,10 +238,9 @@ export default {
   position: absolute;
   height: 100%;
   width: 100%;
-  border: 1px solid rgba(137, 149, 175, .20);
+  border-right: 1px solid rgba(137, 149, 175, .10);
+  border-bottom: 1px solid rgba(137, 149, 175, .10);
   font-size: 0.75em;
-  border-top: 0;
-  border-left: 0;
   background: #fff;
 
   &__time {
@@ -324,5 +283,8 @@ export default {
 }
 .day-off .header {
   color: rgb(192, 0, 0);
+}
+.day-column {
+  flex: 1 0 14.28%;
 }
 </style>

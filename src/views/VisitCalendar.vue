@@ -1,21 +1,21 @@
 <template>
   <div class="visit-log">
     <div class="header">
-      <div class="header__info">
-        <ul class="info">
-          <li class="info__item">
+      <div class="header__info ">
+        <ul class="visit-log__info-list">
+          <li class="visit-log__info-item">
             В процессе/Завершен
           </li>
-          <li class="info__item">
+          <li class="visit-log__info-item _missed">
             Не пришел
           </li>
-          <li class="info__item">
+          <li class="visit-log__info-item _cancelled">
             Отмена
           </li>
-          <li class="info__item">
+          <li class="visit-log__info-item _day-off">
             Выходной
           </li>
-          <li class="info__item">
+          <li class="visit-log__info-item _break">
             Перерыв
           </li>
         </ul>
@@ -34,63 +34,83 @@
         align-center
         justify-space-between
         row
-        class=""
+        class="calendar-controls__container"
       >
-        <v-btn
-          class="cal-next-prev"
-          depressed
-          flat
-          small
-          @click.stop="addMonth(-1)"
-        >
-          <v-icon>navigate_before</v-icon>
-        </v-btn>
-        <div class="">
-          {{ dateMonthHeader }}
+        <div class="calendar-controls__left">
+          <v-btn
+            class="calendar-controls__button"
+            depressed
+            flat
+            small
+            @click.stop="addMonth(-1)"
+          >
+            <v-icon>navigate_before</v-icon>
+          </v-btn>
+          <v-btn
+            class="desktop calendar-controls__button"
+            depressed
+            flat
+            small
+            @click.stop="addMonth(1)"
+          >
+            <v-icon>navigate_next</v-icon>
+          </v-btn>
+          <div class="calendar-controls__heading">
+            {{ dateMonthHeader }}
+          </div>
         </div>
-        <v-btn
-          class="cal-next-prev"
-          depressed
-          flat
-          small
-          @click.stop="addMonth(1)"
-        >
-          <v-icon>navigate_next</v-icon>
-        </v-btn>
+        <div class="calendar-controls__right">
+          <div class="calendar-controls__toggle desktop">
+            <input id="day-mode" v-model="displayMode" type="radio" value="day">
+            <label for="day-mode">День</label>
+            <input id="week-mode" v-model="displayMode" type="radio" value="week">
+            <label for="week-mode">Неделя</label>
+          </div>
+          <v-btn
+            class="mobile calendar-controls__button"
+            depressed
+            flat
+            small
+            @click.stop="addMonth(1)"
+          >
+            <v-icon>navigate_next</v-icon>
+          </v-btn>
+        </div>
       </VLayout>
     </div>
-    <div class="days">
+    <div class="main-table">
       <div class="employees">
         <div class="employees__menu" />
-        <div v-if="selectedEmployee && selectedEmployee.j">
+        <div v-if="selectedEmployee && selectedEmployee.j" class="employee">
           <Avatar
-            class="employee-card__avatar"
+            class="employee__avatar"
             :name="selectedEmployee.j.name"
             :src="selectedEmployee.j.image"
             size="44px"
           />
-          <div class="employee-card__badge">
-            <h2 class="employee-card__title">
+          <div class="employee__badge">
+            <h2 class="employee__title">
               <span>{{ selectedEmployee.j.name && selectedEmployee.j.name.length > 70? selectedEmployee.j.name.substring(0, 70) + '...' : selectedEmployee.j.name }}</span>
             </h2>
-            <div v-if="selectedEmployee.j.category" class="employee-card__subtitle">
+            <div v-if="selectedEmployee.j.category" class="employee__subtitle">
               {{ selectedEmployee.j.category }}
             </div>
           </div>
         </div>
       </div>
-      <VLayout row>
+      <VLayout v-if="selectedEmployee && selectedEmployee.j" row class="main-table__times">
         <CalendarDayColumn
           v-for="(day, i) in selectedWeek"
+          v-show="!i || displayMode === 'week'"
           :key="day.dateKey"
-          class=""
+          :class="{ desktop: i }"
           :show-time="!i"
           :day="day"
           :holiday="isHoliday(day.dateKey)"
           :visits="dayVisits(day.dateKey, selectedEmployee)"
-          :schedule="getDateSchedule(day.dateKey)"
-          :display-from="showTimes[0]"
-          :display-to="showTimes[1]"
+          :schedule="selectedEmployee.j.schedule.data[i]"
+          :display-from="businessSchedule && businessSchedule.data && businessSchedule.data[i][0]"
+          :display-to="businessSchedule && businessSchedule.data && businessSchedule.data[i][1]"
           @onSlotClick="onSlotClick"
         />
       </VLayout>
@@ -115,13 +135,14 @@
 import { mapState, mapActions, mapGetters } from 'vuex'
 import Api from '@/api/backend'
 import MainButton from '@/components/common/MainButton.vue'
-import calendarMixin from '@/mixins/calendar'
 import Avatar from '@/components/avatar/Avatar.vue'
 import CalendarDayColumn from '@/components/calendar/CalendarDayColumn.vue'
-import { hyphenStrToDay, getWeek, visitInit } from '@/components/calendar/utils'
+import { formatDate, hyphenStrToDay, getWeek, visitInit } from '@/components/calendar/utils'
 import VisitEdit from '@/components/calendar/VisitEdit.vue'
 import { makeAlert } from '@/api/utils'
 import Visit from '@/classes/visit'
+
+import calendarMixin from '@/mixins/calendar'
 
 export default {
   components: { Avatar, MainButton, CalendarDayColumn, /*VCalendar,*/ VisitEdit },
@@ -130,6 +151,7 @@ export default {
     return {
       businessInfo: {},
       currentVisit: undefined,
+      displayMode: 'week', /* day or week */
       edit: false,
       editVisitPage: undefined,
       selectedEmployee: {},
@@ -144,7 +166,7 @@ export default {
     ...mapState({
       businessEmployees: state => state.business.businessEmployees
     }),
-    ...mapGetters(['businessId']),
+    ...mapGetters(['businessId', 'businessSchedule']),
     selectedDateObj () {
       return hyphenStrToDay(this.selectedDate)
     },
@@ -181,8 +203,13 @@ export default {
 
       if (!this.selectedWeek) return
 
+      const sunday = this.selectedWeek[6]
+      const nextMonday = new Date()
+
+      nextMonday.setDate(sunday.date.getDate() + 1)
+
       Api()
-        .get(`/visit?salon_id=eq.${this.businessId}&ts_begin=gt.${this.selectedWeek[0].dateKey}&ts_begin=lt.${this.selectedWeek[6].dateKey}`)
+        .get(`/visit?salon_id=eq.${this.businessId}&ts_begin=gt.${this.selectedWeek[0].dateKey}&ts_begin=lt.${formatDate(nextMonday)}`)
         .then(({ data }) => {
           this.visits = []
           data.forEach(v => this.visits.push(new Visit(v)))
@@ -261,28 +288,184 @@ export default {
 
   .visit-log {
     .header {
-      display: flex;
-      justify-content: space-between;
-    }
-    .calendar-controls {
-      .v-btn {
-        width: 55px;
-      }
-    }
-    .mobile {
-      @media only screen and (min-width : $desktop) {
-        display: none;
-      }
-    }
-    .desktop {
       display: none;
+      justify-content: space-between;
       @media only screen and (min-width : $desktop) {
         display: flex;
       }
+      
+      &__info {
+        display: flex;
+        flex-grow: 1;
+        align-items: center;
+      }
     }
 
-    .days {
-      padding-left: 58px;
+    .calendar-controls {
+      background-color: #fff;
+      border-bottom: 1px solid rgba(137, 149, 175, 0.2);
+      @media only screen and (min-width : $desktop) {
+        padding: 0 38px;
+      }
+
+      &__left {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+      } 
+      &__container {
+        height: 44px;
+        @media only screen and (min-width : $desktop) {
+          height: 40px;
+        }
+      }
+      &__button {
+        width: 55px;
+        box-sizing: border-box;
+        min-width: 0;
+        @media only screen and (min-width : $desktop) {
+          width: 24px;
+          padding: 0;
+          margin: 8px 14px;
+        }
+
+        i {
+          @media only screen and (min-width : $desktop) {
+            font-size: 19px;
+          }
+        }
+      }
+      &__heading {
+        font-family: Roboto Slab;
+        font-size: 18px;
+        color: #07101C;
+      }
+      &__toggle { 
+        background: rgba(137, 149, 175, 0.1);
+        border-radius: 20px;  
+        input {
+          display: none;
+          &:checked + label {
+            background: #5699FF;
+            color: #fff;
+          }
+        }
+         label {
+          position: relative;
+          display: inline-block;
+          width: 120px;
+          line-height: 22px;
+          cursor: pointer;  
+          background: transparent;
+          text-align: center;
+          color: #8995AF;
+          border-radius: 20px;
+          transition: color 0.4s, background-color 0.4s;
+        }
+      }
+    }
+
+    .mobile {
+      @media only screen and (min-width : $desktop) {
+        visibility: hidden;  
+        position: absolute;
+        z-index: -1;
+      }
+    }
+    .desktop {
+      visibility: hidden; 
+      position: absolute;
+      z-index: -1;
+      @media only screen and (min-width : $desktop) {
+        visibility: visible;
+        position: relative;
+        z-index: auto;
+      }
+    }
+
+    &__info-list {
+      display: flex;
+      flex-grow: 1;
+      justify-content: space-between;
+      list-style: none;
+      padding: 0 calc((100% - 630px) / 5) 0 56px;
+    }
+    &__info-item {
+      font-size: 12px; 
+      &:before {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 4px;
+        content: '';
+        border-left: 2px solid #fff;
+        background-color: #fff;
+      }
+      &._missed:before {
+        border-color: #EF4D37;
+      }
+      &._cancelled:before {
+        border-color: #8995AF;
+      }
+      &._day-off:before {
+        background-color: rgba(137, 149, 175, 0.1);
+        border-color: transparent;
+      }
+      &._break:before {
+        background: url('../assets/images/svg/cup.svg') left center no-repeat;
+        border-color: transparent;
+      }
+    }
+
+    .main-table {
+      @media only screen and (min-width : $desktop) {
+        display: flex;
+      }
+
+      &__times {
+        padding-left: 58px;
+      }
+    }
+
+    .employees {
+      padding: 18px;
+      background-color: #fff;
+      @media only screen and (min-width : $desktop) {
+        padding: 18px 8px;
+      }
+    }
+    .employee {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+
+      &__avatar {
+        @media only screen and (min-width : $desktop) {
+          width: 24px !important;
+          height: 24px !important;
+        }
+      }
+      &__badge {
+        max-width: 184px;
+        padding-left: 12px;
+        @media only screen and (min-width : $desktop) {
+          display: none;
+        }
+      }
+      &__title {
+        font-weight: bold;
+        font-size: 16px;
+        color: #07101C;
+        text-transform: capitalize;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      &__subtitle {
+        font-weight: normal;
+        font-size: 12px;
+        color: #8995AF;
+      }
     }
   }
 </style>

@@ -38,6 +38,15 @@ class Visit {
   get clientName () {
     return this.j.client.name
   }
+
+  get clientPhone () {
+    return this.j.client.phone
+  }
+
+  get services () {
+    return this.j.services
+  }
+
   get statuses () {
     return [
       { display: 'Не пришел', code: 'unvisited', color: '#ef4d37' },
