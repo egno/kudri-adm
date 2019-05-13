@@ -336,9 +336,11 @@ export default {
         }
       }
       &__heading {
+        padding-left: 5px;
         font-family: Roboto Slab;
         font-size: 18px;
         color: #07101C;
+        text-transform: capitalize;
       }
       &__toggle { 
         background: rgba(137, 149, 175, 0.1);

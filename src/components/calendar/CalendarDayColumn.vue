@@ -1,32 +1,25 @@
 <template>
   <v-flex
-    pt-1
-    :class="['day-column', {'day-off': isDayOff}]"
+    :class="['day-column', { today: isToday }]"
   >
-    <div
+    <v-layout
+      column
       class="header"
       @click="onDayEdit"
     >
-      <v-layout
-        align-start
-        column
-        pa-1
-      >
-        <v-flex>
-          <v-layout column>
-            <v-flex
-              title
-              pl-1
-            >
-              {{ day.display }}
-            </v-flex>
-            <v-flex body-2>
-              {{ dow }}
-            </v-flex>
-          </v-layout>
-        </v-flex>
-      </v-layout>
-    </div>
+      <div class="day-column__date">
+        {{ day.display }}
+      </div>
+      <div :class="['day-column__day', { 'day-off': !schedule || !schedule[0] || !schedule[1] }]">
+        {{ dowLong }}
+      </div>
+      <div v-if="schedule && schedule[0] && schedule[1]" class="day-column__schedule">
+        {{ schedule[0] }} – {{ schedule[1] }}
+      </div>
+      <div v-else class="day-column__schedule">
+        Выходной
+      </div>
+    </v-layout>
     <div
       v-for="(time, i) in times"
       :key="i"
@@ -70,6 +63,7 @@
 <script>
 import VisitCard from '@/components/calendar/VisitCard.vue'
 import {
+  areSameDates,
   dowDisplay,
   formatTime
 } from '@/components/calendar/utils'
@@ -92,7 +86,6 @@ export default {
       type: String,
       default: ''
     },
-    holiday: { type: Boolean },
     schedule: {
       type: Array,
       default () {
@@ -116,16 +109,23 @@ export default {
       rowHeightInEm: 3,
       selectVisit: false,
       timeEditBlock: false,
-      selectedTime: undefined
+      selectedTime: undefined,
+      today: new Date(),
+      dayHeaderOptions: {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        weekday: 'long',
+      }
     }
   },
   computed: {
     ...mapGetters(['apiTimeZone', 'calendar']),
-    isDayOff () {
-      return this.holiday
+    dowLong () {
+      return dowDisplay(this.day.date)
     },
-    dow () {
-      return dowDisplay(this.day.date, 1)
+    isToday () {
+      return areSameDates(this.today, this.day.date)
     },
     lunchTime () {
       if (this.schedule.length > 3) {
@@ -212,10 +212,12 @@ export default {
 
 <style lang="scss" scoped>
 .header {
+  height: 82px;
+  padding: 10px 24px;
   border: 1px solid #ccc;
   border-top: 0;
   border-left: 0;
-  height: 4.5em;
+  background-color: #fff;
 }
 .item {
   position: relative;
@@ -290,5 +292,28 @@ export default {
 }
 .day-column {
   flex: 1 0 14.28%;
+
+  &__date {
+    font-size: 18px;
+    font-family: Roboto Slab;
+  }
+  &__day {
+    text-transform: capitalize;
+  }
+  &__schedule {
+    margin-top: 3px;
+    font-size: 12px;
+    color: #8995AF;
+  }
+  .day-off {
+    color: #8995AF;
+  }
+  &.today {
+    .day-column__date,
+    .day-column__day {
+      color: #5699FF;
+      font-weight: bold;
+    }
+  }
 }
 </style>
