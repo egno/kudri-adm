@@ -137,7 +137,7 @@ export default {
       const isVisible = time => {
         if (!(this.displayFrom || this.displayTo)) return true
 
-        return this.displayFrom <= time.end.display && this.displayTo >= time.begin.display
+        return time.begin.display <= this.displayTo && time.end.display >= this.displayFrom
       }
 
       let times = [...Array((this.hours * this.minutes) / this.duration)].map(
@@ -167,7 +167,7 @@ export default {
   },
   methods: {
     displayTimeStamp (i) {
-      return this.showTime && !(i % this.displayStep)
+      return this.showTime && !((i - 1)% this.displayStep)
     },
     isWorkingTime (i) {
       if (!this.schedule) {
@@ -229,10 +229,11 @@ export default {
 .time-mark {
   position: absolute;
   right: 100%;
-  top: 0;
+  top: -1px;
   font-size: 12px;
   color: #8995AF;
-  margin-right: 8px;
+  padding: 7px 8px 0 0;
+  border-top: 1px solid rgba(137, 149, 175, .20);
 }
 .slot {
   position: absolute;
@@ -241,7 +242,10 @@ export default {
   border-right: 1px solid rgba(137, 149, 175, .10);
   border-bottom: 1px solid rgba(137, 149, 175, .10);
   font-size: 0.75em;
-  background: #fff;
+
+  &.working {
+    background: #fff;
+  }
 
   &__time {
     position: absolute;

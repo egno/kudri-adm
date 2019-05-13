@@ -8,7 +8,11 @@
     >
       <div
         :style="`height: ${actualContainerHight}px; background: ${bgColor};`"
-        :class="['visit']"
+        :class="['visit', {
+          'white-bg': whiteBg,
+          canceled: visit.displayStatus === 'Отмена',
+          unvisited: visit.displayStatus === 'Не пришел'
+        }]"
         @click="selectVisit(id)"
       >
         <div class="visit__top">
@@ -49,7 +53,11 @@
   <div 
     v-else
     :style="`height: ${actualContainerHight}px; background: ${bgColor};`"
-    :class="['visit']"
+    :class="['visit', {
+      'white-bg': whiteBg,
+      canceled: visit.displayStatus === 'Отмена',
+      unvisited: visit.displayStatus === 'Не пришел'
+    }]"
     @click="selectVisit(id)"
   >
     <div class="visit__top">
@@ -111,9 +119,18 @@ export default {
   },
   computed: {
     ...mapGetters(['selectedVisit']),
+    whiteBg () {
+      const status = this.visit.currentStatus
+
+       return status.display === 'Завершен' || status.display === 'Отмена' || status.display === 'Не пришел'
+    },
     bgColor () {
+      if (this.whiteBg) {
+        return '#FFF'
+      }
+
       return (
-        this.color ||
+        this.visit.color ||
         (this.visit.clientName || this.visit.client.phone || this.email
           ? hashColor(`${this.visit.clientName}${this.visit.client.phone}${this.email}`, 30, 40)
           : 'grey')
@@ -186,6 +203,36 @@ export default {
   }
   .active {
     z-index: 2;
+  }
+  &.white-bg {
+    border-radius: 0;
+    border-top: 2px solid #5699FF;
+    color: #07101C;
+
+    .visit__time,
+    .visit__service,
+    .visit__status {
+      color: #8995AF;
+    }
+  }
+
+  &.canceled,
+  &.unvisited {
+    border-top: none;
+  }
+
+  &.unvisited {
+    border-left: 2px solid #EF4D37;
+    .visit__status {
+      color: #EF4D37;
+    }
+  }
+
+  &.canceled {
+    border-left: 2px solid #8995AF;
+    .visit__status {
+      color: rgba(137, 149, 175, 0.35);
+    }
   }
 }
 .v-tooltip__content .visit {

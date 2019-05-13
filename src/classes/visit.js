@@ -43,6 +43,10 @@ class Visit {
     return this.j.client.phone
   }
 
+  get color () {
+    return this.j.color
+  }
+
   get services () {
     return this.j.services
   }
@@ -82,7 +86,7 @@ class Visit {
       this.statuses.find(x => x.code === this.status) ||
       (now < t1
         ? this.statuses[4]
-        : t2
+        : t2 && t2 < now
         ? this.statuses[2]
         : this.statuses[3])
     )
