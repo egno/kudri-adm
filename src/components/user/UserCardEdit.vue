@@ -107,6 +107,7 @@
 </template>
 
 <script>
+
 import MainButton from '@/components/common/MainButton.vue'
 import PhoneEdit from '@/components/common/PhoneEdit.vue'
 import Api from '@/api/backend'
