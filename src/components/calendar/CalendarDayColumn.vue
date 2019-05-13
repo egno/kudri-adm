@@ -4,7 +4,7 @@
   >
     <v-layout
       column
-      class="header"
+      class="day-column__header"
       @click="onDayEdit"
     >
       <div class="day-column__date">
@@ -211,14 +211,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.header {
-  height: 82px;
-  padding: 10px 24px;
-  border: 1px solid #ccc;
-  border-top: 0;
-  border-left: 0;
-  background-color: #fff;
-}
 .item {
   position: relative;
   height: 56px;
@@ -292,6 +284,14 @@ export default {
 }
 .day-column {
   flex: 1 0 14.28%;
+
+  &__header {
+    height: 82px;
+    padding: 10px 24px;
+    border-right: 1px solid rgba(137, 149, 175, 0.1);
+    background-color: #fff;
+    box-shadow: 8px 2px 8px rgba(137, 149, 175, 0.1);
+  }
 
   &__date {
     font-size: 18px;

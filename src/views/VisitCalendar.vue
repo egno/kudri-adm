@@ -79,6 +79,26 @@
       </VLayout>
     </div>
     <div class="main-table">
+      <div class="week-controls">
+        <v-btn
+          class="week-controls__button"
+          depressed
+          flat
+          small
+          @click.stop="changeWeek(-1)"
+        >
+          <v-icon>navigate_before</v-icon>
+        </v-btn>
+        <v-btn
+          class="week-controls__button"
+          depressed
+          flat
+          small
+          @click.stop="changeWeek(1)"
+        >
+          <v-icon>navigate_next</v-icon>
+        </v-btn>
+      </div>
       <div class="employees">
         <div class="employees__menu" />
         <div v-if="selectedEmployee && selectedEmployee.j" class="employee">
@@ -197,6 +217,12 @@ export default {
   },
   methods: {
     ...mapActions(['alert', 'setActions', 'setBusiness']),
+    changeWeek (vector) {
+      let dt = new Date(this.actualDate)
+
+      dt.setDate(dt.getDate() + 7*vector)
+      this.goDate(formatDate(dt))
+    },
     fetchData () {
       if (!this.businessId) return
       this.setActions(this.formActions)
@@ -421,20 +447,49 @@ export default {
     }
 
     .main-table {
+      position: relative;
       @media only screen and (min-width : $desktop) {
         display: flex;
       }
 
       &__times {
         padding-left: 58px;
+        @media only screen and (min-width : $desktop) {
+          padding-left: 70px;
+        }
       }
     }
 
+    .week-controls {
+      display: none;
+      position: absolute;
+      left: 0;
+      width: 125px;
+      height: 82px;
+      padding-left: 55px;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #fff;
+      box-shadow: -6px 2px 8px rgba(137, 149, 175, 0.1);
+      @media only screen and (min-width : $desktop) {
+        display: flex;
+      }
+      button {
+        float: left;
+        min-width: 0;
+        width: 24px;
+        height: 24px;
+        border: 1px solid rgba(137, 149, 175, 0.1);
+        border-radius: 50%;
+        color: #8995AF;
+      }
+    }
     .employees {
       padding: 18px;
       background-color: #fff;
       @media only screen and (min-width : $desktop) {
-        padding: 18px 8px;
+        width: 55px;
+        padding: 100px 8px 0;
       }
     }
     .employee {
@@ -469,5 +524,6 @@ export default {
         color: #8995AF;
       }
     }
+
   }
 </style>
