@@ -1,10 +1,10 @@
 <template>
   <VDialog
     :value="visible"
-    content-class="right-attached-panel businesscard-form" transition="slide"
+    content-class="right-attached-panel businesscard-form visit-edit" transition="slide"
     @input="$emit('close')"
   >
-    <VForm class="right-attached-panel__container">
+    <VForm ref="visitEditForm" class="right-attached-panel__container">
       <button type="button" class="right-attached-panel__close" @click="$emit('close')" />
       <div class="right-attached-panel__header">
         Создать запись
@@ -97,6 +97,8 @@
           v-if="visit.j"
           :phone="visit.j.client.phone"
           :removable="false"
+          label="телефон"
+          placeholder=""
           @onEdit="onPhoneEdit($event)"
         />
       </div>
@@ -122,48 +124,14 @@
         <div class="right-attached-panel__field-name">
           Цветовое выделение
         </div>
-        <v-radio-group v-model="visit.j.color" column>
-          <v-radio
-            color="#DFC497"
-            value="#DFC497"
-          />
-          <v-radio 
-            color="#F3AA57"
-            value="#F3AA57"
-          />
-          <v-radio 
-            color="#85CA86"
-            value="#85CA86"
-          />
-          <v-radio 
-            color="#49C9B7"
-            value="#49C9B7"
-          />
-          <v-radio 
-            color="#5A96DF"
-            value="#5A96DF"
-          />
-          <v-radio 
-            color="#F36B6B"
-            value="#F36B6B"
-          />
-          <v-radio 
-            color="#F37F6B"
-            value="#F37F6B"
-          />
-          <v-radio 
-            color="#DF8CB2"
-            value="#DF8CB2"
-          />
-          <v-radio 
-            color="#B88AB2"
-            value="#B88AB2"
-          />
-          <v-radio 
-            color="#8589DF"
-            value="#8589DF"
-          />
-        </v-radio-group>
+        <div class="visit-edit__colors">
+          <div v-for="color in colors" :key="color" class="visit-edit__color-block">
+            <input :id="color" v-model="visit.j.color" type="radio" :value="`#${color}`">
+            <label :for="color" class="visit-edit__color-label">
+              <div :style="{ background: `#${color}` }" />
+            </label>
+          </div>
+        </div>
       </div>
       <div class="right-attached-panel__buttons">
         <button type="button" class="right-attached-panel__save" :class="{ _disabled: saveDisabled }" @click="onSave">
@@ -223,13 +191,15 @@ export default {
         save: 'Сохранить'
       },
       categoryOthersName: 'Прочие',
+      colors: ['DFC497', 'F3AA57', '85CA86', '49C9B7', '5A96DF', 'F36B6B', 'F37F6B', 'DF8CB2', 'B88AB2', '8589DF'],
       error: '',
       message: '',
       position: null,
-      reminders: [{
+      reminders: [
+        {
           value: 60, 
           text: 'За час'
-          }, {
+        }, {
           value: 180, 
           text: 'За 3 часа'
         }, {
@@ -335,21 +305,11 @@ export default {
       this.visit.ts_end = ts2.toJSON().slice(0, -1)
 
       this.visit.j.services = this.selectedServices
+      if (!this.visit.j.color) {
+        this.visit.j.color = '#' + this.colors[Math.floor(Math.random() * this.colors.length)]
+      }
 
       this.$emit('onSave', this.visit)
-    },
-    setClient (client) {
-      if (client && (typeof client === 'object')) {
-        const {
-          id, 
-          j
-        } = client
-        this.visit.j.client.id = id
-        this.visit.j.client.name = j.name.fullname
-        this.visit.j.client.phone = j.phone
-      } else {
-        this.visit.j.client.name = client
-      }
     },
     setPage () {
       if (this.page !== undefined) {
@@ -358,6 +318,7 @@ export default {
       }
     },
     setSelectedValues () {
+      this.$refs.visitEditForm.reset()
       if (this.visit.ts_begin) {
         let ts1 = new Date(this.visit.ts_begin)
         this.selectedDate = formatDate(ts1)
@@ -367,6 +328,7 @@ export default {
         this.selectedTime = ''
       }
       this.active = 0
+      this.selectedServices = []
     }
   }
 }
@@ -389,11 +351,42 @@ export default {
   overflow: auto;
   max-height: 21em;
 }
-.right-attached-panel {
+.visit-edit.right-attached-panel {
   ._service,
   ._client-name,
   ._reminder {
     position: relative;
+  }
+
+  input[type="radio"] {
+    display: none;
+    &:checked + label {
+      background-color: rgba(137, 149, 175, 0.2);
+    }
+  }
+  .visit-edit__colors {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0 10px;
+    margin-top: 20px;
+  }
+  .visit-edit__color-label {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    margin: 0 6px;
+    border-radius: 50%;
+    padding: 4px;
+    cursor: pointer;
+    &>div {
+      height: 24px;
+      border-radius: 50%;
+    }
+  }
+
+  .right-attached-panel__buttons {
+    margin-top: 50px;
   }
 }
 </style>

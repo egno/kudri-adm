@@ -266,5 +266,15 @@
       display: none;
     }
   }
+  ._phone input {
+    text-align: left;
+    &::placeholder {
+      text-align: left;
+
+    }
+  }
+  ._phone .v-text-field__prefix {
+    padding-top: 7px;
+  }
 }
 
