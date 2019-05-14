@@ -61,7 +61,6 @@ class Event extends ApiObject {
 
 class Events extends ApiObject {
   set jsonObject (newVal) {
-
     this.new_visit_client = new Event({
       ...{ title: 'Уведомлять клиента о новой онлайн-записи' },
       ...(newVal && newVal.new_visit_client)
