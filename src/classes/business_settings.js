@@ -61,36 +61,22 @@ class Event extends ApiObject {
 
 class Events extends ApiObject {
   set jsonObject (newVal) {
-    this.promotion = new Event({
-      ...{ title: 'Реклама' },
-      ...(newVal && newVal.promotion)
-    })
-    this.time_visit = new Event({
-      ...{ title: 'Напоминание о предстоящем визите' },
-      ...(newVal && newVal.time_visit)
-    })
-    this.cancel_visit = new Event({
-      ...(newVal && newVal.cancel_visit),
-      ...{ title: 'Об отмене онлайн-записи', phone: null }
-    })
-    this.account_state = new Event({
-      ...{
-        title: 'О том, что на счете заканчиваются денежные средства',
-        phone: null
-      },
-      ...(newVal && newVal.account_state)
-    })
-    this.confirm_phone = new Event({
-      ...{ title: 'Запрос Клиенту на подтверждение номера телефона' },
-      ...(newVal && newVal.confirm_phone)
-    })
+
     this.new_visit_client = new Event({
-      ...{ title: 'Клиенту о новой онлайн-записи' },
+      ...{ title: 'Уведомлять клиента о новой онлайн-записи' },
       ...(newVal && newVal.new_visit_client)
     })
     this.new_visit_manager = new Event({
-      ...{ title: 'Заказчику о новой онлайн-записи', phone: null },
+      ...{ title: 'Уведомлять менеджера филиала о новой онлайн-записи', phone: null },
       ...(newVal && newVal.new_visit_manager)
+    })
+    this.cancel_visit = new Event({
+      ...(newVal && newVal.cancel_visit),
+      ...{ title: 'Уведомлять сотрудника об отмене онлайн-записи', phone: null }
+    })
+    this.time_visit = new Event({
+      ...{ title: 'Напоминать клиенту о предстоящем визите' },
+      ...(newVal && newVal.time_visit)
     })
   }
   get jsonObject () {
