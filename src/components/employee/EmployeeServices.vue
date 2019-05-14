@@ -155,10 +155,12 @@ export default {
           this.selectedServices = this.selectedServices.filter(s => this.selectedServiceGroups.includes(s.j.group))
         }
       }
+      this.$emit('selected', this.selectedServices)
     },
     onNext () {
       if (this.currentStep === this.selectedServiceGroups.length - 1) {
         this.$emit('selected', this.selectedServices)
+        this.$emit('nextStep')
       } else {
         this.currentStep++
       }

@@ -128,6 +128,7 @@
               :employee-services="empServices"
               :employee-service-groups="empServiceGroups"
               @selected="onServicesSelected"
+              @nextStep="activeTab = 2"
             />
           </div>
           <div v-show="activeTab === 2" class="infocard _edit">
@@ -354,7 +355,7 @@ export default {
     },
     onServicesSelected (payload) {
       this.employee.services = payload
-      this.activeTab = 2
+      // this.activeTab = 2
     },
     save () {
       if (!this.employeeId) return
