@@ -66,7 +66,7 @@
           v-model="filials"
           :items="companyFilials"
           label="Филиал"
-          item-text="j.name"
+          item-text="name"
           item-value="id"
           return-object
           multiple
@@ -218,9 +218,12 @@ export default {
         this.companyFilials = []
       } else {
         Api()
-        .get(`/business?parent=eq.${this.businessId}`)
+        .get(`/business?select=id,j->>name&parent=eq.${this.businessId}`)
         .then(res => {
-          this.companyFilials = res.data
+          this.companyFilials = res.data.map(x=> {
+            x.name = x.name || `<без названия ${x.id.slice(-4)}>`
+            return x
+          })
         })
       }
     },
