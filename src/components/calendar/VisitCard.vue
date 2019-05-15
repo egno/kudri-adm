@@ -1,19 +1,19 @@
 <template>
-  <v-tooltip
-    v-if="visit.j.duration < 45"
-    right
-  >
+  <div class="visit-wrapper">
     <div
-      slot="activator"
+      :style="`height: ${actualContainerHight}px; background: ${bgColor};`"
+      :class="['visit', {
+        'white-bg': whiteBg,
+        canceled: visit.displayStatus === 'Отмена',
+        unvisited: visit.displayStatus === 'Не пришел'
+      }]"
+      @click="selectVisit(visit)"
     >
       <div
-        :style="`height: ${actualContainerHight}px; background: ${bgColor};`"
-        :class="['visit', {
-          'white-bg': whiteBg,
-          canceled: visit.displayStatus === 'Отмена',
-          unvisited: visit.displayStatus === 'Не пришел'
-        }]"
-        @click="selectVisit(id)"
+        v-if="visit.j.duration < 45"
+        class="visit__container"
+        @mouseenter="showTooltip = true"
+        @mouseleave="showTooltip = false"
       >
         <div class="visit__top">
           <div class="visit__time">
@@ -24,63 +24,60 @@
           {{ visit.currentStatus.display }}
         </div>
       </div>
-    </div>
-    <div class="visit">
-      <div class="visit__top">
-        <div class="visit__time">
-          {{ timeStart }} – {{ timeEnd }}
-        </div>
-        <div class="visit__name">
-          {{ visit.clientName }}
-        </div>
-        <div class="visit__phone">
-          {{ visit.clientPhone | phoneFormat }}
-        </div>
-        <div
-          v-for="(service,n) in services"
-          :key="n"
-          class="visit__service"
-        >
-          {{ service.name }}
-        </div>
-      </div>
-      <div class="visit__status">
-        {{ visit.currentStatus.display }}
-      </div>
-    </div>
-  </v-tooltip>  
-    
-  <div 
-    v-else
-    :style="`height: ${actualContainerHight}px; background: ${bgColor};`"
-    :class="['visit', {
-      'white-bg': whiteBg,
-      canceled: visit.displayStatus === 'Отмена',
-      unvisited: visit.displayStatus === 'Не пришел'
-    }]"
-    @click="selectVisit(id)"
-  >
-    <div class="visit__top">
-      <div class="visit__time">
-        {{ timeStart }} – {{ timeEnd }}
-      </div>
-      <div class="visit__name">
-        {{ visit.clientName }}
-      </div>
-      <div class="visit__phone">
-        {{ visit.clientPhone | phoneFormat }}
-      </div>
       <div
-        v-for="(service,n) in services"
-        :key="n"
-        class="visit__service"
+        v-else
+        class="visit__container"
       >
-        {{ service.name }}
+        <div class="visit__top">
+          <div class="visit__time">
+            {{ timeStart }} – {{ timeEnd }}
+          </div>
+          <div class="visit__name">
+            {{ visit.clientName }}
+          </div>
+          <div class="visit__phone">
+            {{ visit.clientPhone | phoneFormat }}
+          </div>
+          <div
+            v-for="(service,n) in services"
+            :key="n"
+            class="visit__service"
+          >
+            {{ service.name }}
+          </div>
+        </div>
+        <div class="visit__status">
+          {{ visit.currentStatus.display }}
+        </div>
       </div>
     </div>
-    <div class="visit__status">
-      {{ visit.currentStatus.display }}
-    </div>
+    <transition :duration="400" name="slide-fade">
+      <div v-show="visit.j.duration < 45 && showTooltip" class="visit _tooltip">
+        <div class="visit__container">
+          <div class="visit__top">
+            <div class="visit__time">
+              {{ timeStart }} – {{ timeEnd }}
+            </div>
+            <div class="visit__name">
+              {{ visit.clientName }}
+            </div>
+            <div class="visit__phone">
+              {{ visit.clientPhone | phoneFormat }}
+            </div>
+            <div
+              v-for="(service,n) in services"
+              :key="n"
+              class="visit__service"
+            >
+              {{ service.name }}
+            </div>
+          </div>
+          <div class="visit__status">
+            {{ visit.currentStatus.display }}
+          </div>
+        </div>        
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -114,7 +111,8 @@ export default {
   data () {
     return {
       slotDuration: 15, /* smallest slot duration in minutes  */
-      slotHeight: 55 /* smallest slot height in px */
+      slotHeight: 55, /* smallest slot height in px */
+      showTooltip: false
     }
   },
   computed: {
@@ -156,26 +154,39 @@ export default {
 </script>
 
 <style lang="scss">
+  .slide-fade-enter-active {
+    transition: all .3s ease;
+  }
+  .slide-fade-leave-active {
+    transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  .slide-fade-enter, .slide-fade-leave-to {
+    transform: translateX(10px);
+    opacity: 0;
+  }
 .v-btn {
   float: right;
   margin: 0;
   border-radius: 0;
 }
 
-.visit {
+.visit-wrapper {
   position: relative;
   top: 1px;
-  display: flex;
-  flex-wrap: wrap;
-  align-content: space-between;
-  overflow: hidden;
-  padding: 9px 12px;  
+}
+.visit {
   font-size: 12px;
-  color: #fff;
   transition: all 0.5s ease 0s;
-  z-index: 1;
   border-radius: 4px;
   text-align: left;
+  &__container { 
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;
+    padding: 9px 12px;  
+    color: #fff;
+  }
   &__top {
     width: 100%;
   }
@@ -197,9 +208,20 @@ export default {
   &__service {
     margin-top: 12px;
     color: rgba(255, 255, 255, 0.8);
+    &::first-letter {
+      text-transform: capitalize;
+    }
   }
   &__status {
     color: rgba(255, 255, 255, 0.35);
+  }
+  &._tooltip {
+    position: absolute;
+    z-index: 10; 
+    top: 100%;
+    padding: 5px;
+    background-color: #1C2F44 !important;
+    box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.04); 
   }
   .active {
     z-index: 2;
@@ -207,8 +229,10 @@ export default {
   &.white-bg {
     border-radius: 0;
     border-top: 2px solid #5699FF;
-    color: #07101C;
-
+    
+    .visit__container {
+      color: #07101C;
+    }
     .visit__time,
     .visit__service,
     .visit__status {

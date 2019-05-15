@@ -7,34 +7,18 @@
     <VForm ref="visitEditForm" class="right-attached-panel__container">
       <button type="button" class="right-attached-panel__close" @click="$emit('close')" />
       <div class="right-attached-panel__header">
-        Создать запись
+        {{ visit.id? 'Изменить запись' : 'Создать запись' }}
       </div>
-      <!--<div class="right-attached-panel__field-block">
+      <div class="right-attached-panel__field-block">
+        <!--todo filter employees by selected service if any -->
         <VSelect
-          v-model="type"
-          :items="types"
-          label="Тип записи"
+          v-model="selectedEmployee"
+          :items="employees"
+          :item-text="e => e.j.name"
+          return-object
+          label="имя и фамилия мастера"
         />
-      </div>-->
-      <template>
-        <!-- <div class="right-attached-panel__field-block">
-          <VSelect
-            v-model="position"
-            :items="empCategories"
-            label="Должность"
-          />
-        </div> -->
-        <div class="right-attached-panel__field-block">
-          <!--todo filter employees by selected service if any -->
-          <VSelect
-            v-model="selectedEmployee"
-            :items="position? employees.filter(e => e.j.category === position) : employees"
-            :item-text="e => e.j.name"
-            return-object
-            label="имя и фамилия мастера"
-          />
-        </div>
-      </template>
+      </div>
       <div class="right-attached-panel__field-block _service">
         <VSelect
           v-model="selectedServices"
@@ -53,24 +37,30 @@
         <div class="right-attached-panel__field-name">
           Дата и время начала визита
         </div>
-        <v-menu>
-          <template v-slot:activator="{ on }">
-            <button
-              type="button"
-              v-on="on"
-            >
-              {{ selectedDayFormatted }}
-            </button>
-          </template>
-          <v-date-picker
-            v-model="selectedDate"
-            locale="ru-RU"
-            no-title
-            first-day-of-week="1"
-          />
-        </v-menu>
+        <VLayout row justify-space-between>
+          <v-menu>
+            <template v-slot:activator="{ on }">
+              <button
+                type="button"
+                v-on="on"
+              >
+                {{ selectedDayFormatted }}
+              </button>
+            </template>
+            <v-date-picker
+              v-model="selectedDate"
+              locale="ru-RU"
+              no-title
+              first-day-of-week="1"
+            />
+          </v-menu>
+          <div v-if="selectedTime" class="visit-edit__time">
+            <div>{{ selectedTime }}</div>
+            <button type="button" class="visit-edit__clear" @click="selectedTime = ''" /> 
+          </div>
+        </VLayout>
       </div>
-      <div class="visit-edit__time-selection">
+      <div v-if="!selectedTime" class="visit-edit__time-selection">
         <TimeSelect
           :selected-time="selectedTime"
           :times="freeTimes"
@@ -85,7 +75,7 @@
         <VTextField
           v-if="visit.j"
           ref="clientName"
-          v-model="visit.j.client.name"
+          :value="visit.j.client.name"
           label="ИМЯ И ФАМИЛИЯ КЛИЕНТА"
           :rules="[() => !!visit.j.client.name || 'Это поле обязательно для заполнения']"
           required
@@ -193,16 +183,10 @@ export default {
   data () {
     return {
       active: 0,
-      buttonCaptions: {
-        next: 'Продолжить',
-        save: 'Сохранить'
-      },
-      categoryOthersName: 'Прочие',
       colors: ['DFC497', 'F3AA57', '85CA86', '49C9B7', '5A96DF', 'F36B6B', 'F37F6B', 'DF8CB2', 'B88AB2', '8589DF'],
       error: '',
       freeTimes: [],
-      message: '',
-      position: null,
+      message: '', 
       reminders: [
         {
           value: 60, 
@@ -228,36 +212,17 @@ export default {
       selectedEmployee: null,
       selectedServices: [],
       selectedTime: null,
-      serviceFilter: '',
-      serviceHeaders: [
-        { text: 'Услуга', value: 'name' },
-        { text: 'Продолжительность', value: 'duration' },
-        { text: 'Стоимость', value: 'price' }
-      ],
-      type: null,
-      types: ['К мастеру', 'На услугу']
     }
   },
   computed: {
     ...mapState({
       businessServices: state => state.business.businessServices,
     }),
-    ...mapGetters(['apiTimeZone', 'businessId', 'businessServiceCategories']),
-    // empCategories () {
-    //   return [
-    //     ...new Set(
-    //       this.employees &&
-    //       this.employees.map(x => x.j && x.j.category)
-    //     )
-    //   ].filter(c => !!c).sort((a, b) => (a < b ? -1 : 1))
-    // },
+    ...mapGetters(['businessId', 'businessServiceCategories']),
     duration () {
       const reducer = (accumulator, currentService) => accumulator + currentService.j.duration
 
       return this.selectedServices.reduce(reducer, 0)
-    },
-    tz () {
-      return this.apiTimeZone
     },
     selectedDayFormatted () {
       if (!this.selectedDate) return ''
@@ -354,7 +319,7 @@ export default {
       }
     },
     setSelectedValues () {
-      this.$refs.visitEditForm.reset()
+      this.$refs.visitEditForm.resetValidation()
       if (this.visit.ts_begin) {
         let ts1 = new Date(this.visit.ts_begin)
         this.selectedDate = formatDate(ts1)
@@ -364,8 +329,16 @@ export default {
         this.selectedTime = ''
       }
       this.active = 0
-      this.selectedServices = []
-      if (this.employee.j.services && this.employee.j.services.length) { 
+
+      if (this.visit.services && this.visit.services.length) {
+        this.selectedServices = this.visit.services
+      } else {
+        this.selectedServices = []
+      }
+
+      if (this.visit.j && this.visit.j.master) {
+        this.selectedEmployee = this.employees.find(e => e.id === this.visit.j.master.id)
+      } else if (this.employee.j.services && this.employee.j.services.length) { 
         this.selectedEmployee = this.employee 
       }
       this.loadFreeTimes()
@@ -427,7 +400,17 @@ export default {
   .visit-edit__time-selection {
     margin-top: 30px;
   }
-
+  .visit-edit__time {
+    display: flex;
+    margin-left: 10px;
+  }
+  .visit-edit__clear {
+    width: 16px;
+    height: 16px;
+    margin-left: 7px;
+    cursor: pointer;
+    background: url('../../assets/images/svg/cross.svg') center no-repeat;
+  }
   .right-attached-panel__buttons {
     margin-top: 50px;
   }

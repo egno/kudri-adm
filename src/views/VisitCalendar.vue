@@ -285,7 +285,7 @@ export default {
     ...mapState({
       businessEmployees: state => state.business.businessEmployees
     }),
-    ...mapGetters(['businessSchedule']),
+    ...mapGetters(['businessSchedule', 'selectedVisit']),
     empCategories () { // todo make a mixin
       return [
         ...new Set(
@@ -330,7 +330,13 @@ export default {
       handler: 'fetchData',
       deep: true
     },
-    businessEmployees: 'initEmployee'
+    businessEmployees: 'initEmployee',
+    selectedVisit () {
+      if (this.selectedVisit) {
+        this.currentVisit = this.selectedVisit
+        this.edit = true
+      }
+    }
   },
   mounted () {
     this.initEmployee()
