@@ -50,6 +50,7 @@
         <v-text-field
           :value="fullName"
           label="ИМЯ И ФАМИЛИЯ"
+          :disabled="foundedUser && !!fullName"
           maxlength="50"
           required
         />
