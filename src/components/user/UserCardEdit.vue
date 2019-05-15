@@ -23,64 +23,51 @@
       <div class="businesscard-form__field">
         <div class="phone-input">
           <PhoneEdit
-            :phone="client.phone"
+            :phone="phone"
             :removable="false"
             label="Телефон"
             placeholder=""
             :class="{ 'no-default': !client.phone && (filledPhones.length > 1) }"
-            @onEdit="client.phones[i] = $event; checkPhones($event)"
+            @onEdit="checkPhone($event)"
           />
-          <template v-if="phone && (filledPhones.length > 1)">
+          <template v-if="seekComplete">
             <div
-              v-if="client.phone && (client.phone.substr(-10) === phone.substr(-10))"
-              class="default"
+              v-if="foundedUser"
+              class="success--text"
             >
-              Основной телефон
+              Пользователь найден
             </div>
-            <button
-              v-else-if="!clientWithSamePhone && (phone.length >= 10)"
-              type="button"
-              class="make-default"
-              @click="client.phone = phone"
+            <div
+              v-else
+              class="error--text"
             >
-              Сделать основным
-            </button>
+              Пользователь с этим номером телефона не найден
+            </div>
           </template>
-          <div
-            v-if="clientWithSamePhone && clientWithSamePhone.phones.find(p => p.substr(-10) === phone.substr(-10))"
-            class="error--text"
-          >
-            Найден 1 клиент с данным номером телефона
-          </div>
         </div>
-
-        <div class="businesscard-form__field _select dropdown-select">
-          <v-combobox
-            ref="fullName"
-            :value="client.fullName"
-            :items="suggestedClients"
-            :item-text="clientDisplay"
-            label="ИМЯ И ФАМИЛИЯ"
-            maxlength="50"
-            return-object
-            required
-            attach="._clients .businesscard-form__field._select"
-            @update:searchInput="onInputName"
-            @input="selectClient"
-          >
-            <template v-slot:selection="{ item, parent, selected }">
-              {{ item }}
-            </template>
-            <template v-slot:item="{ index, item }">
-              <div>
-                {{ item.j.name.fullname }}
-              </div>
-              <div class="phone-number">
-                {{ item.j.phone? item.j.phone : item.j.phones[0] | phoneFormat }}
-              </div>
-            </template>
-          </v-combobox>
-        </div>
+      </div>
+      <div class="businesscard-form__field">
+        <v-text-field
+          :value="fullName"
+          label="ИМЯ И ФАМИЛИЯ"
+          maxlength="50"
+          required
+        />
+      </div>
+      <div class="businesscard-form__field">
+        <v-select
+          v-model="role"
+          :items="roles"
+          label="Роль пользователя"
+        />
+      </div>
+      <div v-if="role===roles[1]" class="businesscard-form__field">
+        <v-select
+          v-model="filials"
+          :items="companyFilials"
+          label="Филиал"
+          multiple
+        />
       </div>
       <div class="businesscard-form__field">
         <v-textarea
@@ -152,10 +139,21 @@ export default {
       clientDisplay (c) {
         return `${c.j.name.fullname}${c.j.phone ? c.j.phone : c.j.phones[0]}`
       },
+      companyFilials: [],
       duplicatedPhone: '',
       hasPhone: undefined,
       hasEmptyPhone: undefined,
+      filials: [],
       filledPhones: [],
+      foundedUser: undefined,
+      fullName: '',
+      phone: '',
+      role: '',
+      roles: [
+        'Администратор компании',
+        'Менеджер филиала'
+      ],
+      seekComplete: false,
       suggestedClients: [],
       rules: {
         required: value => !!value || 'Это поле обязательно для заполнения',
@@ -170,57 +168,38 @@ export default {
   },
   computed: {},
   watch: {
-    'client.id': 'checkPhones',
-    'client.phones': {
-      handler: 'checkPhones',
-      deep: true
-    }
+    foundedUser: 'fillUser'
   },
   beforeMount () {
-    this.checkPhones()
+    this.checkPhone()
   },
   created () {
     this.debouncedGetClients = debounce(this.getClientsByName, 350)
   },
   methods: {
-    checkPhones (newPhone) {
-      const phones = this.client.phones
-
-      this.samePhone = ''
-      this.clientWithSamePhone = null
-      this.duplicatedPhone = ''
-
-      if (!phones || !phones.length) {
-        this.hasPhone = false
-        this.hasEmptyPhone = true
-        this.filledPhones = []
-        return
-      }
-      this.hasPhone = phones.some(phone => phone.length >= 10)
-      this.hasEmptyPhone = phones.some(x => !x || x.length < 10)
-      this.filledPhones = phones.filter(p => p && p.length >= 10)
-
+    checkPhone (newPhone) {
+      this.seekComplete = false
+      this.foundedUser = undefined
       if (
         newPhone &&
         typeof newPhone === 'string' &&
         newPhone.length >= 10 &&
         newPhone.length < 12
       ) {
-        this.getClientsByPhone(newPhone)
+        this.getUsersByPhone(newPhone)
       }
-
-      phones.forEach((p, i) => {
-        if (i === phones.length - 1 || !p) {
-          return
-        }
-
-        for (let j = i + 1; j < phones.length; j++) {
-          if (phones[j] && p.substr(-10) === phones[j].substr(-10)) {
-            this.duplicatedPhone = p
-            return
-          }
-        }
-      })
+    },
+    fillUser () {
+      if (!this.foundedUser) {
+        this.fullName = ''
+      } else {
+        this.fullName = [
+          this.foundedUser.name,
+          this.foundedUser.surname ? this.foundedUser.surname + '.' : undefined
+        ]
+          .filter(x => !!x)
+          .join(' ')
+      }
     },
     getClientsByName (val) {
       Api()
@@ -235,22 +214,16 @@ export default {
           )
         })
     },
-    getClientsByPhone (newPhone) {
+    getUsersByPhone (newPhone) {
+      this.seekComplete = false
+      this.foundedUser = undefined
       if (newPhone && newPhone.length >= 10) {
         Api()
-          .get(
-            `/client_phone?and=(company_id.eq.${
-              this.companyId
-            },phone.eq.7${newPhone})`
-          )
-          .then(({ data }) => {
-            let companyClients = data.filter(
-              c => c.company_id === this.companyId && c.id !== this.client.id
-            )
-
-            if (companyClients.length) {
-              this.clientWithSamePhone = new User(companyClients[0])
-              this.samePhone = '7' + newPhone
+          .post(`/rpc/find_user`, { phone: `7${newPhone}` })
+          .then(res => {
+            this.seekComplete = true
+            if (res.data.id) {
+              this.foundedUser = res.data
             }
           })
           .catch(e => console.log(e))
@@ -335,7 +308,7 @@ export default {
       }, 100)
     },
     reset () {
-      this.clientWithSamePhone = null
+      this.foundedUser = null
       this.samePhone = ''
     },
     selectClient (client) {
@@ -384,7 +357,8 @@ export default {
   .v-btn-toggle--selected {
     box-shadow: none;
   }
-  .error--text {
+  .error--text,
+  .success--text {
     font-size: 12px;
   }
   .phone-input .v-input--is-disabled .v-input__slot:before {
