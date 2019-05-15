@@ -70,24 +70,16 @@ class User extends ApiObject {
   }
 
   save () {
-    if (!this.business_id) return
-    if (!this.id || this.id === 'new') {
-      this.id = null
-      return Api()
-        .post(`user?`, this.jsonObject)
-        .then(res => responseGetId(res))
-        .catch(err => {
-          store.dispatch('alert', makeAlert(err))
-          return false
-        })
-    } else {
-      return Api()
-        .patch(`user?id=eq.${this.id}`, this.jsonObject)
-        .catch(err => {
-          store.dispatch('alert', makeAlert(err))
-          return false
-        })
-    }
+    if (!this.company_id) return Promise.resolve()
+    this.id = null
+    return Api()
+      .post(`user?`, this.jsonObject)
+      .then(res => responseGetId(res))
+      .catch(err => {
+        store.dispatch('alert', makeAlert(err))
+        return false
+      })
+
   }
 }
 

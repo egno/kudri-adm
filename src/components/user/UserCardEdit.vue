@@ -66,12 +66,17 @@
           v-model="filials"
           :items="companyFilials"
           label="Филиал"
+          item-text="j.name"
+          item-value="id"
+          return-object
           multiple
+          chips
+          deletable-chips
         />
       </div>
       <div class="businesscard-form__field">
         <v-textarea
-          v-model="client.notes"
+          v-model="notes"
           label="Комментарий"
           maxlength="500"
           :rules="[rules.maxLength(500)]"
@@ -83,7 +88,7 @@
       <div>
         <MainButton
           class="button save-info"
-          :class="{ button_disabled: !hasPhone || clientWithSamePhone || duplicatedPhone }"
+          :class="{ button_disabled: !seekComplete || !fullName || !role }"
           @click="onSave"
         >
           Сохранить
@@ -98,7 +103,7 @@ import MainButton from '@/components/common/MainButton.vue'
 import PhoneEdit from '@/components/common/PhoneEdit.vue'
 import Api from '@/api/backend'
 import User from '@/classes/user'
-import { debounce } from 'lodash'
+import { mapGetters } from 'vuex'
 
 export default {
   components: { MainButton, PhoneEdit },
@@ -147,6 +152,7 @@ export default {
       filledPhones: [],
       foundedUser: undefined,
       fullName: '',
+      notes: '',
       phone: '',
       role: '',
       roles: [
@@ -166,15 +172,21 @@ export default {
       samePhone: ''
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['businessId','businessFilialCount'])
+  },
   watch: {
-    foundedUser: 'fillUser'
+    foundedUser: 'fillUser',
+    businessId: 'getFilials'
+  },
+  mounted () {
+    this.getFilials()
   },
   beforeMount () {
     this.checkPhone()
   },
   created () {
-    this.debouncedGetClients = debounce(this.getClientsByName, 350)
+   
   },
   methods: {
     checkPhone (newPhone) {
@@ -201,18 +213,16 @@ export default {
           .join(' ')
       }
     },
-    getClientsByName (val) {
-      Api()
-        .get(
-          `client?company_id.eq.${
-            this.companyId
-          }&j->name->>fullname=ilike.*${val}*`
-        )
-        .then(({ data }) => {
-          this.suggestedClients = data.filter(
-            c => c.business_id !== this.filial
-          )
+    getFilials () {
+      if (!this.businessId || !this.businessFilialCount) {
+        this.companyFilials = []
+      } else {
+        Api()
+        .get(`/business?parent=eq.${this.businessId}`)
+        .then(res => {
+          this.companyFilials = res.data
         })
+      }
     },
     getUsersByPhone (newPhone) {
       this.seekComplete = false
@@ -300,11 +310,18 @@ export default {
     },
     onSave () {
       setTimeout(() => {
-        this.client.business_id = this.filial
-        if (!this.client.phone && this.filledPhones.length) {
-          this.client.phone = this.client.phones.find(p => p && p.length >= 10)
+        let userInfo = {
+          user_id: this.foundedUser.id,
+          company_id: this.businessId,
+          business: this.filials.map(x=>{
+            return {id: x.id, name: x.j.name}
+            }),
+          j: {
+            fullName: this.fullName,
+            notes: this.notes
+          }
         }
-        this.$emit('onSave', this.client)
+        this.$emit('onSave', userInfo)
       }, 100)
     },
     reset () {

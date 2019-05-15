@@ -347,6 +347,7 @@ export default {
     },
     onSave (item) {
       const newItem = item instanceof User? item : new User(item)
+      console.log(newItem)
       newItem.save().then(res => {
         if (!res) return
         this.edit = false
