@@ -1,219 +1,229 @@
 <template>
   <div class="visit-log">
-    <div v-show="!showEmployeeSelection">
-      <div class="header">
-        <div class="header__info ">
-          <ul class="visit-log__info-list">
-            <li class="visit-log__info-item">
-              В процессе/Завершен
-            </li>
-            <li class="visit-log__info-item _missed">
-              Не пришел
-            </li>
-            <li class="visit-log__info-item _cancelled">
-              Отмена
-            </li>
-            <li class="visit-log__info-item _day-off">
-              Выходной
-            </li>
-            <li class="visit-log__info-item _break">
-              Перерыв
-            </li>
-          </ul>
+    <v-progress-linear
+      :active="isLoading"
+      height="2"
+      indeterminate
+      color="#5699FF"
+    />
+    <div v-show="!isLoading">      
+      <div v-show="!showEmployeeSelection">
+        <div class="header">
+          <div class="header__info ">
+            <ul class="visit-log__info-list">
+              <li class="visit-log__info-item">
+                В процессе/Завершен
+              </li>
+              <li class="visit-log__info-item _missed">
+                Не пришел
+              </li>
+              <li class="visit-log__info-item _cancelled">
+                Отмена
+              </li>
+              <li class="visit-log__info-item _day-off">
+                Выходной
+              </li>
+              <li class="visit-log__info-item _break">
+                Перерыв
+              </li>
+            </ul>
+          </div>
+          <div class="header__button">
+            <MainButton
+              v-if="selectedEmployee"
+              :class="{ button_disabled: false }"
+              class="button_attractive"
+            >
+              Создать запись
+            </MainButton>
+          </div>
         </div>
-        <div class="header__button">
-          <MainButton
-            v-if="selectedEmployee"
-            :class="{ button_disabled: false }"
-            class="button_attractive"
+        <div class="calendar-controls">
+          <VLayout
+            align-center
+            justify-space-between
+            row
+            class="calendar-controls__container"
           >
-            Создать запись
-          </MainButton>
+            <div class="calendar-controls__left">
+              <v-btn
+                class="calendar-controls__button"
+                depressed
+                flat
+                small
+                @click.stop="addMonth(-1)"
+              >
+                <v-icon>navigate_before</v-icon>
+              </v-btn>
+              <v-btn
+                class="desktop calendar-controls__button"
+                depressed
+                flat
+                small
+                @click.stop="addMonth(1)"
+              >
+                <v-icon>navigate_next</v-icon>
+              </v-btn>
+              <div class="calendar-controls__heading">
+                {{ dateMonthHeader }}
+              </div>
+            </div>
+            <div class="calendar-controls__right">
+              <div class="calendar-controls__toggle desktop">
+                <input id="day-mode" v-model="displayMode" type="radio" value="day">
+                <label for="day-mode">День</label>
+                <input id="week-mode" v-model="displayMode" type="radio" value="week">
+                <label for="week-mode">Неделя</label>
+              </div>
+              <v-btn
+                class="mobile calendar-controls__button"
+                depressed
+                flat
+                small
+                @click.stop="addMonth(1)"
+              >
+                <v-icon>navigate_next</v-icon>
+              </v-btn>
+            </div>
+          </VLayout>
         </div>
-      </div>
-      <div class="calendar-controls">
-        <VLayout
-          align-center
-          justify-space-between
-          row
-          class="calendar-controls__container"
+        <VLayout 
+          v-if="businessEmployees && !businessEmployees.length" 
+          class="visit-log__no-employees"
+          align-center 
+          justify-space-between 
+          row 
+          fill-height
         >
-          <div class="calendar-controls__left">
+          <div>У вас нет ни одного мастера.</div>
+          <!-- todo remove button_disabled class, add functionality -->
+          <MainButton class="button_attractive button_disabled">
+            Создать мастера
+          </MainButton>
+        </VLayout>
+        
+        <div v-if="selectedEmployee && selectedEmployee.j" :class="['main-table', { 'one-day': displayMode === 'day' }]">
+          <div class="controls">
             <v-btn
-              class="calendar-controls__button"
+              class="controls__button"
               depressed
               flat
               small
-              @click.stop="addMonth(-1)"
+              @click.stop="changeWeek(-1)"
             >
               <v-icon>navigate_before</v-icon>
             </v-btn>
             <v-btn
-              class="desktop calendar-controls__button"
+              class="controls__button"
               depressed
               flat
               small
-              @click.stop="addMonth(1)"
-            >
-              <v-icon>navigate_next</v-icon>
-            </v-btn>
-            <div class="calendar-controls__heading">
-              {{ dateMonthHeader }}
-            </div>
-          </div>
-          <div class="calendar-controls__right">
-            <div class="calendar-controls__toggle desktop">
-              <input id="day-mode" v-model="displayMode" type="radio" value="day">
-              <label for="day-mode">День</label>
-              <input id="week-mode" v-model="displayMode" type="radio" value="week">
-              <label for="week-mode">Неделя</label>
-            </div>
-            <v-btn
-              class="mobile calendar-controls__button"
-              depressed
-              flat
-              small
-              @click.stop="addMonth(1)"
+              @click.stop="changeWeek(1)"
             >
               <v-icon>navigate_next</v-icon>
             </v-btn>
           </div>
-        </VLayout>
+          <div class="employees">
+            <button type="button" class="employees__menu" @click="showEmployeeSelection = true" />
+            <div 
+              v-for="employee in businessEmployees" 
+              :key="employee.id" 
+              :class="['employee', { 
+                selected: selectedEmployee === employee, 
+                disabled: !employee.j.services || !employee.j.services.length 
+              }]"
+              @click="selectedEmployee = employee"
+            >
+              <Avatar
+                class="employee__avatar"
+                :name="employee.j.name"
+                :src="employee.j.image"
+                size="44px"
+              />
+              <div class="employee__badge">
+                <h2 class="employee__title">
+                  <span>{{ employee.j.name && employee.j.name.length > 70? employee.j.name.substring(0, 70) + '...' : employee.j.name }}</span>
+                </h2>
+                <div v-if="employee.j.category" class="employee__subtitle">
+                  {{ employee.j.category }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div row class="main-table__times">
+            <CalendarDayColumn
+              v-for="(day, i) in selectedWeek"
+              v-show="day.dateKey === selectedDate || displayMode === 'week'"
+              :key="day.dateKey"
+              :class="{ desktop: day.dateKey !== selectedDate, selected: day.dateKey === selectedDate }"
+              :show-time="!i || day.dateKey === selectedDate"
+              :day="day"
+              :holiday="isHoliday(day.dateKey)"
+              :visits="dayVisits(day.dateKey, selectedEmployee)"
+              :employee-schedule="selectedEmployee.j.schedule.data[i]"
+              :display-from="displayTimes.start"
+              :display-to="displayTimes.end"
+              @onSlotClick="onSlotClick"
+            />
+          </div>
+        </div>
       </div>
-      <VLayout 
-        v-if="!businessEmployees || !businessEmployees.length" 
-        class="visit-log__no-employees"
-        align-center 
-        justify-space-between 
-        row 
-        fill-height
-      >
-        <div>У вас нет ни одного мастера.</div>
-        <MainButton class="button_attractive">
-          Создать мастера
-        </MainButton>
-      </VLayout>
-      <div v-if="selectedEmployee && selectedEmployee.j" :class="['main-table', { 'one-day': displayMode === 'day' }]">
-        <div class="controls">
+      
+      <div v-show="showEmployeeSelection" class="modal-content">
+        <div class="modal-content__header">
           <v-btn
             class="controls__button"
             depressed
             flat
             small
-            @click.stop="changeWeek(-1)"
+            @click.stop="showEmployeeSelection = false"
           >
             <v-icon>navigate_before</v-icon>
           </v-btn>
-          <v-btn
-            class="controls__button"
-            depressed
-            flat
-            small
-            @click.stop="changeWeek(1)"
-          >
-            <v-icon>navigate_next</v-icon>
-          </v-btn>
+          <h2 class="modal-content__heading">
+            Выберите мастера
+          </h2>
         </div>
-        <div class="employees">
-          <button type="button" class="employees__menu" @click="showEmployeeSelection = true" />
-          <div 
-            v-for="employee in businessEmployees" 
-            :key="employee.id" 
-            :class="['employee', { 
-              selected: selectedEmployee === employee, 
-              disabled: !employee.j.services || !employee.j.services.length 
-            }]"
-            @click="selectedEmployee = employee"
+        
+        <div class="modal-content__body">
+          <Accordion>
+            <template slot="heading">
+              <div>Все мастера</div>
+            </template>
+            <template slot="content">
+              <AppCheckbox
+                v-for="(category, i) in empCategories"
+                :id="category"
+                :key="i"
+                :checked="selectedEmpGroups.includes(category)"
+                :label="category"
+                name="employee_category"
+                :value="category"
+                @change="onGroupsChange(category, $event)"
+              />
+            </template>
+          </Accordion>
+          <div
+            v-for="category in selectedEmpGroups"
+            :key="category"
+            class="filter-results__group"
           >
-            <Avatar
-              class="employee__avatar"
-              :name="employee.j.name"
-              :src="employee.j.image"
-              size="44px"
-            />
-            <div class="employee__badge">
-              <h2 class="employee__title">
-                <span>{{ employee.j.name && employee.j.name.length > 70? employee.j.name.substring(0, 70) + '...' : employee.j.name }}</span>
-              </h2>
-              <div v-if="employee.j.category" class="employee__subtitle">
-                {{ employee.j.category }}
+            <template v-if="businessEmployees.some(e => e.j && e.j.category === category)">
+              <div class="filter-results__group-name">
+                {{ category ? category : '' }}
               </div>
-            </div>
+              <div class="filter-results__cards">
+                <div v-for="(employee, i) in businessEmployees" :key="i">
+                  <EmployeeCard
+                    v-if="employee.j.category === category"
+                    :employee="employee"
+                    :services-count="employee.j.services ? employee.j.services.length : 0"
+                    @calendarClick="selectedEmployee = employee; showEmployeeSelection = false"
+                  />
+                </div>
+              </div>
+            </template>
           </div>
-        </div>
-        <div row class="main-table__times">
-          <CalendarDayColumn
-            v-for="(day, i) in selectedWeek"
-            v-show="day.dateKey === selectedDate || displayMode === 'week'"
-            :key="day.dateKey"
-            :class="{ desktop: day.dateKey !== selectedDate, selected: day.dateKey === selectedDate }"
-            :show-time="!i || day.dateKey === selectedDate"
-            :day="day"
-            :holiday="isHoliday(day.dateKey)"
-            :visits="dayVisits(day.dateKey, selectedEmployee)"
-            :schedule="selectedEmployee.j.schedule.data[i]"
-            :display-from="businessSchedule && businessSchedule.data && businessSchedule.data[i][0]"
-            :display-to="businessSchedule && businessSchedule.data && businessSchedule.data[i][1]"
-            @onSlotClick="onSlotClick"
-          />
-        </div>
-      </div>
-    </div>
-    
-    <div v-show="showEmployeeSelection" class="modal-content">
-      <div class="modal-content__header">
-        <v-btn
-          class="controls__button"
-          depressed
-          flat
-          small
-          @click.stop="showEmployeeSelection = false"
-        >
-          <v-icon>navigate_before</v-icon>
-        </v-btn>
-        <h2 class="modal-content__heading">
-          Выберите мастера
-        </h2>
-      </div>
-      
-      <div class="modal-content__body">
-        <Accordion>
-          <template slot="heading">
-            <div>Все мастера</div>
-          </template>
-          <template slot="content">
-            <AppCheckbox
-              v-for="(category, i) in empCategories"
-              :id="category"
-              :key="i"
-              :checked="selectedEmpGroups.includes(category)"
-              :label="category"
-              name="employee_category"
-              :value="category"
-              @change="onGroupsChange(category, $event)"
-            />
-          </template>
-        </Accordion>
-        <div
-          v-for="category in selectedEmpGroups"
-          :key="category"
-          class="filter-results__group"
-        >
-          <template v-if="businessEmployees.some(e => e.j && e.j.category === category)">
-            <div class="filter-results__group-name">
-              {{ category ? category : '' }}
-            </div>
-            <div class="filter-results__cards">
-              <div v-for="(employee, i) in businessEmployees" :key="i">
-                <EmployeeCard
-                  v-if="employee.j.category === category"
-                  :employee="employee"
-                  :services-count="employee.j.services ? employee.j.services.length : 0"
-                  @calendarClick="selectedEmployee = employee; showEmployeeSelection = false"
-                />
-              </div>
-            </div>
-          </template>
         </div>
       </div>
     </div>
@@ -260,6 +270,7 @@ export default {
       displayMode: 'week', /* day or week */
       edit: false,
       editVisitPage: undefined,
+      isLoading: false,
       selectedEmployee: {},
       selectedEmpGroups: [],
       newVisit: false,
@@ -274,7 +285,7 @@ export default {
     ...mapState({
       businessEmployees: state => state.business.businessEmployees
     }),
-    ...mapGetters(['businessId', 'businessSchedule']),
+    ...mapGetters(['businessSchedule']),
     empCategories () { // todo make a mixin
       return [
         ...new Set(
@@ -292,6 +303,26 @@ export default {
       const date = this.selectedDateObj.date
 
       return getWeek(date.getFullYear(), date.getMonth(), this.selectedDateObj.display)
+    },
+    displayTimes () {
+      const schedule = this.businessSchedule && this.businessSchedule.data
+      let start = schedule && schedule.find(day => !!day[0])[0]
+      let end = schedule && schedule.find(day => !!day[1])[1]
+
+      //todo disable 'Журнал Записи' in Navigation if no businessSchedule, businessEmployees or businessServices
+      schedule.forEach(day => {
+        if (!day[0] || !day[1]) {
+          return
+        }
+        if (day[0] < start) {
+          start = day[0]
+        }
+        if (day[1] > end) {
+          end = day[1]
+        }
+      })
+
+      return { start, end }
     }
   },
   watch: {
@@ -299,11 +330,10 @@ export default {
       handler: 'fetchData',
       deep: true
     },
-    businessEmployees () {
-      this.selectedEmployee = this.businessEmployees && this.businessEmployees[0]
-    }
+    businessEmployees: 'initEmployee'
   },
   mounted () {
+    this.initEmployee()
     // TODO проверить, не утекает ли память
     this.fetchData()
     this.$root.$on('onAction', this.onAction)
@@ -320,7 +350,7 @@ export default {
       this.goDate(formatDate(dt))
     },
     fetchData () {
-      if (!this.businessId) return
+      if (!this.$route || !this.$route.params || !this.$route.params.id) return
       this.setActions(this.formActions)
 
       if (!this.selectedWeek) return
@@ -329,27 +359,18 @@ export default {
       const nextMonday = new Date()
 
       nextMonday.setDate(sunday.date.getDate() + 1)
-      
+      this.isLoading = true
       Api()
-        .get(`/visit?salon_id=eq.${this.businessId}&ts_begin=gt.${this.selectedWeek[0].dateKey}&ts_begin=lt.${formatDate(nextMonday)}`)
+        .get(`/visit?salon_id=eq.${this.$route.params.id}&ts_begin=gt.${this.selectedWeek[0].dateKey}&ts_begin=lt.${formatDate(nextMonday)}`)
         .then(({ data }) => {
-          this.visits = []
-          data.forEach(v => this.visits.push(new Visit(v)))
+          this.visits = data.map(v => new Visit(v))
         })
-
-
-      /*if (this.selectedDate) {
-        this.setActualDate(this.selectedDate)
-      }
-      const path = `visit?salon_id=eq.${this.businessId}`
-      Api()
-        .get(path)
-        .then(res => res.data)
-        .then(res => {
-          this.visits = res
-          this.setDateVisits()
-        })*/
-
+        .finally(() => {
+          this.isLoading = false
+        })
+    },
+    initEmployee () {
+      this.selectedEmployee = this.businessEmployees && this.businessEmployees.find(e => e.j.services && e.j.services.length)
     },
     onAction (payload) {
       if (payload === this.formActions[0].action) {
@@ -420,6 +441,9 @@ export default {
   @import '../assets/styles/common';
 
   .visit-log {
+    .v-progress-linear {
+      margin: 0;
+    }
     .header {
       display: none;
       justify-content: space-between;

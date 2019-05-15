@@ -220,3 +220,16 @@ export function hyphenStrToDay (str) {
 
   return day
 }
+
+export function dateISOInLocalTimeZone (date) {
+  const d = new Date(date)
+  const l = d.getTime() - d.getTimezoneOffset() * 60000
+  const dl = new Date(l)
+  return dl.toISOString().slice(0, 19)
+}
+
+export function timestampLocalISO (diff = 30) {
+  let dt = new Date()
+  dt = new Date(dt.getTime() + diff * 60000)
+  return dateISOInLocalTimeZone(dt)
+}
