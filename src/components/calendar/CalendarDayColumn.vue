@@ -10,11 +10,11 @@
       <div class="day-column__date">
         {{ day.display }}
       </div>
-      <div :class="['day-column__day', { 'day-off': !schedule || !schedule[0] || !schedule[1] }]">
+      <div :class="['day-column__day', { 'day-off': isDayOff }]">
         {{ dowLong }}
       </div>
-      <div v-if="schedule && schedule[0] && schedule[1]" class="day-column__schedule">
-        {{ schedule[0] }} – {{ schedule[1] }}
+      <div v-if="!isDayOff" class="day-column__schedule">
+        {{ employeeSchedule[0] }} – {{ employeeSchedule[1] }}
       </div>
       <div v-else class="day-column__schedule">
         Выходной
@@ -42,7 +42,7 @@
       </template>
       <div
         v-else
-        :class="['slot', {working: isWorkingTime(i)}]"
+        :class="['slot', { working: isWorkingTime(i) }]"
         @click="onSlotClick(time)"
       >
         <div class="slot__time">
@@ -86,7 +86,7 @@ export default {
       type: String,
       default: ''
     },
-    schedule: {
+    employeeSchedule: {
       type: Array,
       default () {
         return []
@@ -124,12 +124,20 @@ export default {
     dowLong () {
       return dowDisplay(this.day.date)
     },
+    isDayOff () {
+      if (!this.employeeSchedule || !this.employeeSchedule[0] || !this.employeeSchedule[1]) {
+        return true
+      }
+
+      // todo add getting irregular/extra holidays (POST /business_calendar)
+      return false
+    },
     isToday () {
       return areSameDates(this.today, this.day.date)
     },
     lunchTime () {
-      if (this.schedule.length > 3) {
-        return [this.schedule[1], this.schedule[2]]
+      if (this.employeeSchedule.length > 3) {
+        return [this.employeeSchedule[1], this.employeeSchedule[2]]
       }
       return []
     },
@@ -170,14 +178,14 @@ export default {
       return this.showTime && !((i - 1)% this.displayStep)
     },
     isWorkingTime (i) {
-      if (!this.schedule) {
+      if (!this.employeeSchedule) {
         return false
       }
       return (
-        this.schedule[0] <= this.times[i].begin.display &&
-        (this.schedule[this.schedule.length - 1] === '00:00'
+        this.employeeSchedule[0] <= this.times[i].begin.display &&
+        (this.employeeSchedule[this.employeeSchedule.length - 1] === '00:00'
           ? '24:00'
-          : this.schedule[this.schedule.length - 1]) >=
+          : this.employeeSchedule[this.employeeSchedule.length - 1]) >=
           this.times[i].end.display &&
         !(
           this.lunchTime.length &&
@@ -190,7 +198,7 @@ export default {
       this.$emit('onClickDate', dt)
     },
     onSlotClick (time) {
-      if (time.begin.date.getTime() > Date.now() ) {
+      if (!this.isDayOff && (time.begin.date.getTime() > Date.now())) {
         this.selectedTime = time
       }
     },

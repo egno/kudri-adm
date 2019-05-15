@@ -70,11 +70,11 @@
           />
         </v-menu>
       </div>
-      <div class="right-attached-panel__field-block">
-        <TimeEdit
-          enabled="!showSwitch || switchValue"
-          :time="selectedTime"
-          @onEdit="selectedTime = $event"
+      <div class="visit-edit__time-selection">
+        <TimeSelect
+          :selected-time="selectedTime"
+          :times="freeTimes"
+          @selectedTime="selectedTime = $event"
         />
       </div>
 
@@ -147,7 +147,7 @@
 
 <script>
 import PhoneEdit from '@/components/common/PhoneEdit.vue'
-import TimeEdit from '@/components/TimeEdit.vue'
+import TimeSelect from '@/components/calendar/TimeSelect.vue'
 import {
   dateInLocalTimeZone,
   formatDate,
@@ -156,9 +156,10 @@ import {
   hyphensStringToDate
 } from '@/components/calendar/utils'
 import { mapState, mapGetters } from 'vuex'
+import Api from '@/api/backend'
 
 export default {
-  components: { PhoneEdit, TimeEdit },
+  components: { PhoneEdit, TimeSelect },
   model: {
     prop: 'visible',
     event: 'close'
@@ -199,6 +200,7 @@ export default {
       categoryOthersName: 'Прочие',
       colors: ['DFC497', 'F3AA57', '85CA86', '49C9B7', '5A96DF', 'F36B6B', 'F37F6B', 'DF8CB2', 'B88AB2', '8589DF'],
       error: '',
+      freeTimes: [],
       message: '',
       position: null,
       reminders: [
@@ -282,14 +284,37 @@ export default {
     page: 'setPage',
     employee () {
       if (this.employee.j.services && this.employee.j.services.length) { 
-        this.selectedEmployee = this.employee 
+        this.selectedEmployee = this.employee
+        this.loadFreeTimes() 
       }
-    }
+    },
+    selectedDate: 'loadFreeTimes'
   },
   mounted () {
     this.setSelectedValues()
   },
   methods: {
+    loadFreeTimes () {
+      if (!(this.businessId && this.selectedDate)) return
+
+      let params = {
+        dt: this.selectedDate,
+        business_id: this.businessId
+      }
+
+      if (this.selectedEmployee) {
+        params.employee_id = this.selectedEmployee.id
+      }
+      this.loadingTimes = true
+      Api()
+        .post("rpc/free_times", params)
+        .then(({ data }) => 
+          this.freeTimes = data
+        )
+        .finally(() => {
+          this.loadingTimes = false
+        })
+    },
     onPhoneEdit (payload) {
       this.visit.j.client.phone = payload
     },
@@ -343,6 +368,7 @@ export default {
       if (this.employee.j.services && this.employee.j.services.length) { 
         this.selectedEmployee = this.employee 
       }
+      this.loadFreeTimes()
     }
   }
 }
@@ -397,6 +423,9 @@ export default {
       height: 24px;
       border-radius: 50%;
     }
+  }
+  .visit-edit__time-selection {
+    margin-top: 30px;
   }
 
   .right-attached-panel__buttons {
