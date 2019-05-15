@@ -1,8 +1,8 @@
 <template>
-  <v-flex
+  <div
     :class="['day-column', { today: isToday }]"
   >
-    <v-layout
+    <div
       column
       class="day-column__header"
       @click="onDayEdit"
@@ -19,7 +19,7 @@
       <div v-else class="day-column__schedule">
         Выходной
       </div>
-    </v-layout>
+    </div>
     <div
       v-for="(time, i) in times"
       :key="i"
@@ -56,7 +56,7 @@
         </div>
       </div>
     </div>
-  </v-flex>
+  </div>
 </template>
 
 
@@ -211,6 +211,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  @import '../../assets/styles/common';
+
 .item {
   position: relative;
   height: 56px;
@@ -283,11 +285,18 @@ export default {
   color: rgb(192, 0, 0);
 }
 .day-column {
-  flex: 1 0 14.28%;
+  position: relative;
+  min-width: 136px;
+  @media only screen and (min-width : $desktop) {
+    padding-top: 82px;
+  }
 
   &__header {
+    position: absolute;
+    top: 0;
+    left: 0; right: 0;
     height: 82px;
-    padding: 10px 24px;
+    padding: 12px 24px;
     border-right: 1px solid rgba(137, 149, 175, 0.1);
     background-color: #fff;
     box-shadow: 8px 2px 8px rgba(137, 149, 175, 0.1);
@@ -301,7 +310,7 @@ export default {
     text-transform: capitalize;
   }
   &__schedule {
-    margin-top: 3px;
+    margin-top: 4px;
     font-size: 12px;
     color: #8995AF;
   }

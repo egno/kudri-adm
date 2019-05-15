@@ -1,147 +1,230 @@
 <template>
   <div class="visit-log">
-    <div class="header">
-      <div class="header__info ">
-        <ul class="visit-log__info-list">
-          <li class="visit-log__info-item">
-            В процессе/Завершен
-          </li>
-          <li class="visit-log__info-item _missed">
-            Не пришел
-          </li>
-          <li class="visit-log__info-item _cancelled">
-            Отмена
-          </li>
-          <li class="visit-log__info-item _day-off">
-            Выходной
-          </li>
-          <li class="visit-log__info-item _break">
-            Перерыв
-          </li>
-        </ul>
+    <div v-show="!showEmployeeSelection">
+      <div class="header">
+        <div class="header__info ">
+          <ul class="visit-log__info-list">
+            <li class="visit-log__info-item">
+              В процессе/Завершен
+            </li>
+            <li class="visit-log__info-item _missed">
+              Не пришел
+            </li>
+            <li class="visit-log__info-item _cancelled">
+              Отмена
+            </li>
+            <li class="visit-log__info-item _day-off">
+              Выходной
+            </li>
+            <li class="visit-log__info-item _break">
+              Перерыв
+            </li>
+          </ul>
+        </div>
+        <div class="header__button">
+          <MainButton
+            v-if="selectedEmployee"
+            :class="{ button_disabled: false }"
+            class="button_attractive"
+          >
+            Создать запись
+          </MainButton>
+        </div>
       </div>
-      <div class="header__button">
-        <MainButton
-          :class="{ button_disabled: false }"
-          class="button_attractive"
+      <div class="calendar-controls">
+        <VLayout
+          align-center
+          justify-space-between
+          row
+          class="calendar-controls__container"
         >
-          Создать запись
-        </MainButton>
+          <div class="calendar-controls__left">
+            <v-btn
+              class="calendar-controls__button"
+              depressed
+              flat
+              small
+              @click.stop="addMonth(-1)"
+            >
+              <v-icon>navigate_before</v-icon>
+            </v-btn>
+            <v-btn
+              class="desktop calendar-controls__button"
+              depressed
+              flat
+              small
+              @click.stop="addMonth(1)"
+            >
+              <v-icon>navigate_next</v-icon>
+            </v-btn>
+            <div class="calendar-controls__heading">
+              {{ dateMonthHeader }}
+            </div>
+          </div>
+          <div class="calendar-controls__right">
+            <div class="calendar-controls__toggle desktop">
+              <input id="day-mode" v-model="displayMode" type="radio" value="day">
+              <label for="day-mode">День</label>
+              <input id="week-mode" v-model="displayMode" type="radio" value="week">
+              <label for="week-mode">Неделя</label>
+            </div>
+            <v-btn
+              class="mobile calendar-controls__button"
+              depressed
+              flat
+              small
+              @click.stop="addMonth(1)"
+            >
+              <v-icon>navigate_next</v-icon>
+            </v-btn>
+          </div>
+        </VLayout>
       </div>
-    </div>
-    <div class="calendar-controls">
-      <VLayout
-        align-center
-        justify-space-between
-        row
-        class="calendar-controls__container"
+      <VLayout 
+        v-if="!businessEmployees || !businessEmployees.length" 
+        class="visit-log__no-employees"
+        align-center 
+        justify-space-between 
+        row 
+        fill-height
       >
-        <div class="calendar-controls__left">
+        <div>У вас нет ни одного мастера.</div>
+        <MainButton class="button_attractive">
+          Создать мастера
+        </MainButton>
+      </VLayout>
+      <div v-if="selectedEmployee && selectedEmployee.j" :class="['main-table', { 'one-day': displayMode === 'day' }]">
+        <div class="controls">
           <v-btn
-            class="calendar-controls__button"
+            class="controls__button"
             depressed
             flat
             small
-            @click.stop="addMonth(-1)"
+            @click.stop="changeWeek(-1)"
           >
             <v-icon>navigate_before</v-icon>
           </v-btn>
           <v-btn
-            class="desktop calendar-controls__button"
+            class="controls__button"
             depressed
             flat
             small
-            @click.stop="addMonth(1)"
-          >
-            <v-icon>navigate_next</v-icon>
-          </v-btn>
-          <div class="calendar-controls__heading">
-            {{ dateMonthHeader }}
-          </div>
-        </div>
-        <div class="calendar-controls__right">
-          <div class="calendar-controls__toggle desktop">
-            <input id="day-mode" v-model="displayMode" type="radio" value="day">
-            <label for="day-mode">День</label>
-            <input id="week-mode" v-model="displayMode" type="radio" value="week">
-            <label for="week-mode">Неделя</label>
-          </div>
-          <v-btn
-            class="mobile calendar-controls__button"
-            depressed
-            flat
-            small
-            @click.stop="addMonth(1)"
+            @click.stop="changeWeek(1)"
           >
             <v-icon>navigate_next</v-icon>
           </v-btn>
         </div>
-      </VLayout>
-    </div>
-    <div class="main-table">
-      <div class="week-controls">
-        <v-btn
-          class="week-controls__button"
-          depressed
-          flat
-          small
-          @click.stop="changeWeek(-1)"
-        >
-          <v-icon>navigate_before</v-icon>
-        </v-btn>
-        <v-btn
-          class="week-controls__button"
-          depressed
-          flat
-          small
-          @click.stop="changeWeek(1)"
-        >
-          <v-icon>navigate_next</v-icon>
-        </v-btn>
-      </div>
-      <div class="employees">
-        <div class="employees__menu" />
-        <div v-if="selectedEmployee && selectedEmployee.j" class="employee">
-          <Avatar
-            class="employee__avatar"
-            :name="selectedEmployee.j.name"
-            :src="selectedEmployee.j.image"
-            size="44px"
-          />
-          <div class="employee__badge">
-            <h2 class="employee__title">
-              <span>{{ selectedEmployee.j.name && selectedEmployee.j.name.length > 70? selectedEmployee.j.name.substring(0, 70) + '...' : selectedEmployee.j.name }}</span>
-            </h2>
-            <div v-if="selectedEmployee.j.category" class="employee__subtitle">
-              {{ selectedEmployee.j.category }}
+        <div class="employees">
+          <button type="button" class="employees__menu" @click="showEmployeeSelection = true" />
+          <div 
+            v-for="employee in businessEmployees" 
+            :key="employee.id" 
+            :class="['employee', { 
+              selected: selectedEmployee === employee, 
+              disabled: !employee.j.services || !employee.j.services.length 
+            }]"
+            @click="selectedEmployee = employee"
+          >
+            <Avatar
+              class="employee__avatar"
+              :name="employee.j.name"
+              :src="employee.j.image"
+              size="44px"
+            />
+            <div class="employee__badge">
+              <h2 class="employee__title">
+                <span>{{ employee.j.name && employee.j.name.length > 70? employee.j.name.substring(0, 70) + '...' : employee.j.name }}</span>
+              </h2>
+              <div v-if="employee.j.category" class="employee__subtitle">
+                {{ employee.j.category }}
+              </div>
             </div>
           </div>
         </div>
+        <div row class="main-table__times">
+          <CalendarDayColumn
+            v-for="(day, i) in selectedWeek"
+            v-show="day.dateKey === selectedDate || displayMode === 'week'"
+            :key="day.dateKey"
+            :class="{ desktop: day.dateKey !== selectedDate, selected: day.dateKey === selectedDate }"
+            :show-time="!i || day.dateKey === selectedDate"
+            :day="day"
+            :holiday="isHoliday(day.dateKey)"
+            :visits="dayVisits(day.dateKey, selectedEmployee)"
+            :schedule="selectedEmployee.j.schedule.data[i]"
+            :display-from="businessSchedule && businessSchedule.data && businessSchedule.data[i][0]"
+            :display-to="businessSchedule && businessSchedule.data && businessSchedule.data[i][1]"
+            @onSlotClick="onSlotClick"
+          />
+        </div>
       </div>
-      <VLayout v-if="selectedEmployee && selectedEmployee.j" row class="main-table__times">
-        <CalendarDayColumn
-          v-for="(day, i) in selectedWeek"
-          v-show="!i || displayMode === 'week'"
-          :key="day.dateKey"
-          :class="{ desktop: i }"
-          :show-time="!i"
-          :day="day"
-          :holiday="isHoliday(day.dateKey)"
-          :visits="dayVisits(day.dateKey, selectedEmployee)"
-          :schedule="selectedEmployee.j.schedule.data[i]"
-          :display-from="businessSchedule && businessSchedule.data && businessSchedule.data[i][0]"
-          :display-to="businessSchedule && businessSchedule.data && businessSchedule.data[i][1]"
-          @onSlotClick="onSlotClick"
-        />
-      </VLayout>
     </div>
-
+    
+    <div v-show="showEmployeeSelection" class="modal-content">
+      <div class="modal-content__header">
+        <v-btn
+          class="controls__button"
+          depressed
+          flat
+          small
+          @click.stop="showEmployeeSelection = false"
+        >
+          <v-icon>navigate_before</v-icon>
+        </v-btn>
+        <h2 class="modal-content__heading">
+          Выберите мастера
+        </h2>
+      </div>
+      
+      <div class="modal-content__body">
+        <Accordion>
+          <template slot="heading">
+            <div>Все мастера</div>
+          </template>
+          <template slot="content">
+            <AppCheckbox
+              v-for="(category, i) in empCategories"
+              :id="category"
+              :key="i"
+              :checked="selectedEmpGroups.includes(category)"
+              :label="category"
+              name="employee_category"
+              :value="category"
+              @change="onGroupsChange(category, $event)"
+            />
+          </template>
+        </Accordion>
+        <div
+          v-for="category in selectedEmpGroups"
+          :key="category"
+          class="filter-results__group"
+        >
+          <template v-if="businessEmployees.some(e => e.j && e.j.category === category)">
+            <div class="filter-results__group-name">
+              {{ category ? category : '' }}
+            </div>
+            <div class="filter-results__cards">
+              <div v-for="(employee, i) in businessEmployees" :key="i">
+                <EmployeeCard
+                  v-if="employee.j.category === category"
+                  :employee="employee"
+                  :services-count="employee.j.services ? employee.j.services.length : 0"
+                  @calendarClick="selectedEmployee = employee; showEmployeeSelection = false"
+                />
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+    
     <VisitEdit
       v-if="currentVisit"
       :id="currentVisit.id"
       :visible="edit"
       :business-info="businessInfo"
-      :employees="businessEmployees.filter(e => !!e.j.services)"
+      :employees="businessEmployees.filter(e => e.j.services && e.j.services.length)"
+      :employee="selectedEmployee"
       :visit="currentVisit"
       :page="editVisitPage"
       @onSave="onVisitSave"
@@ -155,8 +238,11 @@
 import { mapState, mapActions, mapGetters } from 'vuex'
 import Api from '@/api/backend'
 import MainButton from '@/components/common/MainButton.vue'
+import Accordion from '@/components/common/Accordion.vue'
+import AppCheckbox from '@/components/common/AppCheckbox.vue'
 import Avatar from '@/components/avatar/Avatar.vue'
 import CalendarDayColumn from '@/components/calendar/CalendarDayColumn.vue'
+import EmployeeCard from '@/components/employee/EmployeeCard.vue'
 import { formatDate, hyphenStrToDay, getWeek, visitInit } from '@/components/calendar/utils'
 import VisitEdit from '@/components/calendar/VisitEdit.vue'
 import { makeAlert } from '@/api/utils'
@@ -165,7 +251,7 @@ import Visit from '@/classes/visit'
 import calendarMixin from '@/mixins/calendar'
 
 export default {
-  components: { Avatar, MainButton, CalendarDayColumn, /*VCalendar,*/ VisitEdit },
+  components: { Accordion, AppCheckbox, Avatar, EmployeeCard, MainButton, CalendarDayColumn, /*VCalendar,*/ VisitEdit },
   mixins: [ calendarMixin ],
   data () {
     return {
@@ -175,10 +261,12 @@ export default {
       edit: false,
       editVisitPage: undefined,
       selectedEmployee: {},
+      selectedEmpGroups: [],
       newVisit: false,
       formActions: [
         { label: 'Добавить запись', action: 'newVisit', default: true }
       ],
+      showEmployeeSelection: false,
       visits: []
     }
   },
@@ -187,6 +275,14 @@ export default {
       businessEmployees: state => state.business.businessEmployees
     }),
     ...mapGetters(['businessId', 'businessSchedule']),
+    empCategories () { // todo make a mixin
+      return [
+        ...new Set(
+          this.businessEmployees &&
+            this.businessEmployees.map(x => x.j && x.j.category)
+        )
+      ].sort((a, b) => (a < b ? -1 : 1))
+    },
     selectedDateObj () {
       return hyphenStrToDay(this.selectedDate)
     },
@@ -203,14 +299,14 @@ export default {
       handler: 'fetchData',
       deep: true
     },
+    businessEmployees () {
+      this.selectedEmployee = this.businessEmployees && this.businessEmployees[0]
+    }
   },
   mounted () {
     // TODO проверить, не утекает ли память
+    this.fetchData()
     this.$root.$on('onAction', this.onAction)
-    setTimeout(() => {
-      this.fetchData()
-      this.selectedEmployee = this.businessEmployees && this.businessEmployees[0]
-    }, 2000)
   },
   beforeDestroy () {
     this.$root.$off('onAction', this.onAction)
@@ -233,7 +329,7 @@ export default {
       const nextMonday = new Date()
 
       nextMonday.setDate(sunday.date.getDate() + 1)
-
+      
       Api()
         .get(`/visit?salon_id=eq.${this.businessId}&ts_begin=gt.${this.selectedWeek[0].dateKey}&ts_begin=lt.${formatDate(nextMonday)}`)
         .then(({ data }) => {
@@ -258,6 +354,17 @@ export default {
     onAction (payload) {
       if (payload === this.formActions[0].action) {
         this.newVisit = true
+      }
+    },
+    onGroupsChange (category, selected) {
+      if (selected) {
+        this.selectedEmpGroups.push(category)
+      } else {
+        const i = this.selectedEmpGroups.indexOf(category)
+
+        if (i > -1) {
+          this.selectedEmpGroups.splice(i, 1)
+        }
       }
     },
     onSelectEmployee (payload) {
@@ -318,10 +425,12 @@ export default {
       justify-content: space-between;
       @media only screen and (min-width : $desktop) {
         display: flex;
+        padding-right: 40px;
       }
       
       &__info {
         display: flex;
+        min-height: 58px;
         flex-grow: 1;
         align-items: center;
       }
@@ -395,28 +504,27 @@ export default {
 
     .mobile {
       @media only screen and (min-width : $desktop) {
-        visibility: hidden;  
-        position: absolute;
-        z-index: -1;
+        display: none;
       }
     }
     .desktop {
-      visibility: hidden; 
-      position: absolute;
-      z-index: -1;
+      display: none;
       @media only screen and (min-width : $desktop) {
-        visibility: visible;
-        position: relative;
-        z-index: auto;
+        display: block;
       }
     }
 
+    &__no-employees {
+      padding: 12px 0;
+      background-color: #fff;
+    }
     &__info-list {
-      display: flex;
+      display: flex; 
       flex-grow: 1;
+      max-width: 772px;
       justify-content: space-between;
       list-style: none;
-      padding: 0 calc((100% - 630px) / 5) 0 56px;
+      padding: 0 4% 0 56px;
     }
     &__info-item {
       font-size: 12px; 
@@ -452,29 +560,60 @@ export default {
         display: flex;
       }
 
-      &__times {
+      &__times { 
         padding-left: 58px;
         @media only screen and (min-width : $desktop) {
+          display: flex;
+          width: 100%;
           padding-left: 70px;
+          overflow: auto;
+        }
+      }
+
+      &.one-day .day-column.selected {
+        width: 100%;
+      }
+    }
+
+    .day-column {
+      &__header { 
+        display: none;
+        @media only screen and (min-width : $desktop) {
+          display: block;      
+        }
+      }
+      .time-mark {
+        display: none;
+      }
+
+      &:first-child .time-mark {
+        @media only screen and (min-width : $desktop) {
+          display: block;      
+        }
+      }
+      &.selected .time-mark {
+        @media only screen and (max-width : $desktop) {
+          display: block;      
         }
       }
     }
 
-    .week-controls {
+    .controls {
       display: none;
       position: absolute;
+      z-index: 1;
       left: 0;
-      width: 125px;
+      width: 128px;
       height: 82px;
-      padding-left: 55px;
+      padding-left: 52px;
       justify-content: space-between;
       align-items: center;
       background-color: #fff;
-      box-shadow: -6px 2px 8px rgba(137, 149, 175, 0.1);
+      box-shadow: -4px 2px 8px rgba(137, 149, 175, 0.1);
       @media only screen and (min-width : $desktop) {
         display: flex;
       }
-      button {
+      &__button {
         float: left;
         min-width: 0;
         width: 24px;
@@ -482,20 +621,56 @@ export default {
         border: 1px solid rgba(137, 149, 175, 0.1);
         border-radius: 50%;
         color: #8995AF;
+        
+        i {
+          font-size: 19px;
+        }
       }
     }
+
     .employees {
+      display: flex;
+      align-items: center;
       padding: 18px;
       background-color: #fff;
       @media only screen and (min-width : $desktop) {
+        display: block;
         width: 55px;
         padding: 100px 8px 0;
       }
+
+      &__menu {
+        width: 24px;
+        height: 24px;
+        background: url('../assets/images/svg/dots.svg') center no-repeat;
+        outline: none;
+        margin-right: 36px;
+        @media only screen and (min-width : $desktop) {
+          display: none;
+          margin: 0 7.5px;
+        }
+      }
     }
     .employee {
-      display: flex;
+      display: none;
+      margin: 12px 0;
       justify-content: flex-start;
       align-items: center;
+      cursor: pointer;
+      @media only screen and (min-width : $desktop) {
+        display: flex;
+        width: 40px;
+        height: 40px;
+        padding: 7px;
+        justify-content: center;
+        border-radius: 50%;
+        &.selected {
+          background-color: #5699FF;
+          .v-avatar {
+            border: 1px solid rgba(255, 255, 255, 0.35);
+          }
+        }
+      }
 
       &__avatar {
         @media only screen and (min-width : $desktop) {
@@ -523,7 +698,55 @@ export default {
         font-size: 12px;
         color: #8995AF;
       }
+      &.selected {
+        display: flex;
+      }
+      &.disabled {
+        opacity: .35;
+        pointer-events: none;
+      }
     }
 
+  }
+
+  .modal-content { 
+    &__header {
+      display: flex;
+      align-items: center;
+      padding: 53px 12px 12px 17px;
+      background-color: #fff;
+    }
+    &__heading {
+      font-family: Roboto Slab;
+      font-weight: normal;
+      font-size: 24px;
+      color: #07101C;
+    }
+    &__body {
+      padding: 28px 30px;
+    }
+
+    .controls__button {
+      margin-right: 15px;
+    }
+    .accordion__header,
+    .accordion__container {
+      background-color: #fff;
+    }
+    .accordion._expanded .accordion__header {
+      border-bottom-color: rgba(137, 149, 175, 0.1);
+    }
+    .accordion__container {
+      padding-bottom: 15px;
+    }
+    .checkbox__label {
+      margin-bottom: 10px;
+    }
+    .filter-results__group-name {
+      padding-left: 25px;
+    }
+    .delete-button {
+      display: none;
+    }
   }
 </style>

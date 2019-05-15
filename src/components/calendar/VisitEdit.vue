@@ -181,7 +181,13 @@ export default {
       default () {
         return []
       }
-    }
+    },
+    employee: {
+      type: Object,
+      default () {
+        return {}
+      }
+    },
   },
   data () {
     return {
@@ -273,7 +279,12 @@ export default {
   },
   watch: {
     visit: 'setSelectedValues',
-    page: 'setPage'
+    page: 'setPage',
+    employee () {
+      if (this.employee.j.services && this.employee.j.services.length) { 
+        this.selectedEmployee = this.employee 
+      }
+    }
   },
   mounted () {
     this.setSelectedValues()
@@ -329,6 +340,9 @@ export default {
       }
       this.active = 0
       this.selectedServices = []
+      if (this.employee.j.services && this.employee.j.services.length) { 
+        this.selectedEmployee = this.employee 
+      }
     }
   }
 }
