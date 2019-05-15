@@ -1,7 +1,7 @@
 import ApiObject from '@/classes/api_object'
 import Api from '@/api/backend'
 import store from '@/store'
-import { makeAlert, responseGetId } from '@/api/utils'
+import { makeAlert } from '@/api/utils'
 
 class User extends ApiObject {
 
@@ -25,7 +25,12 @@ class User extends ApiObject {
   }
 
   get jsonObject () {
-    return super.jsonObject
+    return {
+      user_id: this.id,
+      company_id: this.company_id,
+      j: this.j,
+      business: this.business
+    }
   }
 
   // Properties
@@ -71,10 +76,8 @@ class User extends ApiObject {
 
   save () {
     if (!this.company_id) return Promise.resolve()
-    this.id = null
     return Api()
       .post(`user?`, this.jsonObject)
-      .then(res => responseGetId(res))
       .catch(err => {
         store.dispatch('alert', makeAlert(err))
         return false

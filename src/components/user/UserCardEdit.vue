@@ -326,9 +326,7 @@ export default {
         let userInfo = {
           user_id: this.foundedUser.id,
           company_id: this.businessId,
-          business: this.filials.map(x => {
-            return { id: x.id, name: x.j.name }
-          }),
+          business: this.role==='Менеджер филиала' ? this.filials : [],
           j: {
             fullName: this.fullName,
             notes: this.notes

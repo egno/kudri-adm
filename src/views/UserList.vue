@@ -28,10 +28,19 @@
           >
             <td>
               <v-layout
-                align-center justify-space-between row fill-height
+                align-center
+                justify-space-between
+                row
+                fill-height
                 class="clients__first-cell"
               >
-                <v-layout align-center row fill-height class="clients__badge" @click="userEdit(props.item)">
+                <v-layout
+                  align-center
+                  row
+                  fill-height
+                  class="clients__badge"
+                  @click="userEdit(props.item)"
+                >
                   <div class="clients__avatar">
                     <Avatar
                       class="ma-1"
@@ -44,13 +53,19 @@
                     <div class="clients__name">
                       {{ props.item.fullName }}
                     </div>
-                    <div v-if="props.item.phone" class="clients__add-info _phone">
+                    <div
+                      v-if="props.item.phone"
+                      class="clients__add-info _phone"
+                    >
                       {{ props.item.phone }}
                     </div>
                   </div>
                 </v-layout>
                 <div>
-                  <a :href="`tel:+${props.item.phone}`" class="clients__phone-button" />
+                  <a
+                    :href="`tel:+${props.item.phone}`"
+                    class="clients__phone-button"
+                  />
                 </div>
               </v-layout>
             </td>
@@ -60,12 +75,15 @@
               </div>
             </td>
             <td>
-              <v-layout v-if="props.item.business" column>
+              <v-layout
+                v-if="props.item.business"
+                column
+              >
                 <v-flex>
                   <span>{{ props.item.business[0].name }}</span>
                 </v-flex>
                 <v-flex v-if="props.item.filialCount && (props.item.filialCount - 1)">
-                  <span class="second-row">{{ props.item.filialCount - 1 }}</span>
+                  <span class="second-row">+ еще {{ props.item.filialCount - 1 }}</span>
                 </v-flex>
               </v-layout>
             </td>
@@ -79,13 +97,22 @@
                 fill-height
                 justify-start
               >
-                <DeleteButton :is-dark="true" @click.native.stop="onDelete(props.item)" />
+                <DeleteButton
+                  :is-dark="true"
+                  @click.native.stop="onDelete(props.item)"
+                />
               </v-layout>
             </td>
           </template>
         </v-data-table>
         <div class="text-xs-right">
-          <v-pagination v-model="pagination.page" :length="pages" :total-visible="6" circle color="rgba(137, 149, 175, 0.35)" />
+          <v-pagination
+            v-model="pagination.page"
+            :length="pages"
+            :total-visible="6"
+            circle
+            color="rgba(137, 149, 175, 0.35)"
+          />
         </div>
         <UserCardEdit
           v-if="edit"
@@ -115,7 +142,10 @@
             >
               Удалить пользователя <span class="font-weight-bold">{{ item.fullName }}</span>?
             </div>
-            <div v-else class="uno-modal__text">
+            <div
+              v-else
+              class="uno-modal__text"
+            >
               Удалить пользователя?
             </div>
           </template>
@@ -131,7 +161,7 @@ import { mapActions, mapGetters } from 'vuex'
 import Avatar from '@/components/avatar/Avatar.vue'
 import UserCardEdit from '@/components/user/UserCardEdit.vue'
 import User from '@/classes/user'
-import { filials} from "../components/business/mixins"
+import { filials } from '../components/business/mixins'
 import DeleteButton from '@/components/common/DeleteButton'
 import Users from '@/mixins/users'
 import PageLayout from '@/components/common/PageLayout.vue'
@@ -151,7 +181,7 @@ export default {
       if (!value) {
         return ''
       }
-      return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+      return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
     }
   },
   mixins: [filials, Users],
@@ -178,7 +208,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['businessId', 'businessInfo', 'businessIsFilial', 'searchString']),
+    ...mapGetters([
+      'businessId',
+      'businessInfo',
+      'businessIsFilial',
+      'searchString'
+    ]),
     userId () {
       return this.$route && this.$route.params && this.$route.params.user
     },
@@ -189,8 +224,7 @@ export default {
       return `j->name->>fullname.ilike.*${this.searchString.trim()}*`
     },
     pages () {
-      if (!this.pagination.rowsPerPage || !this.totalItems)
-        return 0
+      if (!this.pagination.rowsPerPage || !this.totalItems) return 0
 
       return Math.ceil(this.totalItems / this.pagination.rowsPerPage)
     }
@@ -224,11 +258,8 @@ export default {
     if (this.userId) {
       this.onClientChange()
     }
-  
   },
-  beforeDestroy () {
-
-  },
+  beforeDestroy () {},
   methods: {
     ...mapActions(['addClientsCounter']),
     userEdit (item) {
@@ -249,7 +280,7 @@ export default {
         })
       }
     },
-    fetchData () {
+    fetchData (force = false) {
       if (!this.businessId) return
 
       const { sortBy, descending, page, rowsPerPage } = this.pagination
@@ -270,7 +301,7 @@ export default {
       if (page > 1) {
         params.push(`offset=${(page - 1) * rowsPerPage}`)
       }
-      if (this.lastQuery !== params.filter(x => !!x).join('&')) {
+      if (force || (this.lastQuery !== params.filter(x => !!x).join('&'))) {
         this.lastQuery = params.filter(x => !!x).join('&')
 
         this.progressQuery = true
@@ -285,12 +316,13 @@ export default {
                 this.totalItems = +r[1]
               }
             }
+                  console.log(res.data)
             return res.data
           })
           .then(res => {
             this.items = res.filter(x => !!x.j).map(x => new User(x))
           })
-          .catch((e) => {
+          .catch(e => {
             console.error(e)
           })
           .finally(() => {
@@ -305,18 +337,16 @@ export default {
         : this.businessId
 
       if (!id) return
-      this.getFilialsOf(id)
-        .then(res => {
-          this.branchesList = res
-        })
+      this.getFilialsOf(id).then(res => {
+        this.branchesList = res
+      })
     },
     onClientChange () {
       if (!this.userId) return
       this.item = new User({ id: this.userId })
-      this.item.load(this.userId)
-        .then(() => {
-          this.edit = true
-        })
+      this.item.load(this.userId).then(() => {
+        this.edit = true
+      })
     },
     onDelete (item) {
       if (item) {
@@ -340,23 +370,16 @@ export default {
         .delete(`user?user_id=eq.${this.item.id}`)
         .then(() => {
           this.addClientsCounter(-1)
-          this.fetchData()
+          this.fetchData(true)
           this.edit = false
           this.item = {}
         })
     },
     onSave (item) {
-      const newItem = item instanceof User? item : new User(item)
-      console.log(newItem)
-      newItem.save().then(res => {
-        if (!res) return
-        this.edit = false
-        let idx = this.items.findIndex(x => x.id === item.id)
-        if (idx > -1) {
-          this.items.splice(idx, 1, item)
-        }
-        this.item = {}
-        this.fetchData()
+      const newItem = item instanceof User ? item : new User(item)
+      newItem.save().then(() => {
+          this.fetchData(true)
+          this.edit = false
       })
     }
   }
@@ -364,219 +387,219 @@ export default {
 </script>
 
 <style lang="scss">
-  @import '../assets/styles/common';
+@import '../assets/styles/common';
 
-  $first-column: 270px;
-  $first-column-desktop: 330px;
-  $max-width: 926px;
-  $left-panel: 240px;
+$first-column: 270px;
+$first-column-desktop: 330px;
+$max-width: 926px;
+$left-panel: 240px;
 
-  .slide-enter, .slide-leave-to {
-    right: -440px !important;
+.slide-enter,
+.slide-leave-to {
+  right: -440px !important;
+}
+
+.badge-inline {
+  display: inline-block;
+  line-height: 0px;
+
+  border-radius: 50%;
+  border: 0px solid;
+}
+.badge-inline span {
+  color: white;
+  display: inline-block;
+
+  padding-top: 50%;
+  padding-bottom: 50%;
+
+  margin-left: 4px;
+  margin-right: 4px;
+}
+.second-row {
+  color: grey;
+  font-size: 0.8em;
+}
+.clients {
+  position: relative;
+  color: #07101c;
+  padding-left: $first-column;
+  background: #fff;
+  overflow-x: auto;
+
+  @media only screen and (min-width: $desktop) {
+    padding-left: $first-column-desktop;
   }
 
-  .badge-inline {
-    display: inline-block;
-    line-height: 0px;
-
-    border-radius: 50%;
-    border: 0px solid;
+  @media only screen and (min-width: ($left-panel+$max-width)) {
+    padding-left: 0;
   }
-  .badge-inline span {
-    color: white;
-    display: inline-block;
 
-    padding-top: 50%;
-    padding-bottom: 50%;
-
-    margin-left: 4px;
-    margin-right: 4px;
+  table.v-table {
+    min-width: 529px;
+    padding-left: 0;
+    @media only screen and (min-width: ($left-panel+$max-width)) {
+      width: 100%;
+    }
   }
-  .second-row {
-    color: grey;
-    font-size: 0.8em;
+
+  thead {
+    background-color: #f3f4f7;
   }
-  .clients {
-    position: relative;
-    color: #07101c;
-    padding-left:  $first-column;
-    background: #fff;
-    overflow-x: auto;
-
-    @media only screen and (min-width : $desktop) {
-      padding-left: $first-column-desktop;
-    }
-
-    @media only screen and (min-width : ($left-panel+$max-width)) {
-      padding-left: 0;
-    }
-
-    table.v-table {
-      min-width: 529px;
-      padding-left: 0;
-      @media only screen and (min-width : ($left-panel+$max-width)) {
-        width: 100%;
-      }
-    }
-
-    thead {
-      background-color: #f3f4f7;
-    }
-    /* styles for table header */
-    thead tr:first-child {
+  /* styles for table header */
+  thead tr:first-child {
+    height: 40px;
+    background: #f3f4f7;
+    border-bottom: none !important;
+    th {
       height: 40px;
+      padding: 10px !important;
       background: #f3f4f7;
-      border-bottom: none !important;
-      th {
-        height: 40px;
-        padding: 10px!important;
-        background: #f3f4f7;
-        color: #8995AF;
-        &:first-child {
-          padding-right: 20px !important;
-          padding-left: 35px !important;
-          @media only screen and (min-width : ($left-panel+$max-width)) {
-            padding-left: 56px !important;
-          }
-
-        }
-        i {
-          vertical-align: top;
+      color: #8995af;
+      &:first-child {
+        padding-right: 20px !important;
+        padding-left: 35px !important;
+        @media only screen and (min-width: ($left-panel+$max-width)) {
+          padding-left: 56px !important;
         }
       }
-    }/* end of styles for table header */
+      i {
+        vertical-align: top;
+      }
+    }
+  } /* end of styles for table header */
 
-    tbody tr {
-      height: 88px;
-      border-bottom-color: #f3f4f7 !important;
-      &:hover {
-        background-color: transparent !important;
-      }
-      &:last-child {
-        border-bottom: 1px solid #f3f4f7;
-      }
+  tbody tr {
+    height: 88px;
+    border-bottom-color: #f3f4f7 !important;
+    &:hover {
+      background-color: transparent !important;
     }
-    td {
-      padding: 0 10px !important;
-    }
-
-    div {
-      font-size: 14px;
-      color: #07101C;
-    }
-
-    .clients__add-info {
-      font-size: 12px;
-      color: #8995AF;
-      &._phone {
-        font-size: 14px;
-      }
-    }
-
-    /* styles for first column */
-    tr th:first-child,
-    tr td:first-child {
-      position: absolute;
-      width: $first-column;
-      height: 88px;
-      left: 0;
-      top: auto;
-      background: #fff;
-      margin-top: 1px;
-      @media only screen and (min-width : $desktop) {
-        width: $first-column-desktop;
-      }
-      @media only screen and (min-width : ($left-panel+$max-width)) {
-        position: static;
-      }
-    }
-    tr th:first-child {
-      margin-top: 0;
-    }
-    @-moz-document url-prefix() {
-      tr th:first-child,
-      tr td:first-child {
-        margin-top: 0;
-      }
-    }
-    tbody td:first-child  {
+    &:last-child {
       border-bottom: 1px solid #f3f4f7;
     }
-    /* end of styles for first column */
+  }
+  td {
+    padding: 0 10px !important;
+  }
 
-    &__first-cell {
-      padding: 9px 0 9px 25px;
-      @media only screen and (min-width : $desktop) {
-        padding-left: 46px;
-      }
-    }
-    &__badge {
-      cursor: pointer;
-    }
-    &__avatar {
-      margin: 0;
-    }
-    &__name-phone {
-      padding-left: 12px;
-      flex-grow: 1;
-      overflow: hidden;
-      line-height: 1.6;
-    }
-    &__name {
-      text-transform: capitalize;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    &__phone-button {
-      display: block;
-      width: 40px;
-      height: 40px;
-      margin: 0 5px;
-      background: url('../assets/images/svg/phone.svg') center no-repeat;
-      border: 1px solid rgba(137, 149, 175, 0.1);
-      border-radius: 50%;
-    }
-    &__unvisited {
-      display: inline-block;
-      vertical-align: baseline;
-      margin-left: 11px;
-      width: 16px;
-      height: 16px;
-      text-align: center;
-      font-size: 12px;
-      color: #FFFFFF;
-      background: #EF4D37;
-      border-radius: 50%;
-    }
-    &__question {
-      position: relative;
-      &:after {
-        display: inline-block;
-        vertical-align: middle;
-        content: '';
-        width: 14px;
-        height: 14px;
-        background: url('../assets/images/svg/question.svg') center no-repeat;
-      }
-    }
-    .clients__tooltip {
-      max-width: 175px;
-      top: 100% !important;
-      white-space: normal;
-      color: #fff;
-      font-size: 13px;
-    }
-    &__filial {
-      font-weight: bold;
-    }
-    .v-datatable__actions__select {
-      display: none;
-    }
-    .avatar-letters {
-      color: #fff;
-      font-size: 11px;
+  div {
+    font-size: 14px;
+    color: #07101c;
+  }
+
+  .clients__add-info {
+    font-size: 12px;
+    color: #8995af;
+    &._phone {
+      font-size: 14px;
     }
   }
+
+  /* styles for first column */
+  tr th:first-child,
+  tr td:first-child {
+    position: absolute;
+    width: $first-column;
+    height: 88px;
+    left: 0;
+    top: auto;
+    background: #fff;
+    margin-top: 1px;
+    @media only screen and (min-width: $desktop) {
+      width: $first-column-desktop;
+    }
+    @media only screen and (min-width: ($left-panel+$max-width)) {
+      position: static;
+    }
+  }
+  tr th:first-child {
+    margin-top: 0;
+  }
+  @-moz-document url-prefix() {
+    tr th:first-child,
+    tr td:first-child {
+      margin-top: 0;
+    }
+  }
+  tbody td:first-child {
+    border-bottom: 1px solid #f3f4f7;
+  }
+  /* end of styles for first column */
+
+  &__first-cell {
+    padding: 9px 0 9px 25px;
+    @media only screen and (min-width: $desktop) {
+      padding-left: 46px;
+    }
+  }
+  &__badge {
+    cursor: pointer;
+  }
+  &__avatar {
+    margin: 0;
+  }
+  &__name-phone {
+    padding-left: 12px;
+    flex-grow: 1;
+    overflow: hidden;
+    line-height: 1.6;
+  }
+  &__name {
+    text-transform: capitalize;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &__phone-button {
+    display: block;
+    width: 40px;
+    height: 40px;
+    margin: 0 5px;
+    background: url('../assets/images/svg/phone.svg') center no-repeat;
+    border: 1px solid rgba(137, 149, 175, 0.1);
+    border-radius: 50%;
+  }
+  &__unvisited {
+    display: inline-block;
+    vertical-align: baseline;
+    margin-left: 11px;
+    width: 16px;
+    height: 16px;
+    text-align: center;
+    font-size: 12px;
+    color: #ffffff;
+    background: #ef4d37;
+    border-radius: 50%;
+  }
+  &__question {
+    position: relative;
+    &:after {
+      display: inline-block;
+      vertical-align: middle;
+      content: '';
+      width: 14px;
+      height: 14px;
+      background: url('../assets/images/svg/question.svg') center no-repeat;
+    }
+  }
+  .clients__tooltip {
+    max-width: 175px;
+    top: 100% !important;
+    white-space: normal;
+    color: #fff;
+    font-size: 13px;
+  }
+  &__filial {
+    font-weight: bold;
+  }
+  .v-datatable__actions__select {
+    display: none;
+  }
+  .avatar-letters {
+    color: #fff;
+    font-size: 11px;
+  }
+}
 </style>
 
