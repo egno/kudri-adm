@@ -54,14 +54,18 @@
           required
         />
       </div>
-      <div class="businesscard-form__field">
+      <div v-if="roles.length > 1" class="businesscard-form__field">
         <v-select
           v-model="role"
           :items="roles"
+          :item-disabled="function(x){console.log(x); return true}"
           label="Роль пользователя"
         />
       </div>
-      <div v-if="role===roles[1]" class="businesscard-form__field">
+      <div
+        v-if="role===roles[1]"
+        class="businesscard-form__field"
+      >
         <v-select
           v-model="filials"
           :items="companyFilials"
@@ -155,10 +159,6 @@ export default {
       notes: '',
       phone: '',
       role: '',
-      roles: [
-        'Администратор компании',
-        'Менеджер филиала'
-      ],
       seekComplete: false,
       suggestedClients: [],
       rules: {
@@ -173,7 +173,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['businessId','businessFilialCount'])
+    ...mapGetters(['businessId', 'businessFilialCount']),
+    roles () {
+      let roles = ['Администратор компании']
+      if (this.businessFilialCount) {
+        roles.push('Менеджер филиала')
+      }
+      return roles
+    }
   },
   watch: {
     foundedUser: 'fillUser',
@@ -185,9 +192,7 @@ export default {
   beforeMount () {
     this.checkPhone()
   },
-  created () {
-   
-  },
+  created () {},
   methods: {
     checkPhone (newPhone) {
       this.seekComplete = false
@@ -218,13 +223,13 @@ export default {
         this.companyFilials = []
       } else {
         Api()
-        .get(`/business?select=id,j->>name&parent=eq.${this.businessId}`)
-        .then(res => {
-          this.companyFilials = res.data.map(x=> {
-            x.name = x.name || `<без названия ${x.id.slice(-4)}>`
-            return x
+          .get(`/business?select=id,j->>name&parent=eq.${this.businessId}`)
+          .then(res => {
+            this.companyFilials = res.data.map(x => {
+              x.name = x.name || `<без названия ${x.id.slice(-4)}>`
+              return x
+            })
           })
-        })
       }
     },
     getUsersByPhone (newPhone) {
@@ -251,6 +256,10 @@ export default {
       } else {
         this.client.birth_date = ''
       }
+    },
+    roleDisabled (value) {
+      console.log(value)
+      return value === this.roles[1]
     },
     validateBirthDay (value) {
       const dateFormat = /^(0?[1-9]|[12][0-9]|3[01])(0?[1-9]|1[012])(19\d{2}|20\d{2})$/
@@ -316,9 +325,9 @@ export default {
         let userInfo = {
           user_id: this.foundedUser.id,
           company_id: this.businessId,
-          business: this.filials.map(x=>{
-            return {id: x.id, name: x.j.name}
-            }),
+          business: this.filials.map(x => {
+            return { id: x.id, name: x.j.name }
+          }),
           j: {
             fullName: this.fullName,
             notes: this.notes
