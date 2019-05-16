@@ -31,10 +31,8 @@ export default {
         .map(x => {
           let ts1 = new Date(x.ts_begin)
           let ts2 = new Date(x.ts_end)
-          if (!x.client) {
-            x.client = { services: [] }
-          }
-          x.client.duration = (ts2.getTime() - ts1.getTime()) / 60000
+
+          x.j.duration = (ts2.getTime() - ts1.getTime()) / 60000
           return x
         })
     },

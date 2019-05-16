@@ -33,7 +33,7 @@
             {{ timeStart }} – {{ timeEnd }}
           </div>
           <div class="visit__name">
-            {{ visit.clientName }}
+            {{ clientName() }}
           </div>
           <div class="visit__phone">
             {{ visit.clientPhone | phoneFormat }}
@@ -43,7 +43,7 @@
             :key="n"
             class="visit__service"
           >
-            {{ service.name }}
+            {{ serviceName(service) }}
           </div>
         </div>
         <div class="visit__status">
@@ -59,7 +59,7 @@
               {{ timeStart }} – {{ timeEnd }}
             </div>
             <div class="visit__name">
-              {{ visit.clientName }}
+              {{ clientName() }}
             </div>
             <div class="visit__phone">
               {{ visit.clientPhone | phoneFormat }}
@@ -69,7 +69,7 @@
               :key="n"
               class="visit__service"
             >
-              {{ service.name }}
+              {{ serviceName(service) }}
             </div>
           </div>
           <div class="visit__status">
@@ -100,12 +100,6 @@ export default {
       default () {
         return {}
       }
-    },
-    visitor: {
-      type: Object,
-      default () {
-        return {}
-      }
     }
   },
   data () {
@@ -129,8 +123,8 @@ export default {
 
       return (
         this.visit.color ||
-        (this.visit.clientName || this.visit.client.phone || this.email
-          ? hashColor(`${this.visit.clientName}${this.visit.client.phone}${this.email}`, 30, 40)
+        (this.visit.clientName || this.visit.j.client.phone 
+          ? hashColor(`${this.visit.clientName}${this.visit.j.client.phone}${this.email}`, 30, 40)
           : 'grey')
       )
     },
@@ -148,6 +142,17 @@ export default {
     ...mapActions(['selectVisit']),
     onSelect () {
       this.$emit('unselectOthers')
+    },
+    serviceName (service) {
+      if (this.services.length > 2) {
+        return service.name.substring(0, 13) + '...'
+      }
+      return (this.services.length > 1) && (service.name.length > 30) ? service.name.substring(0, 27) + '...' : service.name
+    },
+    clientName () {
+      const arr = this.visit.clientName.split(' ')
+
+      return `${arr[0]} ${arr[1] ? arr[1].substring(0, 1) + '.' : ''}`
     }
   }
 }
@@ -206,7 +211,7 @@ export default {
     margin-top: 2px;
   }
   &__service {
-    margin-top: 12px;
+    margin-top: 10px;
     color: rgba(255, 255, 255, 0.8);
     &::first-letter {
       text-transform: capitalize;

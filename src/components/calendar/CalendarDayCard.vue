@@ -12,7 +12,6 @@
       :key="i"
       :time-start="timeFmt(visit.ts_begin)"
       :time-end="timeFmt(visit.ts_end)"
-      :visitor="visit.client"
     />
   </v-card>
 </template>

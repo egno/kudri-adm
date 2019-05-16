@@ -2,31 +2,38 @@
   <div
     :class="['day-column', { today: isToday }]"
   >
-    <div v-if="offsetTop > 0" class="day-column__now" :style="{ top: offsetTop + 'px'}" />
-    <div
-      column
-      class="day-column__header"
-      @click="onDayEdit"
-    >
-      <div class="day-column__date">
-        {{ day.display }}
+    <v-menu v-model="showMenu" offset-y :disabled="day.dateKey <= todayString">
+      <template v-slot:activator="{ on }">
+        <div v-on="on">
+          <div :class="{ 'day-column__header': true, active: showMenu }">
+            <div class="day-column__date">
+              {{ day.display }}
+            </div>
+            <div :class="['day-column__day', { 'day-off': isDayOff }]">
+              {{ dowLong }}
+            </div>
+            <div v-if="!isDayOff" class="day-column__schedule">
+              {{ employeeSchedule[0] }} – {{ employeeSchedule[1] }}
+            </div>
+            <div v-else class="day-column__schedule">
+              Выходной
+            </div>      
+          </div>
+        </div>
+      </template>
+      <div class="day-column__dropdown" @click="onDayEdit">
+        <div>
+          {{ isDayOff? 'Сделать рабочим' : 'Сделать выходным' }}
+        </div>        
       </div>
-      <div :class="['day-column__day', { 'day-off': isDayOff }]">
-        {{ dowLong }}
-      </div>
-      <div v-if="!isDayOff" class="day-column__schedule">
-        {{ employeeSchedule[0] }} – {{ employeeSchedule[1] }}
-      </div>
-      <div v-else class="day-column__schedule">
-        Выходной
-      </div>
-    </div>
+    </v-menu>
+    
     <div
       v-for="(time, i) in times"
       :key="i"
-      :class="{ item: true, 'in-view': i === slotInView }"
+      :class="{ 'day-column__item': true, 'in-view': i === slotInView }"
     >
-      <div class="item__time">
+      <div class="day-column__time">
         <div
           v-if="displayTimeStamp(i)"
           class="time-mark"
@@ -60,6 +67,7 @@
         </div>
       </div>
     </div>
+    <div v-if="offsetTop > 0" class="day-column__now" :style="{ top: offsetTop + 'px'}" />
   </div>
 </template>
 
@@ -69,6 +77,7 @@ import VisitCard from '@/components/calendar/VisitCard.vue'
 import {
   areSameDates,
   dowDisplay,
+  formatDate,
   formatTime
 } from '@/components/calendar/utils'
 import { mapGetters } from 'vuex'
@@ -117,6 +126,7 @@ export default {
       slotDuration,
       slotHeight: 56, /* slot height in pixels */
       displayStep: 4,
+      showMenu: false,
       selectVisit: false,
       timeEditBlock: false,
       selectedTime: undefined,
@@ -186,6 +196,9 @@ export default {
       )
 
       return times.filter(isVisible)
+    },
+    todayString () {
+      return formatDate(this.today)
     }
   },
   created () {
@@ -197,7 +210,7 @@ export default {
       const elem = document.querySelector('.in-view')
       const top = elem && (this.documentOffsetTop(elem) - (window.innerHeight / 2)) || 0
 
-      window.scrollTo({ top, behavior: 'smooth' })  
+      window.scrollTo({ top, behavior: 'smooth' })
     }
   },
   beforeDestroy () {
@@ -219,10 +232,16 @@ export default {
         this.offsetTop = -10
         return
       }
+
+      const minutes = this.getMinutesOffset() 
+      if (minutes / this.slotDuration > this.times.length) {
+        this.offsetTop = 0
+        return
+      }
  
       /* we show one slot before the first (displayFrom) slot, for the first time mark to be visible,
         so we have to add slot's height here */
-      this.offsetTop = this.getMinutesOffset() * this.minuteHeight + this.headerHeight + this.slotHeight
+      this.offsetTop = minutes * this.minuteHeight + this.headerHeight + this.slotHeight
     },
     isWorkingTime (i) {
       if (!this.employeeSchedule) {
@@ -253,7 +272,12 @@ export default {
       }
     },
     onDayEdit () {
-      this.$emit('onDayEdit', this.day)
+      if (!this.isDayOff && this.visits.length) {
+        this.$emit('makeDayOffTry')
+        return
+      }
+
+      this.$emit('onDayEdit', { day: this.day, isDayOff: this.isDayOff })
     },
     onVisitDelete (id) {
       this.$emit('onVisitDelete', id)
@@ -271,21 +295,9 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   @import '../../assets/styles/common';
 
-.item {
-  height: 56px;
-  &:nth-child(even) {
-    .slot {
-      border-bottom: 1px solid rgba(137, 149, 175, .20);
-    }
-  }
-
-  &__time {
-    position: relative;
-  }
-}
 .time-mark {
   position: absolute;
   right: 100%;
@@ -331,21 +343,32 @@ export default {
   display: block;
   position: absolute;
   z-index: 2;
-}
-.working {
-  background: #fefefe;
-}
-.day-off .working {
-  background: #fffefe;
-}
-.day-off .header {
-  color: rgb(192, 0, 0);
-}
+} 
 .day-column {
   position: relative;
+  width: 14.28%;
   min-width: 136px;
   @media only screen and (min-width : $desktop) {
     padding-top: 82px;
+  }
+  &.today {
+    .day-column__date,
+    .day-column__day {
+      color: #5699FF;
+      font-weight: bold;
+    }
+  }
+
+  &__item {
+    height: 56px;
+    &:nth-child(even) {
+      .slot {
+        border-bottom: 1px solid rgba(137, 149, 175, .20);
+      }
+    }
+  }
+  &__time {
+    position: relative;
   }
 
   &__now {
@@ -375,8 +398,28 @@ export default {
     border-right: 1px solid rgba(137, 149, 175, 0.1);
     background-color: #fff;
     box-shadow: 8px 2px 8px rgba(137, 149, 175, 0.1);
+    cursor: pointer;
+    &.active {
+      background-color: #5699FF;
+      border-radius: 4px;
+      .day-column__date,
+      .day-column__day,
+      .day-column__schedule {
+        color: #fff;
+      }
+    }
   }
-
+  &__dropdown {
+    padding: 20px 0;
+    font-size: 13px;
+    color: #2D333B;
+    background-color: #fff;
+    box-shadow: 0px 2px 8px rgba(137, 149, 175, 0.1);
+    cursor: pointer;
+    &>div {
+      text-align: center;
+    }
+  }
   &__date {
     font-size: 18px;
     font-family: Roboto Slab;
@@ -392,12 +435,6 @@ export default {
   .day-off {
     color: #8995AF;
   }
-  &.today {
-    .day-column__date,
-    .day-column__day {
-      color: #5699FF;
-      font-weight: bold;
-    }
-  }
+  
 }
 </style>

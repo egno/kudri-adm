@@ -49,9 +49,11 @@
             </template>
             <v-date-picker
               v-model="selectedDate"
+              :allowed-dates="allowedDates"
               locale="ru-RU"
               no-title
               first-day-of-week="1"
+              @change="selectedTime = ''"
             />
           </v-menu>
           <div v-if="selectedTime" class="visit-edit__time">
@@ -92,6 +94,29 @@
           @onEdit="onPhoneEdit($event)"
         />
       </div>
+      <div v-if="visit.id" class="right-attached-panel__field-block _reminder">
+        <v-switch
+          v-if="visit.isFuture"
+          v-model="visit.status"
+          label="Клиент подтвердил запись"
+          color="#5BCD5E"
+          value="confirmed"
+        />
+        <v-switch
+          v-if="!visit.isFuture"
+          v-model="visit.status"
+          label="Клиент не пришел"
+          color="#EF4D37"
+          value="unvisited"
+        />
+        <v-switch
+          v-if="visit.isFuture"
+          v-model="visit.status"
+          label="Клиент отменил запись"
+          color="#8995AF"
+          value="canceled"
+        />
+      </div>
       <div class="right-attached-panel__field-block _reminder">
         <VSelect
           v-model="visit.j.remind"
@@ -129,6 +154,14 @@
         </button>
         <button type="button" class="right-attached-panel__cancel" @click="$emit('close')">
           Отмена
+        </button>
+        <button 
+          v-if="visit.status === 'canceled' || visit.status === 'unvisited' || visit.displayStatus === 'Завершен'" 
+          type="button" 
+          class="right-attached-panel__delete" 
+          @click="$emit('delete')"
+        >
+          Удалить запись 
         </button>
       </div>
     </VForm>
@@ -242,6 +275,9 @@ export default {
         || !this.selectedServices.length 
         || !this.selectedDate 
         || !this.selectedTime
+    },
+    todayString () {
+      return formatDate(new Date())
     }
   },
   watch: {
@@ -259,6 +295,9 @@ export default {
     this.setSelectedValues()
   },
   methods: {
+    allowedDates (dateStr) {
+      return dateStr > this.todayString
+    },
     loadFreeTimes () {
       if (!(this.businessId && this.selectedDate)) return
 
@@ -302,6 +341,7 @@ export default {
       ts2.setTime(ts1.getTime() + 60000 * duration) 
       this.visit.business_id = this.selectedEmployee? this.selectedEmployee.id : this.businessId
       this.visit.j.duration = duration
+      this.visit.j.client.name = this.visit.j.client.name.trim()
       this.visit.ts_begin = ts1.toJSON().slice(0, -1)
       this.visit.ts_end = ts2.toJSON().slice(0, -1)
 
@@ -329,9 +369,10 @@ export default {
         this.selectedTime = ''
       }
       this.active = 0
-
       if (this.visit.services && this.visit.services.length) {
-        this.selectedServices = this.visit.services
+        const visitServices = this.visit.services.map(s => s.id)
+
+        this.selectedServices = this.businessServices.filter(s => visitServices.includes(s.id))
       } else {
         this.selectedServices = []
       }

@@ -18,11 +18,13 @@ class Visit {
     this.salon_id = (newVal && newVal.salon_id) || null
     this.ts_begin = (newVal && newVal.ts_begin) || null
     this.ts_end = (newVal && newVal.ts_end) || null
-    this.status = (newVal && newVal.status) || null
     this.j = (newVal && newVal.j) || {
       client: {},
-      services: []
+      services: [],
+      // status: null
     }
+    // todo remind to fix saving status on backend 
+    this.status = (newVal && newVal.status) || null
   }
 
   get jsonObject () {
@@ -31,7 +33,28 @@ class Visit {
 
   // Properties
 
+  set client (newVal) {
+    if (newVal) {
+      this.j.client = newVal
+    } else {
+      this.j.client = {}
+    }
+  }
+
+  get client () {
+    return this.j.client
+  }
+
+  // set status (newVal) {
+  //   this.j.status = newVal
+  // }
+
+  // get status () {
+  //   return this.j.status
+  // }
+
   get date () {
+    // converts to dd.mm.yyyy String
     return this.ts_begin && displayRESTDate(this.ts_begin)
   }
 
@@ -47,6 +70,13 @@ class Visit {
     return this.j.color
   }
 
+  get isFuture () {
+    const now = new Date()
+    const date = new Date(Date.parse(this.ts_begin))
+
+    return date > now
+  }
+
   get services () {
     return this.j.services
   }
@@ -54,10 +84,11 @@ class Visit {
   get statuses () {
     return [
       { display: 'Не пришел', code: 'unvisited', color: '#ef4d37' },
-      { display: 'Отмена', code: 'canceled', color: 'grey' },
+      { display: 'Отмена', code: 'canceled', color: '#8995AF' },
       { display: 'Завершен', done: true },
       { display: 'В процессе' },
-      { display: 'Запись', color: '#5699ff' }
+      { display: 'Запись', color: '#5699ff' },
+      { display: 'Подтвердил', code: 'confirmed', color: '#5BCD5E' }
     ]
   }
 
@@ -82,14 +113,15 @@ class Visit {
     const t1 = new Date(Date.parse(this.ts_begin))
     const t2 = this.ts_end? new Date(Date.parse(this.ts_end)) : 0
 
-    return (
-      this.statuses.find(x => x.code === this.status) ||
-      (now < t1
+    if (this.status) {
+      return this.statuses.find(x => x.code === this.status)
+    }
+
+    return now < t1
         ? this.statuses[4]
         : t2 && t2 < now
         ? this.statuses[2]
-        : this.statuses[3])
-    )
+        : this.statuses[3]
   }
 
   get displayStatus () {

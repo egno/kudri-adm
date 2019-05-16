@@ -164,6 +164,8 @@
               :display-from="displayTimes.start"
               :display-to="displayTimes.end"
               @onSlotClick="onSlotClick"
+              @onDayEdit="onDayEdit"
+              @makeDayOffTry="notifyHasVisits = true"
             />
           </div>
         </div>
@@ -238,7 +240,7 @@
       :visit="currentVisit"
       :page="editVisitPage"
       @onSave="onVisitSave"
-      @onDelete="onDelete(-1)"
+      @delete="onDelete"
       @close="edit=false; currentVisit = null"
     />
   </div>
@@ -261,7 +263,7 @@ import Visit from '@/classes/visit'
 import calendarMixin from '@/mixins/calendar'
 
 export default {
-  components: { Accordion, AppCheckbox, Avatar, EmployeeCard, MainButton, CalendarDayColumn, /*VCalendar,*/ VisitEdit },
+  components: { Accordion, AppCheckbox, Avatar, EmployeeCard, MainButton, CalendarDayColumn, VisitEdit },
   mixins: [ calendarMixin ],
   data () {
     return {
@@ -274,11 +276,13 @@ export default {
       selectedEmployee: {},
       selectedEmpGroups: [],
       newVisit: false,
+      notifyHasVisits: false,
       formActions: [
         { label: 'Добавить запись', action: 'newVisit', default: true }
       ],
       showEmployeeSelection: false,
-      visits: []
+      visits: [],
+      irregularDays: []
     }
   },
   computed: {
@@ -336,6 +340,14 @@ export default {
         this.currentVisit = this.selectedVisit
         this.edit = true
       }
+    },
+    selectedWeek: {
+      handler: 'fetchData',
+      deep: true
+    },
+    selectedEmployee: {
+      handler: 'getIrregularDays',
+      deep: true
     }
   },
   mounted () {
@@ -375,6 +387,20 @@ export default {
           this.isLoading = false
         })
     },
+    getIrregularDays () {
+      if (!this.selectedEmployee || !this.selectedWeek) {
+        return
+      }
+      const sunday = this.selectedWeek[6]
+      const nextMonday = new Date()
+
+      nextMonday.setDate(sunday.date.getDate() + 1)
+      Api() 
+        .get(`/business_calendar?business_id=eq.${this.selectedEmployee.id}&changed=eq.true&dt=gt.${this.selectedWeek[0].dateKey}&dt=lt.${formatDate(nextMonday)}`)
+        .then(({ data }) => {
+          this.irregularDays = data
+        })
+    },
     initEmployee () {
       this.selectedEmployee = this.businessEmployees && this.businessEmployees.find(e => e.j.services && e.j.services.length)
     },
@@ -382,6 +408,18 @@ export default {
       if (payload === this.formActions[0].action) {
         this.newVisit = true
       }
+    },
+    onDayEdit ({ day, isDayOff }) {
+      const isWorkingDay = day => day && day[0] && day[1]
+      const averageDay = this.selectedEmployee.j.schedule
+        ? this.selectedEmployee.j.schedule.data.find(isWorkingDay)
+        : this.businessSchedule.data.find(isWorkingDay)
+
+      Api()
+        .patch(`/business_calendar?business_id=eq.${this.selectedEmployee.id}&dt=eq.${day.dateKey}`,
+          {
+            j: { schedule: isDayOff? averageDay: [] }
+          })
     },
     onGroupsChange (category, selected) {
       if (selected) {
@@ -419,12 +457,12 @@ export default {
           }
         })
     },
-    onDelete (id) {
-      // todo check id
+    onDelete () { 
       this.edit = false
       Api()
-        .delete(`visit?id=eq.${id}`)
+        .delete(`visit?id=eq.${this.currentVisit.id}`)
         .then(() => {
+          this.currentVisit = null
           this.fetchData()
         })
     },
@@ -595,6 +633,7 @@ export default {
         @media only screen and (min-width : $desktop) {
           display: flex;
           width: 100%;
+          max-width: 1040px;
           padding-left: 70px;
           overflow: auto;
         }
