@@ -39,9 +39,9 @@
             </div>
             <div
               v-else
-              class="error--text"
+              class="success--text"
             >
-              Пользователь с этим номером телефона не найден
+              Будет создан новый пользователь с этим номером телефона.
             </div>
           </template>
         </div>
@@ -55,7 +55,10 @@
           required
         />
       </div>
-      <div v-if="roles.length > 1" class="businesscard-form__field">
+      <div
+        v-if="roles.length > 1"
+        class="businesscard-form__field"
+      >
         <v-select
           v-model="role"
           :items="roles"
@@ -93,7 +96,7 @@
       <div>
         <MainButton
           class="button save-info"
-          :class="{ button_disabled: !(seekComplete || phone) || !fullName || !role }"
+          :class="{ button_disabled: !seekComplete || !fullName || !checkRole }"
           @click="onSave"
         >
           Сохранить
@@ -176,6 +179,15 @@ export default {
   },
   computed: {
     ...mapGetters(['businessId', 'businessFilialCount']),
+    checkRole () {
+      return (
+        (this.roles.length > 1 &&
+          this.role === this.roles[1] &&
+          this.filials.length) ||
+        (this.roles.length <= 1 && !this.role) ||
+        this.role === this.roles[0]
+      )
+    },
     roles () {
       let roles = ['Администратор компании']
       if (this.businessFilialCount) {
@@ -302,7 +314,7 @@ export default {
         let userInfo = {
           user_id: this.foundedUser && this.foundedUser.id,
           company_id: this.businessId,
-          business: this.role==='Менеджер филиала' ? this.filials : [],
+          business: this.role === 'Менеджер филиала' ? this.filials : [],
           j: {
             name: name,
             surname: surname,
