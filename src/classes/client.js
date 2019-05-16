@@ -110,7 +110,10 @@ class Client extends ApiObject {
    * @param {any} newVal
    */
   set fullName (newVal) {
-    this.name = newVal
+    let parts = newVal.split(' ')
+    this.name = parts[0]
+    parts.splice(0,1)
+    this.surname = parts.join(' ') 
   }
 
   get fullName () {

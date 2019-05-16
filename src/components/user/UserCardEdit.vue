@@ -48,7 +48,7 @@
       </div>
       <div class="businesscard-form__field">
         <v-text-field
-          :value="fullName"
+          v-model="fullName"
           label="ИМЯ И ФАМИЛИЯ"
           :disabled="foundedUser && !!fullName"
           maxlength="50"
@@ -248,11 +248,12 @@ export default {
       this.seekComplete = false
       this.foundedUser = undefined
       if (newPhone && newPhone.length >= 10) {
+        this.phone = newPhone
         Api()
           .post(`/rpc/find_user`, { phone: `7${newPhone}` })
           .then(res => {
             this.seekComplete = true
-            if (res.data.id) {
+            if (res.data && res.data.id) {
               this.foundedUser = res.data
             }
           })
@@ -294,14 +295,20 @@ export default {
     },
     onSave () {
       setTimeout(() => {
+        let parts = this.fullName.split(' ')
+        let name = parts[0]
+        parts.splice(0, 1)
+        let surname = parts.join(' ')
         let userInfo = {
-          user_id: this.foundedUser.id,
+          user_id: this.foundedUser && this.foundedUser.id,
           company_id: this.businessId,
           business: this.role==='Менеджер филиала' ? this.filials : [],
           j: {
-            fullName: this.fullName,
+            name: name,
+            surname: surname,
             notes: this.notes
-          }
+          },
+          phone: this.phone
         }
         this.$emit('onSave', userInfo)
       }, 100)

@@ -29,11 +29,22 @@ class User extends ApiObject {
       user_id: this.id,
       company_id: this.company_id,
       j: this.j,
-      business: this.business
+      business: this.business,
+      phone: this.phone
     }
   }
 
   // Properties
+
+  /**
+   * @param {any} newVal
+   */
+  set fullName (newVal) {
+    let parts = newVal.split(' ')
+    this.j.name = parts[0]
+    parts.splice(0, 1)
+    this.j.surname = parts.join(' ')
+  }
 
   get fullName () {
     return [this.name, this.surname].join(' ')
