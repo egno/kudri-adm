@@ -88,7 +88,7 @@
               </v-layout>
             </td>
             <td>
-              <span v-if="props.item.j.note">{{ props.item.j.note }}</span>
+              <span v-if="props.item.j.notes">{{ props.item.j.notes }}</span>
             </td>
             <td>
               <v-layout
@@ -316,7 +316,6 @@ export default {
                 this.totalItems = +r[1]
               }
             }
-                  console.log(res.data)
             return res.data
           })
           .then(res => {

@@ -93,7 +93,7 @@
       <div>
         <MainButton
           class="button save-info"
-          :class="{ button_disabled: !seekComplete || !fullName || !role }"
+          :class="{ button_disabled: !(seekComplete || phone) || !fullName || !role }"
           @click="onSave"
         >
           Сохранить
@@ -170,7 +170,8 @@ export default {
         discount: val =>
           !val || ((val > 0 && val <= 100) || 'Неверное количество процентов')
       },
-      samePhone: ''
+      samePhone: '',
+      user: undefined
     }
   },
   computed: {
@@ -189,6 +190,7 @@ export default {
   },
   mounted () {
     this.getFilials()
+    this.initUser()
   },
   beforeMount () {
     this.checkPhone()
@@ -206,6 +208,15 @@ export default {
       ) {
         this.getUsersByPhone(newPhone)
       }
+    },
+    initUser () {
+      this.user = new User(this.client)
+      this.foundedUser = this.user
+      this.fullName = this.user.fullName
+      this.phone = this.user.phone && this.user.phone.slice(-10)
+      this.role = this.user.role
+      this.filials = this.client.business
+      this.notes = this.client.j && this.client.j.notes
     },
     fillUser () {
       if (!this.foundedUser) {
@@ -256,46 +267,6 @@ export default {
         this.client.birth_date = newVal
       } else {
         this.client.birth_date = ''
-      }
-    },
-    roleDisabled (value) {
-      console.log(value)
-      return value === this.roles[1]
-    },
-    validateBirthDay (value) {
-      const dateFormat = /^(0?[1-9]|[12][0-9]|3[01])(0?[1-9]|1[012])(19\d{2}|20\d{2})$/
-      const currentYear = new Date().getFullYear()
-      let match
-
-      if (!value) {
-        return true
-      }
-
-      match = value.match(dateFormat)
-
-      if (!match) {
-        return 'Неправильная дата рождения'
-      }
-      const day = match[1]
-      const month = match[2]
-      const year = match[3]
-      const age = currentYear - year
-      let monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-
-      // Adjust for leap years
-      if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) {
-        monthLength[1] = 29
-      }
-
-      // Check the range of the day
-      if (day > monthLength[month - 1]) {
-        return 'Неправильная дата рождения'
-      }
-
-      if (age >= 0 && age < 101) {
-        return true
-      } else {
-        return 'Неправильная дата рождения'
       }
     },
     onInputName (val) {
