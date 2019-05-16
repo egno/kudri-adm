@@ -27,6 +27,7 @@
             :removable="false"
             label="Телефон"
             placeholder=""
+            :disabled="!!client.phone"
             :class="{ 'no-default': !client.phone && (filledPhones.length > 1) }"
             @onEdit="checkPhone($event)"
           />
@@ -96,7 +97,7 @@
       <div>
         <MainButton
           class="button save-info"
-          :class="{ button_disabled: !seekComplete || !fullName || !checkRole }"
+          :class="{ button_disabled: !(seekComplete || client.phone) || !fullName || !checkRole }"
           @click="onSave"
         >
           Сохранить
@@ -183,7 +184,7 @@ export default {
       return (
         (this.roles.length > 1 &&
           this.role === this.roles[1] &&
-          this.filials.length) ||
+          this.filials.length > 0) ||
         (this.roles.length <= 1 && !this.role) ||
         this.role === this.roles[0]
       )
