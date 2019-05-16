@@ -25,12 +25,15 @@
       :key="i"
       class="item"
     >
-      <div
-        v-if="displayTimeStamp(i)"
-        class="time-mark"
-      >
-        <div>{{ time.begin.display }}</div>
+      <div class="item__time">
+        <div
+          v-if="displayTimeStamp(i)"
+          class="time-mark"
+        >
+          <div>{{ time.begin.display }}</div>
+        </div>
       </div>
+      
       <template v-if="time.visit">
         <VisitCard
           :selected="selectVisit"
@@ -222,12 +225,15 @@ export default {
   @import '../../assets/styles/common';
 
 .item {
-  position: relative;
   height: 56px;
   &:nth-child(even) {
     .slot {
       border-bottom: 1px solid rgba(137, 149, 175, .20);
     }
+  }
+
+  &__time {
+    position: relative;
   }
 }
 .time-mark {
@@ -239,10 +245,8 @@ export default {
   padding: 7px 8px 0 0;
   border-top: 1px solid rgba(137, 149, 175, .20);
 }
-.slot {
-  position: absolute;
-  height: 100%;
-  width: 100%;
+.slot { 
+  height: 100%; 
   border-right: 1px solid rgba(137, 149, 175, .10);
   border-bottom: 1px solid rgba(137, 149, 175, .10);
   font-size: 0.75em;
