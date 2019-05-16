@@ -2,6 +2,7 @@
   <div
     :class="['day-column', { today: isToday }]"
   >
+    <div v-if="offsetTop > 0" class="day-column__now" :style="{ top: offsetTop + 'px'}" />
     <div
       column
       class="day-column__header"
@@ -23,7 +24,7 @@
     <div
       v-for="(time, i) in times"
       :key="i"
-      class="item"
+      :class="{ item: true, 'in-view': i === slotInView }"
     >
       <div class="item__time">
         <div
@@ -71,6 +72,7 @@ import {
   formatTime
 } from '@/components/calendar/utils'
 import { mapGetters } from 'vuex'
+import { setInterval, clearInterval } from 'timers'
 
 export default {
   components: { VisitCard },
@@ -104,15 +106,22 @@ export default {
     }
   },
   data () {
+    const minutesOffset = this.getMinutesOffset()
+    const slotDuration = 15
+
     return {
+      headerHeight: 82, /* height of column header in pixels */
       hours: 24,
       minutes: 60,
-      duration: 15,
+      offsetTop: 0,
+      slotDuration,
+      slotHeight: 56, /* slot height in pixels */
       displayStep: 4,
-      rowHeightInEm: 3,
       selectVisit: false,
       timeEditBlock: false,
       selectedTime: undefined,
+      slotInView: Math.floor(minutesOffset / slotDuration) + 1,
+      timerId: 0,
       today: new Date(),
       dayHeaderOptions: {
         year: 'numeric',
@@ -126,6 +135,9 @@ export default {
     ...mapGetters(['apiTimeZone', 'calendar']),
     dowLong () {
       return dowDisplay(this.day.date)
+    },
+    minuteHeight () { /* height in pixels */
+      return this.slotHeight / this.slotDuration 
     },
     isDayOff () {
       if (!this.employeeSchedule || !this.employeeSchedule[0] || !this.employeeSchedule[1]) {
@@ -151,11 +163,11 @@ export default {
         return time.begin.display <= this.displayTo && time.end.display >= this.displayFrom
       }
 
-      let times = [...Array((this.hours * this.minutes) / this.duration)].map(
+      let times = [...Array((this.hours * this.minutes) / this.slotDuration)].map(
         (x, i) => {
           const dateTime = this.day.date.getTime()
-          const d1 = new Date(dateTime + 60000 * (i * this.duration))
-          const d2 = new Date(dateTime + 60000 * ((i + 1) * this.duration))
+          const d1 = new Date(dateTime + 60000 * (i * this.slotDuration))
+          const d2 = new Date(dateTime + 60000 * ((i + 1) * this.slotDuration))
           const displayTime1 = this.timeDisplay(d1)
           const displayTime2 = this.timeDisplay(d2)
 
@@ -176,9 +188,41 @@ export default {
       return times.filter(isVisible)
     }
   },
+  created () {
+    this.setTopOffset()
+    this.timerId = setInterval(this.setTopOffset, 30 * 1000)
+  },
+  mounted () {
+    if (this.offsetTop > 0) {
+      const elem = document.querySelector('.in-view')
+      const top = elem && (this.documentOffsetTop(elem) - (window.innerHeight / 2)) || 0
+
+      window.scrollTo({ top, behavior: 'smooth' })  
+    }
+  },
+  beforeDestroy () {
+    clearInterval(this.timerId)
+  },
   methods: {
     displayTimeStamp (i) {
       return this.showTime && !((i - 1)% this.displayStep)
+    },
+    getMinutesOffset () {
+      const startTime = this.parseTime(this.displayFrom)
+      const currentTime = Date.now()
+      const offset = currentTime - startTime
+
+      return offset / 60000 
+    },
+    setTopOffset () {
+      if (!areSameDates(new Date(), this.day.date)) {
+        this.offsetTop = -10
+        return
+      }
+ 
+      /* we show one slot before the first (displayFrom) slot, for the first time mark to be visible,
+        so we have to add slot's height here */
+      this.offsetTop = this.getMinutesOffset() * this.minuteHeight + this.headerHeight + this.slotHeight
     },
     isWorkingTime (i) {
       if (!this.employeeSchedule) {
@@ -196,6 +240,9 @@ export default {
             this.lunchTime[1] >= this.times[i].end.display)
         )
       )
+    },
+    documentOffsetTop (elem) {
+      return elem.offsetTop + (elem.offsetParent ? this.documentOffsetTop(elem.parentElement) : 0)
     },
     onClickDate (dt) {
       this.$emit('onClickDate', dt)
@@ -217,6 +264,9 @@ export default {
     timeDisplay (date) {
       return formatTime(date)
     },
+    parseTime (timeString) {
+      return Date.parse(`${this.day.dateKey}T${timeString}:00`) 
+    }
   }
 }
 </script>
@@ -276,11 +326,6 @@ export default {
       height: 100%;
     }
   }
-
-  &:hover &__time {
-    display: block;
-    color: rgba(137, 149, 175, .35)
-  }
 }
 .time-edit {
   display: block;
@@ -303,6 +348,24 @@ export default {
     padding-top: 82px;
   }
 
+  &__now {
+    position: absolute;
+    z-index: 4;
+    right: 0;
+    left: 0;
+    border-top: 2px solid #EF4D37;
+    pointer-events: none;
+    &::before {
+      position: absolute;
+      top: -5px;
+      left: -4px;
+      width: 8px;
+      height: 8px;
+      background-color: #EF4D37;
+      content: '';
+      border-radius: 50%;
+    }
+  }
   &__header {
     position: absolute;
     top: 0;
