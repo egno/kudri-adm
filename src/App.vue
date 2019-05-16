@@ -37,7 +37,7 @@ export default {
   },
   data () {
     return {
-      tokenTimerId: undefined,
+      tokenTimerId: undefined
     }
   },
   computed: {
@@ -108,14 +108,14 @@ export default {
       this.tokenTimerId = setTimeout(function () {
         vm.refreshToken()
         vm.tokenTimer()
-      }, 1000*60*45)
+      }, 1000 * 60 * 45)
     }
   }
 }
 </script>
 
 <style lang="scss">
-  @import './assets/styles/common';
+@import './assets/styles/common';
 .application {
   line-height: normal;
 }
@@ -155,7 +155,7 @@ export default {
       }
     }
 
-    @media only screen and (min-width : $desktop) {
+    @media only screen and (min-width: $desktop) {
       display: flex;
     }
   }
@@ -179,7 +179,7 @@ export default {
       background: #fff;
       padding-right: 0;
       padding-left: 0;
-      @media only screen and (min-width : $desktop) {
+      @media only screen and (min-width: $desktop) {
         padding-left: 16px;
       }
     }
@@ -315,7 +315,9 @@ export default {
   .title {
     font-size: 18px !important;
   }
-
+  .businesscard__h1 {
+    font: 24px Roboto Slab, Times New Roman, Times, serif;
+  }
   .workmode-wrap {
     margin: 0;
     padding-left: 7px;
@@ -352,11 +354,12 @@ export default {
 
   .section-add-button {
     margin-right: 16px;
-    background: url('./assets/images/svg/plus-white.svg') no-repeat center/16px #EF4D37;
+    background: url('./assets/images/svg/plus-white.svg') no-repeat center/16px
+      #ef4d37;
     span {
       display: none;
     }
-    @media only screen and (min-width : $desktop) {
+    @media only screen and (min-width: $desktop) {
       background-image: none;
       span {
         display: inline;
@@ -373,7 +376,7 @@ export default {
       font-style: normal;
       font-weight: normal;
       font-size: 18px;
-      color: #07101C;
+      color: #07101c;
     }
 
     &__cards {
@@ -384,7 +387,7 @@ export default {
   .v-pagination__navigation {
     box-shadow: none;
     background: transparent;
-    &--disabled i{
+    &--disabled i {
       color: rgba(137, 149, 175, 0.1);
     }
 
@@ -396,10 +399,10 @@ export default {
     min-width: 20px;
     height: 20px;
     box-shadow: none;
-    color: #8995AF;
+    color: #8995af;
     background: transparent;
     &--active {
-      color: #07101C;
+      color: #07101c;
     }
   }
 }
@@ -408,7 +411,7 @@ export default {
   flex-wrap: wrap;
   flex-grow: 0;
   &__item {
-    @extend %filter
+    @extend %filter;
   }
 }
 .menu-button {
@@ -418,7 +421,7 @@ export default {
   border-radius: 0;
   border-right: 1px solid rgba(137, 149, 175, 0.1);
   background: url('./assets/images/svg/menu.svg') center no-repeat;
-  .v-icon.mdi-menu{
+  .v-icon.mdi-menu {
     display: none;
   }
 }
@@ -507,7 +510,7 @@ export default {
 }
 
 .v-tooltip__content {
-  background: #1C2F44;
+  background: #1c2f44;
   box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.04);
   padding: 15px 20px;
   border-radius: 0;
@@ -550,17 +553,17 @@ export default {
   font-weight: normal;
   font-size: 12px;
   line-height: normal;
-  color: #07101C;
+  color: #07101c;
 }
 .v-breadcrumbs .v-breadcrumbs__divider {
-  border: 1px solid #8995AF;
+  border: 1px solid #8995af;
   border-radius: 50%;
-  background: #8995AF;
+  background: #8995af;
   padding: 0 !important;
   margin: 0 8px;
 }
 .v-breadcrumbs__item--disabled {
-  color: #8995AF;
+  color: #8995af;
 }
 .v-counter {
   order: -1;
@@ -579,5 +582,4 @@ export default {
 .v-select .v-chip {
   background: rgba(137, 149, 175, 0.1);
 }
-
 </style>

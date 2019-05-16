@@ -4,131 +4,138 @@
     offset-xs4
     class="text-xs-center"
   >
-    <VForm
-      v-if="!sended && !keyCode"
-      ref="formLogin"
-    >
-      <VSelect
-        v-if="!restoreMode"
-        v-model="ftype"
-        :items="roles"
-        label="Ваш бизнес"
-      />
-      <VTextField
-        id="flogin"
-        v-model="flogin"
-        name="flogin"
-        label="Телефон"
-        phone
-        type="flogin"
-        :rules="[rules.email]"
-      />
-      <VBtn
-        color="success"
-        @click="sendLogin"
-      >
-        Подтвердить
-      </VBtn>
-    </VForm>
+    <v-card flat>
+      <v-card-text>
+        <VForm
+          v-if="!sended && !keyCode"
+          ref="formLogin"
+        >
+          <div class="businesscard__h1">
+            Регистрация Бизнеса
+          </div>
+          <VSelect
+            v-if="!restoreMode"
+            v-model="ftype"
+            :items="roles"
+            label="Ваш бизнес"
+          />
+          <VTextField
+            id="flogin"
+            v-model="flogin"
+            name="flogin"
+            label="Телефон"
+            phone
+            type="flogin"
+            :rules="[rules.email]"
+          />
+          <VBtn
+            color="success"
+            @click="sendLogin"
+          >
+            Подтвердить
+          </VBtn>
+        </VForm>
 
-    <div v-if="loginIsEmail === true && !keyCode">
-      <div>
-        Вам на почту
-        <strong>{{ flogin }}</strong>
-        отправлено письмо с сылкой
-        для авторизации
-      </div>
-      <div>Перейдите по ссылке в письме</div>
+        <div v-if="loginIsEmail === true && !keyCode">
+          <div>
+            Вам на почту
+            <strong>{{ flogin }}</strong>
+            отправлено письмо с сылкой
+            для авторизации
+          </div>
+          <div>Перейдите по ссылке в письме</div>
 
-      <div>Не пришло письмо?</div>
+          <div>Не пришло письмо?</div>
 
-      <a href="#">
-        Отправить еще раз
-      </a>
-      <br>
-    </div>
+          <a href="#">
+            Отправить еще раз
+          </a>
+          <br>
+        </div>
 
-    <VForm
-      v-if="loginIsEmail === false && !showPasswordInputs && !keyCode"
-      ref="formCode"
-    >
-      <div>
-        На номер телефона
-        <strong>{{ flogin }}</strong>
-        отправлен код авторизации
-      </div>
-      <VTextField
-        id="fcode"
-        v-model="fcode"
-        name="fcode"
-        label="Введите код"
-        type="code"
-        :rules="fcodeRules"
-        :error-messages="badCode"
-      />
-      <VBtn
-        v-if="codeTries"
-        color="success"
-        @click="sendCode"
-      >
-        Проверить
-      </VBtn>
-      <div>Не пришёл код?</div>
-      <a
-        href="#"
-        @click="sendLogin"
-      >
-        Отправить еще раз
-      </a>
-      <br>
-    </VForm>
+        <VForm
+          v-if="loginIsEmail === false && !showPasswordInputs && !keyCode"
+          ref="formCode"
+        >
+          <div>
+            На номер телефона
+            <strong>{{ flogin }}</strong>
+            отправлен код авторизации
+          </div>
+          <VTextField
+            id="fcode"
+            v-model="fcode"
+            name="fcode"
+            label="Введите код"
+            type="code"
+            :rules="fcodeRules"
+            :error-messages="badCode"
+          />
+          <VBtn
+            v-if="codeTries"
+            color="success"
+            @click="sendCode"
+          >
+            Проверить
+          </VBtn>
+          <div>Не пришёл код?</div>
+          <a
+            href="#"
+            @click="sendLogin"
+          >
+            Отправить еще раз
+          </a>
+          <br>
+        </VForm>
 
-    <VForm
-      v-if="showPasswordInputs"
-      ref="passwords"
-      v-model="valid"
-    >
-      <span>Придумайте пароль для входа</span>
-      <VTextField
-        id="fpassword"
-        v-model="fpassword"
-        prepend-icon="lock"
-        name="fpassword"
-        :rules="passRules"
-        label="Пароль"
-        type="password"
-        browser-autocomplete="new-password"
-        required
-      />
-      <VTextField
-        id="fpasswordRepeat"
-        v-model="fpasswordRepeat"
-        prepend-icon="lock"
-        :rules="passRepeatRules"
-        name="fpasswordRepeat"
-        label="Повторите пароль"
-        type="password"
-        browser-autocomplete="new-password"
-        required
-      />
-      <VBtn
-        color="primary"
-        @click="registerAndLogin"
-      >
-        Войти
-      </VBtn>
-    </VForm>
+        <VForm
+          v-if="showPasswordInputs"
+          ref="passwords"
+          v-model="valid"
+        >
+          <span>Придумайте пароль для входа</span>
+          <VTextField
+            id="fpassword"
+            v-model="fpassword"
+            prepend-icon="lock"
+            name="fpassword"
+            :rules="passRules"
+            label="Пароль"
+            type="password"
+            browser-autocomplete="new-password"
+            required
+          />
+          <VTextField
+            id="fpasswordRepeat"
+            v-model="fpasswordRepeat"
+            prepend-icon="lock"
+            :rules="passRepeatRules"
+            name="fpasswordRepeat"
+            label="Повторите пароль"
+            type="password"
+            browser-autocomplete="new-password"
+            required
+          />
+          <VBtn
+            color="primary"
+            @click="registerAndLogin"
+          >
+            Войти
+          </VBtn>
+        </VForm>
 
-    <div v-if="keyCode">
-      {{ badCode }}
-    </div>
+        <div v-if="keyCode">
+          {{ badCode }}
+        </div>
 
-    <a
-      href="#"
-      @click="openMessageWindow"
-    >
-      Связаться с тех. поддержкой
-    </a>
+        <a
+          href="#"
+          @click="openMessageWindow"
+        >
+          Связаться с тех. поддержкой
+        </a>
+      </v-card-text>
+    </v-card>
   </VFlex>
 </template>  
 
