@@ -24,7 +24,7 @@
     <div
       v-for="(time, i) in times"
       :key="i"
-      class="item"
+      :class="{ item: true, 'in-view': i === slotInView }"
     >
       <div class="item__time">
         <div
@@ -106,17 +106,21 @@ export default {
     }
   },
   data () {
+    const minutesOffset = this.getMinutesOffset()
+    const slotDuration = 15
+
     return {
       headerHeight: 82, /* height of column header in pixels */
       hours: 24,
       minutes: 60,
       offsetTop: 0,
-      slotDuration: 15,
+      slotDuration,
       slotHeight: 56, /* slot height in pixels */
       displayStep: 4,
       selectVisit: false,
       timeEditBlock: false,
       selectedTime: undefined,
+      slotInView: Math.floor(minutesOffset / slotDuration) + 1,
       timerId: 0,
       today: new Date(),
       dayHeaderOptions: {
@@ -188,6 +192,14 @@ export default {
     this.setTopOffset()
     this.timerId = setInterval(this.setTopOffset, 30 * 1000)
   },
+  mounted () {
+    if (this.offsetTop > 0) {
+      const elem = document.querySelector('.in-view')
+      const top = elem && (this.documentOffsetTop(elem) - (window.innerHeight / 2)) || 0
+
+      window.scrollTo({ top, behavior: 'smooth' })  
+    }
+  },
   beforeDestroy () {
     clearInterval(this.timerId)
   },
@@ -195,11 +207,14 @@ export default {
     displayTimeStamp (i) {
       return this.showTime && !((i - 1)% this.displayStep)
     },
-    setTopOffset () {
+    getMinutesOffset () {
       const startTime = this.parseTime(this.displayFrom)
       const currentTime = Date.now()
       const offset = currentTime - startTime
 
+      return offset / 60000 
+    },
+    setTopOffset () {
       if (!areSameDates(new Date(), this.day.date)) {
         this.offsetTop = -10
         return
@@ -207,7 +222,7 @@ export default {
  
       /* we show one slot before the first (displayFrom) slot, for the first time mark to be visible,
         so we have to add slot's height here */
-      this.offsetTop =  offset / 60000 * this.minuteHeight + this.headerHeight + this.slotHeight
+      this.offsetTop = this.getMinutesOffset() * this.minuteHeight + this.headerHeight + this.slotHeight
     },
     isWorkingTime (i) {
       if (!this.employeeSchedule) {
@@ -225,6 +240,9 @@ export default {
             this.lunchTime[1] >= this.times[i].end.display)
         )
       )
+    },
+    documentOffsetTop (elem) {
+      return elem.offsetTop + (elem.offsetParent ? this.documentOffsetTop(elem.parentElement) : 0)
     },
     onClickDate (dt) {
       this.$emit('onClickDate', dt)
@@ -332,7 +350,7 @@ export default {
 
   &__now {
     position: absolute;
-    z-index: 10;
+    z-index: 4;
     right: 0;
     left: 0;
     border-top: 2px solid #EF4D37;
