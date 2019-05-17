@@ -4,7 +4,7 @@ import { sortBy } from 'lodash'
 
 const state = {
   businessInfo: {},
-  businessIndividualCategories: ['Частный мастер'],
+  businessIndividualCategories: [],
   businessCategories: [
     'Клиника косметологии',
     'Салон красоты',

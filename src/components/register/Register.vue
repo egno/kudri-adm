@@ -16,7 +16,7 @@
                 Регистрация Бизнеса
               </div>
             </VFlex>
-            <VFlex v-if="false" pa-2>
+            <VFlex pa-2>
               <VSelect
                 v-if="!restoreMode"
                 v-model="ftype"
@@ -24,7 +24,7 @@
                 label="Ваш бизнес"
               />
             </VFlex>
-            <VFlex pa-2>
+            <VFlex v-if="false" pa-2>
               <VTextField
                 v-model="companyName"
                 label="Название компании"
@@ -32,7 +32,7 @@
                 :rules="[rules.required]"
               />
             </VFlex>
-            <VFlex pa-2>
+            <VFlex v-if="false" pa-2>
               <VTextField
                 v-model="userName"
                 label="Имя и фамилия"
@@ -74,7 +74,7 @@
             <VFlex pa-2>
               <VBtn
                 color="success"
-                :disabled="!offerAgree || !companyName || !userName || !flogin || !loginIsCorrect"
+                :disabled="!offerAgree || !flogin || !loginIsCorrect"
                 @click="sendLogin"
               >
                 Создать
