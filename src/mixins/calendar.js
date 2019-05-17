@@ -3,7 +3,7 @@ import { formatDate, getWeeks, monthDisplay } from '@/components/calendar/utils'
 
 export default {
   computed: {
-    ...mapGetters(['actualDate']),
+    ...mapGetters(['actualDate', 'businessId']),
     dateMonthHeader () {
       const d = new Date(this.selectedDate)
       return monthDisplay(d)
@@ -42,7 +42,7 @@ export default {
       return this.calendar.filter(d => d.dt === dt)[0].j.holiday
     },
     goDate (dt) {
-      this.setActualDate(dt)
+      // this.setActualDate(dt)
       this.$router.push({
         name: 'visitCalendar',
         params: { id: this.businessId, date: dt }

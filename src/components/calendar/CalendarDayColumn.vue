@@ -205,7 +205,7 @@ export default {
   },
   created () {
     this.setTopOffset()
-    this.timerId = setInterval(this.setTopOffset, 30 * 1000)
+    this.timerId = setInterval(this.setTopOffset, 60 * 1000)
   },
   mounted () {
     if (this.offsetTop > 0) {

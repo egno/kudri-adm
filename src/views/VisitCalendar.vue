@@ -242,7 +242,7 @@
       :page="editVisitPage"
       @onSave="onVisitSave"
       @delete="onDelete"
-      @close="edit=false; currentVisit = null"
+      @close="edit=false; currentVisit = null; selectVisit(null)"
     />
   </div>
 </template>
@@ -452,6 +452,7 @@ export default {
       this.sendData(payload)
         .then(() => {
           this.edit = false
+          this.selectVisit(null)
         })
         .catch(err => {
           this.alert(makeAlert(err))
@@ -470,6 +471,7 @@ export default {
         .delete(`visit?id=eq.${this.currentVisit.id}`)
         .then(() => {
           this.currentVisit = null
+          this.selectVisit(null)
           this.fetchData()
         })
     },
