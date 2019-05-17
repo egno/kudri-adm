@@ -10,30 +10,77 @@
           v-if="!sended && !keyCode"
           ref="formLogin"
         >
-          <div class="businesscard__h1">
-            Регистрация Бизнеса
-          </div>
-          <VSelect
-            v-if="!restoreMode"
-            v-model="ftype"
-            :items="roles"
-            label="Ваш бизнес"
-          />
-          <VTextField
-            id="flogin"
-            v-model="flogin"
-            name="flogin"
-            label="Телефон"
-            phone
-            type="flogin"
-            :rules="[rules.email]"
-          />
-          <VBtn
-            color="success"
-            @click="sendLogin"
-          >
-            Подтвердить
-          </VBtn>
+          <v-layout column>
+            <VFlex pa-2>
+              <div class="businesscard__h1">
+                Регистрация Бизнеса
+              </div>
+            </VFlex>
+            <VFlex v-if="false" pa-2>
+              <VSelect
+                v-if="!restoreMode"
+                v-model="ftype"
+                :items="roles"
+                label="Ваш бизнес"
+              />
+            </VFlex>
+            <VFlex pa-2>
+              <VTextField
+                v-model="companyName"
+                label="Название компании"
+                required
+                :rules="[rules.required]"
+              />
+            </VFlex>
+            <VFlex pa-2>
+              <VTextField
+                v-model="userName"
+                label="Имя и фамилия"
+                required
+                :rules="[rules.required]"
+              />
+            </VFlex>
+            <VFlex pa-2>
+              <VTextField
+                id="flogin"
+                v-model="flogin"
+                name="flogin"
+                label="Телефон"
+                phone
+                type="flogin"
+                :rules="[rules.phone]"
+              />
+            </VFlex>
+            <VFlex pa-2>
+              <div>
+                <v-layout align-center>
+                  <v-checkbox
+                    v-model="offerAgree"
+                    color="blue"
+                  />
+                  <div class="text-sm-left">
+                    <span class="caption">Соглашаюсь с <a
+                      href="https://docs.google.com/document/d/1Ioe9v58FGXfI7o1ExWPGR9aMkeYyU6LCJenMniPSsl4"
+                      target="_blank"
+                    >правилами</a>, <a
+                      href="https://docs.google.com/document/d/1JWxq7uHt7H9CKhqyJLIozc-JeAT9aNXUszZ1m2Dd4Os"
+                      target="_blank"
+                    >политикой</a> конфиденциальности и разрешаю проводить аналитику своих персональных данных</span>
+                  </div>
+                  <v-layout />
+                </v-layout>
+              </div>
+            </VFlex>
+            <VFlex pa-2>
+              <VBtn
+                color="success"
+                :disabled="!offerAgree || !companyName || !userName || !flogin || !loginIsCorrect"
+                @click="sendLogin"
+              >
+                Создать
+              </VBtn>
+            </VFlex>
+          </v-layout>
         </VForm>
 
         <div v-if="loginIsEmail === true && !keyCode">
@@ -127,13 +174,6 @@
         <div v-if="keyCode">
           {{ badCode }}
         </div>
-
-        <a
-          href="#"
-          @click="openMessageWindow"
-        >
-          Связаться с тех. поддержкой
-        </a>
       </v-card-text>
     </v-card>
   </VFlex>
@@ -151,13 +191,16 @@ export default {
   data () {
     return {
       rules: {
-        email: value => {
+        phone: value => {
           const pattern = /^[+]*([0-9]){11}$/
+          const val = value.replace(/[^0-9]/g,'')
           return (
-            pattern.test(value) || 'Введите действительный номер телефона.'
+            pattern.test(val) || 'Введите действительный номер телефона.'
           )
-        }
+        },
+        required: value => !!value || 'Обязательно для заполнения'
       },
+      companyName: '',
       fpasswordRepeat: '',
       fpassword: '',
       sended: false,
@@ -185,7 +228,9 @@ export default {
       passRepeatRules: [
         v => (!!v && v === this.fpassword) || 'Пароли не совпадают'
       ],
-      userAlreadyInitialized: false
+      offerAgree: false,
+      userAlreadyInitialized: false,
+      userName: ''
     }
   },
   computed: {
@@ -211,6 +256,9 @@ export default {
     },
     restoreMode () {
       return this.$route && this.$route.name === 'restorePassword'
+    },
+    loginIsCorrect () {
+      return this.rules.phone(this.flogin) === true
     }
   },
   watch: {
