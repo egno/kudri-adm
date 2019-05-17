@@ -1,7 +1,10 @@
 <template>
   <VFlex
-    xs4
-    offset-xs4
+    xs12
+    offset-sm2
+    sm8
+    offset-md4
+    md4
     class="text-xs-center"
   >
     <v-card flat>
