@@ -70,7 +70,7 @@
         />
       </div>
 
-      <div v-if="message">
+      <div v-if="message" class="error--text">
         {{ message }}
       </div>
       <div class="right-attached-panel__field-block _client-name">
@@ -180,6 +180,7 @@ import {
 } from '@/components/calendar/utils'
 import { mapState, mapGetters } from 'vuex'
 import Api from '@/api/backend'
+import { isEqual } from 'lodash'
 
 export default {
   components: { PhoneEdit, TimeSelect },
@@ -245,6 +246,7 @@ export default {
       selectedEmployee: null,
       selectedServices: [],
       selectedTime: null,
+      lastFreeTimesRequest: {}
     }
   },
   computed: {
@@ -309,6 +311,11 @@ export default {
       if (this.selectedEmployee) {
         params.employee_id = this.selectedEmployee.id
       }
+      if (isEqual(this.lastFreeTimesRequest, params)) {
+        return
+      }
+      this.lastFreeTimesRequest = params
+      this.message = ''
       this.loadingTimes = true
       Api()
         .post("rpc/free_times", params)
@@ -454,6 +461,9 @@ export default {
   }
   .right-attached-panel__buttons {
     margin-top: 50px;
+  }
+  .error--text {
+    margin-top: 10px;
   }
 }
 </style>

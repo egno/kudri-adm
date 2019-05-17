@@ -1,4 +1,4 @@
-import { displayRESTDate, displayRESTTime } from '@/components/calendar/utils'
+import { ceilMinutes, dateISOInLocalTimeZone, displayRESTDate, displayRESTTime } from '@/components/calendar/utils'
 
 class Visit {
   constructor (val) {
@@ -16,7 +16,7 @@ class Visit {
     this.business_id = (newVal && newVal.business_id) || null
     this.client_id = (newVal && newVal.client_id) || null
     this.salon_id = (newVal && newVal.salon_id) || null
-    this.ts_begin = (newVal && newVal.ts_begin) || null
+    this.ts_begin = (newVal && newVal.ts_begin) || dateISOInLocalTimeZone(ceilMinutes(new Date()))
     this.ts_end = (newVal && newVal.ts_end) || null
     this.j = (newVal && newVal.j) || {
       client: {},

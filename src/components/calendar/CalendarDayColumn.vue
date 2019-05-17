@@ -54,16 +54,18 @@
       <div
         v-else
         :class="['slot', { working: isWorkingTime(i) }]"
-        @click="onSlotClick(time)"
+        @click="onSlotClick(time, i)"
       >
         <div class="slot__time">
           {{ time.begin.display }}
         </div>
-        <div v-show="time === selectedTime" class="slot__wrapper">
-          <div @click="$emit('onSlotClick', time.begin.date)">
+        <div v-show="time === selectedTime" class="slot__container">
+          <div class="slot__add-visit" @click="$emit('onSlotClick', time.begin.date)">
             +
           </div>
-          <div>Cup</div>
+          <div class="slot__add-break">
+            Break
+          </div>
         </div>
       </div>
     </div>
@@ -160,12 +162,12 @@ export default {
     isToday () {
       return areSameDates(this.today, this.day.date)
     },
-    lunchTime () {
-      if (this.employeeSchedule.length > 3) {
-        return [this.employeeSchedule[1], this.employeeSchedule[2]]
-      }
-      return []
-    },
+    // lunchTime () {
+    //   if (this.employeeSchedule.length > 3) {
+    //     return [this.employeeSchedule[1], this.employeeSchedule[2]]
+    //   }
+    //   return []
+    // },
     times () {
       const isVisible = time => {
         if (!(this.displayFrom || this.displayTo)) return true
@@ -247,17 +249,16 @@ export default {
       if (!this.employeeSchedule) {
         return false
       }
+      const dayEnd = this.employeeSchedule[this.employeeSchedule.length - 1]
+
       return (
         this.employeeSchedule[0] <= this.times[i].begin.display &&
-        (this.employeeSchedule[this.employeeSchedule.length - 1] === '00:00'
-          ? '24:00'
-          : this.employeeSchedule[this.employeeSchedule.length - 1]) >=
-          this.times[i].end.display &&
-        !(
-          this.lunchTime.length &&
-          (this.lunchTime[0] <= this.times[i].begin.display &&
-            this.lunchTime[1] >= this.times[i].end.display)
-        )
+        (dayEnd === '00:00' ? '24:00' : dayEnd) >= this.times[i].end.display
+        // && !(
+        //   this.lunchTime.length &&
+        //   (this.lunchTime[0] <= this.times[i].begin.display &&
+        //     this.lunchTime[1] >= this.times[i].end.display)
+        // )
       )
     },
     documentOffsetTop (elem) {
@@ -266,8 +267,8 @@ export default {
     onClickDate (dt) {
       this.$emit('onClickDate', dt)
     },
-    onSlotClick (time) {
-      if (!this.isDayOff && (time.begin.date.getTime() > Date.now())) {
+    onSlotClick (time, i) {
+      if (!this.isDayOff && (time.begin.date.getTime() > Date.now()) && this.isWorkingTime(i)) {
         this.selectedTime = time
       }
     },
@@ -315,6 +316,7 @@ export default {
 
   &.working {
     background: #fff;
+    cursor: pointer;
   }
 
   &__time {
@@ -327,15 +329,40 @@ export default {
     font-size: 12px;
   }
 
-  &__wrapper {
+  &__container {
     position: relative;
     z-index: 2;
     display: flex;
     flex-wrap: nowrap;
     height: 100%;
+    justify-content: space-between;
+    padding: 2px 0;
     & > div {
       width: 50%;
+      margin: 0 2px;
       height: 100%;
+      border-radius: 4px;
+      color: transparent;
+      &:hover {
+        background-color: rgba(137, 149, 175, 0.1);
+      }
+    }
+  }
+  &__add-visit {
+    background: url('../../assets/plus.svg') center/14px no-repeat;
+  }
+  &__add-break {
+    position: relative;
+    background: url('../../assets/images/svg/cup.svg') center no-repeat;
+
+    &:before {
+      content: '';
+      position: absolute;
+      left: -2px;
+      top: 0;
+      height: 100%;
+      width: 1px;
+      background: rgba(137, 149, 175, 0.1);
     }
   }
 }

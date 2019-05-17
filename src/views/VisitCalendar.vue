@@ -33,6 +33,7 @@
               v-if="selectedEmployee"
               :class="{ button_disabled: false }"
               class="button_attractive"
+              @click="createVisit()"
             >
               Создать запись
             </MainButton>
@@ -360,12 +361,20 @@ export default {
     this.$root.$off('onAction', this.onAction)
   },
   methods: {
-    ...mapActions(['alert', 'setActions', 'setBusiness']),
+    ...mapActions(['alert', 'setActions', 'setBusiness', 'selectVisit']),
     changeWeek (vector) {
       let dt = new Date(this.actualDate)
 
       dt.setDate(dt.getDate() + 7*vector)
       this.goDate(formatDate(dt))
+    },
+    createVisit (date) {
+      let visit = visitInit()
+      
+      if (date) {
+        visit.ts_begin = date.toISOString()
+      }  
+      this.selectVisit(visit)
     },
     fetchData () {
       if (!this.$route || !this.$route.params || !this.$route.params.id) return
@@ -436,9 +445,7 @@ export default {
       this.selectedEmployee = payload
     },
     onSlotClick (date) {
-      this.currentVisit = visitInit()
-      this.currentVisit.ts_begin = date.toISOString()
-      this.edit = true
+      this.createVisit(date)
     },
     onVisitSave (payload) {
       this.editVisitPage = undefined

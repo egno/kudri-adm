@@ -1,3 +1,5 @@
+import Visit from '@/classes/visit'
+
 export function dateInTimeZone (date, tz) {
   if (!tz) {
     return date
@@ -145,19 +147,7 @@ export function getWeek (year, month, dd) {
 }
 
 export function visitInit (visit) {
-  return {
-    business_id: null,
-    j: {
-      services: [],
-      client: {
-        name: '',
-        phone: '',
-      }
-    },
-    ts_begin: null,
-    ts_end: null,
-    ...visit
-  }
+  return new Visit(visit)
 }
 
 export function dowDisplay (dt, format = 0) {
@@ -221,6 +211,7 @@ export function hyphenStrToDay (str) {
   return day
 }
 
+// format 2019-05-17T14:58:11
 export function dateISOInLocalTimeZone (date) {
   const d = new Date(date)
   const l = d.getTime() - d.getTimezoneOffset() * 60000
@@ -232,4 +223,12 @@ export function timestampLocalISO (diff = 30) {
   let dt = new Date()
   dt = new Date(dt.getTime() + diff * 60000)
   return dateISOInLocalTimeZone(dt)
+}
+
+export function ceilMinutes (date, interval = 15) {
+  const newDate = new Date(date)
+  const oldMin = date.getMinutes()
+  const integerPart = Math.floor(oldMin / interval)
+
+  return newDate.setHours(date.getHours(), integerPart * interval + interval)  
 }

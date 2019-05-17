@@ -178,6 +178,7 @@ export default {
 .visit-wrapper {
   position: relative;
   top: 1px;
+  cursor: pointer;
 }
 .visit {
   font-size: 12px;
