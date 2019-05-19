@@ -66,7 +66,7 @@
             class="caption text-no-wrap grey--text text--darken-1"
           >
             <RouterLink
-              :to="{name: 'businessCardFilial',params:{id: props.item.id}}"
+              :to="{name: 'filialList',params:{id: props.item.id}}"
             >
               Филиалов: {{ props.item.j.filials }}
             </RouterLink>

@@ -165,15 +165,17 @@ export default {
           title: 'Филиалы',
           count: this.businessFilialCount,
           route: {
-            name: 'businessCardFilial',
+            name: 'filialList',
             params: { id: this.businessId }
           },
           show: (!this.businessIsFilial || this.parentFilialsCount > 1) && this.loggedIn && !this.isManagerMenu && this.businessIsSalon,
-          action: {
-            label: 'Добавить филиал',
-            action: 'newFilial',
-            default: true
-          }
+          action: this.businessIsFilial
+            ? null 
+            : {
+              label: 'Добавить филиал',
+              action: 'newFilial',
+              default: true
+            }
         },
         {
           title: 'Пользователи',
@@ -340,7 +342,7 @@ export default {
     goToCompany () {
       const parentId = this.businessInfo.parent
       this.setBusiness(parentId)
-      this.$router.push({name: 'businessCardFilial',params:{id: parentId}})
+      this.$router.push({name: 'filialList',params:{id: parentId}})
     },
     onAction (action) {
       if (action && action.to) {

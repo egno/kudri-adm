@@ -84,7 +84,7 @@ export default new Router({
     },
     {
       path: '/businessCard/f/:id',
-      name: 'businessCardFilial',
+      name: 'filialList',
       component: () => import('./views/FilialList.vue')
     },
     {
