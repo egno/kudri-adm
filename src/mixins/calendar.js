@@ -2,6 +2,11 @@ import { mapGetters, mapActions } from 'vuex'
 import { formatDate, getWeeks, monthDisplay } from '@/components/calendar/utils'
 
 export default {
+  data () {
+    return {
+      dates: []
+    }
+  },
   computed: {
     ...mapGetters(['actualDate', 'businessId']),
     dateMonthHeader () {
@@ -11,6 +16,15 @@ export default {
     selectedDate () {
       return this.$route.params.date || this.actualDate
     },
+    workMonth () {
+      return +this.selectedDate.slice(5, 7) - 1
+    },
+    workYear () {
+      return +this.selectedDate.slice(0, 4)
+    }
+  },
+  mounted () {
+    this.setDates()
   },
   methods: {
     ...mapActions(['setActualDate']),

@@ -105,7 +105,7 @@ export default {
   data () {
     return {
       slotDuration: 15, /* smallest slot duration in minutes  */
-      slotHeight: 55, /* smallest slot height in px */
+      slotHeight: 55.5, /* smallest slot height in px */
       showTooltip: false
     }
   },

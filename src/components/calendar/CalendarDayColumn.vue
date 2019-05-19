@@ -38,7 +38,7 @@
           v-if="displayTimeStamp(i)"
           class="time-mark"
         >
-          <div>{{ time.begin.display }}</div>
+          {{ time.begin.display }}
         </div>
       </div>
       
@@ -298,7 +298,15 @@ export default {
 
 <style lang="scss">
   @import '../../assets/styles/common';
-
+%active-header {
+  background-color: #5699FF;
+  border-radius: 4px;
+  .day-column__date,
+  .day-column__day,
+  .day-column__schedule {
+    color: #fff;
+  }
+}
 .time-mark {
   position: absolute;
   right: 100%;
@@ -315,8 +323,7 @@ export default {
   font-size: 0.75em;
 
   &.working {
-    background: #fff;
-    cursor: pointer;
+    background: #fff; 
   }
 
   &__time {
@@ -350,6 +357,7 @@ export default {
   }
   &__add-visit {
     background: url('../../assets/plus.svg') center/14px no-repeat;
+    cursor: pointer;
   }
   &__add-break {
     position: relative;
@@ -373,9 +381,9 @@ export default {
 } 
 .day-column {
   position: relative;
-  width: 14.28%;
   min-width: 136px;
   @media only screen and (min-width : $desktop) {
+    width: 14.28%;
     padding-top: 82px;
   }
   &.today {
@@ -385,10 +393,13 @@ export default {
       font-weight: bold;
     }
   }
+  &.selected .day-column__header {
+    @extend %active-header
+  }
 
   &__item {
     height: 56px;
-    &:nth-child(even) {
+    &:nth-child(odd) {
       .slot {
         border-bottom: 1px solid rgba(137, 149, 175, .20);
       }
@@ -415,7 +426,7 @@ export default {
       content: '';
       border-radius: 50%;
     }
-  }
+  } 
   &__header {
     position: absolute;
     top: 0;
@@ -427,13 +438,7 @@ export default {
     box-shadow: 8px 2px 8px rgba(137, 149, 175, 0.1);
     cursor: pointer;
     &.active {
-      background-color: #5699FF;
-      border-radius: 4px;
-      .day-column__date,
-      .day-column__day,
-      .day-column__schedule {
-        color: #fff;
-      }
+      @extend %active-header
     }
   }
   &__dropdown {

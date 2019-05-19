@@ -87,6 +87,19 @@
               </v-btn>
             </div>
           </VLayout>
+          <VLayout row justify-space-between class="calendar-controls__days">
+            <div 
+              v-for="(day, dayIndex) in selectedWeek" 
+              :key="dayIndex" 
+              :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate }"
+              @click="goDate(day.dateKey)"
+            >
+              <div>{{ day.display }}</div>
+              <div class="calendar-controls__dow">
+                {{ dow[dayIndex] }}
+              </div>
+            </div> 
+          </VLayout>          
         </div>
         <VLayout 
           v-if="businessEmployees && !businessEmployees.length" 
@@ -104,9 +117,9 @@
         </VLayout>
         
         <div v-if="selectedEmployee && selectedEmployee.j" :class="['main-table', { 'one-day': displayMode === 'day' }]">
-          <div class="controls">
+          <div class="week-controls">
             <v-btn
-              class="controls__button"
+              class="week-controls__button"
               depressed
               flat
               small
@@ -115,7 +128,7 @@
               <v-icon>navigate_before</v-icon>
             </v-btn>
             <v-btn
-              class="controls__button"
+              class="week-controls__button"
               depressed
               flat
               small
@@ -164,7 +177,7 @@
               :employee-schedule="selectedEmployee.j.schedule.data[i]"
               :display-from="displayTimes.start"
               :display-to="displayTimes.end"
-              @onSlotClick="onSlotClick"
+              @onSlotClick="createVisit"
               @onDayEdit="onDayEdit"
               @makeDayOffTry="notifyHasVisits = true"
             />
@@ -271,12 +284,12 @@ export default {
       businessInfo: {},
       currentVisit: undefined,
       displayMode: 'week', /* day or week */
+      dow: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
       edit: false,
       editVisitPage: undefined,
       isLoading: false,
       selectedEmployee: {},
       selectedEmpGroups: [],
-      newVisit: false,
       notifyHasVisits: false,
       formActions: [
         { label: 'Добавить запись', action: 'newVisit', default: true }
@@ -310,7 +323,7 @@ export default {
       return getWeek(date.getFullYear(), date.getMonth(), this.selectedDateObj.display)
     },
     displayTimes () {
-      const schedule = this.businessSchedule && this.businessSchedule.data
+      const schedule = this.selectedEmployee.j.schedule.data
       let start = schedule && schedule.find(day => !!day[0])[0]
       let end = schedule && schedule.find(day => !!day[1])[1]
 
@@ -367,6 +380,7 @@ export default {
 
       dt.setDate(dt.getDate() + 7*vector)
       this.goDate(formatDate(dt))
+      this.setDates()
     },
     createVisit (date) {
       let visit = visitInit()
@@ -413,10 +427,8 @@ export default {
     initEmployee () {
       this.selectedEmployee = this.businessEmployees && this.businessEmployees.find(e => e.j.services && e.j.services.length)
     },
-    onAction (payload) {
-      if (payload === this.formActions[0].action) {
-        this.newVisit = true
-      }
+    onAction () {
+      this.createVisit()
     },
     onDayEdit ({ day, isDayOff }) {
       const isWorkingDay = day => day && day[0] && day[1]
@@ -443,9 +455,6 @@ export default {
     },
     onSelectEmployee (payload) {
       this.selectedEmployee = payload
-    },
-    onSlotClick (date) {
-      this.createVisit(date)
     },
     onVisitSave (payload) {
       this.editVisitPage = undefined
@@ -474,6 +483,8 @@ export default {
           this.selectVisit(null)
           this.fetchData()
         })
+        .catch(err => {
+          this.alert(makeAlert(err))})
     },
     sendData (data) {
       if (data && data.id) {
@@ -492,7 +503,20 @@ export default {
 
 <style lang="scss">
   @import '../assets/styles/common';
-
+  %round-arrow-button {
+    float: left;
+    min-width: 0;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    border: 1px solid rgba(137, 149, 175, 0.1);
+    border-radius: 50%;
+    color: #8995AF;
+    
+    i {
+      font-size: 19px;
+    }
+  }
   .visit-log {
     .v-progress-linear {
       margin: 0;
@@ -577,6 +601,26 @@ export default {
           transition: color 0.4s, background-color 0.4s;
         }
       }
+      &__days {
+        padding: 0 35px;
+        @media only screen and (min-width : $desktop) {
+          display: none;
+        }
+      }
+      &__day {
+        padding: 14px 12px;
+        &.selected {
+          background-color: #5699FF;
+          border-radius: 4px;
+          * {
+            color: #fff;
+          }
+        }
+      }
+      &__dow {
+        margin-top: 9px;
+        font-weight: bold;
+      }
     }
 
     .mobile {
@@ -635,6 +679,7 @@ export default {
       position: relative;
       @media only screen and (min-width : $desktop) {
         display: flex;
+        overflow: auto;
       }
 
       &__times { 
@@ -644,12 +689,14 @@ export default {
           width: 100%;
           max-width: 1040px;
           padding-left: 70px;
-          overflow: auto;
         }
       }
 
       &.one-day .day-column.selected {
         width: 100%;
+        .time-mark {
+          display: block;
+        }
       }
     }
 
@@ -676,7 +723,7 @@ export default {
       }
     }
 
-    .controls {
+    .week-controls {
       display: none;
       position: absolute;
       z-index: 1;
@@ -692,17 +739,7 @@ export default {
         display: flex;
       }
       &__button {
-        float: left;
-        min-width: 0;
-        width: 24px;
-        height: 24px;
-        border: 1px solid rgba(137, 149, 175, 0.1);
-        border-radius: 50%;
-        color: #8995AF;
-        
-        i {
-          font-size: 19px;
-        }
+        @extend %round-arrow-button
       }
     }
 
@@ -805,6 +842,7 @@ export default {
     }
 
     .controls__button {
+      @extend %round-arrow-button;
       margin-right: 15px;
     }
     .accordion__header,
