@@ -58,7 +58,7 @@
           </v-menu>
           <div v-if="selectedTime" class="visit-edit__time">
             <div>{{ selectedTime }}</div>
-            <button type="button" class="visit-edit__clear" @click="selectedTime = ''" /> 
+            <button type="button" class="visit-edit__clear" @click="selectedTime = ''; message = ''" /> 
           </div>
         </VLayout>
       </div>
@@ -70,16 +70,16 @@
         />
       </div>
 
-      <div v-if="message" class="error--text">
+      <div v-if="message" class="error-message error--text">
         {{ message }}
       </div>
       <div class="right-attached-panel__field-block _client-name">
         <VTextField
           v-if="visit.j"
           ref="clientName"
-          :value="visit.j.client.name"
+          :value="name"
           label="ИМЯ И ФАМИЛИЯ КЛИЕНТА"
-          :rules="[() => !!visit.j.client.name || 'Это поле обязательно для заполнения']"
+          :rules="[() => !!name || 'Это поле обязательно для заполнения']"
           required
           @input="onInputName"
         />
@@ -87,7 +87,7 @@
       <div class="right-attached-panel__field-block">
         <PhoneEdit
           v-if="visit.j"
-          :phone="visit.j.client.phone"
+          :phone="phone"
           :removable="false"
           label="телефон"
           placeholder=""
@@ -178,9 +178,10 @@ import {
   visitInit,
   hyphensStringToDate
 } from '@/components/calendar/utils'
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import Api from '@/api/backend'
 import { isEqual } from 'lodash'
+import { makeAlert } from '@/api/utils'
 
 export default {
   components: { PhoneEdit, TimeSelect },
@@ -221,6 +222,8 @@ export default {
       error: '',
       freeTimes: [],
       message: '', 
+      name: '',
+      phone: '',
       reminders: [
         {
           value: 60, 
@@ -269,15 +272,19 @@ export default {
       }
       return hyphensStringToDate(this.selectedDate).toLocaleString("ru",options)
     }, 
+    hasPhone () {  
+      return this.phone.length >= 10
+    }, 
     saveDisabled () {
-      return !this.visit.j.client
-        || !this.visit.j.client.name 
-        || !this.visit.j.client.phone 
-        || !this.selectedServices 
-        || !this.selectedServices.length 
-        || !this.selectedDate 
-        || !this.selectedTime
-    },
+      return this.message
+        || this.name.length < 3
+        || !this.hasPhone
+        || !(this.visit.j.client
+        && this.selectedServices 
+        && this.selectedServices.length 
+        && this.selectedDate 
+        && this.selectedTime)
+    }, 
     todayString () {
       return formatDate(new Date())
     }
@@ -291,12 +298,14 @@ export default {
         this.loadFreeTimes() 
       }
     },
-    selectedDate: 'loadFreeTimes'
+    selectedDate: 'loadFreeTimes',
+    'selectedServices.length': 'loadFreeTimes'
   },
   mounted () {
     this.setSelectedValues()
   },
   methods: {
+    ...mapActions(['alert']),
     allowedDates (dateStr) {
       return dateStr > this.todayString
     },
@@ -304,12 +313,15 @@ export default {
       if (!(this.businessId && this.selectedDate)) return
 
       let params = {
-        dt: this.selectedDate,
+        dt: `${this.selectedDate}${this.selectedTime? 'T' + this.selectedTime + ':00': ''}`,
         business_id: this.businessId
       }
 
       if (this.selectedEmployee) {
         params.employee_id = this.selectedEmployee.id
+      }
+      if (this.selectedServices.length) {
+        params.duration = this.duration
       }
       if (isEqual(this.lastFreeTimesRequest, params)) {
         return
@@ -319,15 +331,26 @@ export default {
       this.loadingTimes = true
       Api()
         .post("rpc/free_times", params)
-        .then(({ data }) => 
-          this.freeTimes = data
+        .then(({ data }) => {
+            this.freeTimes = data
+            if (!this.freeTimes.length) {
+              this.message = 'На эту дату или время записаться нельзя. Выберите другую дату или время'
+
+              if (this.selectedServices.length > 1) {
+                this.message += ', или уменьшите количество услуг'
+              }
+            }
+          }
         )
+        .catch(err => {
+          this.alert(makeAlert(err))
+        })
         .finally(() => {
           this.loadingTimes = false
         })
     },
     onPhoneEdit (payload) {
-      this.visit.j.client.phone = payload
+      this.phone = payload
     },
     onInputName (val) {
       if (!val) {
@@ -336,7 +359,7 @@ export default {
       const match = val.match(/[а-яА-ЯёЁ ]+/g)
 
       val = match? match[0] : ''
-      this.visit.j.client.name = val
+      this.name = val
       this.$refs.clientName.lazyValue = val
     },
     onSave () {
@@ -348,7 +371,8 @@ export default {
       ts2.setTime(ts1.getTime() + 60000 * duration) 
       this.visit.business_id = this.selectedEmployee? this.selectedEmployee.id : this.businessId
       this.visit.j.duration = duration
-      this.visit.j.client.name = this.visit.j.client.name.trim()
+      this.visit.j.client.name = this.name.trim()
+      this.visit.j.client.phone = this.phone.trim()
       this.visit.ts_begin = ts1.toJSON().slice(0, -1)
       this.visit.ts_end = ts2.toJSON().slice(0, -1)
 
@@ -362,7 +386,10 @@ export default {
     setPage () {
       if (this.page !== undefined) {
         this.active = this.page
-        this.message = 'На это время записаться нельзя. Выберите другое время'
+        this.message = 'На эту дату или время записаться нельзя. Выберите другую дату или время'
+        if (this.selectedServices.length > 1) {
+          this.message += ', или уменьшите количество услуг'
+        }
       }
     },
     setSelectedValues () {
@@ -388,6 +415,12 @@ export default {
         this.selectedEmployee = this.employees.find(e => e.id === this.visit.j.master.id)
       } else if (this.employee.j.services && this.employee.j.services.length) { 
         this.selectedEmployee = this.employee 
+      }
+      if (this.visit.clientName) {
+        this.name = this.visit.clientName
+      }
+      if (this.visit.clientPhone) {
+        this.phone = this.visit.clientPhone
       }
       this.loadFreeTimes()
     }
@@ -462,7 +495,7 @@ export default {
   .right-attached-panel__buttons {
     margin-top: 50px;
   }
-  .error--text {
+  .error-message {
     margin-top: 10px;
   }
 }

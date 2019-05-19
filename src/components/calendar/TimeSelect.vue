@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { displayRESTTime, timestampLocalISO } from "@/components/calendar/utils"
+import { displayRESTTime, dateISOInLocalTimeZone, ceilMinutes } from "@/components/calendar/utils"
 
 export default { 
   props: {
@@ -71,7 +71,7 @@ export default {
   },
   computed: {
     availableFreeTimes () {
-      const today = timestampLocalISO()
+      const today = dateISOInLocalTimeZone(ceilMinutes(new Date()))
       return (
         this.times && [
           ...new Set(

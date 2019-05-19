@@ -230,5 +230,5 @@ export function ceilMinutes (date, interval = 15) {
   const oldMin = date.getMinutes()
   const integerPart = Math.floor(oldMin / interval)
 
-  return newDate.setHours(date.getHours(), integerPart * interval + interval)  
+  return newDate.setHours(date.getHours(), integerPart * interval + interval, 0)  
 }
