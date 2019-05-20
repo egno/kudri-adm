@@ -159,7 +159,7 @@ export default {
           title: 'Все компании',
           icon: 'business',
           route: { name: 'businessList' },
-          show: this.isEditorUser
+          show: this.userRole === 'manager' || this.userRole === 'admin'
         },
         {
           title: 'Филиалы',
@@ -183,7 +183,7 @@ export default {
             name: 'businessUsers',
             params: { id: this.businessId }
           },
-          show: (!this.businessIsFilial) && this.loggedIn && !this.isManagerMenu && this.businessIsSalon
+          show: (!this.businessIsFilial) && this.loggedIn && this.isEditorUser && this.businessIsSalon
         },
         {
           title: 'Услуги',
@@ -264,7 +264,7 @@ export default {
             name: 'businessSettings',
             params: { id: this.businessId }
           },
-          show: this.loggedIn && !this.isManagerMenu
+          show: this.loggedIn && this.isEditorUser
         }
       ]
     },
