@@ -415,12 +415,16 @@ export default {
         this.selectedEmployee = this.employees.find(e => e.id === this.visit.j.master.id)
       } else if (this.employee.j.services && this.employee.j.services.length) { 
         this.selectedEmployee = this.employee 
-      }
+      } 
       if (this.visit.clientName) {
         this.name = this.visit.clientName
+      } else {
+        this.name = ''
       }
       if (this.visit.clientPhone) {
         this.phone = this.visit.clientPhone
+      } else {
+        this.phone = ''
       }
       this.loadFreeTimes()
     }
