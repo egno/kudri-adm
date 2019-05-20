@@ -23,44 +23,49 @@
       </VBtn>
     </VCardActions>
   </VCard>
-  <VCard v-else>
-    <VCardText>
-      <VForm>
-        <VTextField
-          v-model="flogin"
-          prepend-icon="person"
-          name="email"
-          label="e-mail"
-          type="text"
-          browser-autocomplete="username"
-        />
-        <VTextField
-          id="password"
-          v-model="fpassword"
-          prepend-icon="lock"
-          name="password"
-          label="Пароль"
-          type="password"
-          browser-autocomplete="current-password"
-        />
-      </VForm>
-    </VCardText>
-    <VCardActions>
-      <VSpacer />
-      <VBtn
-        color="primary"
-        @click="sendLogin"
+  <div v-else>
+    <VForm class="businesscard-form _login">
+      <VTextField
+        v-model="flogin"
+        name="username"
+        label="Логин"
+        type="text"
+        browser-autocomplete="username"
+        class="businesscard-form__field"
+        :rules="[ rules.required ]"
+      />
+      <VTextField
+        id="password"
+        v-model="fpassword"
+        name="password"
+        label="Пароль"
+        type="password"
+        browser-autocomplete="current-password"
+        class="businesscard-form__field"
+        :rules="[ rules.required ]"
+      />
+      <div>
+        <a @click="goRestorePassword">
+          Забыли пароль?
+        </a>
+      </div>
+      <MainButton
+        type="button"
+        :class="['button', 'save-info', { button_disabled: !flogin || !fpassword }]"
+        @click.native.stop="sendLogin"
       >
-        Войти
-      </VBtn>
-    </VCardActions>
-  </VCard>
+        Вход
+      </MainButton>
+    </VForm>
+  </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import MainButton from '@/components/common/MainButton.vue'
 
 export default {
+  components: { MainButton },
   props: {
     source: { type: String, default: () => '' }
   },
@@ -71,19 +76,43 @@ export default {
     fpassword: '000000050',
     snack: false,
     snackText: '',
-    snackColor: 'error'
+    snackColor: 'error',
+    rules: {
+      required: value => !!value || 'Это поле обязательно для заполнения',
+    },
   }),
   computed: {
     ...mapGetters(['loggedIn', 'userID', 'userInfo'])
   },
+  watch: {
+    loggedIn (newVal, oldVal) {
+      if (newVal  && newVal !== oldVal) {
+        this.$emit('loggedIn')
+        this.$router.push({ name: 'home' })
+      }
+    }
+  },
   methods: {
     ...mapActions(['login', 'logout']),
+    goRestorePassword () {
+      this.$router.push({ name: 'restorePassword' })
+    },
     sendLogin () {
       this.login({ login: this.flogin, pass: this.fpassword })
     },
     sendLogout () {
       this.logout()
+      this.$router.push({ name: 'home' })
     }
   }
 }
 </script>
+
+<style lang="scss">
+  @import '../assets/styles/businesscard-form';
+  ._login {
+    .businesscard-form__field {
+      margin-top: 0;
+    }
+  }
+</style>

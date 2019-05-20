@@ -92,7 +92,7 @@ const actions = {
   login ({ commit }, payload) {
     const loginPath = 'rpc/login'
     localStorage.removeItem('accessToken')
-    Api()
+    return Api()
       .post(loginPath, payload)
       .then(res => res.data)
       .then(res => res[0])

@@ -77,52 +77,19 @@
       </VLayout>
     </VBtn>
     <VList>
-      <template>
-        <VCardText>
-          <VForm>
-            <VTextField
-              v-model="flogin"
-              prepend-icon="person"
-              name="email"
-              label="e-mail"
-              type="text"
-              browser-autocomplete="login"
-            />
-            <VTextField
-              id="password"
-              v-model="fpassword"
-              prepend-icon="lock"
-              name="password"
-              label="Пароль"
-              type="password"
-              browser-autocomplete="current-password"
-            />
-          </VForm>
-          <div>
-            <a @click="goRestorePassword">
-              Забыли пароль?
-            </a>
-          </div>
-        </VCardText>
-        <VCardActions>
-          <VSpacer />
-          <VBtn @click="sendLogin">
-            Войти
-          </VBtn>
-        </VCardActions>
-      </template>
+      <Login @loggedIn="menu = false" />
     </VList>
   </VMenu>
 </template>
 
 <script>
-import router from '@/router'
 import Avatar from '@/components/avatar/Avatar.vue'
+import Login from "../components/Login"
 
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  components: { Avatar },
+  components: { Avatar, Login },
   props: {
     source: { type: String, default: () => '' }
   },
@@ -170,9 +137,6 @@ export default {
         }
       ]
     },
-    menuWidth () {
-      return this.loggedIn ? '154' : '300'
-    },
     displayName () {
       if (!this.userID) return
 
@@ -211,34 +175,19 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['login', 'logout', 'openProfileDrawer']),
-    goRestorePassword () {
-      this.menu = false
-      this.$router.push({ name: 'restorePassword' })
-    },
+    ...mapActions(['logout', 'openProfileDrawer']),
     menuHandler (action) {
       this.menu = false
       switch (action) {
         case 'logout':
-          this.sendLogout()
+          this.logout()
           break
         case 'drawer':
-          this.openDrawer()
+          this.openProfileDrawer()
           break
         default:
       }
     },
-    sendLogin () {
-      this.login({ login: this.flogin, pass: this.fpassword })
-      this.menu = false
-    },
-    openDrawer () {
-      this.openProfileDrawer()
-    },
-    sendLogout () {
-      this.logout()
-      router.push({ name: 'home' })
-    }
   }
 }
 </script>

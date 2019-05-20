@@ -2,6 +2,8 @@
   <VContainer
     fluid
     fill-height
+    justify-center
+    class="login-container"
   >
     <Login />
   </VContainer>
@@ -16,3 +18,9 @@ export default {
   }
 }
 </script>
+
+<style>
+  .login-container ._login {
+    margin-top: -40px;
+  }
+</style>
