@@ -20,7 +20,6 @@
         <v-list-tile-content>
           <v-list-tile-title
             overflow-hidden
-            @click="goHome"
           >
             <div class="logo" />
           </v-list-tile-title>
@@ -438,6 +437,5 @@ export default {
   width: 73px;
   height: 24px;
   background: url('./../assets/images/svg/uno_full.svg') center/contain no-repeat;
-  cursor: pointer;
 }
 </style>
