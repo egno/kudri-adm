@@ -110,8 +110,11 @@
           fill-height
         >
           <div>У вас нет ни одного мастера.</div>
-          <!-- todo remove button_disabled class, add functionality -->
-          <MainButton class="button_attractive button_disabled">
+          <MainButton class="button_attractive" @click="$router.push({
+            name: 'employeeProfile',
+            params: { id: $route.params.id, employee: 'new' }
+          })"
+          >
             Создать мастера
           </MainButton>
         </VLayout>
