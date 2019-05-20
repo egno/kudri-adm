@@ -86,14 +86,6 @@
             <td>
               <span v-if="props.item.visit.visits.check">{{ props.item.visit.visits.check | numberFormat }} рублей</span>
             </td>
-            <!--<td>
-              <div class="clients__filial">
-                {{ getFilialName(props.item.business_id) }}
-              </div>
-              <div class="clients__add-info">
-                Новосибирск, ул. Сибиряков- Гвардейцев, 183
-              </div>
-            </td>-->
             <td>
               <v-layout
                 row
@@ -284,7 +276,7 @@ export default {
         })
       }
     },
-    fetchData () {
+    fetchData (force = false) {
       if (!this.businessId) return
 
       const { sortBy, descending, page, rowsPerPage } = this.pagination
@@ -305,7 +297,7 @@ export default {
       if (page > 1) {
         params.push(`offset=${(page - 1) * rowsPerPage}`)
       }
-      if (this.lastQuery !== params.filter(x => !!x).join('&')) {
+      if (force || this.lastQuery !== params.filter(x => !!x).join('&')) {
         this.lastQuery = params.filter(x => !!x).join('&')
 
         this.progressQuery = true
@@ -333,14 +325,6 @@ export default {
           })
       }
     },
-   /* getFilialName (id) {
-      if (!this.branchesList.length) {
-        return ''
-      }
-      const f = this.branchesList.find(b => b.id === id)
-
-      return f? f.j && f.j.name : ''
-    },*/
     getFilials () {
       const id = this.businessIsFilial
         ? this.businessInfo && this.businessInfo.parent
@@ -382,7 +366,7 @@ export default {
         .delete(`client?id=eq.${this.item.id}`)
         .then(() => {
           this.addClientsCounter(-1)
-          this.fetchData()
+          this.fetchData({force: true})
           this.edit = false
           this.item = {}
         })
@@ -397,7 +381,7 @@ export default {
           this.items.splice(idx, 1, item)
         }
         this.item = {}
-        this.fetchData()
+        this.fetchData({force: true})
       })
     }
   }
