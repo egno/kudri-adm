@@ -155,12 +155,13 @@ export default {
         {
           title: 'Сообщения',
           route: { name: 'messages' },
-          count: 2
+          count: 2,
+          hide: this.userInfo.role !== 'admin' && this.userInfo.role !== 'manager'
         },
         {
           title: 'Личный кабинет',
           route: { name: 'myBusinessList' },
-          hide: this.userInfo.role !== 'manager'
+          hide: this.userInfo.role !== 'admin' && this.userInfo.role !== 'manager'
         },
         {
           title: 'Выйти',

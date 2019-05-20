@@ -159,7 +159,7 @@ export default {
           title: 'Все компании',
           icon: 'business',
           route: { name: 'businessList' },
-          show: !this.loggedIn || this.isManagerMenu
+          show: this.isEditorUser
         },
         {
           title: 'Филиалы',
