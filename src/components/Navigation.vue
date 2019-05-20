@@ -263,7 +263,7 @@ export default {
             name: 'businessSettings',
             params: { id: this.businessId }
           },
-          show: this.loggedIn && this.isEditorUser
+          show: this.loggedIn && (this.userRole === 'business')
         }
       ]
     },
