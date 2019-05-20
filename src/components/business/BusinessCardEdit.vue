@@ -28,10 +28,10 @@
         </v-layout>
 
         <VTextField
-          v-model="data.name"
+          v-model="data.j.name"
           label="Название*"
-          :rules="[() => !!data.name || 'Это поле обязательно для заполнения',
-                   () => !!data.name && data.name.length <= 50 || 'Слишком длинное наименование']"
+          :rules="[() => !!data.j.name || 'Это поле обязательно для заполнения',
+                   () => !!data.j.name && data.j.name.length <= 50 || 'Слишком длинное наименование']"
           required
           maxlength="50"
           class="businesscard-form__field"
@@ -296,7 +296,7 @@ export default {
       return null
     },
     hasName () {
-      return !!(this.data && this.data.name)
+      return !!(this.data && this.data.j && this.data.j.name)
     },
     hasPhone () {
       return !!(
@@ -317,7 +317,7 @@ export default {
       return this.$route.params.id
     },
     name () {
-      return this.data.name
+      return this.data.j.name
     },
     point () {
       if (!this.data || !this.data.j || !this.data.j.address || !this.data.j.address.point) {
