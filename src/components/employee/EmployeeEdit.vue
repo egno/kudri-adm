@@ -49,10 +49,15 @@
         :disabled="!employee.access"
         :rules="[ rules.required ]"
         class="businesscard-form__field"
-        attach=".infocard._edit .dropdown-select"
       />
     </div>
-    <PhoneEdit :phone="employee.j.phones[0]" :disabled="!employee.access" :removable="false" class="phone-input" @onEdit="employee.j.phones[0] = $event" />
+    <PhoneEdit
+      :phone="employee.j.phones[0]"
+      :disabled="!employee.access"
+      :removable="false"
+      class="phone-input"
+      @onEdit="employee.j.phones[0] = $event"
+    />
     <v-textarea
       v-model="employee.j.notes"
       counter="500"
@@ -88,23 +93,24 @@ export default {
       defaultImage: require('@/assets/user.svg'),
       rules: {
         required: value => !!value || 'Это поле обязательно для заполнения',
-        maxLength: length => (value) => value && (value.length <= length || 'Слишком длинный текст') || true
+        maxLength: length => value =>
+          (value && (value.length <= length || 'Слишком длинный текст')) || true
       },
       avatarEdit: false
     }
   },
   computed: {
-    ...mapGetters(['employeePositions', 'employeeCategories']),
+    ...mapGetters(['employeePositions', 'employeeCategories'])
   },
   methods: {
     onSaveAvatarClick (canvasImg) {
       this.avatarEdit = false
       this.$emit('avatarChange', canvasImg)
-    },
+    }
   }
 }
 </script>
 
 <style lang="scss">
-  @import '../../assets/styles/phone-input';
+@import '../../assets/styles/phone-input';
 </style>
