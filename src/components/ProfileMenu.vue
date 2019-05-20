@@ -31,24 +31,26 @@
       </VLayout>
     </VBtn>
     <VList class="menu-list">
-      <VListTile
-        v-for="(item, index) in menuList"
-        :key="index"
-        :to="item.route"
-        @click="menuHandler(item.action)"
-      >
-        <VListTileTitle :class="{ _bold: item.count && item.title === 'Сообщения' }">
-          {{ item.title }}
-        </VListTileTitle>
-        <span
-          v-if="item.count"
-          class="caption count"
-          :class="{ attention: item.count === '!' }"
-          flat
+      <template v-for="(item, index) in menuList">
+        <VListTile
+          v-if="!item.hide"
+          :key="index"
+          :to="item.route"
+          @click="menuHandler(item.action)"
         >
-          {{ item.count }}
-        </span>
-      </VListTile>
+          <VListTileTitle :class="{ _bold: item.count && item.title === 'Сообщения' }">
+            {{ item.title }}
+          </VListTileTitle>
+          <span
+            v-if="item.count"
+            class="caption count"
+            :class="{ attention: item.count === '!' }"
+            flat
+          >
+            {{ item.count }}
+          </span>
+        </VListTile>
+      </template>
     </VList>
   </VMenu>
   <VMenu
@@ -156,12 +158,14 @@ export default {
           title: 'Сообщения',
           route: { name: 'messages' },
           count: 2,
-          hide: this.userInfo.role !== 'admin' && this.userInfo.role !== 'manager'
+          hide:
+            this.userInfo.role !== 'admin' && this.userInfo.role !== 'manager'
         },
         {
           title: 'Личный кабинет',
           route: { name: 'myBusinessList' },
-          hide: this.userInfo.role !== 'admin' && this.userInfo.role !== 'manager'
+          hide:
+            this.userInfo.role !== 'admin' && this.userInfo.role !== 'manager'
         },
         {
           title: 'Выйти',
@@ -267,7 +271,7 @@ export default {
     padding: 17px 0;
   }
   .v-list__tile {
-    --v-primary-base: #2D333B;
+    --v-primary-base: #2d333b;
     color: var(--v-primary-base);
     height: 36px;
     padding-left: 20px;
