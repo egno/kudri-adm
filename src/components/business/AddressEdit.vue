@@ -16,8 +16,6 @@
   </v-layout>
 </template>
 
-
-
 <script>
 import AddressMap from '@/components/yandex/AddressMap.vue'
 export default {

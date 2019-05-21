@@ -186,17 +186,13 @@ export default {
 <style lang="scss">
   @import "../../assets/styles/right-attached-panel";
 
-  .fixed-title {
-    height: 80px;
-    overflow: hidden;
-  }
-  .scrollable {
-    height: calc(100vh - 128px);
-    overflow: auto;
-  }
   .right-attached-panel._client-visits {
     .right-attached-panel__header {
       margin: 53px 0 0;
+    }
+    .scrollable {
+      height: calc(100vh - 128px);
+      overflow: auto;
     }
   }
 </style>

@@ -35,24 +35,6 @@
   </div>
 </template>
 
-<style type="text/css">
-.cursorPointer {
-  cursor: pointer;
-}
-
-.cursorGrab {
-  cursor: grab;
-  cursor: -webkit-grab;
-  cursor: -moz-grab;
-}
-
-.cursorGrabbing {
-  cursor: grabbing;
-  cursor: -webkit-grabbing;
-  cursor: -moz-grabbing;
-}
-</style>
-
 <script>
 export default {
   props: {
@@ -585,14 +567,31 @@ export default {
 </script>
 
 <style>
-.pic-editor {
-  position: absolute;
-  z-index: 1;
-}
-.pic-background {
-  position: absolute;
-  opacity: 0.2;
-  z-index: 0;
-}
+  .cursorPointer {
+    cursor: pointer;
+  }
+
+  .cursorGrab {
+    cursor: grab;
+    cursor: -webkit-grab;
+    cursor: -moz-grab;
+  }
+
+  .cursorGrabbing {
+    cursor: grabbing;
+    cursor: -webkit-grabbing;
+    cursor: -moz-grabbing;
+  }
+
+  .pic-editor {
+    position: absolute;
+    z-index: 1;
+  }
+
+  .pic-background {
+    position: absolute;
+    opacity: 0.2;
+    z-index: 0;
+  }
 </style>
 

@@ -137,11 +137,6 @@ export default {
 }
 </script>
 <style lang="scss">
-
-  .add-workmode {
-    margin-top: 35px;
-  }
-
   .schedule-edit {
     &__heading {
       margin: 23px 0 0;

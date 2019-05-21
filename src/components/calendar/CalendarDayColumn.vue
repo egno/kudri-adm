@@ -374,11 +374,7 @@ export default {
     }
   }
 }
-.time-edit {
-  display: block;
-  position: absolute;
-  z-index: 2;
-} 
+
 .day-column {
   position: relative;
   min-width: 136px;

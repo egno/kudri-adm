@@ -112,15 +112,15 @@ export default {
     .v-item-group {
       margin-bottom: 40px;
     }
-  }
-  .time-checkbox {
-    @extend %filter; 
-    padding: 0 12px;
-    margin-bottom: 24px;
-    outline: none;
-    &.selected {
-      background-color: #5699FF;
-      color: #fff;
+    .time-checkbox {
+      @extend %filter;
+      padding: 0 12px;
+      margin-bottom: 24px;
+      outline: none;
+      &.selected {
+        background-color: #5699FF;
+        color: #fff;
+      }
     }
-  } 
+  }
 </style>

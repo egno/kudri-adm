@@ -434,21 +434,6 @@ export default {
 
 <style lang="scss">
   @import "../../assets/styles/right-attached-panel";
-
-.table-select {
-  color: #555;
-  transition: all 0.5s ease-out;
-}
-.table-select:hover {
-  background: #eee;
-}
-.table-selected {
-  background: #ddd;
-}
-.scrolled {
-  overflow: auto;
-  max-height: 21em;
-}
 .visit-edit.right-attached-panel {
   ._service,
   ._client-name,

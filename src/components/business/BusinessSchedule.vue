@@ -44,9 +44,6 @@ export default {
 </script>
 
 <style lang="scss">
-  .timeClass {
-  font-size: 80%;
-}
   .schedule {
     padding: 20px 0 0;
 
