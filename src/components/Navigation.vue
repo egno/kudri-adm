@@ -88,7 +88,6 @@ import { isBusinessRoute } from '@/utils'
 import { formatDate } from '@/components/calendar/utils'
 import Users from '@/mixins/users'
 import { filials } from './business/mixins'
-import { setTimeout } from 'timers'
 
 export default {
   components: { AddMenu, NavPoweredItem, VCalendar },
@@ -335,11 +334,11 @@ export default {
     ]),
     checkUserInfo () {
       let vm = this
-      setTimeout(function () {
+      this.$nextTick(function () {
         if (vm.loggedIn === false && vm.isBusinessCard === true) {
           vm.$router.push({ name: 'login' })
         }
-      }, 500)
+      })
       this.loadUserInfo()
     },
     loadBusiness () {
