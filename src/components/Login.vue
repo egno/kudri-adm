@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="login-form">
     <VCard v-if="loaded && loggedIn===true">
       <VCardTitle primary-title>
         <div>

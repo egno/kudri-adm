@@ -5,7 +5,12 @@
     justify-center
     class="login-container"
   >
-    <Login />
+    <div>
+      <Login />
+      <router-link :to="{ name: 'register'}" class="login-container__no-account">
+        Ещё нет аккаунта? Зарегистрировать
+      </router-link>
+    </div>
   </VContainer>
 </template>
 
@@ -22,5 +27,11 @@ export default {
 <style>
   .login-container ._login {
     margin-top: -40px;
+  }
+  .login-container__no-account {
+    text-decoration: none;
+  }
+  .login-container .login-form {
+    margin-bottom: 10px;
   }
 </style>
