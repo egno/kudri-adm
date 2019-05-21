@@ -320,9 +320,6 @@ export default {
   mounted () {
     this.checkUserInfo()
   },
-  updated () {
-    this.checkUserInfo()
-  },
   methods: {
     ...mapActions([
       'navBar',
