@@ -306,6 +306,7 @@ export default {
     }
   },
   watch: {
+    isBusinessCard: 'checkUserInfo',
     token: 'checkUserInfo',
     '$route.params': {
       handler: 'loadBusiness',
@@ -332,9 +333,12 @@ export default {
       'setNavigationMini'
     ]),
     checkUserInfo () {
-      if (!this.loggedIn && this.isBusinessCard) {
-        this.$router.push({ name: 'login' })
-      }
+      let vm = this
+      this.$nextTick(function () {
+        if (vm.loggedIn === false && vm.isBusinessCard === true) {
+          vm.$router.push({ name: 'login' })
+        }
+      })
       this.loadUserInfo()
     },
     loadBusiness () {

@@ -81,8 +81,8 @@ export default {
     snackText: '',
     snackColor: 'error',
     rules: {
-      required: value => !!value || 'Это поле обязательно для заполнения',
-    },
+      required: value => !!value || 'Это поле обязательно для заполнения'
+    }
   }),
   computed: {
     ...mapGetters(['loggedIn', 'userID', 'userInfo', 'userRole']),
@@ -91,10 +91,9 @@ export default {
     }
   },
   watch: {
-    loggedIn (newVal, oldVal) {
-      if (newVal  && newVal !== oldVal) {
-        this.$emit('loggedIn')
-        this.$router.push({ name: 'home' })
+    loggedIn (newVal) {
+      if (newVal) {
+        this.loadBusiness()
       }
     }
   },
@@ -160,10 +159,10 @@ export default {
 </script>
 
 <style lang="scss">
-  @import '../assets/styles/businesscard-form';
-  ._login {
-    .businesscard-form__field {
-      margin-top: 0;
-    }
+@import '../assets/styles/businesscard-form';
+._login {
+  .businesscard-form__field {
+    margin-top: 0;
   }
+}
 </style>
