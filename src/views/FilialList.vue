@@ -16,7 +16,7 @@
           :business-info="newBranch"
           :current-tab="infoTab? 'infoTab' : 'scheduleTab'"
           @tabChange="infoTab=!infoTab"
-          @save="debouncedSendData"
+          @saved="onSaved"
           @formChange="isFormChanged = true"
         />
       </VLayout>
@@ -170,7 +170,6 @@ import { mapState, mapActions, mapGetters } from 'vuex'
 import BranchesLayout from '@/components/branches/BranchesLayout'
 import Modal from '@/components/common/Modal'
 import BusinessCardEdit from '@/components/business/BusinessCardEdit.vue'
-import { debounce } from 'lodash'
 import { formatDate } from '@/components/calendar/utils'
 import { filials} from "../components/business/mixins"
 import { conjugateFilial } from '@/components/utils'
@@ -245,7 +244,6 @@ export default {
   },
   created () {
     this.getFilials()
-    this.debouncedSendData = debounce(this.sendData, 300)
   },
   mounted () {
     this.setActions(this.formActions)
@@ -348,21 +346,13 @@ export default {
     onClose () {
       this.isFormChanged? this.showSave = true : this.isCreating = false
     },
-    sendData (branch) {
-      branch.j.phones = branch.j.phones.filter(x => x > '')
-      branch.parent = this.businessId
-      if (branch.id === 'new') {
-        branch.id = null
-      }
-      branch.save()
-        .then(() => {
-          this.getFilials()
-          this.isCreating = false
-          this.isFormChanged = false
-          this.newBranch = null
-          this.infoTab = true
-          this.selectedCity = null
-        })
+    onSaved () {
+      this.isCreating = false
+      this.getFilials()
+      this.isFormChanged = false
+      this.newBranch = null
+      this.infoTab = true
+      this.selectedCity = null
     },
     showCheckoutDialog (branch) {
       if (branch.id === this.businessId) {
