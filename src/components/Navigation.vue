@@ -333,7 +333,7 @@ export default {
       'setNavigationMini'
     ]),
     checkUserInfo () {
-      if (!this.loggedIn && this.isBusinessCard) {
+      if (this.loggedIn===false && this.isBusinessCard===true) {
         this.$router.push({ name: 'login' })
       }
       this.loadUserInfo()
