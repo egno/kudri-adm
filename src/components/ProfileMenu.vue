@@ -185,6 +185,7 @@ export default {
       switch (action) {
         case 'logout':
           this.logout()
+          this.$router.push({ name: 'login' })
           break
         case 'drawer':
           this.openProfileDrawer()

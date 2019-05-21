@@ -65,6 +65,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import MainButton from '@/components/common/MainButton.vue'
+import Api from '@/api/backend'
 
 export default {
   components: { MainButton },
@@ -82,10 +83,9 @@ export default {
     rules: {
       required: value => !!value || 'Это поле обязательно для заполнения',
     },
-    
   }),
   computed: {
-    ...mapGetters(['loggedIn', 'userID', 'userInfo']),
+    ...mapGetters(['loggedIn', 'userID', 'userInfo', 'userRole']),
     loaded () {
       return this.userInfo !== undefined
     }
@@ -98,17 +98,62 @@ export default {
       }
     }
   },
+  mounted () {
+    this.loadBusiness()
+  },
   methods: {
     ...mapActions(['login', 'logout']),
     goRestorePassword () {
       this.$router.push({ name: 'restorePassword' })
+    },
+    loadBusiness () {
+      if (!this.loggedIn) return
+
+      Api()
+        .get(`my_business`)
+        .then(res => res.data)
+        .then(res => {
+          this.businessCount = res.length
+          if (this.userRole === 'manager' || this.userRole === 'admin') {
+            this.$router.push({
+              name: 'myBusinessList'
+            })
+            return
+          }
+          const company = res.find(business => business.type === 'C')
+          const filial = res.find(business => !!business.parent)
+          // if user has access to 1 company with no branches
+          if (this.businessCount === 1 && res[0].id && !company && !filial) {
+            this.$router.push({
+              name: 'businessCard',
+              params: { id: res[0].id }
+            })
+            return
+          }
+          // if user has no access to a company
+          if (!company && filial && filial.id) {
+            this.$router.push({
+              name: 'filialList',
+              params: { id: filial.parent }
+            })
+            return
+          }
+          // if user has access to a company
+          if (company) {
+            this.$router.push({
+              name: 'businessCard',
+              params: { id: company.id }
+            })
+            return
+          }
+        })
     },
     sendLogin () {
       this.login({ login: this.flogin, pass: this.fpassword })
     },
     sendLogout () {
       this.logout()
-      this.$router.push({ name: 'home' })
+      this.$router.push({ name: 'login' })
     }
   }
 }
