@@ -306,6 +306,7 @@ export default {
     }
   },
   watch: {
+    isBusinessCard: 'checkUserInfo',
     token: 'checkUserInfo',
     '$route.params': {
       handler: 'loadBusiness',
