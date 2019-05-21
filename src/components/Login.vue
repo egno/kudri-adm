@@ -1,5 +1,6 @@
 <template>
   <div class="login-form">
+    <Spinner v-if="isLoading" />
     <VCard v-if="loaded && loggedIn===true">
       <VCardTitle primary-title>
         <div>
@@ -65,10 +66,11 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import MainButton from '@/components/common/MainButton.vue'
+import Spinner from '@/components/common/Spinner.vue'
 import Api from '@/api/backend'
 
 export default {
-  components: { MainButton },
+  components: { MainButton, Spinner },
   props: {
     source: { type: String, default: () => '' }
   },
@@ -82,7 +84,8 @@ export default {
     snackColor: 'error',
     rules: {
       required: value => !!value || 'Это поле обязательно для заполнения'
-    }
+    },
+    isLoading: false
   }),
   computed: {
     ...mapGetters(['loggedIn', 'userID', 'userInfo', 'userRole']),
@@ -108,6 +111,7 @@ export default {
     loadBusiness () {
       if (!this.loggedIn) return
 
+      this.isLoading = true
       Api()
         .get(`my_business`)
         .then(res => res.data)
@@ -145,6 +149,9 @@ export default {
             })
             return
           }
+        })
+        .finally(() => {
+          this.isLoading = false
         })
     },
     sendLogin () {
