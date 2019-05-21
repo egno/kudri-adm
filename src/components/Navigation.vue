@@ -18,9 +18,7 @@
     >
       <VList class="logo-wrap">
         <v-list-tile-content>
-          <v-list-tile-title
-            overflow-hidden
-          >
+          <v-list-tile-title overflow-hidden>
             <div class="logo" />
           </v-list-tile-title>
         </v-list-tile-content>
@@ -59,7 +57,10 @@
 
     <VCalendar v-if="isCalendarVisible" />
     <AddMenu v-if="loggedIn && isManagerMenu" />
-    <VList v-if="!mini" class="nav-menu">
+    <VList
+      v-if="!mini"
+      class="nav-menu"
+    >
       <nav-powered-item
         v-for="item in menu"
         :key="item.title"
@@ -86,7 +87,7 @@ import { mapActions, mapGetters } from 'vuex'
 import { isBusinessRoute } from '@/utils'
 import { formatDate } from '@/components/calendar/utils'
 import Users from '@/mixins/users'
-import { filials} from "./business/mixins"
+import { filials } from './business/mixins'
 
 export default {
   components: { AddMenu, NavPoweredItem, VCalendar },
@@ -167,14 +168,18 @@ export default {
             name: 'filialList',
             params: { id: this.businessId }
           },
-          show: (!this.businessIsFilial || this.parentFilialsCount > 1) && this.loggedIn && !this.isManagerMenu && this.businessIsSalon,
+          show:
+            (!this.businessIsFilial || this.parentFilialsCount > 1) &&
+            this.loggedIn &&
+            !this.isManagerMenu &&
+            this.businessIsSalon,
           action: this.businessIsFilial
-            ? null 
+            ? null
             : {
-              label: 'Добавить филиал',
-              action: 'newFilial',
-              default: true
-            }
+                label: 'Добавить филиал',
+                action: 'newFilial',
+                default: true
+              }
         },
         {
           title: 'Пользователи',
@@ -182,7 +187,11 @@ export default {
             name: 'businessUsers',
             params: { id: this.businessId }
           },
-          show: (!this.businessIsFilial) && this.loggedIn && this.isEditorUser && this.businessIsSalon
+          show:
+            !this.businessIsFilial &&
+            this.loggedIn &&
+            this.isEditorUser &&
+            this.businessIsSalon
         },
         {
           title: 'Услуги',
@@ -205,7 +214,11 @@ export default {
             name: 'employeeList',
             params: { id: this.businessId }
           },
-          show: this.businessIsFilial && this.loggedIn && !this.isManagerMenu && this.businessIsSalon,
+          show:
+            this.businessIsFilial &&
+            this.loggedIn &&
+            !this.isManagerMenu &&
+            this.businessIsSalon,
           action: {
             label: 'Добавить сотрудника',
             action: 'newEmployee',
@@ -263,7 +276,7 @@ export default {
             name: 'businessSettings',
             params: { id: this.businessId }
           },
-          show: this.loggedIn && (this.userRole === 'business')
+          show: this.loggedIn && this.userRole === 'business'
         }
       ]
     },
@@ -293,16 +306,22 @@ export default {
     }
   },
   watch: {
-    token: 'loadUserInfo',
+    token: 'checkUserInfo',
     '$route.params': {
       handler: 'loadBusiness',
       deep: true
     },
     actualDate: 'loadBusiness',
-    'businessInfo': {
+    businessInfo: {
       handler: 'getFilialsCount',
       deep: true
-    },
+    }
+  },
+  mounted () {
+    this.checkUserInfo()
+  },
+  updated () {
+    this.checkUserInfo()
   },
   methods: {
     ...mapActions([
@@ -315,8 +334,14 @@ export default {
       'setBusiness',
       'setNavigationMini'
     ]),
+    checkUserInfo () {
+      if (!this.loggedIn && this.isBusinessCard) {
+        this.$router.push({ name: 'login' })
+      }
+      this.loadUserInfo()
+    },
     loadBusiness () {
-      if (!this.businessId || this.businessId==='new') {
+      if (!this.businessId || this.businessId === 'new') {
         return
       }
       this.setBusiness(this.businessId)
@@ -329,10 +354,9 @@ export default {
     },
     getFilialsCount () {
       if (this.businessIsFilial) {
-        this.getFilialsOf(this.businessInfo.parent)
-          .then(filials => {
-            this.parentFilialsCount = filials.length
-          })
+        this.getFilialsOf(this.businessInfo.parent).then(filials => {
+          this.parentFilialsCount = filials.length
+        })
       }
     },
     goHome () {
@@ -341,7 +365,7 @@ export default {
     goToCompany () {
       const parentId = this.businessInfo.parent
       this.setBusiness(parentId)
-      this.$router.push({name: 'filialList',params:{id: parentId}})
+      this.$router.push({ name: 'filialList', params: { id: parentId } })
     },
     onAction (action) {
       if (action && action.to) {
@@ -363,7 +387,7 @@ export default {
   background-color: var(--v-secondary-base);
 }
 .navigation.theme--dark {
-  background: linear-gradient(180deg, #333C54 0.06%, #4A5D6D 85.63%);
+  background: linear-gradient(180deg, #333c54 0.06%, #4a5d6d 85.63%);
 }
 
 .navigation {
@@ -398,7 +422,7 @@ export default {
     overflow: hidden;
     opacity: 0;
     max-height: 0;
-    transition: opacity  0.6s 0s, max-height 0.4s 0s;
+    transition: opacity 0.6s 0s, max-height 0.4s 0s;
     pointer-events: none;
     &._expanded {
       opacity: 1;
@@ -436,6 +460,7 @@ export default {
 .logo {
   width: 73px;
   height: 24px;
-  background: url('./../assets/images/svg/uno_full.svg') center/contain no-repeat;
+  background: url('./../assets/images/svg/uno_full.svg') center/contain
+    no-repeat;
 }
 </style>
