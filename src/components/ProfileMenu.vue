@@ -54,7 +54,7 @@
     </VList>
   </VMenu>
   <VMenu
-    v-else
+    v-else-if="$route.name !== 'login'"
     v-model="menu"
     left
     full-width
