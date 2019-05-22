@@ -10,10 +10,12 @@ anon - незарегистрированный.
 Могут быть еще разные роли внутри business
 */
 const state = {
-  userInfo: {}
+  userInfo: {},
+  userLoadingState: 'not started' /* also: 'started', 'finished' */ 
 }
 
 const getters = {
+  userLoadingState: state => state.userLoadingState,
   loggedIn: (state, getters) => {
     return !!getters.userID
   },
@@ -75,23 +77,36 @@ const mutations = {
     } else {
       localStorage.removeItem('userInfo')
     }
+  },
+  SET_LOADING (state, payload) {
+    state.userLoadingState = payload
   }
 }
 
 const actions = {
-  loadUserInfo ({ commit }) {
+  loadUserInfo ({ commit, state }) {
     const infoPath = 'rpc/me'
+
+    if (state.userLoadingState === 'started') {
+      return
+    }
+    commit('SET_LOADING', 'started')
     Api()
       .post(infoPath)
       .then(res => res.data)
       .then(res => {
         commit('SET_USERINFO', res)
+        commit('SET_LOADING', 'finished')
       })
-      .catch(err => commit('ADD_ALERT', makeAlert(err)))
+      .catch(err => { 
+        commit('ADD_ALERT', makeAlert(err))
+        commit('SET_LOADING', 'not started')
+      })
   },
-  login ({ commit }, payload) {
+  login ({ commit, dispatch }, payload) {
     const loginPath = 'rpc/login'
-    localStorage.removeItem('accessToken')
+
+    commit('SET_TOKEN', '')
     return Api()
       .post(loginPath, payload)
       .then(res => res.data)
@@ -99,6 +114,7 @@ const actions = {
       .then(res => res.token)
       .then(token => {
         commit('SET_TOKEN', token)
+        dispatch('loadUserInfo')
       })
       .catch(err => {
         commit('ADD_ALERT', makeAlert(err))
@@ -108,6 +124,7 @@ const actions = {
     commit('SET_TOKEN', '')
     commit('SET_USERINFO', {})
     commit('SET_BUSINESS_INFO', {})
+    commit('SET_LOADING', 'not started')
   },
   setUserAvatar ({ dispatch, state }, payload) {
     if (!payload) return
@@ -122,6 +139,7 @@ const actions = {
       .post(path, { j: payload })
       .then(res => {
         commit('SET_USERINFO', res.data)
+        commit('SET_LOADING', 'finished')
       })
   }
 }

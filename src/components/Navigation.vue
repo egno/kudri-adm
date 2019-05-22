@@ -106,11 +106,9 @@ export default {
       'businessClientCount',
       'businessServiceCount',
       'employeeCount',
-      'loggedIn',
       'navigationMini',
       'token',
       'navigationVisible',
-      'userRole',
       'businessIsFilial'
     ]),
     date () {
@@ -134,8 +132,9 @@ export default {
     },
     isManagerMenu () {
       return (
+        this.loggedIn && 
         (this.userRole === 'manager' || this.userRole === 'admin') &&
-        !this.isBusinessCard
+        (this.$route.name === 'businessList' || this.$route.name === 'myBusinessList')
       )
     },
     menu () {
@@ -147,19 +146,24 @@ export default {
             name: 'businessCard',
             params: { id: this.businessId }
           },
-          show: this.loggedIn && !this.isManagerMenu
+          show: this.loggedIn && 
+            (this.userRole === 'manager' || 
+              this.userRole === 'admin' || 
+              this.user.role === 'Администратор компании' || 
+              this.user.role === 'Менеджер филиала' && this.businessIsFilial) &&
+              !this.isManagerMenu
         },
         {
           title: 'Мои компании',
           icon: 'business',
           route: { name: 'myBusinessList' },
-          show: this.loggedIn && this.isManagerMenu
+          show: this.isManagerMenu
         },
         {
           title: 'Все компании',
           icon: 'business',
           route: { name: 'businessList' },
-          show: this.userRole === 'manager' || this.userRole === 'admin'
+          show:  this.isManagerMenu
         },
         {
           title: 'Филиалы',
@@ -169,13 +173,10 @@ export default {
             params: { id: this.businessId }
           },
           show:
-            (!this.businessIsFilial || this.parentFilialsCount > 1) &&
+            !this.businessIsFilial &&
             this.loggedIn &&
-            !this.isManagerMenu &&
             this.businessIsSalon,
-          action: this.businessIsFilial
-            ? null
-            : {
+          action: {
                 label: 'Добавить филиал',
                 action: 'newFilial',
                 default: true
@@ -187,11 +188,10 @@ export default {
             name: 'businessUsers',
             params: { id: this.businessId }
           },
-          show:
-            !this.businessIsFilial &&
-            this.loggedIn &&
-            this.isEditorUser &&
-            this.businessIsSalon
+          show: !this.businessIsFilial &&
+            this.loggedIn && 
+            !this.isManagerMenu && 
+            (this.userRole === 'manager' || this.userRole === 'admin' || this.user.role === 'Администратор компании')
         },
         {
           title: 'Услуги',
@@ -276,7 +276,10 @@ export default {
             name: 'businessSettings',
             params: { id: this.businessId }
           },
-          show: this.loggedIn && this.userRole === 'business'
+          show: !this.businessIsFilial &&
+            !this.isManagerMenu && 
+            this.loggedIn && 
+            (this.userRole === 'manager' || this.userRole === 'admin' || this.user.role === 'Администратор компании')
         }
       ]
     },
@@ -307,7 +310,7 @@ export default {
   },
   watch: {
     isBusinessCard: 'checkUserInfo',
-    token: 'checkUserInfo',
+    userLoadingState: 'checkUserInfo',
     '$route.params': {
       handler: 'loadBusiness',
       deep: true
@@ -333,13 +336,14 @@ export default {
       'setNavigationMini'
     ]),
     checkUserInfo () {
-      let vm = this
-      this.$nextTick(function () {
-        if (vm.loggedIn === false && vm.isBusinessCard === true) {
-          vm.$router.push({ name: 'login' })
+      this.$nextTick(() => {
+        if (this.userLoadingState === 'finished' && this.loggedIn === false && this.isBusinessCard === true) {          
+          this.$router.push({ name: 'login' })
         }
       })
-      this.loadUserInfo()
+      if (this.userLoadingState === 'not started') {
+        this.loadUserInfo()
+      }      
     },
     loadBusiness () {
       if (!this.businessId || this.businessId === 'new') {
