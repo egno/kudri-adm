@@ -272,7 +272,14 @@ import AppCheckbox from '@/components/common/AppCheckbox.vue'
 import Avatar from '@/components/avatar/Avatar.vue'
 import CalendarDayColumn from '@/components/calendar/CalendarDayColumn.vue'
 import EmployeeCard from '@/components/employee/EmployeeCard.vue'
-import { formatDate, hyphenStrToDay, getWeek, visitInit } from '@/components/calendar/utils'
+import { 
+  ceilMinutes, 
+  dateISOInLocalTimeZone, 
+  formatDate, 
+  hyphenStrToDay, 
+  getWeek, 
+  visitInit 
+} from '@/components/calendar/utils'
 import VisitEdit from '@/components/calendar/VisitEdit.vue'
 import { makeAlert } from '@/api/utils'
 import Visit from '@/classes/visit'
@@ -386,7 +393,7 @@ export default {
       this.setDates()
     },
     createVisit (date) {
-      let visit = visitInit()
+      let visit = visitInit({ ts_begin: dateISOInLocalTimeZone(ceilMinutes(new Date())) })
       
       if (date) {
         visit.ts_begin = date.toISOString()
