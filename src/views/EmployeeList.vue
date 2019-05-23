@@ -28,9 +28,9 @@
           <div
             class="filters__item"
             :class="{
-              _active:
-                selectedCategories &&
-                selectedCategories.length >= categories.length
+              _active: searchString
+                ? businessEmployees.filter(e => isMatchingSearch(e)).length === businessEmployees.length 
+                : selectedCategories && selectedCategories.length >= categories.length                 
             }"
             @click="toggleAll"
           >
@@ -50,7 +50,7 @@
               <div class="filter-results__cards">
                 <div v-for="(employee, i) in businessEmployees" :key="i">
                   <EmployeeCard
-                    v-if="employee.j.category === category"
+                    v-if="employee.j.category === category && isMatchingSearch(employee)"
                     :employee="employee"
                     :services-count="empServices(employee.id)"
                     @delete="showDeleteDialog(employee)"
@@ -154,10 +154,14 @@ export default {
         }
       }
     },
-    searchString (val) {
-      this.selectedCategories = this.businessEmployees
-        .filter(emp => emp.j.name.toLowerCase().includes(val))
-        .map(s => s.j.category)
+    searchString () {
+      this.selectedCategories = [
+        ...new Set(
+          this.businessEmployees
+          .filter(e => this.isMatchingSearch(e))
+          .map(s => s.j.category)
+        )
+      ]
     }
   },
   mounted () {
@@ -197,6 +201,12 @@ export default {
     },
     onSave (payload) {
       this.sendData(payload)
+    },
+    isMatchingSearch (employee) {
+      if (this.searchString) {
+        return employee.j.name.toLowerCase().includes(this.searchString.trim().toLowerCase())
+      } 
+      return true
     },
     sendData (data) {
       data.j.phones = data.j.phones.filter(x => x > '')
