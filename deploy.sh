@@ -1,7 +1,7 @@
 #!/bin/bash
 
 git pull && \
-git checkout dev && \
+git checkout current && \
 npm i && \
 npm run build && \
 rm -rf ../html/* && \
