@@ -1,10 +1,26 @@
 import { mapGetters } from 'vuex'
+import User from '@/classes/user'
 
 export default {
+  data () {
+    return {
+      user: {}
+    }
+  },
   computed: {
-    ...mapGetters(['userRole']),
+    ...mapGetters(['userLoadingState', 'loggedIn', 'userRole', 'userInfo']),
     isEditorUser () {
       return this.userRole !== 'anon' && this.userRole !== 'client'
+    }
+  },
+  watch: {
+    loggedIn (newVal) {
+      if (newVal) {
+        this.user = new User({ id: this.userInfo.id })
+        this.user.load(this.userInfo.id)
+      } else {
+        this.user = {}
+      }
     }
   }
 }

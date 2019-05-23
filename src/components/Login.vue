@@ -68,9 +68,12 @@ import { mapGetters, mapActions } from 'vuex'
 import MainButton from '@/components/common/MainButton.vue'
 import Spinner from '@/components/common/Spinner.vue'
 import Api from '@/api/backend'
+import Users from '@/mixins/users'
+import { formatDate } from '@/components/calendar/utils'
 
 export default {
   components: { MainButton, Spinner },
+  mixins: [ Users ],
   props: {
     source: { type: String, default: () => '' }
   },
@@ -88,7 +91,7 @@ export default {
     isLoading: false
   }),
   computed: {
-    ...mapGetters(['loggedIn', 'userID', 'userInfo', 'userRole']),
+    ...mapGetters(['userID']),
     loaded () {
       return this.userInfo !== undefined
     }
@@ -125,7 +128,7 @@ export default {
           }
           const company = res.find(business => business.type === 'C')
           const filial = res.find(business => !!business.parent)
-          // if user has access to 1 company with no branches
+          // if user has access to a company with no branches
           if (this.businessCount === 1 && res[0].id && !company && !filial) {
             this.$router.push({
               name: 'businessCard',
@@ -134,11 +137,21 @@ export default {
             return
           }
           // if user has no access to a company
-          if (!company && filial && filial.id) {
-            this.$router.push({
-              name: 'filialList',
-              params: { id: filial.parent }
-            })
+          if (!company) {
+            if (this.user.business.length === 1) {
+              this.$router.push({
+                name: 'visitCalendar',
+                params: { 
+                  id: filial.id,
+                  date: formatDate(new Date())
+                }
+              })              
+            } else {
+              this.$router.push({
+                name: 'filialList',
+                params: { id: filial.parent }
+              })
+            }
             return
           }
           // if user has access to a company
