@@ -342,7 +342,8 @@ export default {
         }
       })
       if (this.userLoadingState === 'not started') {
-        this.loadUserInfo()
+        this.$nextTick()
+        .then(() => {this.loadUserInfo()})
       }      
     },
     loadBusiness () {

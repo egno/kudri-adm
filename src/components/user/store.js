@@ -90,9 +90,6 @@ const actions = {
     if (state.userLoadingState === 'started') {
       return
     }
-    if (!state.token) {
-      return
-    }
     commit('SET_LOADING', 'started')
     Api()
       .post(infoPath)
