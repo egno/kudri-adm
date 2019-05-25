@@ -32,7 +32,7 @@
           name="username"
           label="Логин"
           type="text"
-          browser-autocomplete="username"
+          browser-autocomplete="username phone email"
           class="businesscard-form__field"
           :rules="[ rules.required ]"
         />
