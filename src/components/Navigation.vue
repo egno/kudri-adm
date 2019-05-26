@@ -121,6 +121,9 @@ export default {
     clientsCount () {
       return this.businessClientCount
     },
+    currentToken () {
+      return this.token
+    },
     employeesCount () {
       return this.employeeCount
     },
@@ -309,6 +312,7 @@ export default {
     }
   },
   watch: {
+    currentToken: 'onNewToken',
     isBusinessCard: 'checkUserInfo',
     userLoadingState: 'checkUserInfo',
     '$route.params': {
@@ -322,6 +326,7 @@ export default {
     }
   },
   mounted () {
+    this.logout()
     this.checkUserInfo()
   },
   methods: {
@@ -333,18 +338,18 @@ export default {
       'openMessageWindow',
       'setAppTitle',
       'setBusiness',
-      'setNavigationMini'
+      'setNavigationMini',
+      'logout'
     ]),
+    onNewToken () {
+      this.loadUserInfo()
+    },
     checkUserInfo () {
       this.$nextTick(() => {
         if (this.userLoadingState === 'finished' && this.loggedIn === false && this.isBusinessCard === true) {          
           this.$router.push({ name: 'login' })
         }
       })
-      if (this.userLoadingState === 'not started') {
-        this.$nextTick()
-        .then(() => {this.loadUserInfo()})
-      }      
     },
     loadBusiness () {
       if (!this.businessId || this.businessId === 'new') {
