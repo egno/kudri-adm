@@ -42,15 +42,16 @@
         </div>
       </div>
       
-      <template v-if="time.visit">
+      <div v-if="time.visit" class="slot">
         <VisitCard
+          :now="now"
           :selected="selectVisit"
           :visit="time.visit"
           :services="time.visit.services" 
           @onDelete="onVisitDelete(time.visit.id)"
           @onEdit="onVisitEdit(time.visit)"
         />
-      </template>
+      </div>
       <div
         v-else
         :class="['slot', { working: isWorkingTime(i) }]"
@@ -106,6 +107,12 @@ export default {
       type: Array,
       default () {
         return []
+      }
+    },
+    now: { 
+      type: Date,
+      default () {
+        return new Date()
       }
     },
     showTime: { type: Boolean, default: true },

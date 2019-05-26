@@ -21,9 +21,7 @@ class Visit {
     this.j = (newVal && newVal.j) || {
       client: {},
       services: [],
-      // status: null
     }
-    // todo remind to fix saving status on backend 
     this.status = (newVal && newVal.status) || null
   }
 
@@ -44,14 +42,6 @@ class Visit {
   get client () {
     return this.j.client
   }
-
-  // set status (newVal) {
-  //   this.j.status = newVal
-  // }
-
-  // get status () {
-  //   return this.j.status
-  // }
 
   get date () {
     // converts to dd.mm.yyyy String
@@ -108,8 +98,8 @@ class Visit {
     )
   }
 
-  get currentStatus () {
-    const now = new Date()
+  getCurrentStatus (date = new Date()) {
+    const now = date
     const t1 = new Date(Date.parse(this.ts_begin))
     const t2 = this.ts_end? new Date(Date.parse(this.ts_end)) : 0
 
@@ -122,10 +112,6 @@ class Visit {
         : t2 && t2 < now
         ? this.statuses[2]
         : this.statuses[3]
-  }
-
-  get displayStatus () {
-    return this.currentStatus.display
   }
 }
 
