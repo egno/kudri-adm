@@ -52,9 +52,18 @@ export default {
     },
     isHoliday (dt) {
       const dow = this.selectedWeek.findIndex(d => d.dateKey === dt)
-      const irregularDay = this.irregularDays.find(d => d.date === dt)
+      const irregularDay = this.isIrregularDay(dt)
 
-      return irregularDay? !irregularDay.schedule.length : !this.selectedEmployee.j.schedule.data[dow].length
+      if (this.irregularDays.length && (this.irregularDays[0].employeeId !== this.selectedEmployee.id)) {
+        return false
+      }
+
+      return irregularDay
+        ? !irregularDay.schedule.length
+        : !this.selectedEmployee.j.schedule.data[dow].length || !this.selectedEmployee.j.schedule.data[dow][1]
+    },
+    isIrregularDay (dt) {
+      return this.irregularDays.find(d => d.date === dt && d.employeeId === this.selectedEmployee.id)
     },
     goDate (dt) {
       // this.setActualDate(dt)

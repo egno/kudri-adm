@@ -178,7 +178,7 @@
               :now="now"
               :holiday="isHoliday(day.dateKey)"
               :visits="dayVisits(day.dateKey, selectedEmployee)"
-              :employee-schedule="selectedEmployee.j.schedule.data[i]"
+              :employee-schedule="isIrregularDay(day.dateKey)? isIrregularDay(day.dateKey).schedule : selectedEmployee.j.schedule.data[i]"
               :display-from="displayTimes.start"
               :display-to="displayTimes.end"
               @onSlotClick="createVisit"
@@ -437,7 +437,7 @@ export default {
       Api() 
         .get(`/business_calendar?business_id=eq.${this.selectedEmployee.id}&changed=eq.true&dt=gt.${this.selectedWeek[0].dateKey}&dt=lt.${formatDate(nextMonday)}`)
         .then(({ data }) => {
-          this.irregularDays = data.map(x => ({ date: x.dt, schedule: x.j.schedule }))
+          this.irregularDays = data.map(x => ({ date: x.dt, schedule: x.j.schedule, employeeId: x.business_id }))
         })
     },
     initEmployee () {
