@@ -413,7 +413,7 @@ export default {
       if (!this.selectedWeek) return
 
       const sunday = this.selectedWeek[6]
-      const nextMonday = new Date()
+      const nextMonday = new Date(sunday.date)
 
       nextMonday.setDate(sunday.date.getDate() + 1)
       this.isLoading = true
@@ -431,13 +431,13 @@ export default {
         return
       }
       const sunday = this.selectedWeek[6]
-      const nextMonday = new Date()
+      const nextMonday = new Date(sunday.date)
 
       nextMonday.setDate(sunday.date.getDate() + 1)
       Api() 
         .get(`/business_calendar?business_id=eq.${this.selectedEmployee.id}&changed=eq.true&dt=gt.${this.selectedWeek[0].dateKey}&dt=lt.${formatDate(nextMonday)}`)
         .then(({ data }) => {
-          this.irregularDays = data
+          this.irregularDays = data.map(x => ({ date: x.dt, schedule: x.j.schedule }))
         })
     },
     initEmployee () {
@@ -457,6 +457,9 @@ export default {
           {
             j: { schedule: isDayOff? averageDay: [] }
           })
+        .then(() => {
+          this.getIrregularDays()
+        })
     },
     onGroupsChange (category, selected) {
       if (selected) {
