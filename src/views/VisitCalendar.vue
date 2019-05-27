@@ -571,6 +571,9 @@ export default {
         flex-grow: 1;
         display: flex;
         align-items: center;
+        @media only screen and (min-width : $desktop) {
+          padding-left: 11px;
+        }
       } 
       &__container {
         height: 44px;
@@ -585,7 +588,7 @@ export default {
         @media only screen and (min-width : $desktop) {
           width: 24px;
           padding: 0;
-          margin: 8px 14px;
+          margin: 8px 5px;
         }
 
         i {
@@ -754,9 +757,9 @@ export default {
       position: absolute;
       z-index: 1;
       left: 0;
-      width: 128px;
+      width: 125px;
       height: 82px;
-      padding-left: 52px;
+      padding: 0 14px 0 55px;
       justify-content: space-between;
       align-items: center;
       background-color: #fff;
@@ -765,7 +768,10 @@ export default {
         display: flex;
       }
       &__button {
-        @extend %round-arrow-button
+        @extend %round-arrow-button;
+        &:hover {
+          background-color: rgba(137, 149, 175, 0.1);;
+        }
       }
     }
 

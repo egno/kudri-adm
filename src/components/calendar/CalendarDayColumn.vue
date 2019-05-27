@@ -393,6 +393,9 @@ export default {
     padding-top: 82px;
   }
   &.today {
+    .day-column__header {
+      border-left: 2px solid #5699FF;
+    }
     .day-column__date,
     .day-column__day {
       color: #5699FF;
@@ -434,7 +437,7 @@ export default {
       content: '';
       border-radius: 50%;
     }
-  } 
+  }
   &__header {
     position: absolute;
     top: 0;
@@ -442,6 +445,7 @@ export default {
     height: 82px;
     padding: 12px 24px;
     border-right: 1px solid rgba(137, 149, 175, 0.1);
+    border-left: 2px solid transparent;
     background-color: #fff;
     box-shadow: 8px 2px 8px rgba(137, 149, 175, 0.1);
     cursor: pointer;
