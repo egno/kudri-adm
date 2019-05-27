@@ -717,6 +717,9 @@ export default {
 
       &.one-day .day-column.selected {
         width: 100%;
+        .day-column__header {
+          background-color: #fff;
+        }
         .time-mark {
           display: block;
         }

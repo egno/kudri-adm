@@ -309,14 +309,13 @@ export default {
 
 <style lang="scss">
   @import '../../assets/styles/common';
-%active-header {
-  background-color: #5699FF;
-  border-radius: 4px;
-  .day-column__date,
-  .day-column__day,
-  .day-column__schedule {
-    color: #fff;
-  }
+@mixin active-header {
+    background-color: rgba(137, 149, 175, 0.35);
+    border-radius: 4px;
+    .day-column__date,
+    .day-column__day {
+      font-weight: bold;
+    }
 }
 .time-mark {
   position: absolute;
@@ -401,7 +400,9 @@ export default {
     }
   }
   &.selected .day-column__header {
-    @extend %active-header
+    @media only screen and (min-width : $desktop) {
+      @include active-header
+    }
   }
 
   &__item {
@@ -445,7 +446,10 @@ export default {
     box-shadow: 8px 2px 8px rgba(137, 149, 175, 0.1);
     cursor: pointer;
     &.active {
-      @extend %active-header
+      @media only screen and (min-width : $desktop) {
+        @include active-header;
+        background-color: rgba(137, 149, 175, 0.2);
+      }
     }
   }
   &__dropdown {
