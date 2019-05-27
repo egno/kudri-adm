@@ -171,10 +171,11 @@
             <CalendarDayColumn
               v-for="(day, i) in selectedWeek"
               v-show="day.dateKey === selectedDate || displayMode === 'week'"
-              :key="day.dateKey"
+              :key="selectedEmployee.j.name + day.dateKey"
               :class="{ desktop: day.dateKey !== selectedDate, selected: day.dateKey === selectedDate }"
               :show-time="!i || day.dateKey === selectedDate"
               :day="day"
+              :now="now"
               :holiday="isHoliday(day.dateKey)"
               :visits="dayVisits(day.dateKey, selectedEmployee)"
               :employee-schedule="selectedEmployee.j.schedule.data[i]"
@@ -283,6 +284,7 @@ import {
 import VisitEdit from '@/components/calendar/VisitEdit.vue'
 import { makeAlert } from '@/api/utils'
 import Visit from '@/classes/visit'
+import { setInterval, clearInterval } from 'timers'
 
 import calendarMixin from '@/mixins/calendar'
 
@@ -298,6 +300,7 @@ export default {
       edit: false,
       editVisitPage: undefined,
       isLoading: false,
+      now: new Date(),
       selectedEmployee: {},
       selectedEmpGroups: [],
       notifyHasVisits: false,
@@ -305,6 +308,7 @@ export default {
         { label: 'Добавить запись', action: 'newVisit', default: true }
       ],
       showEmployeeSelection: false,
+      timerId: null,
       visits: [],
       irregularDays: []
     }
@@ -379,9 +383,11 @@ export default {
     // TODO проверить, не утекает ли память
     this.fetchData()
     this.$root.$on('onAction', this.onAction)
+    this.timerId = setInterval(this.updateStatus, 60 * 1000)
   },
   beforeDestroy () {
     this.$root.$off('onAction', this.onAction)
+    clearInterval(this.timerId)
   },
   methods: {
     ...mapActions(['alert', 'setActions', 'setBusiness', 'selectVisit']),
@@ -467,6 +473,7 @@ export default {
       this.selectedEmployee = payload
     },
     onVisitSave (payload) {
+      //todo move saving into Visit class 
       this.editVisitPage = undefined
       this.sendData(payload)
         .then(() => {
@@ -506,6 +513,9 @@ export default {
           .post('visit', data)
           .then(() => this.fetchData())
       }
+    },
+    updateStatus () {
+      this.now = new Date()
     },
   }
 }

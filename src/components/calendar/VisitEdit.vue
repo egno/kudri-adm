@@ -58,7 +58,7 @@
           </v-menu>
           <div v-if="selectedTime" class="visit-edit__time">
             <div>{{ selectedTime }}</div>
-            <button type="button" class="visit-edit__clear" @click="selectedTime = ''; message = ''" /> 
+            <button type="button" class="visit-edit__clear" @click="selectedTime = ''; message = ''; loadFreeTimes()" /> 
           </div>
         </VLayout>
       </div>

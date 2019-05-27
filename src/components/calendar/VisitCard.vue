@@ -4,8 +4,8 @@
       :style="`height: ${actualContainerHight}px; background: ${bgColor};`"
       :class="['visit', {
         'white-bg': whiteBg,
-        canceled: visit.displayStatus === 'Отмена',
-        unvisited: visit.displayStatus === 'Не пришел'
+        canceled: visitStatus.display === 'Отмена',
+        unvisited: visitStatus.display === 'Не пришел'
       }]"
       @click="selectVisit(visit)"
     >
@@ -21,7 +21,7 @@
           </div>
         </div>
         <div class="visit__status">
-          {{ visit.currentStatus.display }}
+          {{ visitStatus.display }}
         </div>
       </div>
       <div
@@ -47,7 +47,7 @@
           </div>
         </div>
         <div class="visit__status">
-          {{ visit.currentStatus.display }}
+          {{ visitStatus.display }}
         </div>
       </div>
     </div>
@@ -73,7 +73,7 @@
             </div>
           </div>
           <div class="visit__status">
-            {{ visit.currentStatus.display }}
+            {{ visitStatus.display }}
           </div>
         </div>        
       </div>
@@ -88,6 +88,12 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   props: {
     id: { type: String, default: undefined },
+    now: { 
+      type: Date,
+      default () {
+        return new Date()
+      }
+    },
     selected: { type: Boolean, default: false },
     services: {
       type: Array,
@@ -111,8 +117,11 @@ export default {
   },
   computed: {
     ...mapGetters(['selectedVisit']),
+    visitStatus () {
+      return this.visit.getCurrentStatus(this.now)
+    },
     whiteBg () {
-      const status = this.visit.currentStatus
+      const status = this.visitStatus
 
        return status.display === 'Завершен' || status.display === 'Отмена' || status.display === 'Не пришел'
     },
@@ -129,7 +138,7 @@ export default {
       )
     },
     actualContainerHight () {
-      return this.visit.j.duration / this.slotDuration * this.slotHeight
+      return this.visit.j.duration / this.slotDuration * this.slotHeight - 1
     },
     timeEnd () {
       return this.visit.timeEnd
@@ -177,7 +186,6 @@ export default {
 
 .visit-wrapper {
   position: relative;
-  top: 1px;
   cursor: pointer;
 }
 .visit {

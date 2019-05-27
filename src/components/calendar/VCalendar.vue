@@ -156,7 +156,7 @@ export default {
   },
   data () {
     return {
-      currentVisit: visitInit(),
+      currentVisit: {},
       dates: undefined,
       days: [],
       edit: false,
