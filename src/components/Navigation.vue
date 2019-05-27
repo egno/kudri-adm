@@ -326,7 +326,6 @@ export default {
     }
   },
   mounted () {
-    this.logout()
     this.checkUserInfo()
   },
   methods: {
