@@ -109,7 +109,11 @@ export default {
         return []
       }
     },
-    now: { 
+    holiday: {
+      type: Boolean,
+      default: false
+    },
+    now: {
       type: Date,
       default () {
         return new Date()
@@ -163,8 +167,7 @@ export default {
         return true
       }
 
-      // todo add getting irregular/extra holidays (POST /business_calendar)
-      return false
+      return this.holiday
     },
     isToday () {
       return areSameDates(this.today, this.day.date)
@@ -258,8 +261,9 @@ export default {
       }
       const dayEnd = this.employeeSchedule[this.employeeSchedule.length - 1]
 
-      return (
-        this.employeeSchedule[0] <= this.times[i].begin.display &&
+      return this.isDayOff
+        ? false
+        : (this.employeeSchedule[0] <= this.times[i].begin.display &&
         (dayEnd === '00:00' ? '24:00' : dayEnd) >= this.times[i].end.display
         // && !(
         //   this.lunchTime.length &&
