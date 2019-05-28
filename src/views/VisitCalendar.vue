@@ -743,7 +743,6 @@ export default {
         @media only screen and (min-width : $desktop) {
           display: flex;
           width: 100%;
-          max-width: 1040px;
           padding-left: 70px;
         }
       }
@@ -788,13 +787,13 @@ export default {
       position: absolute;
       z-index: 1;
       left: 0;
-      width: 125px;
+      width: 126px;
       height: 82px;
       padding: 0 14px 0 55px;
       justify-content: space-between;
       align-items: center;
       background-color: #fff;
-      box-shadow: -4px 2px 8px rgba(137, 149, 175, 0.1);
+      border-bottom: 1px solid rgba(137, 149, 175, 0.2);
       @media only screen and (min-width : $desktop) {
         display: flex;
       }

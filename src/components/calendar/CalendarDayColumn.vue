@@ -407,6 +407,12 @@ export default {
       @include active-header
     }
   }
+  &.selected.today .day-column__header {
+    @media only screen and (min-width : $desktop) {
+      background-color: #fff;
+      border-radius: 0;
+    }
+  }
 
   &__item {
     height: 56px;
@@ -447,7 +453,7 @@ export default {
     border-right: 1px solid rgba(137, 149, 175, 0.1);
     border-left: 2px solid transparent;
     background-color: #fff;
-    box-shadow: 8px 2px 8px rgba(137, 149, 175, 0.1);
+    border-bottom: 1px solid rgba(137, 149, 175, 0.2);
     cursor: pointer;
     &.active {
       @media only screen and (min-width : $desktop) {
