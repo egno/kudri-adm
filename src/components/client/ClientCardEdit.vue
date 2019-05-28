@@ -13,7 +13,7 @@
       </div>
       <div class="businesscard-form__field _select dropdown-select">
         <v-combobox
-          ref="fullName"
+          ref="clientFullName"
           :value="client.fullName"
           :items="suggestedClients"
           :item-text="clientDisplay"
@@ -22,7 +22,7 @@
           return-object
           required
           attach="._clients .businesscard-form__field._select"
-          @update:searchInput="onInputName"
+          @update:searchInput="onInputName(companyId, $event)"
           @input="selectClient"
         >
           <template v-slot:selection="{ item, parent, selected }">
@@ -190,10 +190,11 @@ import MainButton from '@/components/common/MainButton.vue'
 import PhoneEdit from '@/components/common/PhoneEdit.vue'
 import Api from '@/api/backend'
 import Client from '@/classes/client'
-import { debounce } from 'lodash'
+import clientMixin from '@/mixins/client'
 
 export default {
   components: { Accordion, MainButton, PhoneEdit },
+  mixins: [ clientMixin ],
   model: {
     prop: 'visible',
     event: 'close'
@@ -228,14 +229,10 @@ export default {
     return {
       active: 0,
       clientWithSamePhone: undefined,
-      clientDisplay (c) {
-        return `${ c.j.name.fullname }${ c.j.phone? c.j.phone : c.j.phones[0] }`
-      },
       duplicatedPhone: '',
       hasPhone: undefined,
       hasEmptyPhone: undefined,
       filledPhones: [],
-      suggestedClients: [],
       rules: {
         required: value => !!value || 'Это поле обязательно для заполнения',
         maxLength: length => (value) => value && (value.length <= length || 'Слишком длинный текст') || true,
@@ -243,9 +240,6 @@ export default {
       },
       samePhone: ''
     }
-  },
-  computed: {
-
   },
   watch: {
     'client.id': 'checkPhones',
@@ -256,9 +250,6 @@ export default {
   },
   beforeMount () {
     this.checkPhones()
-  },
-  created () {
-    this.debouncedGetClients = debounce(this.getClientsByName, 350)
   },
   methods: {
     checkPhones (newPhone) {
@@ -294,13 +285,6 @@ export default {
           }
         }
       })
-    },
-    getClientsByName (val) {
-      Api()
-        .get(`client?company_id.eq.${this.companyId}&j->name->>fullname=ilike.*${val}*`)
-        .then(({ data }) => {
-          this.suggestedClients = data.filter(c => c.business_id !== this.filial)
-        })
     },
     getClientsByPhone (newPhone) {
       if (newPhone && newPhone.length >= 10) {
@@ -363,22 +347,6 @@ export default {
       } else {
         return 'Неправильная дата рождения'
       }
-    },
-    onInputName (val) {
-      if (!val) {
-        this.suggestedClients = []
-        return
-      }
-
-      const match = val.match(/[а-яА-ЯёЁ ]+/g)
-
-      val = match? match[0] : ''
-      this.$refs.fullName.lazySearch = val
-      if (!val || val.length < 3) {
-        this.suggestedClients = []
-        return
-      }
-      this.debouncedGetClients(val)
     },
     onInputPercent (val) {
       if (this.rules.discount(val) === true) {
