@@ -83,26 +83,62 @@
       <div v-if="message" class="error-message error--text">
         {{ message }}
       </div>
-      <div v-if="!expressRecord" class="right-attached-panel__field-block _client-name">
-        <VTextField
+      <div v-if="!expressRecord" class="right-attached-panel__field-block _client-name dropdown-select">
+        <v-combobox
           v-if="visit.j"
-          ref="clientName"
+          ref="clientFullName"
           :value="name"
+          :items="suggestedClients"
+          :item-text="clientDisplay"
           label="ИМЯ И ФАМИЛИЯ КЛИЕНТА"
-          :rules="[() => !!name || 'Это поле обязательно для заполнения']"
+          maxlength="50"
+          return-object
           required
-          @input="onInputName"
-        />
+          attach=".visit-edit ._client-name"
+          @update:searchInput="onInputName(companyId, $event)"
+          @input="selectClient('name', $event)"
+        >
+          <template v-slot:selection="{ item, parent, selected }">
+            {{ item }}
+          </template>
+          <template v-slot:item="{ index, item }">
+            <div>
+              {{ item.j.name.fullname }}
+            </div>
+            <div class="phone-number">
+              {{ item.j.phone? item.j.phone : item.j.phones[0] | phoneFormat }}
+            </div>
+          </template>
+        </v-combobox>
       </div>
-      <div v-if="!expressRecord" class="right-attached-panel__field-block">
-        <PhoneEdit
+      <div v-if="!expressRecord" class="right-attached-panel__field-block _client-phone dropdown-select">
+        <v-combobox
           v-if="visit.j"
-          :phone="phone"
-          :removable="false"
+          ref="clientPhone"
+          :value="phone"
+          :items="suggestedClientsByPhone"
+          :item-text="clientDisplay"
           label="телефон"
-          placeholder=""
-          @onEdit="onPhoneEdit($event)"
-        />
+          mask="phone"
+          prefix="+7"
+          return-object
+          required
+          attach=".visit-edit ._client-phone"
+          @update:searchInput="onInputPhone"
+          @change="selectClient('phone', $event)"
+        >
+          <template v-slot:selection="{ item, parent, selected }">
+            {{ item }}
+          </template>
+          <template v-slot:item="{ index, item }">
+            <div>
+              {{ item.j.name.fullname }}
+            </div>
+            <div class="phone-number">
+              {{ item.j.phone? item.j.phone : item.j.phones[0] | phoneFormat }}
+            </div>
+          </template>
+        </v-combobox>
       </div>
       <div v-if="visit.id" class="right-attached-panel__field-block _reminder">
         <v-switch
@@ -179,7 +215,6 @@
 </template>
 
 <script>
-import PhoneEdit from '@/components/common/PhoneEdit.vue'
 import TimeSelect from '@/components/calendar/TimeSelect.vue'
 import {
   dateInLocalTimeZone,
@@ -192,14 +227,17 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import Api from '@/api/backend'
 import { isEqual } from 'lodash'
 import { makeAlert } from '@/api/utils'
+import clientMixin from '@/mixins/client'
 
 export default {
-  components: { PhoneEdit, TimeSelect },
+  components: { TimeSelect },
+  mixins: [ clientMixin ],
   model: {
     prop: 'visible',
     event: 'close'
   },
   props: {
+    companyId: { type: String, default: '' },
     id: { type: String, default: '' },
     visible: {
       type: Boolean,
@@ -260,6 +298,7 @@ export default {
       selectedEmployee: null,
       selectedServices: [],
       selectedTime: null,
+      suggestedClientsByPhone: [],
       lastFreeTimesRequest: {}
     }
   },
@@ -321,6 +360,19 @@ export default {
     allowedDates (dateStr) {
       return dateStr >= this.todayString
     },
+    getClientsByPhone (newPhone) {
+      Api()
+        .get(`/client_phone?and=(company_id.eq.${this.companyId},phone.ilike.*7${newPhone}*)`) //todo add limit
+        .then(({ data }) => {
+          let companyClients = data.filter(c => (c.company_id === this.companyId))
+
+          if (companyClients.length) {
+            this.suggestedClientsByPhone = companyClients
+          }
+
+        })
+        .catch(e => console.log(e))
+    },
     loadFreeTimes () {
       if (!(this.businessId && this.selectedDate)) return
 
@@ -361,18 +413,20 @@ export default {
           this.loadingTimes = false
         })
     },
-    onPhoneEdit (payload) {
-      this.phone = payload
-    },
-    onInputName (val) {
+    onInputPhone (val) {
       if (!val) {
+        this.suggestedClientsByPhone = []
         return
       }
-      const match = val.match(/[а-яА-ЯёЁ ]+/g)
 
-      val = match? match[0] : ''
-      this.name = val
-      this.$refs.clientName.lazyValue = val
+      val = val.replace(/[() -]/g, '')
+      this.$refs.clientPhone.lazySearch = val
+      if (!val || val.length < 3) {
+        this.suggestedClientsByPhone = []
+        return
+      }
+      console.log(val)
+      this.getClientsByPhone(val) // todo add debounce
     },
     onSave () {
       const duration = this.duration
@@ -394,6 +448,16 @@ export default {
       }
 
       this.$emit('onSave', this.visit)
+    },
+    selectClient (field, value) {
+      if (value && (typeof value === 'object')) {
+        const { j } = value
+
+        this.name = j.name.fullname
+        this.phone = j.phone.substr(-10)
+      } else {
+        this[field] = value
+      }
     },
     setPage () {
       if (this.page !== undefined) {
@@ -449,7 +513,9 @@ export default {
 
 <style lang="scss">
   @import "../../assets/styles/right-attached-panel";
-.visit-edit.right-attached-panel {
+  @import "../../assets/styles/dropdown-select";
+
+  .visit-edit.right-attached-panel {
   ._service,
   ._client-name,
   ._reminder {
@@ -507,6 +573,26 @@ export default {
   }
   .error-message {
     margin-top: 10px;
+  }
+  .dropdown-select {
+    .v-menu__content {
+      top: 100% !important;
+    }
+    .v-list__tile {
+      display: block;
+      padding: 5px 16px 5px 37px;
+      text-align: left;
+      text-transform: capitalize;
+      color: #8995AF;
+      font-size: 14px;
+      &:hover {
+        background-color: rgba(137, 149, 175, 0.2);
+      }
+      .phone-number {
+        font-weight: normal;
+        font-size: 12px;
+      }
+    }
   }
 }
 </style>

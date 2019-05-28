@@ -259,7 +259,7 @@
       v-if="currentVisit"
       :id="currentVisit.id"
       :visible="edit"
-      :business-info="businessInfo"
+      :company-id="businessInfo.parent? businessInfo.parent : businessId"
       :employees="businessEmployees.filter(e => e.j.services && e.j.services.length)"
       :employee="selectedEmployee"
       :visit="currentVisit"
@@ -318,7 +318,6 @@ export default {
   mixins: [ calendarMixin ],
   data () {
     return {
-      businessInfo: {},
       currentVisit: undefined,
       displayMode: 'week', /* day or week */
       dow: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
@@ -348,7 +347,7 @@ export default {
     ...mapState({
       businessEmployees: state => state.business.businessEmployees
     }),
-    ...mapGetters(['businessSchedule', 'selectedVisit']),
+    ...mapGetters(['businessSchedule', 'selectedVisit', 'businessInfo']),
     empCategories () { // todo make a mixin
       return [
         ...new Set(

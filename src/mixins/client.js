@@ -1,7 +1,7 @@
 import { debounce } from 'lodash'
 import Api from '@/api/backend'
 
-/* !!! This mixin requires the fullName ref to select/combobox !!! */
+/* !!! This mixin requires the clientFullName ref to select/combobox !!! */
 export default {
   data () {
     return {
@@ -31,7 +31,7 @@ export default {
       const match = val.match(/[а-яА-ЯёЁ ]+/g)
 
       val = match? match[0] : ''
-      this.$refs.fullName.lazySearch = val
+      this.$refs.clientFullName.lazySearch = val
       if (!val || val.length < 3) {
         this.suggestedClients = []
         return
