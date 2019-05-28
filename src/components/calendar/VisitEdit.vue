@@ -9,7 +9,7 @@
       <div class="right-attached-panel__header">
         {{ visit.id? 'Изменить запись' : 'Создать запись' }}
       </div>
-      <template v-if="!visit.id">
+      <template v-if="!visit.id || !visit.j.client.phone">
         <input
           id="express"
           v-model="expressRecord"
@@ -436,6 +436,9 @@ export default {
         this.phone = this.visit.clientPhone
       } else {
         this.phone = ''
+      }
+      if (this.visit.id && !this.visit.clientPhone) {
+        this.expressRecord = true
       }
       this.loadFreeTimes()
     }
