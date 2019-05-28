@@ -273,6 +273,18 @@ export default {
           }
         },
         {
+          title: 'Онлайн запись',
+          count: undefined,
+          route: {
+            name: 'widgetSettings',
+            params: { id: this.businessId }
+          },
+          show: !this.businessIsFilial &&
+            !this.isManagerMenu && 
+            this.loggedIn && 
+            (this.userRole === 'manager' || this.userRole === 'admin' || this.user.role === 'Администратор компании')
+        },
+        {
           title: 'Настройки',
           count: undefined,
           route: {
