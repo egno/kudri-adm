@@ -1,5 +1,5 @@
 <template>
-  <VDialog :value="visible" max-width="440px" persistent>
+  <VDialog :value="visible" max-width="440px" persistent v-bind="$attrs">
     <div class="uno-modal">
       <button type="button" class="uno-modal__close" @click="$emit('close')" />
       <div class="uno-modal__content">
@@ -31,7 +31,6 @@
         default () {
           return {
             header: '',
-            text: '',
             leftButton: '',
             rightButton: ''
           }

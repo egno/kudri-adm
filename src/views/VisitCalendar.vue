@@ -69,7 +69,14 @@
                 {{ dateMonthHeader }}
               </div>
             </div>
-            <div class="calendar-controls__right">
+            <VLayout row align-center class="calendar-controls__right">
+              <router-link
+                :disabled="selectedDateObj.dateKey === todayString"
+                class="calendar-controls__today"
+                :to="{ name: 'visitCalendar', params: { id: businessId, date: todayString } }"
+              >
+                Сегодня
+              </router-link>
               <div class="calendar-controls__toggle desktop">
                 <input id="day-mode" v-model="displayMode" type="radio" value="day">
                 <label for="day-mode">День</label>
@@ -85,7 +92,7 @@
               >
                 <v-icon>navigate_next</v-icon>
               </v-btn>
-            </div>
+            </VLayout>
           </VLayout>
           <VLayout row justify-space-between class="calendar-controls__days">
             <div 
@@ -261,6 +268,22 @@
       @delete="onDelete"
       @close="edit=false; currentVisit = null; selectVisit(null)"
     />
+    <Modal
+      :visible="showSuccessModal"
+      :template="{
+        header: 'Запись создана',
+        rightButton: 'Ок'
+      }"
+      content-class="create-visit-success"
+      @rightButtonClick="closeModal"
+      @close="closeModal"
+    >
+      <template slot="text">
+        <div class="create-visit-success__content">
+          Запись на <b>{{ successTemplate.date }} {{ successTemplate.time }}</b> к мастеру <b>{{ successTemplate.master }}</b> успешно создана.
+        </div>
+      </template>
+    </Modal>
   </div>
 </template>
 
@@ -277,7 +300,8 @@ import {
   ceilMinutes, 
   dateISOInLocalTimeZone, 
   formatDate, 
-  hyphenStrToDay, 
+  hyphenStrToDay,
+  hyphensStringToDate,
   getWeek, 
   visitInit 
 } from '@/components/calendar/utils'
@@ -285,11 +309,12 @@ import VisitEdit from '@/components/calendar/VisitEdit.vue'
 import { makeAlert } from '@/api/utils'
 import Visit from '@/classes/visit'
 import { setInterval, clearInterval } from 'timers'
+import Modal from '@/components/common/Modal'
 
 import calendarMixin from '@/mixins/calendar'
 
 export default {
-  components: { Accordion, AppCheckbox, Avatar, EmployeeCard, MainButton, CalendarDayColumn, VisitEdit },
+  components: { Accordion, AppCheckbox, Avatar, EmployeeCard, MainButton, Modal, CalendarDayColumn, VisitEdit },
   mixins: [ calendarMixin ],
   data () {
     return {
@@ -308,6 +333,12 @@ export default {
         { label: 'Добавить запись', action: 'newVisit', default: true }
       ],
       showEmployeeSelection: false,
+      showSuccessModal: false,
+      successTemplate : {
+        master: '',
+        date: '',
+        time: ''
+      },
       timerId: null,
       visits: [],
       irregularDays: []
@@ -355,6 +386,9 @@ export default {
       })
 
       return { start, end }
+    },
+    todayString () {
+      return formatDate(this.now)
     }
   },
   watch: {
@@ -397,6 +431,14 @@ export default {
       dt.setDate(dt.getDate() + 7*vector)
       this.goDate(formatDate(dt))
       this.setDates()
+    },
+    closeModal () {
+      this.showSuccessModal = false
+      this.successTemplate = {
+        master: '',
+        date: '',
+        time: ''
+      }
     },
     createVisit (date) {
       let visit = visitInit({ ts_begin: dateISOInLocalTimeZone(ceilMinutes(new Date())) })
@@ -472,17 +514,20 @@ export default {
         }
       }
     },
-    onSelectEmployee (payload) {
-      this.selectedEmployee = payload
-    },
     onVisitSave (payload) {
-      //todo move saving into Visit class 
+      //todo move saving into Visit class
+
       this.editVisitPage = undefined
+      this.successTemplate.date = hyphensStringToDate(payload.ts_begin.substring(0, 10)).toLocaleString('ru-RU', { day: 'numeric', month: 'long', weekday: 'short' })
+      this.successTemplate.time = payload.ts_begin.substring(11, 16)
+      this.successTemplate.master = this.selectedEmployee.j.name
       this.sendData(payload)
         .then(() => {
           this.edit = false
           this.selectVisit(null)
+          this.showSuccessModal = true
         })
+        .then(() => this.fetchData())
         .catch(err => {
           this.alert(makeAlert(err))
           if (
@@ -510,11 +555,9 @@ export default {
       if (data && data.id) {
         return Api()
           .patch(`visit?id=eq.${data.id}`, data)
-          .then(() => this.fetchData())
       } else {
         return Api()
           .post('visit', data)
-          .then(() => this.fetchData())
       }
     },
     updateStatus () {
@@ -574,7 +617,10 @@ export default {
         @media only screen and (min-width : $desktop) {
           padding-left: 11px;
         }
-      } 
+      }
+      &__right {
+        flex-grow: 0;
+      }
       &__container {
         height: 44px;
         @media only screen and (min-width : $desktop) {
@@ -604,9 +650,26 @@ export default {
         color: #07101C;
         text-transform: capitalize;
       }
-      &__toggle { 
+      &__today {
+        height: 24px;
+        margin-right: 16px;
+        padding: 0 35px;
+        line-height: 24px;
+        border: 1px solid #5699FF;
+        border-radius: 16px;
+        color: #5699FF;
+        text-decoration: none;
+        &[disabled="disabled"] {
+          border-color: rgba(137, 149, 175, 0.2);
+          color: rgba(137, 149, 175, 0.35);
+          cursor: default;
+        }
+      }
+      &__toggle {
+        height: 24px;
+        padding: 1px;
         background: rgba(137, 149, 175, 0.1);
-        border-radius: 20px;  
+        border-radius: 20px;
         input {
           display: none;
           &:checked + label {
@@ -713,7 +776,6 @@ export default {
         @media only screen and (min-width : $desktop) {
           display: flex;
           width: 100%;
-          max-width: 1040px;
           padding-left: 70px;
         }
       }
@@ -722,6 +784,7 @@ export default {
         width: 100%;
         .day-column__header {
           background-color: #fff;
+          border-radius: 0;
         }
         .time-mark {
           display: block;
@@ -757,13 +820,13 @@ export default {
       position: absolute;
       z-index: 1;
       left: 0;
-      width: 125px;
+      width: 126px;
       height: 82px;
       padding: 0 14px 0 55px;
       justify-content: space-between;
       align-items: center;
       background-color: #fff;
-      box-shadow: -4px 2px 8px rgba(137, 149, 175, 0.1);
+      border-bottom: 1px solid rgba(137, 149, 175, 0.2);
       @media only screen and (min-width : $desktop) {
         display: flex;
       }
@@ -896,5 +959,18 @@ export default {
     .delete-button {
       display: none;
     }
+  }
+
+  .create-visit-success {
+    &__content {
+      margin-top: 30px;
+    }
+    .uno-modal__buttons {
+      justify-content: center;
+    }
+    .uno-modal__left {
+      display: none;
+    }
+
   }
 </style>
