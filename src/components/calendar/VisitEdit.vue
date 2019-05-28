@@ -9,6 +9,16 @@
       <div class="right-attached-panel__header">
         {{ visit.id? 'Изменить запись' : 'Создать запись' }}
       </div>
+      <template v-if="!visit.id || !visit.j.client.phone">
+        <input
+          id="express"
+          v-model="expressRecord"
+          type="checkbox"
+          value="express"
+          class="filters__item right-attached-panel__sex"
+        >
+        <label for="express" class="right-attached-panel__checkbox-label">Экспресс-запись</label>
+      </template>
       <div class="right-attached-panel__field-block">
         <!--todo filter employees by selected service if any -->
         <VSelect
@@ -73,7 +83,7 @@
       <div v-if="message" class="error-message error--text">
         {{ message }}
       </div>
-      <div class="right-attached-panel__field-block _client-name">
+      <div v-if="!expressRecord" class="right-attached-panel__field-block _client-name">
         <VTextField
           v-if="visit.j"
           ref="clientName"
@@ -84,7 +94,7 @@
           @input="onInputName"
         />
       </div>
-      <div class="right-attached-panel__field-block">
+      <div v-if="!expressRecord" class="right-attached-panel__field-block">
         <PhoneEdit
           v-if="visit.j"
           :phone="phone"
@@ -117,7 +127,7 @@
           value="canceled"
         />
       </div>
-      <div class="right-attached-panel__field-block _reminder">
+      <div v-if="!expressRecord" class="right-attached-panel__field-block _reminder">
         <VSelect
           v-model="visit.j.remind"
           :items="reminders"            
@@ -220,6 +230,7 @@ export default {
       active: 0,
       colors: ['DFC497', 'F3AA57', '85CA86', '49C9B7', '5A96DF', 'F36B6B', 'F37F6B', 'DF8CB2', 'B88AB2', '8589DF'],
       error: '',
+      expressRecord: false,
       freeTimes: [],
       message: '', 
       name: '',
@@ -277,8 +288,8 @@ export default {
     }, 
     saveDisabled () {
       return this.message
-        || this.name.length < 3
-        || !this.hasPhone
+        || (!this.expressRecord && this.name.length < 3)
+        || (!this.expressRecord && !this.hasPhone)
         || !(this.visit.j.client
         && this.selectedServices 
         && this.selectedServices.length 
@@ -371,8 +382,8 @@ export default {
       ts2.setTime(ts1.getTime() + 60000 * duration) 
       this.visit.business_id = this.selectedEmployee? this.selectedEmployee.id : this.businessId
       this.visit.j.duration = duration
-      this.visit.j.client.name = this.name.trim()
-      this.visit.j.client.phone = this.phone.trim()
+      this.visit.j.client.name = this.expressRecord? null : this.name.trim()
+      this.visit.j.client.phone = this.expressRecord? null : this.phone.trim()
       this.visit.ts_begin = ts1.toJSON().slice(0, -1)
       this.visit.ts_end = ts2.toJSON().slice(0, -1)
 
@@ -425,6 +436,9 @@ export default {
         this.phone = this.visit.clientPhone
       } else {
         this.phone = ''
+      }
+      if (this.visit.id && !this.visit.clientPhone) {
+        this.expressRecord = true
       }
       this.loadFreeTimes()
     }
@@ -483,6 +497,12 @@ export default {
   }
   .right-attached-panel__buttons {
     margin-top: 50px;
+  }
+  .right-attached-panel__checkbox-label {
+    margin: 28px auto 20px;
+    padding: 0 50px;
+    height: 24px;
+    line-height: 24px;
   }
   .error-message {
     margin-top: 10px;

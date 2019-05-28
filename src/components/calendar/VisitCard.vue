@@ -159,7 +159,7 @@ export default {
       return (this.services.length > 1) && (service.name.length > 30) ? service.name.substring(0, 27) + '...' : service.name
     },
     clientName () {
-      const arr = this.visit.clientName.split(' ')
+      const arr = this.visit.clientName? this.visit.clientName.split(' ') : ['Аноним','']
 
       return `${arr[0]} ${arr[1] ? arr[1].substring(0, 1) + '.' : ''}`
     }
