@@ -69,7 +69,14 @@
                 {{ dateMonthHeader }}
               </div>
             </div>
-            <div class="calendar-controls__right">
+            <VLayout row align-center class="calendar-controls__right">
+              <router-link
+                :disabled="selectedDateObj.dateKey === todayString"
+                class="calendar-controls__today"
+                :to="{ name: 'visitCalendar', params: { id: businessId, date: todayString } }"
+              >
+                Сегодня
+              </router-link>
               <div class="calendar-controls__toggle desktop">
                 <input id="day-mode" v-model="displayMode" type="radio" value="day">
                 <label for="day-mode">День</label>
@@ -85,7 +92,7 @@
               >
                 <v-icon>navigate_next</v-icon>
               </v-btn>
-            </div>
+            </VLayout>
           </VLayout>
           <VLayout row justify-space-between class="calendar-controls__days">
             <div 
@@ -355,6 +362,9 @@ export default {
       })
 
       return { start, end }
+    },
+    todayString () {
+      return formatDate(this.now)
     }
   },
   watch: {
@@ -574,7 +584,10 @@ export default {
         @media only screen and (min-width : $desktop) {
           padding-left: 11px;
         }
-      } 
+      }
+      &__right {
+        flex-grow: 0;
+      }
       &__container {
         height: 44px;
         @media only screen and (min-width : $desktop) {
@@ -604,9 +617,26 @@ export default {
         color: #07101C;
         text-transform: capitalize;
       }
-      &__toggle { 
+      &__today {
+        height: 24px;
+        margin-right: 16px;
+        padding: 0 35px;
+        line-height: 24px;
+        border: 1px solid #5699FF;
+        border-radius: 16px;
+        color: #5699FF;
+        text-decoration: none;
+        &[disabled="disabled"] {
+          border-color: rgba(137, 149, 175, 0.2);
+          color: rgba(137, 149, 175, 0.35);
+          cursor: default;
+        }
+      }
+      &__toggle {
+        height: 24px;
+        padding: 1px;
         background: rgba(137, 149, 175, 0.1);
-        border-radius: 20px;  
+        border-radius: 20px;
         input {
           display: none;
           &:checked + label {
@@ -722,6 +752,7 @@ export default {
         width: 100%;
         .day-column__header {
           background-color: #fff;
+          border-radius: 0;
         }
         .time-mark {
           display: block;
