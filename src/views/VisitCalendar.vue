@@ -268,6 +268,22 @@
       @delete="onDelete"
       @close="edit=false; currentVisit = null; selectVisit(null)"
     />
+    <Modal
+      :visible="showSuccessModal"
+      :template="{
+        header: 'Запись создана',
+        rightButton: 'Ок'
+      }"
+      content-class="create-visit-success"
+      @rightButtonClick="closeModal"
+      @close="closeModal"
+    >
+      <template slot="text">
+        <div class="create-visit-success__content">
+          Запись на <b>{{ successTemplate.date }} {{ successTemplate.time }}</b> к мастеру <b>{{ successTemplate.master }}</b> успешно создана.
+        </div>
+      </template>
+    </Modal>
   </div>
 </template>
 
@@ -284,7 +300,8 @@ import {
   ceilMinutes, 
   dateISOInLocalTimeZone, 
   formatDate, 
-  hyphenStrToDay, 
+  hyphenStrToDay,
+  hyphensStringToDate,
   getWeek, 
   visitInit 
 } from '@/components/calendar/utils'
@@ -292,11 +309,12 @@ import VisitEdit from '@/components/calendar/VisitEdit.vue'
 import { makeAlert } from '@/api/utils'
 import Visit from '@/classes/visit'
 import { setInterval, clearInterval } from 'timers'
+import Modal from '@/components/common/Modal'
 
 import calendarMixin from '@/mixins/calendar'
 
 export default {
-  components: { Accordion, AppCheckbox, Avatar, EmployeeCard, MainButton, CalendarDayColumn, VisitEdit },
+  components: { Accordion, AppCheckbox, Avatar, EmployeeCard, MainButton, Modal, CalendarDayColumn, VisitEdit },
   mixins: [ calendarMixin ],
   data () {
     return {
@@ -315,6 +333,12 @@ export default {
         { label: 'Добавить запись', action: 'newVisit', default: true }
       ],
       showEmployeeSelection: false,
+      showSuccessModal: false,
+      successTemplate : {
+        master: '',
+        date: '',
+        time: ''
+      },
       timerId: null,
       visits: [],
       irregularDays: []
@@ -408,6 +432,14 @@ export default {
       this.goDate(formatDate(dt))
       this.setDates()
     },
+    closeModal () {
+      this.showSuccessModal = false
+      this.successTemplate = {
+        master: '',
+        date: '',
+        time: ''
+      }
+    },
     createVisit (date) {
       let visit = visitInit({ ts_begin: dateISOInLocalTimeZone(ceilMinutes(new Date())) })
       
@@ -482,17 +514,20 @@ export default {
         }
       }
     },
-    onSelectEmployee (payload) {
-      this.selectedEmployee = payload
-    },
     onVisitSave (payload) {
-      //todo move saving into Visit class 
+      //todo move saving into Visit class
+
       this.editVisitPage = undefined
+      this.successTemplate.date = hyphensStringToDate(payload.ts_begin.substring(0, 10)).toLocaleString('ru-RU', { day: 'numeric', month: 'long', weekday: 'short' })
+      this.successTemplate.time = payload.ts_begin.substring(11, 16)
+      this.successTemplate.master = this.selectedEmployee.j.name
       this.sendData(payload)
         .then(() => {
           this.edit = false
           this.selectVisit(null)
+          this.showSuccessModal = true
         })
+        .then(() => this.fetchData())
         .catch(err => {
           this.alert(makeAlert(err))
           if (
@@ -520,11 +555,9 @@ export default {
       if (data && data.id) {
         return Api()
           .patch(`visit?id=eq.${data.id}`, data)
-          .then(() => this.fetchData())
       } else {
         return Api()
           .post('visit', data)
-          .then(() => this.fetchData())
       }
     },
     updateStatus () {
@@ -926,5 +959,18 @@ export default {
     .delete-button {
       display: none;
     }
+  }
+
+  .create-visit-success {
+    &__content {
+      margin-top: 30px;
+    }
+    .uno-modal__buttons {
+      justify-content: center;
+    }
+    .uno-modal__left {
+      display: none;
+    }
+
   }
 </style>
