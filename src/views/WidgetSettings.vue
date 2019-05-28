@@ -66,6 +66,67 @@
           <div
             v-show="activeTab === 1"
             class="infocard _edit"
+          >
+            <div class="infocard__content">
+              <v-layout
+                align-left
+                column
+              >
+                <v-flex>
+                  <v-layout
+                    row
+                    wrap
+                  >
+                    <v-flex
+                      pa-3
+                      sm6
+                    >
+                      <v-layout column>
+                        <v-flex pa-2>
+                          Разместите вашу ссылку на запись там, где бывают ваши клиенты. Ссылку можно прикреплять к постам в социальной сети, установить в качестве статуса, веб-сайта и отправлять в диалог с клиентом в мессенджере.
+                        </v-flex>
+                        <v-flex pa-2>
+                          Добавьте для ваших клиентов возможность записываться онлайн <span class="font-weight-bold">прямо на вашей странице в Instagram</span>. 
+                        </v-flex>
+                        <v-flex pa-2>
+                          Для этого скопируйте ссылку, которая находится ниже, и вставьте ее в поле Веб-сайт вашего профиля.
+                        </v-flex>
+                        <v-flex pa-2>
+                          <h3>Ваша ссылка</h3>
+                        </v-flex>
+                        <v-flex pa-2>
+                          <v-layout row wrap>
+                            <v-flex xs-6>
+                              <a :href="link" target="_blank">{{ link }}</a>
+                            </v-flex>
+                            <v-flex xs-6>
+                              <v-btn small ripple round color="primary" outline @click="copyLink">
+                                Скопировать
+                              </v-btn>
+                            </v-flex>
+                          </v-layout>
+                        </v-flex>
+                      </v-layout>
+                    </v-flex>
+                    <v-flex
+                      pa-3
+                      sm6
+                    >
+                      <div>
+                        <v-img src="/img/widget02.png" />
+                      </div>
+                    </v-flex>
+                  </v-layout>
+                </v-flex>
+                <v-flex>
+                  <FilialWidgetSettings />
+                </v-flex>
+              </v-layout>
+            </div>
+          </div>
+          <div
+            v-show="activeTab === 1"
+            class="infocard _edit"
           />
         </v-form>
       </div>
@@ -79,9 +140,15 @@ import { mapGetters } from 'vuex'
 import AppTabs from '@/components/common/AppTabs.vue'
 import PageLayout from '@/components/common/PageLayout.vue'
 import WidgetButtonSettings from '@/components/WidgetButtonSettings.vue'
+import FilialWidgetSettings from '@/components/FilialWidgetSettings.vue'
 
 export default {
-  components: { AppTabs, PageLayout, WidgetButtonSettings },
+  components: {
+    AppTabs,
+    PageLayout,
+    WidgetButtonSettings,
+    FilialWidgetSettings
+  },
   data () {
     return {
       activeTab: 0,
@@ -89,21 +156,19 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['businessId'])
-  },
-  watch: {
-    businessId: 'load'
-  },
-  mounted () {
-    this.load()
+    ...mapGetters(['businessId']),
+    link () {
+      return `${process.env.VUE_APP_WIDGET_ADDRESS || '/'}?b=${this.businessId}`
+    }
   },
   methods: {
-    load () {
-      if (!this.businessId) return
-      this.businessSettings.load(this.businessId)
-    },
-    save () {
-      this.businessSettings.save()
+    copyLink () {
+      const el = document.createElement('textarea')
+        el.value = this.link
+        document.body.appendChild(el)
+        el.select()
+        document.execCommand('copy')
+      document.body.removeChild(el)
     }
   }
 }
