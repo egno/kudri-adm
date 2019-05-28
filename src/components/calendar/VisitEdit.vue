@@ -310,7 +310,8 @@ export default {
       }
     },
     selectedDate: 'loadFreeTimes',
-    'selectedServices.length': 'loadFreeTimes'
+    'selectedServices.length': 'loadFreeTimes',
+    selectedEmployee: 'loadFreeTimes'
   },
   mounted () {
     this.setSelectedValues()
@@ -318,7 +319,7 @@ export default {
   methods: {
     ...mapActions(['alert']),
     allowedDates (dateStr) {
-      return dateStr > this.todayString
+      return dateStr >= this.todayString
     },
     loadFreeTimes () {
       if (!(this.businessId && this.selectedDate)) return
