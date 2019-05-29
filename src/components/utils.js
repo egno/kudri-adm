@@ -56,3 +56,12 @@ export function conjugateServices (n) {
   const forms = ["услуга", "услуги", "услуг", "Нет услуг"]
   return numberText(n, forms)
 }
+
+export function widgetHost () {
+  let host = window.location.host
+  // set host address for debug
+  if (host.substr(-5) === ':8080') {
+    host = 'kudri.ml'
+  }
+  return `https://widget.${host}`
+}

@@ -51,6 +51,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import Api from '@/api/backend'
+import {widgetHost} from '@/components/utils'
 
 export default {
   props: {
@@ -80,7 +81,7 @@ export default {
       })
     },
     link (id) {
-      return `${process.env.VUE_APP_WIDGET_ADDRESS || '/'}?b=${id}`
+      return `${widgetHost()}?b=${id}`
     },
     copyLink (id) {
       const el = document.createElement('textarea')

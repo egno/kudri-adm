@@ -141,6 +141,7 @@ import AppTabs from '@/components/common/AppTabs.vue'
 import PageLayout from '@/components/common/PageLayout.vue'
 import WidgetButtonSettings from '@/components/WidgetButtonSettings.vue'
 import FilialWidgetSettings from '@/components/FilialWidgetSettings.vue'
+import {widgetHost} from '@/components/utils'
 
 export default {
   components: {
@@ -158,7 +159,8 @@ export default {
   computed: {
     ...mapGetters(['businessId']),
     link () {
-      return `${process.env.VUE_APP_WIDGET_ADDRESS || '/'}?b=${this.businessId}`
+      let host = widgetHost()
+      return `${host}/?b=${this.businessId}`
     }
   },
   methods: {
