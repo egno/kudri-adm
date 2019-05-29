@@ -28,10 +28,10 @@
               <v-flex v-for="filial in filials" :key="filial.id" py-3>
                 <v-layout row wrap align-start fill-height justify-space-between>
                   <v-flex xs12 md4>
-                    {{ filial.j.name }}
+                    {{ (filial.j && filial.j.name ) || `<${filial.id}>` }}
                   </v-flex>
                   <v-flex xs12 md5>
-                    {{ filial.j.address.name }}
+                    {{ filial.j && filial.j.address && filial.j.address.name }}
                   </v-flex>
                   <v-flex xs12 md3>
                     <v-btn small ripple round color="primary" outline @click="copyLink(filial.id)">
