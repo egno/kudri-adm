@@ -228,6 +228,7 @@ import Api from '@/api/backend'
 import { isEqual } from 'lodash'
 import { makeAlert } from '@/api/utils'
 import clientMixin from '@/mixins/client'
+import { debounce } from 'lodash'
 
 export default {
   components: { TimeSelect },
@@ -352,6 +353,9 @@ export default {
     'selectedServices.length': 'loadFreeTimes',
     selectedEmployee: 'loadFreeTimes'
   },
+  created () {
+    this.debouncedGetClientsByPhone = debounce(this.getClientsByPhone, 350)
+  },
   mounted () {
     this.setSelectedValues()
   },
@@ -362,7 +366,7 @@ export default {
     },
     getClientsByPhone (newPhone) {
       Api()
-        .get(`/client_phone?and=(company_id.eq.${this.companyId},phone.ilike.*7${newPhone}*)`) //todo add limit
+        .get(`/client_phone?and=(company_id.eq.${this.companyId},phone.ilike.*7${newPhone}*)&limit=10`)
         .then(({ data }) => {
           let companyClients = data.filter(c => (c.company_id === this.companyId))
 
@@ -425,8 +429,7 @@ export default {
         this.suggestedClientsByPhone = []
         return
       }
-      console.log(val)
-      this.getClientsByPhone(val) // todo add debounce
+      this.debouncedGetClientsByPhone(val)
     },
     onSave () {
       const duration = this.duration
