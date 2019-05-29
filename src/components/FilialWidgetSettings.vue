@@ -94,3 +94,39 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+@import 'https://widget.uno.salon/css/widget.css';
+.button-container {
+  height: 60px;
+}
+.button-example {
+  position: relative !important;
+}
+.card-rounded {
+  border-radius: 24px;
+}
+.card-divider {
+  border-color: rgba(255, 255, 255, 1);
+}
+.script-text {
+  width: 100%;
+  background: white;
+  min-height: 6em;
+  padding: 0.5em;
+}
+.rounded {
+  font-size: 10px;
+  display: inline-block;
+  border: solid;
+  border-width: 1px;
+  border-radius: 1em;
+  text-align: center;
+  position: relative;
+  bottom: 1px;
+  width: 14px;
+  height: 14px;
+  margin-right: 0.5em;
+}
+</style>
+
