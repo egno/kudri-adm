@@ -18,10 +18,17 @@ class Visit {
     this.salon_id = (newVal && newVal.salon_id) || null
     this.ts_begin = (newVal && newVal.ts_begin) || null
     this.ts_end = (newVal && newVal.ts_end) || null
-    this.j = (newVal && newVal.j) || {
-      client: {},
-      services: [],
+    if (newVal && newVal.j) {
+      this.j = newVal.j
+      this.j.notes = this.j.notes || ''
+    } else {
+      this.j = {
+        client: {},
+        services: [],
+        notes: ''
+      }
     }
+
     this.status = (newVal && newVal.status) || null
   }
 

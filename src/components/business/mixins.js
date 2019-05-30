@@ -143,7 +143,6 @@ export const scheduleMixin = {
       const errors = []
       const startTime = this.getTimeArray(newDaySchedule.start)
       const endTime = this.getTimeArray(newDaySchedule.end)
-
       if (
         endTime[0] < startTime[0] ||
         (endTime[0] === startTime[0] && endTime[1] < startTime[1])

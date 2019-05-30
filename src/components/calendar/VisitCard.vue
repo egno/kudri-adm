@@ -1,5 +1,7 @@
 <template>
-  <div class="visit-wrapper">
+  <!-- todo add delete button for existing break -->
+  <div v-if="visit.j.type === 'break'" class="break-time" @click="selectCurrentBreak" />
+  <div v-else class="visit-wrapper">
     <div
       :style="`height: ${actualContainerHight}px; background: ${bgColor};`"
       :class="['visit', {
@@ -132,7 +134,7 @@ export default {
 
       return (
         this.visit.color ||
-        (this.visit.clientName || this.visit.j.client.phone 
+        (this.visit.clientName || this.visit.clientPhone
           ? hashColor(`${this.visit.clientName}${this.visit.j.client.phone}${this.email}`, 30, 40)
           : 'grey')
       )
@@ -148,9 +150,12 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['selectVisit']),
+    ...mapActions(['selectBreak', 'selectVisit']),
     onSelect () {
       this.$emit('unselectOthers')
+    },
+    selectCurrentBreak () {
+      this.selectBreak(this.visit)
     },
     serviceName (service) {
       if (this.services.length > 2) {
@@ -182,6 +187,11 @@ export default {
   float: right;
   margin: 0;
   border-radius: 0;
+}
+
+.break-time {
+  height: 100%;
+  background: url('../../assets/images/svg/cup.svg') center/35px no-repeat;
 }
 
 .visit-wrapper {
