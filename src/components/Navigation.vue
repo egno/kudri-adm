@@ -131,13 +131,30 @@ export default {
       return isBusinessRoute(this.$route.name)
     },
     isCalendarVisible () {
-      return this.businessIsFilial && this.isBusinessCard && this.isEditorUser
+      return this.hasSalonLevelAccess && this.isBusinessCard && this.isEditorUser
     },
     isManagerMenu () {
       return (
-        this.loggedIn && 
+        this.loggedIn &&
         (this.userRole === 'manager' || this.userRole === 'admin') &&
-        (this.$route.name === 'businessList' || this.$route.name === 'myBusinessList')
+        (this.$route.name === 'businessList' ||
+          this.$route.name === 'myBusinessList')
+      )
+    },
+    hasCompanyLevelAccess () {
+      return (
+        this.loggedIn &&
+        this.businessInfo &&
+        (this.businessInfo.type === 'C' ||
+          (this.businessInfo.type === null &&
+            this.businessInfo.parent === null))
+      )
+    },
+    hasSalonLevelAccess () {
+      return (
+        this.loggedIn &&
+        this.businessInfo &&
+        this.businessInfo.type === null
       )
     },
     menu () {
@@ -149,12 +166,14 @@ export default {
             name: 'businessCard',
             params: { id: this.businessId }
           },
-          show: this.loggedIn && 
-            (this.userRole === 'manager' || 
-              this.userRole === 'admin' || 
-              this.user.role === 'Администратор компании' || 
-              this.user.role === 'Менеджер филиала' && this.businessIsFilial) &&
-              !this.isManagerMenu
+          show:
+            this.loggedIn &&
+            (this.userRole === 'manager' ||
+              this.userRole === 'admin' ||
+              this.user.role === 'Администратор компании' ||
+              (this.user.role === 'Менеджер филиала' &&
+                this.businessIsFilial)) &&
+            !this.isManagerMenu
         },
         {
           title: 'Мои компании',
@@ -166,7 +185,7 @@ export default {
           title: 'Все компании',
           icon: 'business',
           route: { name: 'businessList' },
-          show:  this.isManagerMenu
+          show: this.isManagerMenu
         },
         {
           title: 'Филиалы',
@@ -175,15 +194,12 @@ export default {
             name: 'filialList',
             params: { id: this.businessId }
           },
-          show:
-            !this.businessIsFilial &&
-            this.loggedIn &&
-            this.businessIsSalon,
+          show: this.hasCompanyLevelAccess && !this.businessIsFilial,
           action: {
-                label: 'Добавить филиал',
-                action: 'newFilial',
-                default: true
-              }
+            label: 'Добавить филиал',
+            action: 'newFilial',
+            default: true
+          }
         },
         {
           title: 'Пользователи',
@@ -191,10 +207,14 @@ export default {
             name: 'businessUsers',
             params: { id: this.businessId }
           },
-          show: !this.businessIsFilial &&
-            this.loggedIn && 
-            !this.isManagerMenu && 
-            (this.userRole === 'manager' || this.userRole === 'admin' || this.user.role === 'Администратор компании')
+          show:
+            this.hasSalonLevelAccess &&
+            !this.businessIsFilial &&
+            this.loggedIn &&
+            !this.isManagerMenu &&
+            (this.userRole === 'manager' ||
+              this.userRole === 'admin' ||
+              this.user.role === 'Администратор компании')
         },
         {
           title: 'Услуги',
@@ -203,7 +223,7 @@ export default {
             name: 'services',
             params: { id: this.businessId }
           },
-          show: this.businessIsFilial && this.loggedIn && !this.isManagerMenu,
+          show: this.hasSalonLevelAccess && !this.isManagerMenu,
           action: {
             label: 'Добавить услугу',
             action: 'newService',
@@ -218,10 +238,8 @@ export default {
             params: { id: this.businessId }
           },
           show:
-            this.businessIsFilial &&
-            this.loggedIn &&
-            !this.isManagerMenu &&
-            this.businessIsSalon,
+            this.hasSalonLevelAccess &&
+            !this.isManagerMenu,
           action: {
             label: 'Добавить сотрудника',
             action: 'newEmployee',
@@ -248,7 +266,7 @@ export default {
             name: 'BusinessClientsTable',
             params: { id: this.businessId }
           },
-          show: this.businessIsFilial && this.isEditorUser,
+          show: (this.hasCompanyLevelAccess || this.hasSalonLevelAccess) && this.isEditorUser,
           action: {
             label: 'Добавить клиента',
             action: 'newClient',
@@ -265,7 +283,7 @@ export default {
             name: 'visitCalendar',
             params: { id: this.businessId, date: this.date }
           },
-          show: this.businessIsFilial && this.loggedIn && !this.isManagerMenu,
+          show: this.hasSalonLevelAccess && !this.isManagerMenu,
           action: {
             label: 'Добавить запись',
             action: 'newVisit',
@@ -291,10 +309,12 @@ export default {
             name: 'businessSettings',
             params: { id: this.businessId }
           },
-          show: !this.businessIsFilial &&
-            !this.isManagerMenu && 
-            this.loggedIn && 
-            (this.userRole === 'manager' || this.userRole === 'admin' || this.user.role === 'Администратор компании')
+          show:
+            (this.hasCompanyLevelAccess) &&
+            !this.isManagerMenu &&
+            (this.userRole === 'manager' ||
+              this.userRole === 'admin' ||
+              this.user.role === 'Администратор компании')
         }
       ]
     },
@@ -357,7 +377,11 @@ export default {
     },
     checkUserInfo () {
       this.$nextTick(() => {
-        if (this.userLoadingState === 'finished' && this.loggedIn === false && this.isBusinessCard === true) {          
+        if (
+          this.userLoadingState === 'finished' &&
+          this.loggedIn === false &&
+          this.isBusinessCard === true
+        ) {
           this.$router.push({ name: 'login' })
         }
       })
