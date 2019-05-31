@@ -292,10 +292,10 @@
       :end-time="currentBreak && currentBreak.ts_end"
       :notes-prop="currentBreak && currentBreak.j.notes"
       :visible="showEditBreak"
-      :date="breakTime"
       :employee-id="selectedEmployee.id"
+      :employee-visits="visits.filter(v => v.business_id === selectedEmployee.id)"
       @inputStart="currentBreak.ts_begin = $event"
-      @inputEnd="currentBreak.ts_end = $event"
+      @inputEnd="onInputBreakEnd"
       @inputNotes="addNotesToBreak"
       @saved="fetchData"
       @close="onCloseBreakEdit"
@@ -335,7 +335,6 @@ export default {
   mixins: [ calendarMixin ],
   data () {
     return {
-      breakTime: undefined,
       currentBreak: undefined,
       currentVisit: undefined,
       displayMode: 'week', /* day or week */
@@ -480,7 +479,6 @@ export default {
         }
       })
 
-      this.breakTime = date
       this.selectBreak(newBreak)
     },
     createVisit (date) {
@@ -533,7 +531,6 @@ export default {
     },
     onCloseBreakEdit () {
       this.showEditBreak = false
-      this.breakTime = null
       setTimeout(() => {
         this.selectBreak(null)
       }, 300)
@@ -563,6 +560,12 @@ export default {
           this.selectedEmpGroups.splice(i, 1)
         }
       }
+    },
+    onInputBreakEnd (payload) {
+      const time = payload.substring(11,16)
+      const endOfWorkDay = this.displayTimes.end
+
+      this.currentBreak.ts_end = (time <= endOfWorkDay)? payload : `${payload.substring(0, 10)}T${endOfWorkDay}`
     },
     onVisitSave (payload) {
       //todo move saving into Visit class

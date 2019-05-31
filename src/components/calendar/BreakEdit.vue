@@ -3,13 +3,13 @@
     :value="visible"
     content-class="create-break"
     max-width="440px"
-    @input="$emit('close')"
+    @input="close"
   >
     <VForm
       v-if="workBreak"
       class="create-break__content uno-modal"
     >
-      <button type="button" class="uno-modal__close" @click="$emit('close')" />
+      <button type="button" class="uno-modal__close" @click="close" />
       <div class="create-break__header">
         {{ workBreak.id ? 'Изменить перерыв' : 'Добавить перерыв' }}
       </div>
@@ -45,7 +45,7 @@
         @changeCount="duration = $event"
       />
 
-      <div v-if="error" class="create-break__error">
+      <div :class="['create-break__error', { _visible: error }]">
         <span class="error--text">{{ error }}</span>
       </div>
       <VLayout justify-center class="create-break__notes">
@@ -92,6 +92,12 @@
         type: String,
         default: ''
       },
+      employeeVisits: {
+        type: Array,
+        default () {
+          return []
+        }
+      },
       startTime: {
         type: String,
         default: ''
@@ -127,7 +133,12 @@
       },
       duration : {
         set (newVal) {
-          this.$emit('inputEnd', dateISOInLocalTimeZone(this.addMinutes(newVal)) )
+          this.$emit('inputEnd',  dateISOInLocalTimeZone(this.addMinutes(newVal)))
+
+          this.$nextTick(() => {
+            this.validate()
+          })
+
         },
         get () {
           if (!(this.workBreak && this.workBreak.ts_begin && this.workBreak.ts_end)) {
@@ -169,6 +180,9 @@
           const n = this.workBreak && this.workBreak.j? this.notesProp : ''
           return n
         }
+      },
+      dayVisits () {
+        return this.employeeVisits.filter(v => v.ts_begin.includes(this.dateString))
       }
     },
     methods: {
@@ -176,14 +190,24 @@
       addMinutes (minutes) {
         return new Date(this.date.getTime() + minutes*60000)
       },
+      close () {
+        this.error = ''
+        this.$emit('close')
+      },
       validate () {
-        if (!this.start || !this.end) {
+        const endTime = this.endTime
+        const existingVisit = this.dayVisits.find(v =>
+          (endTime > v.ts_begin && endTime <= v.ts_end) || (this.startTime < v.ts_begin && endTime > v.ts_end)
+        )
+
+        this.error = ''
+        if (!existingVisit) {
           return
         }
-        if (this.start < this.end) {
-          return false
+        if (!existingVisit.j.type) {
+          this.error = 'На это время уже запланирован визит'
         } else {
-          return 'Некорректный диапазон времени'
+          this.error = 'На это время уже запланирован перерыв'
         }
       },
       send () {
@@ -199,7 +223,7 @@
         this.send()
           .then(() => {
             this.$emit('saved')
-            this.$emit('close')
+            this.close()
           })
           .catch(err => {
             console.log(err)
@@ -211,7 +235,7 @@
           .delete(`visit?id=eq.${this.workBreak.id}`)
           .then(() => {
             this.$emit('saved')
-            this.$emit('close')
+            this.close()
           })
           .catch(err => {
             this.alert(makeAlert(err))})
@@ -265,10 +289,19 @@
       background: url('../../assets/images/svg/cross.svg') center no-repeat;
     }
     &__error {
+      min-height: 17px;
       margin: 20px 0 0;
+      .error--text {
+        color: transparent;
+      }
+      &._visible {
+        .error--text {
+          color: #EF4D37;
+        }
+      }
     }
     &__notes {
-      margin-top: 34px;
+      margin-top: 20px;
     }
     .v-label {
       max-width: 100%;

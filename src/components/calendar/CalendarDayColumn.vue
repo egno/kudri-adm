@@ -321,7 +321,6 @@ export default {
   border-right: 1px solid rgba(137, 149, 175, .10);
   border-bottom: 1px solid rgba(137, 149, 175, .10);
   font-size: 0.75em;
-  background-color: #fff;
 
   &.working {
     background: #fff; 
