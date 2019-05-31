@@ -189,6 +189,7 @@
               :display-from="displayTimes.start"
               :display-to="displayTimes.end"
               @onSlotClick="createVisit"
+              @onBreakClick="createBreak"
               @onDayEdit="onDayEdit"
               @makeDayOffTry="notifyHasVisits = true"
             />
@@ -284,6 +285,21 @@
         </div>
       </template>
     </Modal>
+    <BreakEdit
+      v-if="selectedEmployee"
+      :work-break="currentBreak"
+      :start-time="currentBreak && currentBreak.ts_begin"
+      :end-time="currentBreak && currentBreak.ts_end"
+      :notes-prop="currentBreak && currentBreak.j.notes"
+      :visible="showEditBreak"
+      :employee-id="selectedEmployee.id"
+      :employee-visits="visits.filter(v => v.business_id === selectedEmployee.id)"
+      @inputStart="currentBreak.ts_begin = $event"
+      @inputEnd="onInputBreakEnd"
+      @inputNotes="addNotesToBreak"
+      @saved="fetchData"
+      @close="onCloseBreakEdit"
+    />
   </div>
 </template>
 
@@ -296,7 +312,8 @@ import AppCheckbox from '@/components/common/AppCheckbox.vue'
 import Avatar from '@/components/avatar/Avatar.vue'
 import CalendarDayColumn from '@/components/calendar/CalendarDayColumn.vue'
 import EmployeeCard from '@/components/employee/EmployeeCard.vue'
-import { 
+import BreakEdit from '@/components/calendar/BreakEdit.vue'
+import {
   ceilMinutes, 
   dateISOInLocalTimeZone, 
   formatDate, 
@@ -314,10 +331,11 @@ import Modal from '@/components/common/Modal'
 import calendarMixin from '@/mixins/calendar'
 
 export default {
-  components: { Accordion, AppCheckbox, Avatar, EmployeeCard, MainButton, Modal, CalendarDayColumn, VisitEdit },
+  components: { Accordion, AppCheckbox, Avatar, BreakEdit, EmployeeCard, MainButton, Modal, CalendarDayColumn, VisitEdit },
   mixins: [ calendarMixin ],
   data () {
     return {
+      currentBreak: undefined,
       currentVisit: undefined,
       displayMode: 'week', /* day or week */
       dow: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
@@ -331,6 +349,7 @@ export default {
       formActions: [
         { label: 'Добавить запись', action: 'newVisit', default: true }
       ],
+      showEditBreak: false,
       showEmployeeSelection: false,
       showSuccessModal: false,
       successTemplate : {
@@ -347,7 +366,7 @@ export default {
     ...mapState({
       businessEmployees: state => state.business.businessEmployees
     }),
-    ...mapGetters(['businessSchedule', 'selectedVisit', 'businessInfo']),
+    ...mapGetters(['businessSchedule', 'selectedBreak', 'selectedVisit', 'businessInfo']),
     empCategories () { // todo make a mixin
       return [
         ...new Set(
@@ -396,6 +415,15 @@ export default {
       deep: true
     },
     businessEmployees: 'initEmployee',
+    selectedBreak () {
+      if (this.selectedBreak) {
+        this.currentBreak = { ...this.selectedBreak, j: { ...this.selectedBreak.j } }
+        this.showEditBreak = true
+      } else {
+        this.currentBreak = null
+        this.showEditBreak = false
+      }
+    },
     selectedVisit () {
       if (this.selectedVisit) {
         this.currentVisit = this.selectedVisit
@@ -423,7 +451,10 @@ export default {
     clearInterval(this.timerId)
   },
   methods: {
-    ...mapActions(['alert', 'setActions', 'setBusiness', 'selectVisit']),
+    ...mapActions(['alert', 'setActions', 'setBusiness', 'selectBreak', 'selectVisit']),
+    addNotesToBreak (payload) {
+      this.currentBreak.j.notes = payload
+    },
     changeWeek (vector) {
       let dt = new Date(this.actualDate)
 
@@ -438,6 +469,17 @@ export default {
         date: '',
         time: ''
       }
+    },
+    createBreak (date) {
+      let newBreak = visitInit({
+        ts_begin: dateISOInLocalTimeZone(date),
+        business_id: this.selectedEmployee.id,
+        j: {
+          type: 'break'
+        }
+      })
+
+      this.selectBreak(newBreak)
     },
     createVisit (date) {
       let visit = visitInit({ ts_begin: dateISOInLocalTimeZone(ceilMinutes(new Date())) })
@@ -487,6 +529,12 @@ export default {
     onAction () {
       this.createVisit()
     },
+    onCloseBreakEdit () {
+      this.showEditBreak = false
+      setTimeout(() => {
+        this.selectBreak(null)
+      }, 300)
+    },
     onDayEdit ({ day, isDayOff }) {
       const isWorkingDay = day => day && day[0] && day[1]
       const averageDay = this.selectedEmployee.j.schedule
@@ -512,6 +560,12 @@ export default {
           this.selectedEmpGroups.splice(i, 1)
         }
       }
+    },
+    onInputBreakEnd (payload) {
+      const time = payload.substring(11,16)
+      const endOfWorkDay = this.displayTimes.end
+
+      this.currentBreak.ts_end = (time <= endOfWorkDay)? payload : `${payload.substring(0, 10)}T${endOfWorkDay}`
     },
     onVisitSave (payload) {
       //todo move saving into Visit class
@@ -568,6 +622,8 @@ export default {
 
 <style lang="scss">
   @import '../assets/styles/common';
+  @import '../assets/styles/day-schedule';
+
   %round-arrow-button {
     float: left;
     min-width: 0;

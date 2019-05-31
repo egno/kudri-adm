@@ -49,7 +49,6 @@
           :visit="time.visit"
           :services="time.visit.services" 
           @onDelete="onVisitDelete(time.visit.id)"
-          @onEdit="onVisitEdit(time.visit)"
         />
       </div>
       <div
@@ -64,7 +63,7 @@
           <div class="slot__add-visit" @click="$emit('onSlotClick', time.begin.date)">
             +
           </div>
-          <div class="slot__add-break">
+          <div class="slot__add-break" @click="$emit('onBreakClick', time.begin.date)">
             Break
           </div>
         </div>
@@ -172,12 +171,6 @@ export default {
     isToday () {
       return areSameDates(this.today, this.day.date)
     },
-    // lunchTime () {
-    //   if (this.employeeSchedule.length > 3) {
-    //     return [this.employeeSchedule[1], this.employeeSchedule[2]]
-    //   }
-    //   return []
-    // },
     times () {
       const isVisible = time => {
         if (!(this.displayFrom || this.displayTo)) return true
@@ -293,9 +286,6 @@ export default {
     },
     onVisitDelete (id) {
       this.$emit('onVisitDelete', id)
-    },
-    onVisitEdit (item) {
-      this.$emit('onVisitEdit', item)
     },
     timeDisplay (date) {
       return formatTime(date)

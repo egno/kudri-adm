@@ -1,5 +1,10 @@
 <template>
-  <div class="visit-wrapper">
+  <div v-if="visit.j.type === 'break'" class="visit-wrapper" @click="selectCurrentBreak">
+    <div class="visit" :style="`height: ${actualContainerHight}px;`">
+      <div :class="['break-time', { _long: visit.j.duration > 15 }]" />
+    </div>
+  </div>
+  <div v-else class="visit-wrapper">
     <div
       :style="`height: ${actualContainerHight}px; background: ${bgColor};`"
       :class="['visit', {
@@ -132,7 +137,7 @@ export default {
 
       return (
         this.visit.color ||
-        (this.visit.clientName || this.visit.j.client.phone 
+        (this.visit.clientName || this.visit.clientPhone
           ? hashColor(`${this.visit.clientName}${this.visit.j.client.phone}${this.email}`, 30, 40)
           : 'grey')
       )
@@ -148,9 +153,12 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['selectVisit']),
+    ...mapActions(['selectBreak', 'selectVisit']),
     onSelect () {
       this.$emit('unselectOthers')
+    },
+    selectCurrentBreak () {
+      this.selectBreak(this.visit)
     },
     serviceName (service) {
       if (this.services.length > 2) {
@@ -270,6 +278,14 @@ export default {
     border-left: 2px solid #8995AF;
     .visit__status {
       color: rgba(137, 149, 175, 0.35);
+    }
+  }
+  .break-time {
+    height: 100%;
+    background: url('../../assets/images/svg/cup-big.svg') center/48px no-repeat #e7eaef;
+    border-radius: 4px;
+    &._long {
+      background: url('../../assets/images/svg/cup-title.svg') center/65px 81px no-repeat #e7eaef;
     }
   }
 }

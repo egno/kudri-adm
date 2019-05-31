@@ -25,6 +25,7 @@ const state = {
 
   schedule: [],
   searchString: '',
+  selectedBreak: undefined,
   selectedVisit: undefined,
   token: ''
 }
@@ -48,6 +49,7 @@ const getters = {
   navBarVisible: state => state.navBarVisible,
   schedule: state => state.schedule,
   searchString: state => state.searchString,
+  selectedBreak: state => state.selectedBreak,
   selectedVisit: state => state.selectedVisit,
   token: state => {
     return state.token
@@ -84,6 +86,9 @@ const mutations = {
     var status = payload == undefined ? !state.navBarVisible : payload
     state.navBarVisible = status
   },
+  SELECT_BREAK (state, payload) {
+    state.selectedBreak = payload
+  },
   SELECT_VISIT (state, payload) {
     state.selectedVisit = payload
   },
@@ -110,7 +115,6 @@ const mutations = {
       localStorage.removeItem('accessToken')
     }
   },
-
   SHOW_NAVBAR (state) {
     state.navBarVisible = true
   }
@@ -125,6 +129,9 @@ const actions = {
   },
   closeProfileDrawer ({ commit }) {
     commit('PROFILE_DRAWER', false)
+  },
+  selectBreak ({ commit }, payload) {
+    commit('SELECT_BREAK', payload)
   },
   selectVisit ({ commit }, payload) {
     commit('SELECT_VISIT', payload)

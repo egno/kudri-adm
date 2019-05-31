@@ -400,14 +400,14 @@ export default {
       Api()
         .post("rpc/free_times", params)
         .then(({ data }) => {
-            this.freeTimes = data
-            if (!this.freeTimes.length) {
-              this.message = 'На эту дату или время записаться нельзя. Выберите другую дату или время'
+          this.freeTimes = data
+          if (!this.freeTimes.length) {
+            this.message = 'На эту дату или время записаться нельзя. Выберите другую дату или время'
 
-              if (this.selectedServices.length > 1) {
-                this.message += ', или уменьшите количество услуг'
-              }
+            if (this.selectedServices.length > 1) {
+              this.message += ', или уменьшите количество услуг'
             }
+          }
           }
         )
         .catch(err => {
