@@ -413,8 +413,7 @@ export default {
       if (!this.selectedWeek) return
 
       const sunday = this.selectedWeek[6]
-      const nextMonday = new Date()
-
+      const nextMonday = new Date(sunday.dateKey)
       nextMonday.setDate(sunday.date.getDate() + 1)
       this.isLoading = true
       Api()
