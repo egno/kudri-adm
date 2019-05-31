@@ -103,6 +103,22 @@ const actions = {
   addClientsCounter ({ commit }, payload) {
     commit('ADD_CLIENTS_COUNTER', payload)
   },
+  setBusinessToParent (  { commit, dispatch }, businessId) {
+      if (!(businessId && businessId.length == 36)) {
+        commit('SET_BUSINESS_INFO', {})
+        return
+      }
+      const path = `business?id=eq.${businessId}`
+      Api()
+        .get(path)
+        .then(res => res.data[0])
+        .then(res => {
+          if (res.id) {
+            dispatch('setBusiness', res.parent)
+          }
+        })
+        .catch(err => commit('ADD_ALERT', makeAlert(err)))
+  },
   setBusiness ({ commit, dispatch }, businessId) {
     if (!(businessId && businessId.length == 36)) {
       commit('SET_BUSINESS_INFO', {})

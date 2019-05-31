@@ -253,7 +253,7 @@ export default {
     this.$root.$off('onAction', this.createBranch)
   },
   methods: {
-    ...mapActions(['setActions', 'setBusiness']),
+    ...mapActions(['setActions', 'setBusiness','setBusinessToParent']),
     checkout () {
       if (!this.branchToCheckout) {
         return
@@ -347,6 +347,8 @@ export default {
       this.isFormChanged? this.showSave = true : this.isCreating = false
     },
     onSaved () {
+      console.log('saved', this.$route.params.id)
+      this.setBusinessToParent(this.$route.params.id)
       this.isCreating = false
       this.getFilials()
       this.isFormChanged = false
