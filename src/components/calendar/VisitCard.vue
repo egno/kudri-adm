@@ -1,6 +1,9 @@
 <template>
-  <!-- todo add delete button for existing break -->
-  <div v-if="visit.j.type === 'break'" class="break-time" @click="selectCurrentBreak" />
+  <div v-if="visit.j.type === 'break'" class="visit-wrapper" @click="selectCurrentBreak">
+    <div class="visit" :style="`height: ${actualContainerHight}px;`">
+      <div :class="['break-time', { _long: visit.j.duration > 15 }]" />
+    </div>
+  </div>
   <div v-else class="visit-wrapper">
     <div
       :style="`height: ${actualContainerHight}px; background: ${bgColor};`"
@@ -189,12 +192,6 @@ export default {
   border-radius: 0;
 }
 
-.break-time {
-  height: 100%;
-  background: url('../../assets/images/svg/cup.svg') center/35px no-repeat rgba(137, 149, 175, 0.2);;
-  border-radius: 4px;
-}
-
 .visit-wrapper {
   position: relative;
   cursor: pointer;
@@ -281,6 +278,14 @@ export default {
     border-left: 2px solid #8995AF;
     .visit__status {
       color: rgba(137, 149, 175, 0.35);
+    }
+  }
+  .break-time {
+    height: 100%;
+    background: url('../../assets/images/svg/cup-big.svg') center/48px no-repeat #e7eaef;
+    border-radius: 4px;
+    &._long {
+      background: url('../../assets/images/svg/cup-title.svg') center/65px 81px no-repeat #e7eaef;
     }
   }
 }

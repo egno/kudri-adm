@@ -285,10 +285,9 @@
         </div>
       </template>
     </Modal>
-    <!--todo add timeout for animation to end -->
     <BreakEdit
-      v-if="currentBreak && selectedEmployee"
-      :break="currentBreak"
+      v-if="selectedEmployee"
+      :work-break="currentBreak"
       :start-time="currentBreak && currentBreak.ts_begin"
       :end-time="currentBreak && currentBreak.ts_end"
       :notes-prop="currentBreak && currentBreak.j.notes"
@@ -298,7 +297,8 @@
       @inputStart="currentBreak.ts_begin = $event"
       @inputEnd="currentBreak.ts_end = $event"
       @inputNotes="addNotesToBreak"
-      @close="showEditBreak = false; breakTime = null; selectBreak(null)"
+      @saved="fetchData"
+      @close="onCloseBreakEdit"
     />
   </div>
 </template>
@@ -530,6 +530,13 @@ export default {
     },
     onAction () {
       this.createVisit()
+    },
+    onCloseBreakEdit () {
+      this.showEditBreak = false
+      this.breakTime = null
+      setTimeout(() => {
+        this.selectBreak(null)
+      }, 300)
     },
     onDayEdit ({ day, isDayOff }) {
       const isWorkingDay = day => day && day[0] && day[1]

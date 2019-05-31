@@ -5,10 +5,13 @@
     max-width="440px"
     @input="$emit('close')"
   >
-    <VForm class="create-break__content uno-modal">
+    <VForm
+      v-if="workBreak"
+      class="create-break__content uno-modal"
+    >
       <button type="button" class="uno-modal__close" @click="$emit('close')" />
       <div class="create-break__header">
-        Добавить перерыв
+        {{ workBreak.id ? 'Изменить перерыв' : 'Добавить перерыв' }}
       </div>
       <div class="create-break__subheader">
         Дата и время
@@ -58,6 +61,7 @@
         <button :disabled="disabled" type="button" class="uno-modal__right" @click="saveBreak">
           Сохранить
         </button>
+        <DeleteButton v-if="workBreak.id" :is-dark="true" @delete="deleteBreak" />
       </div>
     </VForm>
   </v-dialog>
@@ -69,15 +73,16 @@
   import { makeAlert } from '@/api/utils'
   import { dateISOInLocalTimeZone } from '@/components/calendar/utils'
   import Counter from '@/components/common/Counter'
+  import DeleteButton from '@/components/common/DeleteButton'
 
   export default {
-    components: { Counter },
+    components: { Counter, DeleteButton },
     model: {
       prop: 'visible',
       event: 'close'
     },
     props: {
-      break: {
+      workBreak: {
         type: Object,
         default () {
           return {}
@@ -112,10 +117,10 @@
     },
     computed: {
       date () {
-        return this.break && this.break.ts_begin? new Date(Date.parse(this.break.ts_begin)) : new Date()
+        return this.workBreak && this.workBreak.ts_begin? new Date(Date.parse(this.workBreak.ts_begin)) : new Date()
       },
       dateString () {
-        return this.break.ts_begin? this.break.ts_begin.substring(0,10): ''
+        return this.workBreak.ts_begin? this.workBreak.ts_begin.substring(0,10): ''
       },
       disabled () {
         return !this.start || !this.end || !!this.error
@@ -125,10 +130,10 @@
           this.$emit('inputEnd', dateISOInLocalTimeZone(this.addMinutes(newVal)) )
         },
         get () {
-          if (!(this.break && this.break.ts_begin && this.break.ts_end)) {
+          if (!(this.workBreak && this.workBreak.ts_begin && this.workBreak.ts_end)) {
             return 0
           }
-          return (Date.parse(this.break.ts_end) - Date.parse(this.break.ts_begin)) / (1000 * 60)
+          return (Date.parse(this.workBreak.ts_end) - Date.parse(this.workBreak.ts_begin)) / (1000 * 60)
         }
       },
       selectedDateFormatted () {
@@ -145,7 +150,7 @@
           this.$emit('inputStart', newVal? `${this.dateString}T${newVal}:00` : `${this.dateString}T`)
         },
         get () {
-          return this.break && this.break.ts_begin? this.startTime.substring(11,16) : ''
+          return this.workBreak && this.workBreak.ts_begin? this.startTime.substring(11,16) : ''
         }
       },
       end: {
@@ -153,7 +158,7 @@
           this.$emit('inputEnd', newVal? `${this.dateString}T${newVal}:00` : `${this.dateString}T`)
         },
         get () {
-          return this.break && this.break.ts_end? this.endTime.substring(11,16) : ''
+          return this.workBreak && this.workBreak.ts_end? this.endTime.substring(11,16) : ''
         }
       },
       notes: {
@@ -161,7 +166,7 @@
           this.$emit('inputNotes', newVal)
         },
         get () {
-          const n = this.break && this.break.j? this.notesProp : ''
+          const n = this.workBreak && this.workBreak.j? this.notesProp : ''
           return n
         }
       }
@@ -182,17 +187,18 @@
         }
       },
       send () {
-        return this.break.id
+        return this.workBreak.id
           ? Api()
-            .patch(`visit?id=eq.${this.break.id}`, this.break)
+            .patch(`visit?id=eq.${this.workBreak.id}`, this.workBreak)
           : Api()
-            .post('visit', this.break)
+            .post('visit', this.workBreak)
       },
       saveBreak () {
         // todo проверить случай, когда диапазон выходит за пределы рабочего времени
         // todo проверять не перекрывает ли диапазон имеющиеся визиты
         this.send()
           .then(() => {
+            this.$emit('saved')
             this.$emit('close')
           })
           .catch(err => {
@@ -200,7 +206,16 @@
             this.alert(makeAlert(err))
           })
       },
-
+      deleteBreak () {
+        Api()
+          .delete(`visit?id=eq.${this.workBreak.id}`)
+          .then(() => {
+            this.$emit('saved')
+            this.$emit('close')
+          })
+          .catch(err => {
+            this.alert(makeAlert(err))})
+      }
     }
   }
 </script>
@@ -273,9 +288,11 @@
     }
     .uno-modal__right[disabled="disabled"] {
       @extend %button-disabled;
-      @media only screen and (min-width : $desktop) {
-        padding: 0 60px;
-      }
+    }
+    .delete-button {
+      min-width: 56px;
+      margin-left: 12px;
+      padding: 0;
     }
   }
 </style>
