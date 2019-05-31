@@ -221,7 +221,7 @@ export default {
     ...mapState({
       categories: state => state.business.businessCategories
     }),
-    ...mapGetters(['businessId','businessInfo', 'businessIsFilial']),
+    ...mapGetters(['businessId','businessParent','businessInfo', 'businessIsFilial']),
     deleteTemplate () {
       if (!this.branchToDelete || !this.branchToDelete.j || !this.branchToDelete.j.name) {
         return {
@@ -240,7 +240,8 @@ export default {
     }
   },
   watch: {
-    businessId: 'getFilials'
+    businessId: 'getFilials',
+    businessParent: 'goToParent'
   },
   created () {
     this.getFilials()
@@ -302,6 +303,7 @@ export default {
           this.branchesList = res
           this.sortedUniqueCities = [...new Set(res.map(branch => branch.j && branch.j.address && branch.j.address.city))].sort()
           this.groupBranches()
+          this.setBusiness(id)
         })
     },
     groupBranches () {
@@ -343,14 +345,19 @@ export default {
         this.isCreating = true
       }
     },
+    goToParent () {
+      console.log('go to parent', this.businessParent)
+      if (this.businessParent) {
+        console.log('replace', this.businessParent)
+        this.$router.replace({ name: 'filialList', params:{ id: this.businessParent } })
+      }
+    },
     onClose () {
       this.isFormChanged? this.showSave = true : this.isCreating = false
     },
     onSaved () {
-      console.log('saved', this.$route.params.id)
-      this.setBusinessToParent(this.$route.params.id)
-      this.isCreating = false
       this.getFilials()
+      this.isCreating = false
       this.isFormChanged = false
       this.newBranch = null
       this.infoTab = true

@@ -22,6 +22,7 @@ const state = {
 
 const getters = {
   businessId: state => state.businessInfo && state.businessInfo.id,
+  businessParent: state => state.businessInfo && state.businessInfo.parent,
   businessCategories: state => [
     ...state.businessCategories,
     ...state.businessIndividualCategories
@@ -113,7 +114,7 @@ const actions = {
         .get(path)
         .then(res => res.data[0])
         .then(res => {
-          if (res.id) {
+          if (res.parent) {
             dispatch('setBusiness', res.parent)
           }
         })
