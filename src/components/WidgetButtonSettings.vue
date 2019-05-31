@@ -32,7 +32,23 @@
                 </div>
               </v-flex>
               <v-flex pa-2>
-                <ColorSelector @click="color=$event" />
+                <ColorSelector
+                  :colors="[
+                    'C9A15D',
+                    'DFC497',
+                    'F3AA57',
+                    '85CA86',
+                    '49C9B7',
+                    '5A96DF',
+                    '142941',
+                    'F36B6B',
+                    'F37F6B',
+                    'DF8CB2',
+                    'B88AB2',
+                    '8589DF'
+                  ]"
+                  @click="color=$event"
+                />
               </v-flex>
               <v-flex pa-5>
                 <div class="button-container">
