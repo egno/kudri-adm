@@ -63,7 +63,19 @@ const mutations = {
     state.schedule = payload
   },
   MESSAGE_WINDOW (state, payload) {
-    state.messageWindow = !!payload
+    if (payload) {
+      const elem = document.getElementById("amoforms_overlay")
+      elem.style.display='block'
+      elem.style.zIndex='999'
+
+      if (!state.helpListener) {
+        state.helpListener = true
+        elem.addEventListener("click", function () {
+          const elem = document.getElementById("amoforms_overlay")
+          elem.style.display = 'none'
+        }, {capture: true})
+      }
+    }
   },
   PROFILE_DRAWER (state, payload) {
     state.profileDrawer = !!payload

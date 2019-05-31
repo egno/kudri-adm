@@ -6,7 +6,6 @@
       <RouterView />
     </VContent>
     <Alerts />
-    <SendMessage :edit="messageWindow" />
     <UserProfileModal :show="profileDrawer" />
   </VApp>
 </template>
@@ -16,7 +15,6 @@ import UserProfileModal from '@/components/user/UserProfileModal.vue'
 import Navigation from '@/components/Navigation.vue'
 import TopBar from '@/components/TopBar.vue'
 import Alerts from '@/components/Alerts.vue'
-import SendMessage from '@/components/SendMessage.vue'
 import router from '@/router'
 import { mapActions, mapGetters } from 'vuex'
 import { setTimeout, clearTimeout } from 'timers'
@@ -31,7 +29,6 @@ export default {
   components: {
     Alerts,
     Navigation,
-    SendMessage,
     TopBar,
     UserProfileModal
   },
