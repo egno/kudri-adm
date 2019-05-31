@@ -285,8 +285,9 @@
         </div>
       </template>
     </Modal>
+    <!--todo add timeout for animation to end -->
     <BreakEdit
-      v-if="selectedEmployee"
+      v-if="currentBreak && selectedEmployee"
       :break="currentBreak"
       :start-time="currentBreak && currentBreak.ts_begin"
       :end-time="currentBreak && currentBreak.ts_end"
@@ -471,9 +472,14 @@ export default {
       }
     },
     createBreak (date) {
-      let newBreak = visitInit({ ts_begin: dateISOInLocalTimeZone(date) })
+      let newBreak = visitInit({
+        ts_begin: dateISOInLocalTimeZone(date),
+        business_id: this.selectedEmployee.id,
+        j: {
+          type: 'break'
+        }
+      })
 
-      newBreak.ts_begin = date.toISOString()
       this.breakTime = date
       this.selectBreak(newBreak)
     },

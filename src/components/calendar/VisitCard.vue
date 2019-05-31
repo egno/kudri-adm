@@ -191,7 +191,8 @@ export default {
 
 .break-time {
   height: 100%;
-  background: url('../../assets/images/svg/cup.svg') center/35px no-repeat;
+  background: url('../../assets/images/svg/cup.svg') center/35px no-repeat rgba(137, 149, 175, 0.2);;
+  border-radius: 4px;
 }
 
 .visit-wrapper {
