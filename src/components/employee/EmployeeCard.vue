@@ -27,7 +27,7 @@
           </template>
           <span>Журнал записей мастера</span>
         </VTooltip>
-        <DeleteButton :is-dark="true" delete-text="Удалить сотрудника" @delete="$emit('delete')" />
+        <DeleteButton :is-dark="true" delete-text="Удалить сотрудника" @click.native.stop="$emit('delete')" />
       </div>
     </div>
   </div>
