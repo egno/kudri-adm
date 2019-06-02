@@ -202,7 +202,7 @@ export default {
   },
   computed: {
     ...mapState({ businessServices: state => state.business.businessServices }),
-    ...mapGetters(['businessId']),
+    ...mapGetters(['businessId', 'businessInfo']),
     breadcrumbs () {
       const businessId = this.id
       const employeeId = this.employeeId
@@ -261,6 +261,14 @@ export default {
     },
     phone () {
       return this.employee.j && this.employee.j.phones && this.employee.j.phones[0]
+    },
+    workDaysCount () {
+      const schedule = this.employee.j.schedule
+      if (!schedule || !schedule.data || !schedule.data.length) {
+        return 0
+      }
+
+      return schedule.data.filter(day => day && day.start && day.end).length
     }
   },
   watch: {
@@ -365,6 +373,11 @@ export default {
           this.employee.services = this.employee.services && this.employee.services.length
             ? this.employee.services.map(s => s && (typeof s === 'object')? s.id : s).filter(s => !!s)
             : []
+          
+          if (!this.workDaysCount) {
+            this.employee.j.schedule = this.employee.j.schedule || { data: [], type: 'week' }
+            this.employee.j.schedule.data = this.businessInfo.j.schedule.data
+          }
 
           this.employee.save().then(id => {
             if (this.employeeId === 'new') {
