@@ -57,6 +57,11 @@ export function conjugateServices (n) {
   return numberText(n, forms)
 }
 
+export function conjugateVisits (n) {
+  const forms = ["визит", "визита", "визитов", "Нет визитов"]
+  return numberText(n, forms)
+}
+
 export function widgetHost () {
   let host = window.location.host
   // set host address for debug
