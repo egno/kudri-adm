@@ -197,7 +197,8 @@
       validate () {
         const endTime = this.endTime
         const existingVisit = this.dayVisits.find(v =>
-          (endTime > v.ts_begin && endTime <= v.ts_end) || (this.startTime < v.ts_begin && endTime > v.ts_end)
+          v.id !== this.workBreak.id &&
+          ((endTime > v.ts_begin && endTime <= v.ts_end) || (this.startTime < v.ts_begin && endTime > v.ts_end))
         )
 
         this.error = ''
