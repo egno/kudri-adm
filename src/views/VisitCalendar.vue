@@ -534,7 +534,7 @@ export default {
 
       nextMonday.setDate(sunday.date.getDate() + 1)
       Api() 
-        .get(`/business_calendar?business_id=eq.${this.selectedEmployee.id}&changed=eq.true&dt=gt.${this.selectedWeek[0].dateKey}&dt=lt.${formatDate(nextMonday)}`)
+        .get(`/business_calendar?business_id=eq.${this.selectedEmployee.id}&changed=eq.true&dt=gte.${this.selectedWeek[0].dateKey}&dt=lt.${formatDate(nextMonday)}`)
         .then(({ data }) => {
           this.irregularDays = data.map(x => ({ date: x.dt, schedule: x.j.schedule, employeeId: x.business_id }))
         })
