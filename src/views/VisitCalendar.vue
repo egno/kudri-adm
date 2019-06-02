@@ -273,15 +273,31 @@
       :visible="showSuccessModal"
       :template="{
         header: 'Запись создана',
-        rightButton: 'Ок'
+        rightButton: 'Понятно'
       }"
-      content-class="create-visit-success"
+      content-class="modal-notification"
       @rightButtonClick="closeModal"
       @close="closeModal"
     >
       <template slot="text">
-        <div class="create-visit-success__content">
+        <div class="modal-notification__content">
           Запись на <b>{{ successTemplate.date }} {{ successTemplate.time }}</b> к мастеру <b>{{ successTemplate.master }}</b> успешно создана.
+        </div>
+      </template>
+    </Modal>
+    <Modal
+      :visible="notifyHasVisits"
+      :template="{
+        header: 'На этот день есть записи!',
+        rightButton: 'Понятно'
+      }"
+      content-class="modal-notification"
+      @rightButtonClick="notifyHasVisits = false"
+      @close="notifyHasVisits = false"
+    >
+      <template slot="text">
+        <div class="modal-notification__content">
+          Прежде чем изменить рабочее время, вам необходимо удалить или изменить время записи.
         </div>
       </template>
     </Modal>
@@ -1016,9 +1032,15 @@ export default {
     }
   }
 
-  .create-visit-success {
+  .modal-notification {
     &__content {
       margin-top: 30px;
+    }
+    .uno-modal {
+      background: url('../assets/images/svg/broken.svg') center 52px no-repeat #fff;
+    }
+    .uno-modal__header {
+      margin-top: 78px;
     }
     .uno-modal__buttons {
       justify-content: center;
