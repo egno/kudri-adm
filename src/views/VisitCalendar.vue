@@ -185,7 +185,7 @@
               :now="now"
               :holiday="isHoliday(day.dateKey)"
               :visits="dayVisits(day.dateKey, selectedEmployee)"
-              :employee-schedule="isIrregularDay(day.dateKey)? isIrregularDay(day.dateKey).schedule : selectedEmployee.j.schedule.data[i]"
+              :employee-schedule="getIrregularDay(day.dateKey)? getIrregularDay(day.dateKey).schedule : selectedEmployee.j.schedule.data[i]"
               :display-from="displayTimes.start"
               :display-to="displayTimes.end"
               @onSlotClick="createVisit"
@@ -380,7 +380,8 @@ export default {
   },
   computed: {
     ...mapState({
-      businessEmployees: state => state.business.businessEmployees
+      businessEmployees: state => state.business.businessEmployees,
+      businessServices: state => state.business.businessServices
     }),
     ...mapGetters(['businessSchedule', 'selectedBreak', 'selectedVisit', 'businessInfo']),
     empCategories () { // todo make a mixin
@@ -431,6 +432,7 @@ export default {
       deep: true
     },
     businessEmployees: 'initEmployee',
+    businessServices: 'initEmployee',
     selectedBreak () {
       if (this.selectedBreak) {
         this.currentBreak = { ...this.selectedBreak, j: { ...this.selectedBreak.j } }
@@ -540,7 +542,23 @@ export default {
         })
     },
     initEmployee () {
-      this.selectedEmployee = this.businessEmployees && this.businessEmployees.find(e => e.j.services && e.j.services.length)
+      if (!this.businessEmployees || !this.businessEmployees.length ||
+        !this.businessServices || !this.businessServices.length) {
+        return
+      }
+      const serviceWithEmployee = this.businessServices && this.businessServices.find(s =>  s.j.employees && s.j.employees.length)
+
+      if (!serviceWithEmployee) {
+        return
+      }
+      for (let id of serviceWithEmployee.j.employees) {
+        const employee = this.businessEmployees.find(e => e.id === id)
+
+        if (employee) {
+          this.selectedEmployee = employee
+          break
+        }
+      }
     },
     onAction () {
       this.createVisit()
