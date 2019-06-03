@@ -78,6 +78,7 @@
                 :branch="item"
                 :pinned="item.id === businessId"
                 :is-editable="!businessIsFilial"
+                :can-delete="filialCount > 1"
                 @click="showCheckoutDialog(item)"
                 @delete="showDeleteDialog(item)"
               >
@@ -111,6 +112,7 @@
               :branch="item"
               :pinned="item.id === businessId"
               :is-editable="!businessIsFilial"
+              :can-delete="filialCount > 1"
               @click="showCheckoutDialog(item)"
               @delete="showDeleteDialog(item)"
             >
@@ -222,6 +224,9 @@ export default {
       categories: state => state.business.businessCategories
     }),
     ...mapGetters(['businessId','businessParent','businessInfo', 'businessIsFilial']),
+    filialCount () {
+      return this.branchesList && this.branchesList.length
+    },
     deleteTemplate () {
       if (!this.branchToDelete || !this.branchToDelete.j || !this.branchToDelete.j.name) {
         return {
@@ -311,10 +316,7 @@ export default {
         'Другие': []
       }
       this.branchesList.forEach(branch => {
-        if (!branch.j || !branch.j.address) {
-          return
-        }
-        if (branch.j.address.city) {
+        if ( branch.j && branch.j.address && branch.j.address.city) {
           const city = branch.j.address.city
 
           if (!this.branchesByCities[city]) {

@@ -157,6 +157,13 @@ export default {
         this.businessInfo.type === null
       )
     },
+    hasName () {
+      return (
+        this.businessInfo &&
+        this.businessInfo.j &&
+        this.businessInfo.j.name
+      )
+    },
     menu () {
       return [
         {
@@ -194,7 +201,7 @@ export default {
             name: 'filialList',
             params: { id: this.businessId }
           },
-          show: this.hasCompanyLevelAccess && !this.businessIsFilial,
+          show: this.hasCompanyLevelAccess && this.hasName && !this.businessIsFilial,
           action: {
             label: 'Добавить филиал',
             action: 'newFilial',
@@ -209,6 +216,7 @@ export default {
           },
           show:
             this.hasSalonLevelAccess &&
+            this.hasName &&
             !this.businessIsFilial &&
             this.loggedIn &&
             !this.isManagerMenu &&
@@ -223,7 +231,7 @@ export default {
             name: 'services',
             params: { id: this.businessId }
           },
-          show: this.hasSalonLevelAccess && !this.isManagerMenu,
+          show: this.hasSalonLevelAccess && this.hasName && !this.isManagerMenu ,
           action: {
             label: 'Добавить услугу',
             action: 'newService',
@@ -239,6 +247,7 @@ export default {
           },
           show:
             this.hasSalonLevelAccess &&
+            this.hasName &&
             !this.isManagerMenu,
           action: {
             label: 'Добавить сотрудника',
@@ -266,7 +275,7 @@ export default {
             name: 'BusinessClientsTable',
             params: { id: this.businessId }
           },
-          show: (this.hasCompanyLevelAccess || this.hasSalonLevelAccess) && this.isEditorUser,
+          show: this.hasSalonLevelAccess && this.hasName && this.isEditorUser,
           action: {
             label: 'Добавить клиента',
             action: 'newClient',
@@ -283,7 +292,7 @@ export default {
             name: 'visitCalendar',
             params: { id: this.businessId, date: this.date }
           },
-          show: this.hasSalonLevelAccess && !this.isManagerMenu,
+          show: this.hasSalonLevelAccess && this.hasName && !this.isManagerMenu,
           action: {
             label: 'Добавить запись',
             action: 'newVisit',
@@ -298,6 +307,7 @@ export default {
             params: { id: this.businessId }
           },
           show: !this.businessIsFilial &&
+          this.hasName &&
             !this.isManagerMenu && 
             this.loggedIn && 
             (this.userRole === 'manager' || this.userRole === 'admin' || this.user.role === 'Администратор компании')
@@ -311,6 +321,7 @@ export default {
           },
           show:
             (this.hasCompanyLevelAccess) &&
+            this.hasName &&
             !this.isManagerMenu &&
             (this.userRole === 'manager' ||
               this.userRole === 'admin' ||
