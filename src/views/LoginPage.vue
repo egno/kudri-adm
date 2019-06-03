@@ -3,11 +3,14 @@
     fluid
     fill-height
     justify-center
-    class="login-container"
+    class="login-page"
   >
-    <div>
+    <div class="login-page__container">
+      <h1 class="login-page__heading">
+        Авторизация
+      </h1>
       <Login />
-      <router-link :to="{ name: 'register'}" class="login-container__no-account">
+      <router-link :to="{ name: 'register'}" class="login-page__no-account">
         Ещё нет аккаунта? Зарегистрировать
       </router-link>
     </div>
@@ -24,14 +27,38 @@ export default {
 }
 </script>
 
-<style>
-  .login-container ._login {
-    margin-top: -40px;
-  }
-  .login-container__no-account {
-    text-decoration: none;
-  }
-  .login-container .login-form {
-    margin-bottom: 10px;
+<style lang="scss">
+  .login-page {
+    &__container {
+      margin-top: -60px;
+    }
+    &__heading {
+      margin-bottom: 23px;
+      font-family: Roboto Slab;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 24px;
+      text-align: center;
+      color: #07101C;
+    }
+    &__no-account {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .login-form {
+      margin-bottom: 20px;
+    }
+    input {
+      width: 280px;
+      padding: 8px 0 7px;
+    }
+    .businesscard-form__field:first-child {
+      margin-bottom: 38px;
+    }
+    .save-info {
+      margin-top: 32px;
+    }
   }
 </style>

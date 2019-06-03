@@ -47,7 +47,7 @@
           :rules="[ rules.required ]"
         />
         <div>
-          <a @click="goRestorePassword">
+          <a class="login-form__restore-link" @click="goRestorePassword">
             Забыли пароль?
           </a>
         </div>
@@ -183,6 +183,10 @@ export default {
 ._login {
   .businesscard-form__field {
     margin-top: 0;
+  }
+  .login-form__restore-link {
+    display: block;
+    text-align: center;
   }
 }
 </style>

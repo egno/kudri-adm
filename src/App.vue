@@ -458,6 +458,14 @@ export default {
     font-style: normal;
     font-weight: 300;
     line-height: normal;
+    &.v-label {
+      max-width: 100%;
+      padding-left: 0;
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+    }
     &.v-label--active {
       opacity: 1;
       font-size: 10px;
