@@ -4,28 +4,19 @@
     <VCard v-if="loaded && loggedIn===true">
       <VCardTitle primary-title>
         <div>
-          <h3 class="headline mb-0">
-            Выйти из личного кабинета?
-          </h3>
           <div>
-            Сейчас вы авторизованы как
+            Вы авторизованы как
             <span class="font-weight-medium">
               {{ userID }}
             </span>
           </div>
+          <div>
+            Подождите, идет загрузка
+          </div>
         </div>
       </VCardTitle>
-      <VCardActions>
-        <VSpacer />
-        <VBtn
-          color="primary"
-          @click="sendLogout"
-        >
-          Выйти
-        </VBtn>
-      </VCardActions>
     </VCard>
-    <div v-if="loaded && loggedIn===false">
+    <div v-if="!isLoading && loaded && loggedIn===false">
       <VForm class="businesscard-form _login">
         <VTextField
           v-model="flogin"
@@ -47,7 +38,10 @@
           :rules="[ rules.required ]"
         />
         <div>
-          <a class="login-form__restore-link" @click="goRestorePassword">
+          <a
+            class="login-form__restore-link"
+            @click="goRestorePassword"
+          >
             Забыли пароль?
           </a>
         </div>
@@ -59,6 +53,12 @@
           Вход
         </MainButton>
       </VForm>
+      <router-link
+        :to="{ name: 'register'}"
+        class="login-page__no-account"
+      >
+        Ещё нет аккаунта? Зарегистрировать
+      </router-link>
     </div>
   </div>
 </template>
@@ -73,7 +73,7 @@ import { formatDate } from '@/components/calendar/utils'
 
 export default {
   components: { MainButton, Spinner },
-  mixins: [ Users ],
+  mixins: [Users],
   props: {
     source: { type: String, default: () => '' }
   },
@@ -141,11 +141,11 @@ export default {
             if (this.user.business.length === 1) {
               this.$router.push({
                 name: 'visitCalendar',
-                params: { 
+                params: {
                   id: filial.id,
                   date: formatDate(new Date())
                 }
-              })              
+              })
             } else {
               this.$router.push({
                 name: 'filialList',

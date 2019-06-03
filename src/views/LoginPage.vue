@@ -10,9 +10,6 @@
         Авторизация
       </h1>
       <Login />
-      <router-link :to="{ name: 'register'}" class="login-page__no-account">
-        Ещё нет аккаунта? Зарегистрировать
-      </router-link>
     </div>
   </VContainer>
 </template>
