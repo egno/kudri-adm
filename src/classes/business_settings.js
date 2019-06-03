@@ -162,6 +162,9 @@ class BusinessSettings extends ApiObject {
     } else {
       return Api()
         .patch(`business_settings?id=eq.${this.id}`, this.jsonObject)
+        .then(() => {
+          store.dispatch('alert', makeAlert('Сохранено успешно'))
+        })
         .catch(err => {
           store.dispatch('alert', makeAlert(err))
           return false
