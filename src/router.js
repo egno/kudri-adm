@@ -149,6 +149,11 @@ export default new Router({
       component: () => import('./views/BusinessSettings.vue')
     },
     {
+      path: '/businessCard/w/:id',
+      name: 'widgetSettings',
+      component: () => import('./views/WidgetSettings.vue')
+    },
+    {
       path: '/managerCard',
       name: 'managerCard',
       component: () => import('./views/ManagerCard.vue')

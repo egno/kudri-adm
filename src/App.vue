@@ -6,7 +6,6 @@
       <RouterView />
     </VContent>
     <Alerts />
-    <SendMessage :edit="messageWindow" />
     <UserProfileModal :show="profileDrawer" />
   </VApp>
 </template>
@@ -16,7 +15,6 @@ import UserProfileModal from '@/components/user/UserProfileModal.vue'
 import Navigation from '@/components/Navigation.vue'
 import TopBar from '@/components/TopBar.vue'
 import Alerts from '@/components/Alerts.vue'
-import SendMessage from '@/components/SendMessage.vue'
 import router from '@/router'
 import { mapActions, mapGetters } from 'vuex'
 import { setTimeout, clearTimeout } from 'timers'
@@ -31,7 +29,6 @@ export default {
   components: {
     Alerts,
     Navigation,
-    SendMessage,
     TopBar,
     UserProfileModal
   },
@@ -430,12 +427,14 @@ export default {
     border-bottom: 1px solid #5699ff !important;
   }
   textarea {
+    padding-top: 12px;
     font-family: Lato;
     font-style: normal;
-    font-weight: 300;
+    font-weight: normal;
     line-height: normal;
-    font-size: 13px;
+    font-size: 14px;
     color: #07101c;
+    text-align: center;
     &::placeholder {
       color: rgba(7, 16, 28, 0.35) !important;
       font-size: 13px;
@@ -461,7 +460,7 @@ export default {
     line-height: normal;
     &.v-label--active {
       opacity: 1;
-      font-size: 11px;
+      font-size: 10px;
       color: rgba(7, 16, 28, 0.35) !important;
       transform: scale(1) translateY(-18px);
     }

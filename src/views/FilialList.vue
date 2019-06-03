@@ -78,6 +78,7 @@
                 :branch="item"
                 :pinned="item.id === businessId"
                 :is-editable="!businessIsFilial"
+                :can-delete="filialCount > 1"
                 @click="showCheckoutDialog(item)"
                 @delete="showDeleteDialog(item)"
               >
@@ -111,6 +112,7 @@
               :branch="item"
               :pinned="item.id === businessId"
               :is-editable="!businessIsFilial"
+              :can-delete="filialCount > 1"
               @click="showCheckoutDialog(item)"
               @delete="showDeleteDialog(item)"
             >
@@ -221,7 +223,10 @@ export default {
     ...mapState({
       categories: state => state.business.businessCategories
     }),
-    ...mapGetters(['businessId','businessInfo', 'businessIsFilial']),
+    ...mapGetters(['businessId','businessParent','businessInfo', 'businessIsFilial']),
+    filialCount () {
+      return this.branchesList && this.branchesList.length
+    },
     deleteTemplate () {
       if (!this.branchToDelete || !this.branchToDelete.j || !this.branchToDelete.j.name) {
         return {
@@ -240,7 +245,8 @@ export default {
     }
   },
   watch: {
-    businessId: 'getFilials'
+    businessId: 'getFilials',
+    businessParent: 'goToParent'
   },
   created () {
     this.getFilials()
@@ -253,7 +259,7 @@ export default {
     this.$root.$off('onAction', this.createBranch)
   },
   methods: {
-    ...mapActions(['setActions', 'setBusiness']),
+    ...mapActions(['setActions', 'setBusiness','setBusinessToParent']),
     checkout () {
       if (!this.branchToCheckout) {
         return
@@ -302,6 +308,7 @@ export default {
           this.branchesList = res
           this.sortedUniqueCities = [...new Set(res.map(branch => branch.j && branch.j.address && branch.j.address.city))].sort()
           this.groupBranches()
+          this.setBusiness(id)
         })
     },
     groupBranches () {
@@ -309,10 +316,7 @@ export default {
         'Другие': []
       }
       this.branchesList.forEach(branch => {
-        if (!branch.j || !branch.j.address) {
-          return
-        }
-        if (branch.j.address.city) {
+        if ( branch.j && branch.j.address && branch.j.address.city) {
           const city = branch.j.address.city
 
           if (!this.branchesByCities[city]) {
@@ -343,12 +347,19 @@ export default {
         this.isCreating = true
       }
     },
+    goToParent () {
+      console.log('go to parent', this.businessParent)
+      if (this.businessParent) {
+        console.log('replace', this.businessParent)
+        this.$router.replace({ name: 'filialList', params:{ id: this.businessParent } })
+      }
+    },
     onClose () {
       this.isFormChanged? this.showSave = true : this.isCreating = false
     },
     onSaved () {
-      this.isCreating = false
       this.getFilials()
+      this.isCreating = false
       this.isFormChanged = false
       this.newBranch = null
       this.infoTab = true

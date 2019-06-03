@@ -25,6 +25,7 @@ const state = {
 
   schedule: [],
   searchString: '',
+  selectedBreak: undefined,
   selectedVisit: undefined,
   token: ''
 }
@@ -48,6 +49,7 @@ const getters = {
   navBarVisible: state => state.navBarVisible,
   schedule: state => state.schedule,
   searchString: state => state.searchString,
+  selectedBreak: state => state.selectedBreak,
   selectedVisit: state => state.selectedVisit,
   token: state => {
     return state.token
@@ -63,7 +65,19 @@ const mutations = {
     state.schedule = payload
   },
   MESSAGE_WINDOW (state, payload) {
-    state.messageWindow = !!payload
+    if (payload) {
+      const elem = document.getElementById("amoforms_overlay")
+      elem.style.display='block'
+      elem.style.zIndex='999'
+
+      if (!state.helpListener) {
+        state.helpListener = true
+        elem.addEventListener("click", function () {
+          const elem = document.getElementById("amoforms_overlay")
+          elem.style.display = 'none'
+        }, {capture: true})
+      }
+    }
   },
   PROFILE_DRAWER (state, payload) {
     state.profileDrawer = !!payload
@@ -71,6 +85,9 @@ const mutations = {
   NAVBAR (state, payload) {
     var status = payload == undefined ? !state.navBarVisible : payload
     state.navBarVisible = status
+  },
+  SELECT_BREAK (state, payload) {
+    state.selectedBreak = payload
   },
   SELECT_VISIT (state, payload) {
     state.selectedVisit = payload
@@ -98,7 +115,6 @@ const mutations = {
       localStorage.removeItem('accessToken')
     }
   },
-
   SHOW_NAVBAR (state) {
     state.navBarVisible = true
   }
@@ -113,6 +129,9 @@ const actions = {
   },
   closeProfileDrawer ({ commit }) {
     commit('PROFILE_DRAWER', false)
+  },
+  selectBreak ({ commit }, payload) {
+    commit('SELECT_BREAK', payload)
   },
   selectVisit ({ commit }, payload) {
     commit('SELECT_VISIT', payload)

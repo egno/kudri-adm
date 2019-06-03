@@ -27,7 +27,7 @@
         </div>
       </div>
       <template v-show="editMode">
-        <DeleteButton @delete="$emit('delete')" />
+        <DeleteButton @click.native.stop="$emit('delete')" />
       </template>
     </div>
     <div class="service-card__selection" />

@@ -69,7 +69,14 @@
                 {{ dateMonthHeader }}
               </div>
             </div>
-            <div class="calendar-controls__right">
+            <VLayout row align-center class="calendar-controls__right">
+              <router-link
+                :disabled="selectedDateObj.dateKey === todayString"
+                class="calendar-controls__today"
+                :to="{ name: 'visitCalendar', params: { id: businessId, date: todayString } }"
+              >
+                Сегодня
+              </router-link>
               <div class="calendar-controls__toggle desktop">
                 <input id="day-mode" v-model="displayMode" type="radio" value="day">
                 <label for="day-mode">День</label>
@@ -85,7 +92,7 @@
               >
                 <v-icon>navigate_next</v-icon>
               </v-btn>
-            </div>
+            </VLayout>
           </VLayout>
           <VLayout row justify-space-between class="calendar-controls__days">
             <div 
@@ -178,10 +185,11 @@
               :now="now"
               :holiday="isHoliday(day.dateKey)"
               :visits="dayVisits(day.dateKey, selectedEmployee)"
-              :employee-schedule="selectedEmployee.j.schedule.data[i]"
+              :employee-schedule="getIrregularDay(day.dateKey)? getIrregularDay(day.dateKey).schedule : selectedEmployee.j.schedule.data[i]"
               :display-from="displayTimes.start"
               :display-to="displayTimes.end"
               @onSlotClick="createVisit"
+              @onBreakClick="createBreak"
               @onDayEdit="onDayEdit"
               @makeDayOffTry="notifyHasVisits = true"
             />
@@ -252,7 +260,7 @@
       v-if="currentVisit"
       :id="currentVisit.id"
       :visible="edit"
-      :business-info="businessInfo"
+      :company-id="businessInfo.parent? businessInfo.parent : businessId"
       :employees="businessEmployees.filter(e => e.j.services && e.j.services.length)"
       :employee="selectedEmployee"
       :visit="currentVisit"
@@ -260,6 +268,53 @@
       @onSave="onVisitSave"
       @delete="onDelete"
       @close="edit=false; currentVisit = null; selectVisit(null)"
+    />
+    <Modal
+      :visible="showSuccessModal"
+      :template="{
+        header: 'Запись создана',
+        rightButton: 'Понятно'
+      }"
+      content-class="modal-notification"
+      @rightButtonClick="closeModal"
+      @close="closeModal"
+    >
+      <template slot="text">
+        <div class="modal-notification__content">
+          Запись на <b>{{ successTemplate.date }} {{ successTemplate.time }}</b> к мастеру <b>{{ successTemplate.master }}</b> успешно создана.
+        </div>
+      </template>
+    </Modal>
+    <Modal
+      :visible="notifyHasVisits"
+      :template="{
+        header: 'На этот день есть записи!',
+        rightButton: 'Понятно'
+      }"
+      content-class="modal-notification"
+      @rightButtonClick="notifyHasVisits = false"
+      @close="notifyHasVisits = false"
+    >
+      <template slot="text">
+        <div class="modal-notification__content">
+          Прежде чем изменить рабочее время, вам необходимо удалить или изменить время записи.
+        </div>
+      </template>
+    </Modal>
+    <BreakEdit
+      v-if="selectedEmployee"
+      :work-break="currentBreak"
+      :start-time="currentBreak && currentBreak.ts_begin"
+      :end-time="currentBreak && currentBreak.ts_end"
+      :notes-prop="currentBreak && currentBreak.j.notes"
+      :visible="showEditBreak"
+      :employee-id="selectedEmployee.id"
+      :employee-visits="visits.filter(v => v.business_id === selectedEmployee.id)"
+      @inputStart="currentBreak.ts_begin = $event"
+      @inputEnd="onInputBreakEnd"
+      @inputNotes="addNotesToBreak"
+      @saved="fetchData"
+      @close="onCloseBreakEdit"
     />
   </div>
 </template>
@@ -273,11 +328,13 @@ import AppCheckbox from '@/components/common/AppCheckbox.vue'
 import Avatar from '@/components/avatar/Avatar.vue'
 import CalendarDayColumn from '@/components/calendar/CalendarDayColumn.vue'
 import EmployeeCard from '@/components/employee/EmployeeCard.vue'
-import { 
+import BreakEdit from '@/components/calendar/BreakEdit.vue'
+import {
   ceilMinutes, 
   dateISOInLocalTimeZone, 
   formatDate, 
-  hyphenStrToDay, 
+  hyphenStrToDay,
+  hyphensStringToDate,
   getWeek, 
   visitInit 
 } from '@/components/calendar/utils'
@@ -285,15 +342,16 @@ import VisitEdit from '@/components/calendar/VisitEdit.vue'
 import { makeAlert } from '@/api/utils'
 import Visit from '@/classes/visit'
 import { setInterval, clearInterval } from 'timers'
+import Modal from '@/components/common/Modal'
 
 import calendarMixin from '@/mixins/calendar'
 
 export default {
-  components: { Accordion, AppCheckbox, Avatar, EmployeeCard, MainButton, CalendarDayColumn, VisitEdit },
+  components: { Accordion, AppCheckbox, Avatar, BreakEdit, EmployeeCard, MainButton, Modal, CalendarDayColumn, VisitEdit },
   mixins: [ calendarMixin ],
   data () {
     return {
-      businessInfo: {},
+      currentBreak: undefined,
       currentVisit: undefined,
       displayMode: 'week', /* day or week */
       dow: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
@@ -307,7 +365,14 @@ export default {
       formActions: [
         { label: 'Добавить запись', action: 'newVisit', default: true }
       ],
+      showEditBreak: false,
       showEmployeeSelection: false,
+      showSuccessModal: false,
+      successTemplate : {
+        master: '',
+        date: '',
+        time: ''
+      },
       timerId: null,
       visits: [],
       irregularDays: []
@@ -315,9 +380,10 @@ export default {
   },
   computed: {
     ...mapState({
-      businessEmployees: state => state.business.businessEmployees
+      businessEmployees: state => state.business.businessEmployees,
+      businessServices: state => state.business.businessServices
     }),
-    ...mapGetters(['businessSchedule', 'selectedVisit']),
+    ...mapGetters(['businessSchedule', 'selectedBreak', 'selectedVisit', 'businessInfo']),
     empCategories () { // todo make a mixin
       return [
         ...new Set(
@@ -355,6 +421,9 @@ export default {
       })
 
       return { start, end }
+    },
+    todayString () {
+      return formatDate(this.now)
     }
   },
   watch: {
@@ -363,6 +432,16 @@ export default {
       deep: true
     },
     businessEmployees: 'initEmployee',
+    businessServices: 'initEmployee',
+    selectedBreak () {
+      if (this.selectedBreak) {
+        this.currentBreak = { ...this.selectedBreak, j: { ...this.selectedBreak.j } }
+        this.showEditBreak = true
+      } else {
+        this.currentBreak = null
+        this.showEditBreak = false
+      }
+    },
     selectedVisit () {
       if (this.selectedVisit) {
         this.currentVisit = this.selectedVisit
@@ -390,13 +469,35 @@ export default {
     clearInterval(this.timerId)
   },
   methods: {
-    ...mapActions(['alert', 'setActions', 'setBusiness', 'selectVisit']),
+    ...mapActions(['alert', 'setActions', 'setBusiness', 'selectBreak', 'selectVisit']),
+    addNotesToBreak (payload) {
+      this.currentBreak.j.notes = payload
+    },
     changeWeek (vector) {
       let dt = new Date(this.actualDate)
 
       dt.setDate(dt.getDate() + 7*vector)
       this.goDate(formatDate(dt))
       this.setDates()
+    },
+    closeModal () {
+      this.showSuccessModal = false
+      this.successTemplate = {
+        master: '',
+        date: '',
+        time: ''
+      }
+    },
+    createBreak (date) {
+      let newBreak = visitInit({
+        ts_begin: dateISOInLocalTimeZone(date),
+        business_id: this.selectedEmployee.id,
+        j: {
+          type: 'break'
+        }
+      })
+
+      this.selectBreak(newBreak)
     },
     createVisit (date) {
       let visit = visitInit({ ts_begin: dateISOInLocalTimeZone(ceilMinutes(new Date())) })
@@ -430,20 +531,42 @@ export default {
         return
       }
       const sunday = this.selectedWeek[6]
-      const nextMonday = new Date()
+      const nextMonday = new Date(sunday.date)
 
       nextMonday.setDate(sunday.date.getDate() + 1)
       Api() 
-        .get(`/business_calendar?business_id=eq.${this.selectedEmployee.id}&changed=eq.true&dt=gt.${this.selectedWeek[0].dateKey}&dt=lt.${formatDate(nextMonday)}`)
+        .get(`/business_calendar?business_id=eq.${this.selectedEmployee.id}&changed=eq.true&dt=gte.${this.selectedWeek[0].dateKey}&dt=lt.${formatDate(nextMonday)}`)
         .then(({ data }) => {
-          this.irregularDays = data
+          this.irregularDays = data.map(x => ({ date: x.dt, schedule: x.j.schedule, employeeId: x.business_id }))
         })
     },
     initEmployee () {
-      this.selectedEmployee = this.businessEmployees && this.businessEmployees.find(e => e.j.services && e.j.services.length)
+      if (!this.businessEmployees || !this.businessEmployees.length ||
+        !this.businessServices || !this.businessServices.length) {
+        return
+      }
+      const serviceWithEmployee = this.businessServices && this.businessServices.find(s =>  s.j.employees && s.j.employees.length)
+
+      if (!serviceWithEmployee) {
+        return
+      }
+      for (let id of serviceWithEmployee.j.employees) {
+        const employee = this.businessEmployees.find(e => e.id === id)
+
+        if (employee) {
+          this.selectedEmployee = employee
+          break
+        }
+      }
     },
     onAction () {
       this.createVisit()
+    },
+    onCloseBreakEdit () {
+      this.showEditBreak = false
+      setTimeout(() => {
+        this.selectBreak(null)
+      }, 300)
     },
     onDayEdit ({ day, isDayOff }) {
       const isWorkingDay = day => day && day[0] && day[1]
@@ -456,6 +579,9 @@ export default {
           {
             j: { schedule: isDayOff? averageDay: [] }
           })
+        .then(() => {
+          this.getIrregularDays()
+        })
     },
     onGroupsChange (category, selected) {
       if (selected) {
@@ -468,17 +594,26 @@ export default {
         }
       }
     },
-    onSelectEmployee (payload) {
-      this.selectedEmployee = payload
+    onInputBreakEnd (payload) {
+      const time = payload.substring(11,16)
+      const endOfWorkDay = this.displayTimes.end
+
+      this.currentBreak.ts_end = (time <= endOfWorkDay)? payload : `${payload.substring(0, 10)}T${endOfWorkDay}`
     },
     onVisitSave (payload) {
-      //todo move saving into Visit class 
+      //todo move saving into Visit class
+
       this.editVisitPage = undefined
+      this.successTemplate.date = hyphensStringToDate(payload.ts_begin.substring(0, 10)).toLocaleString('ru-RU', { day: 'numeric', month: 'long', weekday: 'short' })
+      this.successTemplate.time = payload.ts_begin.substring(11, 16)
+      this.successTemplate.master = this.selectedEmployee.j.name
       this.sendData(payload)
         .then(() => {
           this.edit = false
           this.selectVisit(null)
+          this.showSuccessModal = true
         })
+        .then(() => this.fetchData())
         .catch(err => {
           this.alert(makeAlert(err))
           if (
@@ -506,11 +641,9 @@ export default {
       if (data && data.id) {
         return Api()
           .patch(`visit?id=eq.${data.id}`, data)
-          .then(() => this.fetchData())
       } else {
         return Api()
           .post('visit', data)
-          .then(() => this.fetchData())
       }
     },
     updateStatus () {
@@ -522,6 +655,8 @@ export default {
 
 <style lang="scss">
   @import '../assets/styles/common';
+  @import '../assets/styles/day-schedule';
+
   %round-arrow-button {
     float: left;
     min-width: 0;
@@ -567,7 +702,13 @@ export default {
         flex-grow: 1;
         display: flex;
         align-items: center;
-      } 
+        @media only screen and (min-width : $desktop) {
+          padding-left: 11px;
+        }
+      }
+      &__right {
+        flex-grow: 0;
+      }
       &__container {
         height: 44px;
         @media only screen and (min-width : $desktop) {
@@ -581,7 +722,7 @@ export default {
         @media only screen and (min-width : $desktop) {
           width: 24px;
           padding: 0;
-          margin: 8px 14px;
+          margin: 8px 5px;
         }
 
         i {
@@ -597,9 +738,26 @@ export default {
         color: #07101C;
         text-transform: capitalize;
       }
-      &__toggle { 
+      &__today {
+        height: 24px;
+        margin-right: 16px;
+        padding: 0 35px;
+        line-height: 24px;
+        border: 1px solid #5699FF;
+        border-radius: 16px;
+        color: #5699FF;
+        text-decoration: none;
+        &[disabled="disabled"] {
+          border-color: rgba(137, 149, 175, 0.2);
+          color: rgba(137, 149, 175, 0.35);
+          cursor: default;
+        }
+      }
+      &__toggle {
+        height: 24px;
+        padding: 1px;
         background: rgba(137, 149, 175, 0.1);
-        border-radius: 20px;  
+        border-radius: 20px;
         input {
           display: none;
           &:checked + label {
@@ -706,13 +864,16 @@ export default {
         @media only screen and (min-width : $desktop) {
           display: flex;
           width: 100%;
-          max-width: 1040px;
           padding-left: 70px;
         }
       }
 
       &.one-day .day-column.selected {
         width: 100%;
+        .day-column__header {
+          background-color: #fff;
+          border-radius: 0;
+        }
         .time-mark {
           display: block;
         }
@@ -747,18 +908,21 @@ export default {
       position: absolute;
       z-index: 1;
       left: 0;
-      width: 128px;
+      width: 126px;
       height: 82px;
-      padding-left: 52px;
+      padding: 0 14px 0 55px;
       justify-content: space-between;
       align-items: center;
       background-color: #fff;
-      box-shadow: -4px 2px 8px rgba(137, 149, 175, 0.1);
+      border-bottom: 1px solid rgba(137, 149, 175, 0.2);
       @media only screen and (min-width : $desktop) {
         display: flex;
       }
       &__button {
-        @extend %round-arrow-button
+        @extend %round-arrow-button;
+        &:hover {
+          background-color: rgba(137, 149, 175, 0.1);;
+        }
       }
     }
 
@@ -883,5 +1047,24 @@ export default {
     .delete-button {
       display: none;
     }
+  }
+
+  .modal-notification {
+    &__content {
+      margin-top: 30px;
+    }
+    .uno-modal {
+      background: url('../assets/images/svg/broken.svg') center 52px no-repeat #fff;
+    }
+    .uno-modal__header {
+      margin-top: 78px;
+    }
+    .uno-modal__buttons {
+      justify-content: center;
+    }
+    .uno-modal__left {
+      display: none;
+    }
+
   }
 </style>

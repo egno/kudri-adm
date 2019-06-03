@@ -44,7 +44,7 @@
             value="male"
             class="filters__item right-attached-panel__sex"
           >
-          <label :for="create? 'male' : 'male2'" class="right-attached-panel__sex-label">Муж</label>
+          <label :for="create? 'male' : 'male2'" class="right-attached-panel__checkbox-label">Муж</label>
           <input
             :id="create? 'female' : 'female2'"
             v-model="sex"
@@ -52,7 +52,7 @@
             value="female"
             class="filters__item right-attached-panel__sex"
           >
-          <label :for="create? 'female' : 'female2'" class="right-attached-panel__sex-label">Жен</label>
+          <label :for="create? 'female' : 'female2'" class="right-attached-panel__checkbox-label">Жен</label>
           <input
             :id="create? 'child' : 'child2'"
             v-model="sex"
@@ -60,7 +60,7 @@
             value="child"
             class="filters__item right-attached-panel__sex"
           >
-          <label :for="create? 'child' : 'child2'" class="right-attached-panel__sex-label">Дети</label>
+          <label :for="create? 'child' : 'child2'" class="right-attached-panel__checkbox-label">Дети</label>
         </div>
 
         <div class="right-attached-panel__field-block">

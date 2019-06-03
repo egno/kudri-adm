@@ -97,6 +97,8 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import Api from '@/api/backend'
 import Modal from '@/components/common/Modal'
 import { conjugateEmployee } from '@/components/utils'
+import Employee from '@/classes/employee'
+import { responseGetId } from '@/api/utils'
 
 export default {
   components: {
@@ -135,7 +137,10 @@ export default {
     }
   },
   computed: {
-    ...mapState({ businessServices: state => state.business.businessServices }),
+    ...mapState({
+      businessEmployees: state => state.business.businessEmployees,
+      businessServices: state => state.business.businessServices
+    }),
     ...mapGetters(['serviceGroups', 'businessServiceCategories', 'searchString', 'businessId']),
     id () {
       return this.$route.params.id
@@ -202,6 +207,14 @@ export default {
   },
   methods: {
     ...mapActions(['setActions', 'loadBusinessServices']),
+    addServiceToEmployee (serviceId, employeeId) {
+      const employee = new Employee(this.businessEmployees.find(e => e.id === employeeId))
+
+      if (!employee.services.includes(serviceId)) {
+        employee.j.services.push(serviceId)
+        employee.save()
+      }
+    },
     closeWithoutSaving () {
       this.showCreate = false
       this.showEdit = false
@@ -218,9 +231,13 @@ export default {
           ...newService,
         }
       })
-        .then(() => {
+        .then(res => responseGetId(res))
+        .then(id => {
           this.showCreate = false
           this.loadBusinessServices(this.businessId)
+          newService.employees.forEach(employeeId => {
+            this.addServiceToEmployee(id, employeeId)
+          })
         })
         .catch((e) => {
           console.log('FAILURE!! ', e)
@@ -231,31 +248,51 @@ export default {
         })
     },
     deleteService (service) {
+      const oldService = this.businessServices.find(s => s.id === service.id)
+
+      oldService.j.employees.forEach(employeeId => {
+        this.removeEmployeeService(employeeId, service.id)
+      })
+
       Api().delete(`business_service?id=eq.${service.id}`)
         .then(() => {
           this.showEdit = false
           this.deletingService = null
+          service.j.employees.forEach(e => {
+            this.addServiceToEmployee(service.id, e.id)
+          })
           this.loadBusinessServices(this.businessId)
+
         })
         .catch((e) => {
           console.log('FAILURE!! ', e)
         })
     },
-    editService (service) {
+    editService (newService) {
       const serviceId = this.editingService.id
+      const oldService = this.businessServices.find(s => s.id === serviceId)
+
+      oldService.j.employees.forEach(employeeId => {
+        if (!newService.employees.includes(employeeId)) {
+          this.removeEmployeeService(employeeId, serviceId)
+        }
+      })
 
       Api().patch(`business_service?id=eq.${serviceId}`, {
         id: serviceId,
         business_id: this.id,
-        name: service.name,
+        name: newService.name,
         access: true,
         j: {
-          ...service
+          ...newService
         }
       })
         .then(() => {
           this.showEdit = false
           this.editingService = null
+          newService.employees.forEach(employeeId => {
+            this.addServiceToEmployee(serviceId, employeeId)
+          })
           this.loadBusinessServices(this.businessId)
         })
         .catch((e) => {
@@ -280,6 +317,13 @@ export default {
         this.editingService = null
         this.newService = null
       }
+    },
+    removeEmployeeService (employeeId, serviceId) {
+      const employee = new Employee(this.businessEmployees.find(e => e.id === employeeId))
+      let index = employee.services.indexOf(serviceId)
+
+      employee.j.services.splice(index, 1)
+      employee.save()
     },
     showEditPanel (service) {
       if (this.showEdit) {

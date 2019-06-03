@@ -9,6 +9,16 @@
       <div class="right-attached-panel__header">
         {{ visit.id? 'Изменить запись' : 'Создать запись' }}
       </div>
+      <template v-if="!visit.id || !visit.j.client.phone">
+        <input
+          id="express"
+          v-model="expressRecord"
+          type="checkbox"
+          value="express"
+          class="filters__item right-attached-panel__sex"
+        >
+        <label for="express" class="right-attached-panel__checkbox-label">Экспресс-запись</label>
+      </template>
       <div class="right-attached-panel__field-block">
         <!--todo filter employees by selected service if any -->
         <VSelect
@@ -73,26 +83,62 @@
       <div v-if="message" class="error-message error--text">
         {{ message }}
       </div>
-      <div class="right-attached-panel__field-block _client-name">
-        <VTextField
+      <div v-if="!expressRecord" class="right-attached-panel__field-block _client-name dropdown-select">
+        <v-combobox
           v-if="visit.j"
-          ref="clientName"
+          ref="clientFullName"
           :value="name"
+          :items="suggestedClients"
+          :item-text="clientDisplay"
           label="ИМЯ И ФАМИЛИЯ КЛИЕНТА"
-          :rules="[() => !!name || 'Это поле обязательно для заполнения']"
+          maxlength="50"
+          return-object
           required
-          @input="onInputName"
-        />
+          attach=".visit-edit ._client-name"
+          @update:searchInput="onInputName(companyId, $event)"
+          @input="selectClient('name', $event)"
+        >
+          <template v-slot:selection="{ item, parent, selected }">
+            {{ item }}
+          </template>
+          <template v-slot:item="{ index, item }">
+            <div>
+              {{ item.j.name.fullname }}
+            </div>
+            <div class="phone-number">
+              {{ item.j.phone? item.j.phone : item.j.phones[0] | phoneFormat }}
+            </div>
+          </template>
+        </v-combobox>
       </div>
-      <div class="right-attached-panel__field-block">
-        <PhoneEdit
+      <div v-if="!expressRecord" class="right-attached-panel__field-block _client-phone dropdown-select">
+        <v-combobox
           v-if="visit.j"
-          :phone="phone"
-          :removable="false"
+          ref="clientPhone"
+          :value="phone"
+          :items="suggestedClientsByPhone"
+          :item-text="clientDisplay"
           label="телефон"
-          placeholder=""
-          @onEdit="onPhoneEdit($event)"
-        />
+          mask="phone"
+          prefix="+7"
+          return-object
+          required
+          attach=".visit-edit ._client-phone"
+          @update:searchInput="onInputPhone"
+          @change="selectClient('phone', $event)"
+        >
+          <template v-slot:selection="{ item, parent, selected }">
+            {{ item }}
+          </template>
+          <template v-slot:item="{ index, item }">
+            <div>
+              {{ item.j.name.fullname }}
+            </div>
+            <div class="phone-number">
+              {{ item.j.phone? item.j.phone : item.j.phones[0] | phoneFormat }}
+            </div>
+          </template>
+        </v-combobox>
       </div>
       <div v-if="visit.id" class="right-attached-panel__field-block _reminder">
         <v-switch
@@ -117,7 +163,7 @@
           value="canceled"
         />
       </div>
-      <div class="right-attached-panel__field-block _reminder">
+      <div v-if="!expressRecord" class="right-attached-panel__field-block _reminder">
         <VSelect
           v-model="visit.j.remind"
           :items="reminders"            
@@ -169,7 +215,6 @@
 </template>
 
 <script>
-import PhoneEdit from '@/components/common/PhoneEdit.vue'
 import TimeSelect from '@/components/calendar/TimeSelect.vue'
 import {
   dateInLocalTimeZone,
@@ -182,14 +227,18 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import Api from '@/api/backend'
 import { isEqual } from 'lodash'
 import { makeAlert } from '@/api/utils'
+import clientMixin from '@/mixins/client'
+import { debounce } from 'lodash'
 
 export default {
-  components: { PhoneEdit, TimeSelect },
+  components: { TimeSelect },
+  mixins: [ clientMixin ],
   model: {
     prop: 'visible',
     event: 'close'
   },
   props: {
+    companyId: { type: String, default: '' },
     id: { type: String, default: '' },
     visible: {
       type: Boolean,
@@ -220,6 +269,7 @@ export default {
       active: 0,
       colors: ['DFC497', 'F3AA57', '85CA86', '49C9B7', '5A96DF', 'F36B6B', 'F37F6B', 'DF8CB2', 'B88AB2', '8589DF'],
       error: '',
+      expressRecord: false,
       freeTimes: [],
       message: '', 
       name: '',
@@ -249,6 +299,7 @@ export default {
       selectedEmployee: null,
       selectedServices: [],
       selectedTime: null,
+      suggestedClientsByPhone: [],
       lastFreeTimesRequest: {}
     }
   },
@@ -277,8 +328,8 @@ export default {
     }, 
     saveDisabled () {
       return this.message
-        || this.name.length < 3
-        || !this.hasPhone
+        || (!this.expressRecord && this.name.length < 3)
+        || (!this.expressRecord && !this.hasPhone)
         || !(this.visit.j.client
         && this.selectedServices 
         && this.selectedServices.length 
@@ -299,7 +350,11 @@ export default {
       }
     },
     selectedDate: 'loadFreeTimes',
-    'selectedServices.length': 'loadFreeTimes'
+    'selectedServices.length': 'loadFreeTimes',
+    selectedEmployee: 'loadFreeTimes'
+  },
+  created () {
+    this.debouncedGetClientsByPhone = debounce(this.getClientsByPhone, 350)
   },
   mounted () {
     this.setSelectedValues()
@@ -307,7 +362,20 @@ export default {
   methods: {
     ...mapActions(['alert']),
     allowedDates (dateStr) {
-      return dateStr > this.todayString
+      return dateStr >= this.todayString
+    },
+    getClientsByPhone (newPhone) {
+      Api()
+        .get(`/client_phone?and=(company_id.eq.${this.companyId},phone.ilike.*7${newPhone}*)&limit=10`)
+        .then(({ data }) => {
+          let companyClients = data.filter(c => (c.company_id === this.companyId))
+
+          if (companyClients.length) {
+            this.suggestedClientsByPhone = companyClients
+          }
+
+        })
+        .catch(e => console.log(e))
     },
     loadFreeTimes () {
       if (!(this.businessId && this.selectedDate)) return
@@ -332,14 +400,14 @@ export default {
       Api()
         .post("rpc/free_times", params)
         .then(({ data }) => {
-            this.freeTimes = data
-            if (!this.freeTimes.length) {
-              this.message = 'На эту дату или время записаться нельзя. Выберите другую дату или время'
+          this.freeTimes = data
+          if (!this.freeTimes.length) {
+            this.message = 'На эту дату или время записаться нельзя. Выберите другую дату или время'
 
-              if (this.selectedServices.length > 1) {
-                this.message += ', или уменьшите количество услуг'
-              }
+            if (this.selectedServices.length > 1) {
+              this.message += ', или уменьшите количество услуг'
             }
+          }
           }
         )
         .catch(err => {
@@ -349,18 +417,19 @@ export default {
           this.loadingTimes = false
         })
     },
-    onPhoneEdit (payload) {
-      this.phone = payload
-    },
-    onInputName (val) {
+    onInputPhone (val) {
       if (!val) {
+        this.suggestedClientsByPhone = []
         return
       }
-      const match = val.match(/[а-яА-ЯёЁ ]+/g)
 
-      val = match? match[0] : ''
-      this.name = val
-      this.$refs.clientName.lazyValue = val
+      val = val.replace(/[() -]/g, '')
+      this.$refs.clientPhone.lazySearch = val
+      if (!val || val.length < 3) {
+        this.suggestedClientsByPhone = []
+        return
+      }
+      this.debouncedGetClientsByPhone(val)
     },
     onSave () {
       const duration = this.duration
@@ -371,8 +440,8 @@ export default {
       ts2.setTime(ts1.getTime() + 60000 * duration) 
       this.visit.business_id = this.selectedEmployee? this.selectedEmployee.id : this.businessId
       this.visit.j.duration = duration
-      this.visit.j.client.name = this.name.trim()
-      this.visit.j.client.phone = this.phone.trim()
+      this.visit.j.client.name = this.expressRecord? null : this.name.trim()
+      this.visit.j.client.phone = this.expressRecord? null : this.phone.trim()
       this.visit.ts_begin = ts1.toJSON().slice(0, -1)
       this.visit.ts_end = ts2.toJSON().slice(0, -1)
 
@@ -382,6 +451,16 @@ export default {
       }
 
       this.$emit('onSave', this.visit)
+    },
+    selectClient (field, value) {
+      if (value && (typeof value === 'object')) {
+        const { j } = value
+
+        this.name = j.name.fullname
+        this.phone = j.phone.substr(-10)
+      } else {
+        this[field] = value
+      }
     },
     setPage () {
       if (this.page !== undefined) {
@@ -426,6 +505,9 @@ export default {
       } else {
         this.phone = ''
       }
+      if (this.visit.id && !this.visit.clientPhone) {
+        this.expressRecord = true
+      }
       this.loadFreeTimes()
     }
   }
@@ -434,7 +516,9 @@ export default {
 
 <style lang="scss">
   @import "../../assets/styles/right-attached-panel";
-.visit-edit.right-attached-panel {
+  @import "../../assets/styles/dropdown-select";
+
+  .visit-edit.right-attached-panel {
   ._service,
   ._client-name,
   ._reminder {
@@ -484,8 +568,34 @@ export default {
   .right-attached-panel__buttons {
     margin-top: 50px;
   }
+  .right-attached-panel__checkbox-label {
+    margin: 28px auto 20px;
+    padding: 0 50px;
+    height: 24px;
+    line-height: 24px;
+  }
   .error-message {
     margin-top: 10px;
+  }
+  .dropdown-select {
+    .v-menu__content {
+      top: 100% !important;
+    }
+    .v-list__tile {
+      display: block;
+      padding: 5px 16px 5px 37px;
+      text-align: left;
+      text-transform: capitalize;
+      color: #8995AF;
+      font-size: 14px;
+      &:hover {
+        background-color: rgba(137, 149, 175, 0.2);
+      }
+      .phone-number {
+        font-weight: normal;
+        font-size: 12px;
+      }
+    }
   }
 }
 </style>

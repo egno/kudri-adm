@@ -49,7 +49,6 @@
           :visit="time.visit"
           :services="time.visit.services" 
           @onDelete="onVisitDelete(time.visit.id)"
-          @onEdit="onVisitEdit(time.visit)"
         />
       </div>
       <div
@@ -64,7 +63,7 @@
           <div class="slot__add-visit" @click="$emit('onSlotClick', time.begin.date)">
             +
           </div>
-          <div class="slot__add-break">
+          <div class="slot__add-break" @click="$emit('onBreakClick', time.begin.date)">
             Break
           </div>
         </div>
@@ -109,7 +108,11 @@ export default {
         return []
       }
     },
-    now: { 
+    holiday: {
+      type: Boolean,
+      default: false
+    },
+    now: {
       type: Date,
       default () {
         return new Date()
@@ -163,18 +166,11 @@ export default {
         return true
       }
 
-      // todo add getting irregular/extra holidays (POST /business_calendar)
-      return false
+      return this.holiday
     },
     isToday () {
       return areSameDates(this.today, this.day.date)
     },
-    // lunchTime () {
-    //   if (this.employeeSchedule.length > 3) {
-    //     return [this.employeeSchedule[1], this.employeeSchedule[2]]
-    //   }
-    //   return []
-    // },
     times () {
       const isVisible = time => {
         if (!(this.displayFrom || this.displayTo)) return true
@@ -258,8 +254,9 @@ export default {
       }
       const dayEnd = this.employeeSchedule[this.employeeSchedule.length - 1]
 
-      return (
-        this.employeeSchedule[0] <= this.times[i].begin.display &&
+      return this.isDayOff
+        ? false
+        : (this.employeeSchedule[0] <= this.times[i].begin.display &&
         (dayEnd === '00:00' ? '24:00' : dayEnd) >= this.times[i].end.display
         // && !(
         //   this.lunchTime.length &&
@@ -290,9 +287,6 @@ export default {
     onVisitDelete (id) {
       this.$emit('onVisitDelete', id)
     },
-    onVisitEdit (item) {
-      this.$emit('onVisitEdit', item)
-    },
     timeDisplay (date) {
       return formatTime(date)
     },
@@ -305,14 +299,13 @@ export default {
 
 <style lang="scss">
   @import '../../assets/styles/common';
-%active-header {
-  background-color: #5699FF;
-  border-radius: 4px;
-  .day-column__date,
-  .day-column__day,
-  .day-column__schedule {
-    color: #fff;
-  }
+@mixin active-header {
+    background-color: rgba(137, 149, 175, 0.35);
+    border-radius: 4px;
+    .day-column__date,
+    .day-column__day {
+      font-weight: bold;
+    }
 }
 .time-mark {
   position: absolute;
@@ -390,6 +383,9 @@ export default {
     padding-top: 82px;
   }
   &.today {
+    .day-column__header {
+      border-left: 2px solid #5699FF;
+    }
     .day-column__date,
     .day-column__day {
       color: #5699FF;
@@ -397,7 +393,15 @@ export default {
     }
   }
   &.selected .day-column__header {
-    @extend %active-header
+    @media only screen and (min-width : $desktop) {
+      @include active-header
+    }
+  }
+  &.selected.today .day-column__header {
+    @media only screen and (min-width : $desktop) {
+      background-color: #fff;
+      border-radius: 0;
+    }
   }
 
   &__item {
@@ -429,7 +433,7 @@ export default {
       content: '';
       border-radius: 50%;
     }
-  } 
+  }
   &__header {
     position: absolute;
     top: 0;
@@ -437,11 +441,15 @@ export default {
     height: 82px;
     padding: 12px 24px;
     border-right: 1px solid rgba(137, 149, 175, 0.1);
+    border-left: 2px solid transparent;
     background-color: #fff;
-    box-shadow: 8px 2px 8px rgba(137, 149, 175, 0.1);
+    border-bottom: 1px solid rgba(137, 149, 175, 0.2);
     cursor: pointer;
     &.active {
-      @extend %active-header
+      @media only screen and (min-width : $desktop) {
+        @include active-header;
+        background-color: rgba(137, 149, 175, 0.2);
+      }
     }
   }
   &__dropdown {

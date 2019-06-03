@@ -51,9 +51,26 @@ export default {
         })
     },
     isHoliday (dt) {
-      if (!(this.calendar && this.calendar.filter(d => d.dt === dt).length))
+      const dow = this.selectedWeek.findIndex(d => d.dateKey === dt)
+      const irregularDay = this.getIrregularDay(dt)
+
+      if (this.irregularDays.length && (this.irregularDays[0].employeeId !== this.selectedEmployee.id)) {
+        return false
+      }
+
+      if (!irregularDay && !this.selectedEmployee) {
+        return false
+      }
+
+      return irregularDay
+        ? !irregularDay.schedule.length
+        : !this.selectedEmployee.j.schedule.data[dow].length || !this.selectedEmployee.j.schedule.data[dow][1]
+    },
+    getIrregularDay (dt) {
+      if (!this.selectedEmployee) {
         return
-      return this.calendar.filter(d => d.dt === dt)[0].j.holiday
+      }
+      return this.irregularDays.find(d => d.date === dt && d.employeeId === this.selectedEmployee.id)
     },
     goDate (dt) {
       // this.setActualDate(dt)

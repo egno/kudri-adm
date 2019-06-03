@@ -83,7 +83,8 @@
             v-if="empToDelete && empToDelete.j && empToDelete.j.name"
             class="uno-modal__text"
           >
-            Вы точно хотите удалить сотрудника <b>{{ empToDelete.j.name }}?</b>
+            Вы точно хотите удалить сотрудника <b>{{ empToDelete.j.name }}?</b> 
+            <span v-if="hasVisits"> К cотруднику {{ hasVisits === 1? 'запланирован ' : 'запланировано ' }} {{ hasVisits | formatVisit }}. </span> 
           </div>
           <div v-else class="uno-modal__text">
             Вы точно хотите удалить сотрудника?
@@ -102,6 +103,7 @@ import Api from '@/api/backend'
 import { mapState, mapActions, mapGetters } from 'vuex'
 import { employeeMixin } from '@/mixins/employee'
 import { formatDate } from '@/components/calendar/utils'
+import { conjugateVisits } from '@/components/utils'
 
 export default {
   params: {
@@ -109,6 +111,11 @@ export default {
     search: { type: String, default: '' }
   },
   components: { PageLayout, EmployeeCard, Modal },
+  filters: {
+    formatVisit (n) {
+      return conjugateVisits(n)
+    }
+  },
   mixins: [employeeMixin],
   data () {
     return {
@@ -119,6 +126,7 @@ export default {
         leftButton: 'ОТМЕНА',
         rightButton: 'УДАЛИТЬ'
       },
+      hasVisits: false,
       newEmp: undefined,
       selectedCategories: [],
       selectedOnStart: false
@@ -225,8 +233,13 @@ export default {
       this.selectedCategories = this.categories.slice()
     },
     showDeleteDialog (emp) {
-      this.deleteModalVisible = true
-      this.empToDelete = emp
+      Api()
+        .get(`/visit?salon_id=eq.${this.$route.params.id}&business_id=eq.${emp.id}&ts_begin=gte.${formatDate(new Date())}`)
+        .then(({ data }) => {
+          this.hasVisits = data.filter(v => !v.j.type).length
+          this.deleteModalVisible = true
+          this.empToDelete = emp
+        })      
     },
     showEditPanel () {},
     toggleAll () {

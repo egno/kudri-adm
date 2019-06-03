@@ -8,7 +8,7 @@
               <path fill-rule="evenodd" clip-rule="evenodd" d="M10 3.4375L5 0L0 3.4375V11H10V3.4375ZM3.75 10.9999V7.33321H6.25V10.9999H3.75Z" :fill="pinned? '#FFFFFF' : '#5699FF'" />
             </svg>
           </span>-->
-          <span>{{ branch.j.name }}</span>
+          <span>{{ branch.j.name || '<Филиал компании>' }}</span>
         </h2>
         <div v-if="branch.j.address" class="branch-card__subtitle">
           {{ branch.j.address.name }}
@@ -24,7 +24,7 @@
           {{ branch.j.employees | formatMaster }}
         </div>
       </div>
-      <DeleteButton :is-dark="true" :visible="isEditable" @delete="$emit('delete')" />
+      <DeleteButton :is-dark="true" :visible="isEditable && canDelete" @delete="$emit('delete')" />
     </div>
   </div>
 </template>
@@ -56,6 +56,10 @@ export default {
     isEditable: {
       type: Boolean,
       default: false
+    },
+    canDelete: {
+      type: Boolean,
+      default: true
     },
   },
   data () {
