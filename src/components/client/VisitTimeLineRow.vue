@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="client-visit-log" :class="{ [visit.status]: visit.status, done: visit.currentStatus.done }">
+  <v-layout class="client-visit-log" :class="{ [visit.status]: visit.status, done: visit.currentStatus && visit.currentStatus.done }">
     <div
       class="client-visit-log__left"
     >

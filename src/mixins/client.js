@@ -8,6 +8,7 @@ export default {
       clientDisplay (c) {
         return `${ c.j.name.fullname }${ c.j.phone? c.j.phone : c.j.phones[0] }`
       },
+      nameInput: '',
       suggestedClients: [],
     }
   },
@@ -25,7 +26,7 @@ export default {
     onInputName (companyId, val) {
       if (!val) {
         this.suggestedClients = []
-        return
+        return ''
       }
 
       const match = val.match(/[а-яА-ЯёЁ ]+/g)
@@ -34,9 +35,10 @@ export default {
       this.$refs.clientFullName.lazySearch = val
       if (!val || val.length < 3) {
         this.suggestedClients = []
-        return
+        return val
       }
       this.debouncedGetClients(companyId, val)
+      return val
     },
   }
 }
