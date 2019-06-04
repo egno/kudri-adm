@@ -328,7 +328,7 @@ export default {
     }, 
     saveDisabled () {
       return this.message
-        || !this.name
+        || (!this.expressRecord && !this.name)
         || (!this.expressRecord && this.name.length < 3)
         || (!this.expressRecord && !this.hasPhone)
         || !(this.visit.j.client && this.selectedServices && this.selectedServices.length && this.selectedDate && this.selectedTime)
