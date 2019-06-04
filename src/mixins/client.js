@@ -17,7 +17,7 @@ export default {
   methods: {
     getClientsByName (companyId, val) {
       Api()
-        .get(`client?company_id.eq.${companyId}&j->name->>fullname=ilike.*${val}*`)
+        .get(`client?company_id=eq.${companyId}&j->name->>fullname=ilike.*${val}*`)
         .then(({ data }) => {
           this.suggestedClients = data.filter(c => c.business_id !== this.filial)
         })

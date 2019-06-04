@@ -15,7 +15,7 @@
         :required="!removable"
         @input="onEdit"
         @focus="focused = true"
-        @blur="focused = false"
+        @blur="focused = false; $emit('blur')"
       />
     </VFlex>    
     <button v-show="removable" type="button" class="businesscard-form__delete" @mousedown="$emit('deletePhone')">

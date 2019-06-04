@@ -91,7 +91,6 @@
           :items="suggestedClients"
           :item-text="clientDisplay"
           label="ИМЯ И ФАМИЛИЯ КЛИЕНТА"
-          maxlength="50"
           return-object
           required
           attach=".visit-edit ._client-name"
@@ -106,39 +105,36 @@
               {{ item.j.name.fullname }}
             </div>
             <div class="phone-number">
-              {{ item.j.phone? item.j.phone : item.j.phones[0] | phoneFormat }}
+              {{ normalizedPhone(item.j.phone? item.j.phone : item.j.phones[0]) | phoneFormat }}
             </div>
           </template>
         </v-combobox>
       </div>
       <div v-if="!expressRecord" class="right-attached-panel__field-block _client-phone dropdown-select">
-        <v-combobox
+        <PhoneEdit
           v-if="visit.j"
-          ref="clientPhone"
-          :value="phone"
-          :items="suggestedClientsByPhone"
-          :item-text="clientDisplay"
-          label="телефон"
-          mask="phone"
-          prefix="+7"
-          return-object
-          required
-          attach=".visit-edit ._client-phone"
-          @update:searchInput="onInputPhone"
-          @change="selectClient('phone', $event)"
-        >
-          <template v-slot:selection="{ item, parent, selected }">
-            {{ item }}
-          </template>
-          <template v-slot:item="{ index, item }">
+          :phone="phone"
+          :removable="false"
+          label="Телефон"
+          placeholder=""
+          @onEdit="onInputPhone"
+          @blur="suggestedClientsByPhone = []"
+        />
+        <div v-if="suggestedClientsByPhone.length" class="custom-select__dropdown">
+          <div
+            v-for="(client, clientIndex) in suggestedClientsByPhone"
+            :key="clientIndex"
+            class="custom-select__item"
+            @mousedown="selectClient('phone', client); suggestedClientsByPhone = []"
+          >
             <div>
-              {{ item.j.name.fullname }}
+              {{ client.j.name.fullname }}
             </div>
             <div class="phone-number">
-              {{ item.j.phone? item.j.phone : item.j.phones[0] | phoneFormat }}
+              {{ normalizedPhone(client.j.phone? client.j.phone : client.j.phones[0]) | phoneFormat }}
             </div>
-          </template>
-        </v-combobox>
+          </div>
+        </div>
       </div>
       <div v-if="visit.id" class="right-attached-panel__field-block _reminder">
         <v-switch
@@ -229,9 +225,10 @@ import { isEqual } from 'lodash'
 import { makeAlert } from '@/api/utils'
 import clientMixin from '@/mixins/client'
 import { debounce } from 'lodash'
+import PhoneEdit from '@/components/common/PhoneEdit.vue'
 
 export default {
-  components: { TimeSelect },
+  components: { PhoneEdit, TimeSelect },
   mixins: [ clientMixin ],
   model: {
     prop: 'visible',
@@ -323,18 +320,18 @@ export default {
       }
       return hyphensStringToDate(this.selectedDate).toLocaleString("ru",options)
     }, 
-    hasPhone () {  
+    hasPhone () {
+      if (!this.phone) {
+        return 0
+      }
       return this.phone.length >= 10
     }, 
     saveDisabled () {
       return this.message
+        || !this.name
         || (!this.expressRecord && this.name.length < 3)
         || (!this.expressRecord && !this.hasPhone)
-        || !(this.visit.j.client
-        && this.selectedServices 
-        && this.selectedServices.length 
-        && this.selectedDate 
-        && this.selectedTime)
+        || !(this.visit.j.client && this.selectedServices && this.selectedServices.length && this.selectedDate && this.selectedTime)
     }, 
     todayString () {
       return formatDate(new Date())
@@ -366,14 +363,9 @@ export default {
     },
     getClientsByPhone (newPhone) {
       Api()
-        .get(`/client_phone?and=(company_id.eq.${this.companyId},phone.ilike.*7${newPhone}*)&limit=10`)
+        .get(`/client_phone?company_id=eq.${this.companyId}&phone=ilike.*7${newPhone}*&limit=10`)
         .then(({ data }) => {
-          let companyClients = data.filter(c => (c.company_id === this.companyId))
-
-          if (companyClients.length) {
-            this.suggestedClientsByPhone = companyClients
-          }
-
+          this.suggestedClientsByPhone = data
         })
         .catch(e => console.log(e))
     },
@@ -417,15 +409,13 @@ export default {
           this.loadingTimes = false
         })
     },
+    normalizedPhone (phone) {
+      return phone.length === 10 ? `7${phone}` : phone
+    },
     onInputPhone (val) {
-      if (!val) {
-        this.suggestedClientsByPhone = []
-        return
-      }
+      this.phone = val
 
-      val = val.replace(/[() -]/g, '')
-      this.$refs.clientPhone.lazySearch = val
-      if (!val || val.length < 3) {
+      if (!val || val.length < 3 || val.length === 10) {
         this.suggestedClientsByPhone = []
         return
       }
@@ -457,7 +447,7 @@ export default {
         const { j } = value
 
         this.name = j.name.fullname
-        this.phone = j.phone.substr(-10)
+        this.phone = j.phone? j.phone.substr(-10) : j.phones[0].substr(-10)
       } else {
         this[field] = value
       }
@@ -594,6 +584,36 @@ export default {
       .phone-number {
         font-weight: normal;
         font-size: 12px;
+      }
+    }
+  }
+  .custom-select {
+    position: relative;
+
+    &__dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      max-height: 220px;
+      overflow-y: auto;
+      background: #fff;
+      z-index: 1000000;
+    }
+    &__item {
+      cursor: pointer;
+      padding: 6px 0 5px 32px;
+      text-align: left;
+      background: rgba(137, 149, 175, 0.1);
+      color: #8995AF;
+      font-family: Lato, sans-serif;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: normal;
+      transition: background-color 0.4s 0s;
+      &:hover {
+        background: rgba(137, 149, 175, 0.2);
       }
     }
   }
