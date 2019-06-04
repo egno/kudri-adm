@@ -26,6 +26,7 @@ export default {
 
 <style lang="scss">
   .login-page {
+    background-color: #fff;
     &__container {
       margin-top: -60px;
     }
@@ -41,6 +42,7 @@ export default {
     &__no-account {
       display: block;
       text-align: center;
+      margin-top: 10px;
       text-decoration: none;
     }
 

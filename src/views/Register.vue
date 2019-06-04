@@ -1,7 +1,12 @@
 <template>
-  <div class="about">
+  <VContainer
+    fluid
+    fill-height
+    justify-center
+    class="register-page"
+  >
     <RegisterForm />
-  </div>
+  </VContainer>
 </template>
 
 
@@ -24,3 +29,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  .register-page {
+    background-color: #fff;
+  }
+</style>
