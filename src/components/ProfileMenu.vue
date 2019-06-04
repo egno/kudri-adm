@@ -53,7 +53,7 @@
       </template>
     </VList>
   </VMenu>
-  <VMenu
+  <!--<VMenu
     v-else-if="$route.name !== 'login'"
     v-model="menu"
     left
@@ -81,17 +81,17 @@
     <VList>
       <Login @loggedIn="menu = false" />
     </VList>
-  </VMenu>
+  </VMenu>-->
 </template>
 
 <script>
 import Avatar from '@/components/avatar/Avatar.vue'
-import Login from "../components/Login"
+// import Login from "../components/Login"
 
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  components: { Avatar, Login },
+  components: { Avatar, /*Login*/ },
   props: {
     source: { type: String, default: () => '' }
   },

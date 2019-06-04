@@ -441,7 +441,6 @@ export default {
     }
   }
   .v-text-field__prefix {
-    padding-top: 5px;
     font-size: 13px;
     font-family: Lato;
     font-style: normal;
@@ -450,7 +449,6 @@ export default {
   }
   input,
   label {
-    padding-bottom: 2px;
     max-width: 100%;
     width: 100%;
     font-size: 14px;
@@ -476,6 +474,11 @@ export default {
   input {
     color: #07101c;
   }
+  label {
+    color: #07101c;
+    opacity: 0.35;
+    letter-spacing: 25%;
+  }
   &.centered-input {
     text-transform: uppercase !important;
     input,
@@ -487,14 +490,7 @@ export default {
       }
     }
   }
-  label {
-    color: #07101c;
-    opacity: 0.35;
-    letter-spacing: 25%;
-  }
-  input {
-    color: #07101c;
-  }
+
   &.workmode {
     width: 34px;
     height: 24px;

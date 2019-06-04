@@ -1,193 +1,179 @@
 <template>
-  <VFlex
-    xs12
-    offset-sm2
-    sm8
-    offset-md4
-    md4
-    class="text-xs-center"
-  >
-    <v-card flat>
-      <v-card-text>
-        <VForm
-          v-if="!sended && !keyCode"
-          ref="formLogin"
-        >
-          <v-layout column>
-            <VFlex pa-2>
-              <div class="businesscard__h1">
-                Регистрация Бизнеса
-              </div>
-            </VFlex>
-            <VFlex pa-2>
-              <VSelect
-                v-if="!restoreMode"
-                v-model="ftype"
-                :items="roles"
-                label="Ваш бизнес"
-              />
-            </VFlex>
-            <VFlex v-if="false" pa-2>
-              <VTextField
-                v-model="companyName"
-                label="Название компании"
-                required
-                :rules="[rules.required]"
-              />
-            </VFlex>
-            <VFlex v-if="false" pa-2>
-              <VTextField
-                v-model="userName"
-                label="Имя и фамилия"
-                required
-                :rules="[rules.required]"
-              />
-            </VFlex>
-            <VFlex pa-2>
-              <VTextField
-                id="flogin"
-                v-model="flogin"
-                name="flogin"
-                label="Телефон"
-                phone
-                type="flogin"
-                :rules="[rules.phone]"
-              />
-            </VFlex>
-            <VFlex pa-2>
-              <div>
-                <v-layout align-center>
-                  <v-checkbox
-                    v-model="offerAgree"
-                    color="blue"
-                  />
-                  <div class="text-sm-left">
-                    <span class="caption">Соглашаюсь с <a
-                      href="https://docs.google.com/document/d/1Ioe9v58FGXfI7o1ExWPGR9aMkeYyU6LCJenMniPSsl4"
-                      target="_blank"
-                    >правилами</a>, <a
-                      href="https://docs.google.com/document/d/1JWxq7uHt7H9CKhqyJLIozc-JeAT9aNXUszZ1m2Dd4Os"
-                      target="_blank"
-                    >политикой</a> конфиденциальности и разрешаю проводить аналитику своих персональных данных</span>
-                  </div>
-                  <v-layout />
-                </v-layout>
-              </div>
-            </VFlex>
-            <VFlex pa-2>
-              <VBtn
-                color="success"
-                :disabled="!offerAgree || !flogin || !loginIsCorrect"
-                @click="sendLogin"
-              >
-                Создать
-              </VBtn>
-            </VFlex>
-          </v-layout>
-        </VForm>
-
-        <div v-if="loginIsEmail === true && !keyCode">
-          <div>
-            Вам на почту
-            <strong>{{ flogin }}</strong>
-            отправлено письмо с сылкой
-            для авторизации
-          </div>
-          <div>Перейдите по ссылке в письме</div>
-
-          <div>Не пришло письмо?</div>
-
-          <a href="#">
-            Отправить еще раз
-          </a>
-          <br>
-        </div>
-
-        <VForm
-          v-if="loginIsEmail === false && !showPasswordInputs && !keyCode"
-          ref="formCode"
-        >
-          <div>
-            На номер телефона
-            <strong>{{ flogin }}</strong>
-            отправлен код авторизации
-          </div>
+  <div class="register-form text-xs-center businesscard-form">
+    <VForm
+      v-if="!sended && !keyCode"
+      ref="formLogin"
+    >
+      <div>
+        <h1 class="register-form__h1">
+          Регистрация Бизнеса
+        </h1>
+        <div>
           <VTextField
-            id="fcode"
-            v-model="fcode"
-            name="fcode"
-            label="Введите код"
-            type="code"
-            :rules="fcodeRules"
-            :error-messages="badCode"
+            v-model="companyName"
+            label="Название компании"
+            :rules="[rules.required,
+                     value => !!value && value.length <= 50 || 'Слишком длинное наименование']"
+            maxlength="50"
+            class="businesscard-form__field"
           />
-          <VBtn
-            v-if="codeTries"
-            color="success"
-            @click="sendCode"
-          >
-            Проверить
-          </VBtn>
-          <div>Не пришёл код?</div>
-          <a
-            href="#"
+        </div>
+        <div class="">
+          <VTextField
+            v-model="userName"
+            label="Имя и фамилия"
+            required
+            :rules="[rules.required]"
+            class="businesscard-form__field"
+          />
+        </div>
+        <div class="">
+          <PhoneEdit
+            :phone="flogin"
+            :removable="false"
+            label="Телефон"
+            placeholder=""
+            @onEdit="flogin = $event"
+          />
+          <div v-if="alreadyUsedPhone">
+            На данный номер уже зарегистрирована компания. <router-link :to="{ name: 'login' }">
+              Авторизоваться
+            </router-link>
+          </div>
+        </div>
+        <!--show disclaimer with animation v-show="companyName && userName && flogin"-->
+        <v-layout justify-center>
+          <v-checkbox
+            v-model="offerAgree"
+            color="#5699FF"
+          />
+          <p class="register-form__disclaimer text-sm-left">
+            Нажимая кнопку «Создать», вы соглашаетесь с
+            <a href="https://docs.google.com/document/d/1Ioe9v58FGXfI7o1ExWPGR9aMkeYyU6LCJenMniPSsl4" target="_blank">правилами</a>,
+            политикой <a href="https://docs.google.com/document/d/1JWxq7uHt7H9CKhqyJLIozc-JeAT9aNXUszZ1m2Dd4Os" target="_blank">конфиденциальности</a>
+            и разрешаете проводить аналитику своих персональных данных.
+          </p>
+        </v-layout>
+        <v-layout justify-center>
+          <MainButton
+            :class="{ button_disabled: !offerAgree || !flogin || !loginIsCorrect }"
+            class="button"
+            type="button"
             @click="sendLogin"
           >
-            Отправить еще раз
-          </a>
-          <br>
-        </VForm>
+            Создать
+          </MainButton>
+        </v-layout>
+      </div>
+    </VForm>
 
-        <VForm
-          v-if="showPasswordInputs"
-          ref="passwords"
-          v-model="valid"
-        >
-          <span>Придумайте пароль для входа</span>
-          <VTextField
-            id="fpassword"
-            v-model="fpassword"
-            prepend-icon="lock"
-            name="fpassword"
-            :rules="passRules"
-            label="Пароль"
-            type="password"
-            browser-autocomplete="new-password"
-            required
-          />
-          <VTextField
-            id="fpasswordRepeat"
-            v-model="fpasswordRepeat"
-            prepend-icon="lock"
-            :rules="passRepeatRules"
-            name="fpasswordRepeat"
-            label="Повторите пароль"
-            type="password"
-            browser-autocomplete="new-password"
-            required
-          />
-          <VBtn
-            color="primary"
-            @click="registerAndLogin"
-          >
-            Войти
-          </VBtn>
-        </VForm>
+    <!--<div v-if="loginIsEmail === true && !keyCode">
+      <div>
+        Вам на почту
+        <strong>{{ flogin }}</strong>
+        отправлено письмо с сылкой
+        для авторизации
+      </div>
+      <div>Перейдите по ссылке в письме</div>
 
-        <div v-if="keyCode">
-          {{ badCode }}
-        </div>
-      </v-card-text>
-    </v-card>
-  </VFlex>
+      <div>Не пришло письмо?</div>
+
+      <a href="#">
+        Отправить еще раз
+      </a>
+      <br>
+    </div>-->
+
+    <VForm
+      v-if="loginIsEmail === false && !showPasswordInputs && !keyCode"
+      ref="formCode"
+    >
+      <h2 class="register-form__h1">
+        Введите код подтверждения
+      </h2>
+      <div class="register-form__confirm-code">
+        На ваш номер <strong>{{ '7' + flogin | phoneFormat }}</strong>
+        был отправлен код подтверждения.
+      </div>
+      <VTextField
+        id="fcode"
+        v-model="fcode"
+        name="fcode"
+        label="код"
+        type="code"
+        :rules="fcodeRules"
+        :error-messages="badCode"
+      />
+      <VBtn
+        v-if="codeTries"
+        class="button"
+        :class="{ button_disabled: !fcode }"
+        @click="sendCode"
+      >
+        Проверить
+      </VBtn>
+      <div>Не пришёл код?</div>
+      <a
+        href="#"
+        @click="sendLogin"
+      >
+        Отправить еще раз
+      </a>
+      <br>
+    </VForm>
+
+    <VForm
+      v-if="showPasswordInputs"
+      ref="passwords"
+      v-model="valid"
+    >
+      <h2 class="register-form__h1">
+        Придумайте пароль для входа
+      </h2>
+      <VTextField
+        id="fpassword"
+        v-model="fpassword"
+        name="fpassword"
+        :rules="passRules"
+        label="Пароль"
+        type="password"
+        browser-autocomplete="new-password"
+        required
+      />
+      <VTextField
+        id="fpasswordRepeat"
+        v-model="fpasswordRepeat"
+        :rules="passRepeatRules"
+        name="fpasswordRepeat"
+        label="Повторите пароль"
+        type="password"
+        browser-autocomplete="new-password"
+        required
+      />
+      <VBtn
+        class="button"
+        :class="{ button_disabled: !fpassword || !fpasswordRepeat || fpassword !== fpasswordRepeat }"
+        @click="registerAndLogin"
+      >
+        Войти
+      </VBtn>
+    </VForm>
+
+    <div v-if="keyCode">
+      {{ badCode }}
+    </div>
+  </div>
 </template>  
 
 <script>
 import Api from '@/api/backend'
 import { makeAlert } from '@/api/utils'
 import { mapGetters, mapActions } from 'vuex'
+import PhoneEdit from '@/components/common/PhoneEdit.vue'
+import MainButton from '@/components/common/MainButton.vue'
 
 export default {
+  components: { PhoneEdit, MainButton },
   props: {
     frole: { type: String, default: 'business' }
   },
@@ -196,7 +182,7 @@ export default {
       rules: {
         phone: value => {
           const pattern = /^[+]*([0-9]){11}$/
-          const val = value.replace(/[^0-9]/g,'')
+          const val = '7' + value.replace(/[^0-9]/g,'')
           return (
             pattern.test(val) || 'Введите действительный номер телефона.'
           )
@@ -215,7 +201,7 @@ export default {
       codeTries: 1,
       flogin: '',
       fcode: null,
-      fcodeRules: [v => !!v || 'Код не действителен.'],
+      fcodeRules: [v => !!v || 'Введите код.'],
       froleRules: [v => !!v || 'Выберите тип бизнеса'],
       loginRules: [
         v => !!v || 'Введите действительный номер телефона или e-mail',
@@ -233,7 +219,8 @@ export default {
       ],
       offerAgree: false,
       userAlreadyInitialized: false,
-      userName: ''
+      userName: '',
+      alreadyUsedPhone: false
     }
   },
   computed: {
@@ -252,13 +239,10 @@ export default {
     },
     loginIsEmail () {
       if (this.sended === true) {
-        return this.flogin.includes('@') ? true : false
+        return this.flogin.includes('@')
       } else {
         return undefined
       }
-    },
-    restoreMode () {
-      return this.$route && this.$route.name === 'restorePassword'
     },
     loginIsCorrect () {
       return this.rules.phone(this.flogin) === true
@@ -309,27 +293,31 @@ export default {
       }
     },
     sendLogin () {
-      if (this.loginIsEmail === false || this.$refs.formLogin.validate()) {
+      this.alreadyUsedPhone = false
+      if (!this.loginIsEmail || this.$refs.formLogin.validate()) {
         Api()
           .post(this.url, {
             login: this.flogin,
             code: null,
             j: { business_category: this.ftype }
           })
-          .then(res => {
+          .then(({ data }) => {
             this.sended = true
+            this.fcode = ''
+            this.badCode = ''
+            this.codeTries = data.attempts
+            if (data.info && data.info.phone && data.info.phone.phone) {
+              this.alreadyUsedPhone = true
+            }
+            if (data.seconds) {
+              this.alert({
+                message:
+                  'Новый код можно будет отправить через ' + data.seconds
+              })
+            }
             this.$nextTick(function () {
               this.$refs.formCode.resetValidation()
             })
-            this.fcode = ''
-            this.badCode = ''
-            this.codeTries = res.data.attempts
-            if (res.data.seconds) {
-              this.alert({
-                message:
-                  'Новый код можно будет отправить через ' + res.data.seconds
-              })
-            }
           })
           .catch(res => {
             console.log('FAILURE!!', res)
@@ -397,5 +385,70 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
+  @import '../../assets/styles/businesscard-form';
+  @import '../../assets/styles/dropdown-select';
+
+  .register-form {
+    width: 280px;
+    &__h1 {
+      margin-bottom: 23px;
+      font-family: Roboto Slab;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 24px;
+      text-align: center;
+      color: #07101C;
+    }
+    &__disclaimer {
+      width: 220px;
+      font-size: 10px;
+    }
+    &__confirm-code {
+      font-size: 16px;
+    }
+    .businesscard-form__field {
+      margin-top: 22px;
+    }
+    input {
+      text-align: center;
+      padding: 9px 0 7px 0;
+    }
+    .button {
+      width: 240px !important;
+      height: 56px !important;
+      border-radius: 0 !important;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-family: $roboto;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 18px;
+      text-align: center;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .v-select__selections {
+      max-width: 100%;
+      overflow-x: hidden;
+      .v-chip {
+        text-overflow: ellipsis;
+      }
+    }
+    .v-select__selections>div{
+      text-align: right;
+      justify-content: flex-end;
+      flex-grow: 1;
+    }
+    .v-input--selection-controls {
+      max-width: 32px;
+      margin-top: 0;
+    }
+    ._phone .v-text-field__prefix {
+      padding: 2px 4px 0 73px !important;
+    }
+    .v-messages__message {
+      text-align: center;
+    }
+  }
 </style>

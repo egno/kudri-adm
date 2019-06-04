@@ -14,10 +14,14 @@
     width: 240px;
     height: 56px;
     border-radius: 0;
+    &:hover {
+      background-color: #07101C;;
+    }
   }
 
   &_disabled {
     background-color: rgba(137, 149, 175, 0.2) !important;
+    color: rgba(255, 255, 255, 0.5);
     pointer-events: none;
   }
 
