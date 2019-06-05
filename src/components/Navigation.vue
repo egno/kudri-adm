@@ -215,7 +215,7 @@ export default {
             params: { id: this.businessId }
           },
           show:
-            this.hasSalonLevelAccess &&
+            this.hasCompanyLevelAccess &&
             this.hasName &&
             !this.businessIsFilial &&
             this.loggedIn &&
