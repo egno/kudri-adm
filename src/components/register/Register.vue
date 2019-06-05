@@ -6,27 +6,29 @@
     >
       <div>
         <h1 class="register-form__h1">
-          Регистрация Бизнеса
+          {{ restoreMode? 'Восстановление пароля' : 'Регистрация Бизнеса' }}
         </h1>
-        <div>
-          <VTextField
-            v-model="companyName"
-            label="Название компании"
-            :rules="[rules.required,
-                     value => !!value && value.length <= 50 || 'Слишком длинное наименование']"
-            maxlength="50"
-            class="businesscard-form__field"
-          />
-        </div>
-        <div class="">
-          <VTextField
-            v-model="userName"
-            label="Имя и фамилия"
-            required
-            :rules="[rules.required]"
-            class="businesscard-form__field"
-          />
-        </div>
+        <template v-if="!restoreMode">
+          <div>
+            <VTextField
+              v-model="companyName"
+              label="Название компании"
+              :rules="[rules.required,
+                       value => !!value && value.length <= 50 || 'Слишком длинное наименование']"
+              maxlength="50"
+              class="businesscard-form__field"
+            />
+          </div>
+          <div class="">
+            <VTextField
+              v-model="userName"
+              label="Имя и фамилия"
+              required
+              :rules="[rules.required]"
+              class="businesscard-form__field"
+            />
+          </div>
+        </template>
         <div class="">
           <PhoneEdit
             :phone="flogin"
@@ -35,14 +37,14 @@
             placeholder=""
             @onEdit="flogin = $event"
           />
-          <div v-if="alreadyUsedPhone">
+          <div v-if="alreadyUsedPhone" class="error-message">
             На данный номер уже зарегистрирована компания. <router-link :to="{ name: 'login' }">
               Авторизоваться
             </router-link>
           </div>
         </div>
         <!--show disclaimer with animation v-show="companyName && userName && flogin"-->
-        <v-layout justify-center>
+        <v-layout v-show="!alreadyUsedPhone" justify-center>
           <v-checkbox
             v-model="offerAgree"
             color="#5699FF"
@@ -54,14 +56,14 @@
             и разрешаете проводить аналитику своих персональных данных.
           </p>
         </v-layout>
-        <v-layout justify-center>
+        <v-layout v-show="!alreadyUsedPhone" justify-center>
           <MainButton
             :class="{ button_disabled: !offerAgree || !flogin || !loginIsCorrect }"
             class="button"
             type="button"
             @click="sendLogin"
           >
-            Создать
+            {{ restoreMode? 'Восстановить' : 'Создать' }} 
           </MainButton>
         </v-layout>
       </div>
@@ -161,7 +163,7 @@
       </VBtn>
     </VForm>
 
-    <div>
+    <div v-show="!alreadyUsedPhone">
       Уже есть аккаунт?
       <router-link :to="{ name: 'login'}">
         Войти
@@ -254,7 +256,10 @@ export default {
     },
     loginIsCorrect () {
       return this.rules.phone(this.flogin) === true
-    }
+    },
+    restoreMode () {
+      return this.$route && this.$route.name === 'restorePassword'
+    },
   },
   watch: {
     userID: function (newVal, oldVal) {
@@ -298,6 +303,9 @@ export default {
           login: this.flogin,
           pass: this.fpassword
         })
+        .then(()=> {
+          this.$router.push({ name: 'login' })
+        })
       }
     },
     sendLogin () {
@@ -310,13 +318,10 @@ export default {
             j: { business_category: this.ftype }
           })
           .then(({ data }) => {
-            this.sended = true
             this.fcode = ''
             this.badCode = ''
             this.codeTries = data.attempts
-            if (data.info && data.info.phone && data.info.phone.phone) {
-              this.alreadyUsedPhone = true
-            }
+
             if (data.seconds) {
               this.alert({
                 message:
@@ -324,8 +329,14 @@ export default {
               })
             }
             this.$nextTick(function () {
-              this.$refs.formCode.resetValidation()
+              this.$refs.formCode && this.$refs.formCode.resetValidation()
             })
+            
+            if (data.info && data.info.phone && data.info.phone.phone) {
+              this.alreadyUsedPhone = true
+              return
+            }
+            this.sended = true
           })
           .catch(res => {
             console.log('FAILURE!!', res)
@@ -457,6 +468,10 @@ export default {
     }
     .v-messages__message {
       text-align: center;
+    }
+    .error-message {
+      margin-bottom: 20px;
+      color: #EF4D37;
     }
   }
 </style>

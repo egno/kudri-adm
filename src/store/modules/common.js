@@ -259,7 +259,8 @@ const actions = {
   },
   register ({ commit, dispatch }, payload) {
     const registerPath = 'rpc/register'
-    Api()
+    
+    return Api()
       .post(registerPath, payload)
       .then(res => {
         return res.data
