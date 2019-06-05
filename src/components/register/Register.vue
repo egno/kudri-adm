@@ -106,6 +106,7 @@
       />
       <VBtn
         v-if="codeTries"
+        type="button"
         class="button"
         :class="{ button_disabled: !fcode }"
         @click="sendCode"
@@ -151,6 +152,7 @@
         required
       />
       <VBtn
+        type="button"
         class="button"
         :class="{ button_disabled: !fpassword || !fpasswordRepeat || fpassword !== fpasswordRepeat }"
         @click="registerAndLogin"
@@ -159,6 +161,12 @@
       </VBtn>
     </VForm>
 
+    <div>
+      Уже есть аккаунт?
+      <router-link :to="{ name: 'login'}">
+        Войти
+      </router-link>
+    </div>
     <div v-if="keyCode">
       {{ badCode }}
     </div>
