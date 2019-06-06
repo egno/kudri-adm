@@ -19,7 +19,9 @@
       <VList class="logo-wrap">
         <v-list-tile-content>
           <v-list-tile-title overflow-hidden>
-            <div class="logo" />
+            <router-link :to="{ name: 'home' }">
+              <div class="logo" />
+            </router-link>
           </v-list-tile-title>
         </v-list-tile-content>
       </VList>

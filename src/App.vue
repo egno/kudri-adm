@@ -1,7 +1,8 @@
 <template>
   <VApp app>
-    <top-bar />
-    <Navigation @onAction="onAction" />
+    <top-bar v-if="$route.name !== 'home'" />
+    <HomeHeader v-else />
+    <Navigation v-if="isMenuVisible" @onAction="onAction" />
     <VContent app>
       <RouterView />
     </VContent>
@@ -14,6 +15,7 @@
 import UserProfileModal from '@/components/user/UserProfileModal.vue'
 import Navigation from '@/components/Navigation.vue'
 import TopBar from '@/components/TopBar.vue'
+import HomeHeader from '@/components/home/HomeHeader.vue'
 import Alerts from '@/components/Alerts.vue'
 import router from '@/router'
 import { mapActions, mapGetters } from 'vuex'
@@ -28,6 +30,7 @@ export default {
   name: 'App',
   components: {
     Alerts,
+    HomeHeader,
     Navigation,
     TopBar,
     UserProfileModal
@@ -66,6 +69,12 @@ export default {
         return `${this.appTitle} ${this.userRole}`
       }
       return this.appTitle
+    },
+    isMenuVisible () {
+      if (!this.$route) {
+        return false
+      }
+      return this.$route.name !== 'home' && this.$route.name !== 'login' && this.$route.name !== 'restorePassword' && this.$route.name !== 'register'
     }
   },
   mounted () {
@@ -113,6 +122,9 @@ export default {
 
 <style lang="scss">
 @import './assets/styles/common';
+#amoforms_action_btn {
+  display: none !important; 
+}
 .application {
   line-height: normal;
 }
