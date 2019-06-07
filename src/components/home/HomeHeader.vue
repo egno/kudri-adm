@@ -13,14 +13,14 @@
         <a v-smooth-scroll href="#faq">ПРОДУКТ</a>
         <a v-smooth-scroll href="#news">НОВОСТИ</a>
       </div>
-      <div>
-        <v-btn flat @click="$router.push({ name: 'register' })">
+      <div class="home-header__right">
+        <v-btn flat class="home-header__button _register" @click="$router.push({ name: 'register' })">
           <div class="home-header__icon _register" />
           <div class="home-header__tablet-text">
             ПОПРОБУЙТЕ БЕСПЛАТНО
           </div>
         </v-btn>
-        <v-btn flat @click="$router.push({ name: 'login' })">
+        <v-btn flat class="home-header__button" @click="$router.push({ name: 'login' })">
           <div class="home-header__desktop">
             ВХОД
           </div>
@@ -66,8 +66,13 @@
     &__desktop {
       display: none;
       @media only screen and (min-width : $desktop) {
-        display: block;
+        display: flex;
+        width: 50%;
+        justify-content: space-between;
       }
+    }
+    &__right {
+      height: 100%;
     }
     &__tablet-text {
       display: none;
@@ -88,6 +93,9 @@
         background-image: url('../../assets/images/svg/lock.svg');
 
       }
+    }
+    &__button:first-child {
+      border-right: 2px solid #07101C;
     }
     .v-toolbar__content {
       height: 55px !important;
@@ -110,6 +118,12 @@
           margin-right: 10px;
         }
       }
+    }
+    a {
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;   
+      color: #07101C;
     }
   }
 </style>
