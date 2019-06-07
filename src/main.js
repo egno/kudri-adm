@@ -11,10 +11,12 @@ import 'lato-font/css/lato-font.css'
 import '@mdi/font/css/materialdesignicons.css'
 //import 'vuetify/src/stylus/main.styl';
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
+import vueSmoothScroll from 'vue2-smooth-scroll'
 
 Vue.config.productionTip = false
 Vue.use(Meta)
 
+Vue.use(vueSmoothScroll)
 Vue.filter('phoneFormat', function (value) {
   if (!value) return ''
   return value.replace(
