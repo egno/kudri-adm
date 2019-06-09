@@ -4,9 +4,9 @@
     app
     flat
     fixed
+    :height="isDesktop? 146 : 91"
   >
     <div class="home-header__logo" />
-
     <VToolbarItems>
       <div class="home-header__desktop">
         <a v-smooth-scroll href="#about">О ПРОЕКТЕ</a>
@@ -33,24 +33,27 @@
 
 <script>
   export default {
-    name: 'HomeHeaderVue'
+    name: 'HomeHeaderVue',
+    computed: {
+      isDesktop () {
+        return window && window.innerWidth > 1159
+      }
+    }
   }
 </script>
 
 <style lang="scss">
   @import '../../assets/styles/common';
 
-  .home-header {
-    height: 55px;
-    box-sizing: content-box;
-    padding-top: 18px;
+  .home-header { 
+    box-sizing: content-box; 
     background-color: #fff !important;
 
-    @media only screen and (min-width : $tablet) {
-      padding-top: 23px;
+    @media only screen and (min-width : $tablet) { 
+      padding-top: 5px;
     }
     @media only screen and (min-width : $desktop) {
-      padding-top: 39px;
+      padding-top: 0;
     }
     &__logo {
       width: 63px;
@@ -98,7 +101,7 @@
       border-right: 2px solid #07101C;
     }
     .v-toolbar__content {
-      height: 55px !important;
+      //height: 55px !important;
     }
     .v-toolbar__items {
       flex-grow: 1;

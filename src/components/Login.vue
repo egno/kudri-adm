@@ -146,7 +146,7 @@ export default {
                   date: formatDate(new Date())
                 }
               })
-            } else {
+            } else if (filial) {
               this.$router.push({
                 name: 'filialList',
                 params: { id: filial.parent }
