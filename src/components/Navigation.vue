@@ -90,7 +90,6 @@ import { isBusinessRoute } from '@/utils'
 import { formatDate } from '@/components/calendar/utils'
 import Users from '@/mixins/users'
 import { filials } from './business/mixins'
-
 export default {
   components: { AddMenu, NavPoweredItem, VCalendar },
   mixins: [Users, filials],
@@ -309,9 +308,9 @@ export default {
             params: { id: this.businessId }
           },
           show: !this.businessIsFilial &&
-          this.hasName &&
-            !this.isManagerMenu && 
-            this.loggedIn && 
+            this.hasName &&
+            !this.isManagerMenu &&
+            this.loggedIn &&
             (this.userRole === 'manager' || this.userRole === 'admin' || this.user.role === 'Администратор компании')
         },
         {
@@ -448,7 +447,6 @@ export default {
 .navigation.theme--dark {
   background: linear-gradient(180deg, #333c54 0.06%, #4a5d6d 85.63%);
 }
-
 .navigation {
   @media only screen and (min-height: 667px) {
     padding-bottom: 40px;
@@ -519,7 +517,6 @@ export default {
 .logo {
   width: 73px;
   height: 24px;
-  background: url('./../assets/images/svg/uno_full.svg') center/contain
-    no-repeat;
+  background: url('./../assets/images/svg/uno_full.svg') center/contain no-repeat;
 }
 </style>

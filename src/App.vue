@@ -1,7 +1,6 @@
 <template>
   <VApp app>
-    <top-bar v-if="$route.name !== 'home'" />
-    <HomeHeader v-else />
+    <top-bar />
     <Navigation v-if="isMenuVisible" @onAction="onAction" />
     <VContent app>
       <RouterView />
@@ -15,7 +14,6 @@
 import UserProfileModal from '@/components/user/UserProfileModal.vue'
 import Navigation from '@/components/Navigation.vue'
 import TopBar from '@/components/TopBar.vue'
-import HomeHeader from '@/components/home/HomeHeader.vue'
 import Alerts from '@/components/Alerts.vue'
 import router from '@/router'
 import { mapActions, mapGetters } from 'vuex'
@@ -30,7 +28,6 @@ export default {
   name: 'App',
   components: {
     Alerts,
-    HomeHeader,
     Navigation,
     TopBar,
     UserProfileModal
@@ -46,12 +43,18 @@ export default {
       'actualDate',
       'appTitle',
       'businessName',
+      'businessInfo',
+      'loggedIn',
       'navBarVisible',
       'messageWindow',
       'profileDrawer',
       'userID',
-      'userRole'
+      'userRole',
+      'myBusinessList'
     ]),
+    businessId () {
+      return this.$route && this.$route.params && this.$route.params.id
+    },
     defaultAction () {
       if (!this.actions) {
         return
@@ -74,7 +77,19 @@ export default {
       if (!this.$route) {
         return false
       }
-      return this.$route.name !== 'home' && this.$route.name !== 'login' && this.$route.name !== 'restorePassword' && this.$route.name !== 'register'
+      return this.$route.name !== 'home' && this.$route.name !== 'login' && this.$route.name !== 'restorePassword' && this.$route.name !== 'register' && this.$route.name !== 'faq'
+    }
+  },
+  watch: {
+    '$route.params': {
+      handler: 'loadBusiness',
+      deep: true
+    },
+    actualDate: 'loadBusiness',
+    loggedIn (newVal) {
+      if (newVal) {
+        this.loadMyBusinessList()
+      }
     }
   },
   mounted () {
@@ -90,13 +105,16 @@ export default {
   methods: {
     ...mapActions([
       'loadApiTime',
+      'loadDayVisits',
       'loadEmployeeCategories',
       'loadFromStorage',
+      'loadMyBusinessList',
       'loadServiceList',
       'loadServiceGroups',
       'refreshToken',
       'setActions',
       'setActualDate',
+      'setBusiness',
       'navBar'
     ]),
     checkDate () {
@@ -104,6 +122,18 @@ export default {
     },
     goHome () {
       router.push({ name: 'home' })
+    },
+    loadBusiness () {
+      if (!this.businessId || this.businessId === 'new') {
+        return
+      }
+      this.setBusiness(this.businessId)
+      if (!this.actualDate) return
+      const month = this.actualDate.replace(/\d{2}$/, '01')
+      this.loadDayVisits({
+        business: this.businessId,
+        month: month
+      })
     },
     onAction (payload) {
       this.$root.$emit('onAction', payload)
