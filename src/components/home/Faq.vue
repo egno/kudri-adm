@@ -2,6 +2,7 @@
   <section id="faq" class="faq">
     <div class="main-page__container">
       <div class="main-page__section-header _faq" />
+      <MobileMenu />
       <div class="faq__content">
         <h2 class="main-page__heading">
           Все, что вы хотели узнать об UNO CRM
@@ -105,10 +106,12 @@
 
 <script>
   import Accordion from '@/components/common/Accordion.vue'
+  import MobileMenu from '@/components/home/MobileMenu'
 
   export default {
     components: {
       Accordion,
+      MobileMenu
     },
   }
 </script>

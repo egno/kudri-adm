@@ -15,30 +15,12 @@
           <router-link :to="{ name: 'register' }" class="main-page__register-link">
             ПОПРОБУЙТЕ ДЕМО-ВЕРСИЮ БЕСПЛАТНО
           </router-link>
-        </div>
-        <div class="main-page__scroll">
-          <span>Вниз</span>
+          <div class="main-page__scroll">
+            <span>Вниз</span>
+          </div>
         </div>
       </section>
-
-      <v-layout id="home-menu" justify-start row class="home-menu">
-        <button type="button" :class="['home-menu__activator', { active: isMenuVisible }]" @click="isMenuVisible = !isMenuVisible">
-          <span>Меню</span>
-        </button>
-        <v-expand-x-transition>
-          <div v-show="isMenuVisible" class="home-menu__items">
-            <a
-              v-for="(item, i) in menuItems"
-              :key="i"
-              v-smooth-scroll
-              :href="item.hash"
-            >
-              {{ item.title }}
-            </a>
-          </div>
-        </v-expand-x-transition>
-      </v-layout>
-
+      <MobileMenu />
       <section id="about" class="about">
         <div class="main-page__container">
           <div class="main-page__section-header _about" />
@@ -147,26 +129,19 @@
 <script>
   // import ReleaseNotes from "../components/home/ReleaseNotes"
   import Faq from "../components/home/Faq"
+  import MobileMenu from "../components/home/MobileMenu"
 
 export default {
   components: {
-    Faq
+    Faq,
+    MobileMenu
   },
   data () {
     return {
-      isMenuVisible: false,
-      menuItems: [
-        { title: 'О проекте', hash: '#about' },
-        { title: 'Продукт', hash: '#faq' },
-        { title: 'Новости', hash: '#news' },
-      ],
       news: []
     }
   },
-  computed : {
-    windowHeight () {
-      return document.documentElement.clientHeight - 73
-    },
+  methods: {
   }
 }
 </script>
@@ -224,7 +199,6 @@ export default {
       }
     }
     &__first {
-      position: relative;
       height: calc(100vh - #{$header-height + $padding-top});
       display: flex;
       flex-direction: column;
@@ -256,6 +230,7 @@ export default {
         }
       }
       .main-page__container {
+        position: relative;
         @media only screen and (min-width : $tablet) {
           padding-left: 80px;
         }
@@ -320,7 +295,7 @@ export default {
     &__scroll {
       display: none;
       position: absolute;
-      bottom: 15px;
+      top: 120%;
       left: 0;
       right: 0;
       margin: auto;
@@ -333,7 +308,7 @@ export default {
         display: block;
       }
 
-      @media only screen and (min-width : $tablet) {
+      @media only screen and (min-height : $min-height) and (min-width : $tablet) {
         background-position: left;
         left: 185px;
         margin: 0;
@@ -354,50 +329,7 @@ export default {
     section {
       margin-bottom: 20px;
     }
-    .home-menu {
-      padding-left: 20px;
-      align-items: center;
-      @media only screen and (min-width : $tablet) {
-        display: none;
-      }
-      &__activator {
-        height: 35px;
-        padding-left: 40px;
-        background: url('../assets/images/svg/home_menu.svg') center left no-repeat #fff;
-        font-weight: 400;
-        font-size: 16px;
-        outline: none;
-
-        span {
-          display: block;
-          margin-left: 30px;
-          transition: width 0.3s;
-          overflow: hidden;
-        }
-        &.active {
-          background: url('../assets/images/svg/home_menu_open.svg') center left no-repeat #fff;
-
-          span {
-            width: 0;
-          }
-        }
-      }
-      &__items {
-        height: 16px;
-        overflow: hidden;
-        a {
-          color: #07101C;
-          text-transform: uppercase;
-          text-decoration: none;
-        }
-      }
-      .v-menu__content {
-        width: 100%;
-      }
-      .v-list {
-        display: flex;
-      }
-    }
+    
     .target-audience {
       padding: 0 6px;
       &__list {

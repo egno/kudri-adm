@@ -9,16 +9,21 @@
     <div class="home-header__logo" />
     <VToolbarItems>
       <div class="home-header__desktop">
-        <a v-if="$route.name === 'home'" v-smooth-scroll href="/#about">О ПРОЕКТЕ</a>
-        <router-link v-else :to="{ name: 'home', hash: '#about' }">
+        <a 
+          v-if="$route.name === 'home'" 
+          v-smooth-scroll 
+          href="/#about"
+          :class="{ current: $route.hash && $route.hash === '#about' }"
+        >О ПРОЕКТЕ</a>
+        <router-link v-else :to="{ name: 'home', hash: '#about' }" :class="{ current: $route.hash && $route.hash === '#about' }">
           О ПРОЕКТЕ
         </router-link>
-        <router-link :to="{ name: 'faq' }">
+        <router-link :to="{ name: 'faq' }" :class="{ current: $route.name === 'faq' }">
           ПРОДУКТ
         </router-link>
-        <router-link :to="{ name: 'home' }">
+        <!-- <router-link :to="{ name: 'news' }">
           НОВОСТИ
-        </router-link>
+        </router-link> -->
       </div>
       <div class="home-header__right">
         <VLayout v-if="loggedIn" align-end justify-center column fill-height class="company-badge">
@@ -29,7 +34,12 @@
             {{ businessInfo.category }}
           </VFlex>
         </VLayout>
-        <v-btn v-else flat class="home-header__button _register" @click="$router.push({ name: 'register' })">
+        <v-btn 
+          v-else 
+          flat 
+          :class="['home-header__button _register', { active: !isFirstSectionInView || $route.name === 'faq' }]" 
+          @click="$router.push({ name: 'register' })"
+        >
           <div class="home-header__icon _register" />
           <div class="home-header__tablet-text">
             ПОПРОБУЙТЕ БЕСПЛАТНО
@@ -64,6 +74,47 @@
       isDesktop () {
         return window && window.innerWidth > 1159
       }
+    },
+    data () {
+      return {
+        firstSection: null,
+        isFirstSectionInView: true
+      }
+    },
+    watch: {
+      $route: {
+        handler: 'checkElement',
+        deep: true
+      },
+    },
+    mounted () {
+      this.checkElement()
+    },
+    beforeDestroy () {
+      if (this.onScroll) {
+        document.removeEventListener('scroll', this.onScroll)
+      }
+    },
+    methods: {
+      checkElement () {
+        this.$nextTick(() => {
+          this.firstSection = document.querySelector('.main-page__first')
+
+          if (this.firstSection) {
+            this.onScroll = () => this.isOutOfViewport(this.firstSection)
+            this.onScroll()
+            document.addEventListener('scroll', this.onScroll)
+          }
+        })
+      },
+      isOutOfViewport (elem) {
+        if (!elem) {
+          return 
+        }
+        let bounding = elem.getBoundingClientRect()
+
+        this.isFirstSectionInView = bounding.bottom  > 100 && bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight)
+      }
     }
   }
 </script>
@@ -97,7 +148,16 @@
       @media only screen and (min-width : $desktop) {
         display: flex;
         width: 50%;
-        justify-content: space-between;
+        justify-content: space-around;
+      }
+      a {
+        line-height: 37px;
+        padding: 0 8px;
+        border-bottom: 1px solid transparent;
+        &.current {
+          color: #BA9462;
+          border-bottom-color: #BA9462;
+        }
       }
     }
     &__right {
@@ -124,8 +184,28 @@
 
       }
     }
-    &__button:first-child {
-      border-right: 2px solid #07101C;
+    &__button {
+      padding: 0 30px;
+      &:first-child {
+        border-right: 2px solid #07101C;
+        &.active {
+          @media only screen and (min-width : $tablet) {
+            border-right: none;
+            background: linear-gradient(90deg, #C9A15D 0%, #BA9462 100%) #b69768;
+            color: #fff;
+            .home-header__icon {
+              background-image: url('../../assets/images/svg/user_white.svg');
+            }
+            &:hover {
+              background-color: #07101C;
+              background-image: none;
+            }
+          }
+        }
+      }
+    }
+    .v-toolbar__content {
+      padding-right: 0;
     }
     .v-toolbar__items {
       flex-grow: 1;
