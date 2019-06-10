@@ -311,12 +311,16 @@ export default {
     sendLogin () {
       this.alreadyUsedPhone = false
       if (!this.loginIsEmail || this.$refs.formLogin.validate()) {
-        Api()
-          .post(this.url, {
+        let data = {
             login: this.flogin,
             code: null,
             j: { business_category: this.ftype }
-          })
+          }
+        if (this.restoreMode) {
+          data.j.restore = true
+        }
+        Api()
+          .post(this.url, data)
           .then(({ data }) => {
             this.fcode = ''
             this.badCode = ''
@@ -338,8 +342,8 @@ export default {
             }
             this.sended = true
           })
-          .catch(res => {
-            console.log('FAILURE!!', res)
+          .catch(err => {
+            this.alert(makeAlert(err))
           })
       }
     },
