@@ -1,5 +1,7 @@
 <template>
+  <HomeHeader v-if="$route.name === 'home' || $route.name === 'faq'" /><!--todo make a slot inside HomeHeader for authenticated user -->
   <VToolbar
+    v-else
     class="topbar"
     app
     height="55px"
@@ -39,6 +41,29 @@
           {{ businessInfo.category }}
         </VFlex>
       </VLayout>
+      <div class="go-home-menu">
+        <v-menu left offset-y @input="goHomeMenuActive = !goHomeMenuActive">
+          <template v-slot:activator="{ on }">
+            <button
+              type="button"
+              :class="{ active: goHomeMenuActive }"
+              v-on="on"
+            />
+          </template>
+          <VList class="menu-list">
+            <template v-for="(item, index) in menuList">
+              <VListTile
+                :key="index"
+                @click="$router.push(item.route)"
+              >
+                <VListTileTitle>
+                  {{ item.title }}
+                </VListTileTitle>
+              </VListTile>
+            </template>
+          </VList>
+        </v-menu>
+      </div>
       <ProfileMenu />
     </VToolbarItems>
   </VToolbar>
@@ -49,14 +74,26 @@ import ProfileMenu from '@/components/ProfileMenu.vue'
 import router from '@/router'
 import { mapActions, mapGetters } from 'vuex'
 import { isBusinessRoute } from '@/utils'
+import HomeHeader from '@/components/home/HomeHeader.vue'
 
 export default {
   components: {
+    HomeHeader,
     ProfileMenu,
   },
   data () {
     return {
       searchString: '',
+      menuList: [
+        {
+          title: 'На главную UNO',
+          route: { name: 'home' },
+        },
+        /*{
+          title: 'Мой рабочий стол'
+        }*/
+      ],
+      goHomeMenuActive: false
     }
   },
   computed: {
@@ -64,7 +101,8 @@ export default {
       'actions',
       'businessInfo',
       'navigationVisible',
-      'userID'
+      'userID',
+      'myBusinessList'
     ]),
     defaultAction () {
       if (!(this.actions && Array.isArray(this.actions))) {
@@ -109,12 +147,7 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-.display-4 {
-  display: flex;
-  padding-left: 0;
-  align-items: center;
-}
+<style lang="scss">
   .company-badge {
     display: none;
     padding-right: 24px;
@@ -140,6 +173,17 @@ export default {
       line-height: normal;
       text-align: right;
       color: #8995AF;
+    }
+  }
+  .go-home-menu {
+    button {
+      width: 66px;
+      height: 100%;
+      outline: none;
+      background: url('../assets/images/svg/home_blue.svg') center/24px no-repeat;
+      &.active {
+        background-color: rgba(137, 149, 175, 0.2);
+      }
     }
   }
 </style>

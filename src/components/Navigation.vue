@@ -101,7 +101,6 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'actualDate',
       'businessFilialCount',
       'businessInfo',
       'businessIsSalon',
@@ -360,11 +359,7 @@ export default {
     currentToken: 'onNewToken',
     isBusinessCard: 'checkUserInfo',
     userLoadingState: 'checkUserInfo',
-    '$route.params': {
-      handler: 'loadBusiness',
-      deep: true
-    },
-    actualDate: 'loadBusiness',
+
     businessInfo: {
       handler: 'getFilialsCount',
       deep: true
@@ -377,7 +372,6 @@ export default {
     ...mapActions([
       'navBar',
       'setNavigationVisible',
-      'loadDayVisits',
       'loadUserInfo',
       'openMessageWindow',
       'setAppTitle',
@@ -399,18 +393,7 @@ export default {
         }
       })
     },
-    loadBusiness () {
-      if (!this.businessId || this.businessId === 'new') {
-        return
-      }
-      this.setBusiness(this.businessId)
-      if (!this.actualDate) return
-      const month = this.actualDate.replace(/\d{2}$/, '01')
-      this.loadDayVisits({
-        business: this.businessId,
-        month: month
-      })
-    },
+
     getFilialsCount () {
       if (this.businessIsFilial) {
         this.getFilialsOf(this.businessInfo.parent).then(filials => {

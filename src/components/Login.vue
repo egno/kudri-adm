@@ -67,7 +67,6 @@
 import { mapGetters, mapActions } from 'vuex'
 import MainButton from '@/components/common/MainButton.vue'
 import Spinner from '@/components/common/Spinner.vue'
-import Api from '@/api/backend'
 import Users from '@/mixins/users'
 import { formatDate } from '@/components/calendar/utils'
 
@@ -107,7 +106,7 @@ export default {
     this.loadBusiness()
   },
   methods: {
-    ...mapActions(['login', 'logout']),
+    ...mapActions(['login', 'logout', 'loadMyBusinessList']),
     goRestorePassword () {
       this.$router.push({ name: 'restorePassword' })
     },
@@ -115,10 +114,10 @@ export default {
       if (!this.loggedIn) return
 
       this.isLoading = true
-      Api()
-        .get(`my_business`)
-        .then(res => res.data)
+
+      this.loadMyBusinessList()
         .then(res => {
+          // todo replace into App.vue
           this.businessCount = res.length
           if (this.userRole === 'manager' || this.userRole === 'admin') {
             this.$router.push({

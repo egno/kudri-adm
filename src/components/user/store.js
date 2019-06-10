@@ -11,7 +11,8 @@ anon - незарегистрированный.
 */
 const state = {
   userInfo: {},
-  userLoadingState: 'not started' /* also: 'started', 'finished' */ 
+  userLoadingState: 'not started' /* also: 'started', 'finished' */,
+  myBusinessList: []
 }
 
 const getters = {
@@ -66,7 +67,8 @@ const getters = {
         info.data.j.business_category === 'Частный мастер') ||
       (business && business.type === 'P')
     )
-  }
+  },
+  myBusinessList: state => state.myBusinessList
 }
 
 const mutations = {
@@ -80,6 +82,9 @@ const mutations = {
   },
   SET_LOADING (state, payload) {
     state.userLoadingState = payload
+  },
+  SET_MY_BUSINESS_LIST (state, payload) {
+    state.myBusinessList = payload
   }
 }
 
@@ -103,6 +108,18 @@ const actions = {
         commit('SET_LOADING', 'not started')
       })
   },
+  loadMyBusinessList ({ commit, getters }) {
+    if (!getters.loggedIn) {
+      return []
+    }
+
+    return Api()
+      .get(`my_business?limit=10`)
+      .then(({ data }) => {
+        commit('SET_MY_BUSINESS_LIST', data)
+        return data
+      })
+  },
   login ({ commit, dispatch }, payload) {
     const loginPath = 'rpc/login'
 
@@ -115,6 +132,7 @@ const actions = {
       .then(token => {
         commit('SET_TOKEN', token)
         dispatch('loadUserInfo')
+        dispatch('loadMyBusinessList')
       })
       .catch(err => {
         commit('ADD_ALERT', makeAlert(err))

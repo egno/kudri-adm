@@ -9,18 +9,34 @@
     <div class="home-header__logo" />
     <VToolbarItems>
       <div class="home-header__desktop">
-        <a v-smooth-scroll href="#about">О ПРОЕКТЕ</a>
-        <a v-smooth-scroll href="#faq">ПРОДУКТ</a>
-        <a v-smooth-scroll href="#news">НОВОСТИ</a>
+        <a v-if="$route.name === 'home'" v-smooth-scroll href="/#about">О ПРОЕКТЕ</a>
+        <router-link v-else :to="{ name: 'home', hash: '#about' }">
+          О ПРОЕКТЕ
+        </router-link>
+        <router-link :to="{ name: 'faq' }">
+          ПРОДУКТ
+        </router-link>
+        <router-link :to="{ name: 'home' }">
+          НОВОСТИ
+        </router-link>
       </div>
       <div class="home-header__right">
-        <v-btn flat class="home-header__button _register" @click="$router.push({ name: 'register' })">
+        <VLayout v-if="loggedIn" align-end justify-center column fill-height class="company-badge">
+          <VFlex class="text-truncate company-badge__name">
+            {{ businessInfo.name }}
+          </VFlex>
+          <VFlex class="company-badge__category">
+            {{ businessInfo.category }}
+          </VFlex>
+        </VLayout>
+        <v-btn v-else flat class="home-header__button _register" @click="$router.push({ name: 'register' })">
           <div class="home-header__icon _register" />
           <div class="home-header__tablet-text">
             ПОПРОБУЙТЕ БЕСПЛАТНО
           </div>
         </v-btn>
-        <v-btn flat class="home-header__button" @click="$router.push({ name: 'login' })">
+        <ProfileMenu v-if="loggedIn" />
+        <v-btn v-else flat class="home-header__button" @click="$router.push({ name: 'login' })">
           <div class="home-header__desktop">
             ВХОД
           </div>
@@ -32,9 +48,19 @@
 </template>
 
 <script>
+  import ProfileMenu from '@/components/ProfileMenu.vue'
+  import { mapGetters } from 'vuex'
+
   export default {
     name: 'HomeHeaderVue',
+    components: {
+      ProfileMenu,
+    },
     computed: {
+      ...mapGetters([
+        'businessInfo',
+        'loggedIn'
+      ]),
       isDesktop () {
         return window && window.innerWidth > 1159
       }
@@ -76,6 +102,7 @@
     }
     &__right {
       height: 100%;
+      display: flex;
     }
     &__tablet-text {
       display: none;
@@ -100,9 +127,6 @@
     &__button:first-child {
       border-right: 2px solid #07101C;
     }
-    .v-toolbar__content {
-      //height: 55px !important;
-    }
     .v-toolbar__items {
       flex-grow: 1;
       height: 55px;
@@ -124,7 +148,7 @@
     }
     a {
       text-decoration: none;
-      font-weight: bold;
+      font-weight: 400;
       font-size: 16px;   
       color: #07101C;
     }
