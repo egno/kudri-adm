@@ -90,7 +90,6 @@ import { isBusinessRoute } from '@/utils'
 import { formatDate } from '@/components/calendar/utils'
 import Users from '@/mixins/users'
 import { filials } from './business/mixins'
-
 export default {
   components: { AddMenu, NavPoweredItem, VCalendar },
   mixins: [Users, filials],
@@ -101,6 +100,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'actualDate',
       'businessFilialCount',
       'businessInfo',
       'businessIsSalon',
@@ -308,9 +308,9 @@ export default {
             params: { id: this.businessId }
           },
           show: !this.businessIsFilial &&
-          this.hasName &&
-            !this.isManagerMenu && 
-            this.loggedIn && 
+            this.hasName &&
+            !this.isManagerMenu &&
+            this.loggedIn &&
             (this.userRole === 'manager' || this.userRole === 'admin' || this.user.role === 'Администратор компании')
         },
         {
@@ -359,7 +359,11 @@ export default {
     currentToken: 'onNewToken',
     isBusinessCard: 'checkUserInfo',
     userLoadingState: 'checkUserInfo',
-
+    '$route.params': {
+      handler: 'loadBusiness',
+      deep: true
+    },
+    actualDate: 'loadBusiness',
     businessInfo: {
       handler: 'getFilialsCount',
       deep: true
@@ -372,6 +376,7 @@ export default {
     ...mapActions([
       'navBar',
       'setNavigationVisible',
+      'loadDayVisits',
       'loadUserInfo',
       'openMessageWindow',
       'setAppTitle',
@@ -393,7 +398,18 @@ export default {
         }
       })
     },
-
+    loadBusiness () {
+      if (!this.businessId || this.businessId === 'new') {
+        return
+      }
+      this.setBusiness(this.businessId)
+      if (!this.actualDate) return
+      const month = this.actualDate.replace(/\d{2}$/, '01')
+      this.loadDayVisits({
+        business: this.businessId,
+        month: month
+      })
+    },
     getFilialsCount () {
       if (this.businessIsFilial) {
         this.getFilialsOf(this.businessInfo.parent).then(filials => {
@@ -431,7 +447,6 @@ export default {
 .navigation.theme--dark {
   background: linear-gradient(180deg, #333c54 0.06%, #4a5d6d 85.63%);
 }
-
 .navigation {
   @media only screen and (min-height: 667px) {
     padding-bottom: 40px;
@@ -502,7 +517,6 @@ export default {
 .logo {
   width: 73px;
   height: 24px;
-  background: url('./../assets/images/svg/uno_full.svg') center/contain
-    no-repeat;
+  background: url('./../assets/images/svg/uno_full.svg') center/contain no-repeat;
 }
 </style>
