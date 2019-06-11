@@ -22,5 +22,11 @@ export default {
         this.user = {}
       }
     }
+  },
+  mounted () {
+    if (this.userInfo && this.userInfo.id) {
+      this.user = new User({ id: this.userInfo.id })
+      this.user.load(this.userInfo.id)
+    }
   }
 }

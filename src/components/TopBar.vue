@@ -33,11 +33,11 @@
     <VSpacer />
     <VToolbarItems>
       <!--<Notifications />-->
-      <VLayout align-end justify-center column fill-height class="company-badge">
+      <VLayout align-center justify-center class="company-badge">
         <VFlex class="text-truncate company-badge__name">
           {{ businessInfo.name }}
         </VFlex>
-        <VFlex class="company-badge__category">
+        <VFlex v-if="businessInfo.category" class="company-badge__category">
           {{ businessInfo.category }}
         </VFlex>
       </VLayout>
@@ -150,12 +150,13 @@ export default {
 <style lang="scss">
   .company-badge {
     display: none;
-    padding-right: 24px;
+    max-width: 324px;
+    padding: 8px 24px 8px 0;
     @media only screen and (min-width: 1160px) {
       display: flex;
+      flex-wrap: wrap;
     }
     &__name {
-      padding-top: 9px;
       font-family: Roboto Slab, Times New Roman, Times, serif;
       font-style: normal;
       font-weight: normal;
