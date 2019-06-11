@@ -253,7 +253,7 @@ export default {
     &__heading {
       margin-bottom: 17px;
       text-align: center;
-      font-weight: 400;
+      font-weight: 700;
       font-size: 30px;
       @media only screen and (min-width : $tablet) {
         text-align: left;
@@ -262,7 +262,7 @@ export default {
     &__subheading {
       margin-bottom: 4vh;
       text-align: center;
-      font-weight: 400;
+      font-weight: 700;
       font-size: 18px;
       @media only screen and (min-width : $tablet) {
         text-align: left;
@@ -320,7 +320,7 @@ export default {
       }
       span {
         display: none;
-        font-weight: 400;
+        font-weight: 700;
         @media only screen and (min-width : $tablet) {
           display: inline;
         }
@@ -343,7 +343,7 @@ export default {
       &__item {
         width: 158px;
         margin: 0 11px 60px;
-        font-weight: 400;
+        font-weight: 700;
         font-size: 16px;
         text-align: center;
         @media only screen and (min-width : $desktop) {
@@ -414,7 +414,7 @@ export default {
       &__quote {
         width: 90%;
         margin-bottom: 30px;
-        font-weight: 400;
+        font-weight: 700;
         font-size: 30px;
         @media only screen and (min-width : $tablet) {
           max-width: 460px;
@@ -424,7 +424,7 @@ export default {
         }
       }
       &__cite {
-        font-weight: 400;
+        font-weight: 700;
         font-size: 16px;
         font-style: normal;
       }

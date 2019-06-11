@@ -155,6 +155,7 @@
         border-bottom-right-radius: 20px;
       }
       &__header {
+        font-weight: 400;
         font-size: 16px;
         color: #fff;
         background: linear-gradient(90deg, #C9A15D 0%, #BA9462 100%);

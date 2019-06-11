@@ -251,12 +251,18 @@
     }
     a {
       text-decoration: none;
-      font-weight: 400;
+      font-weight: 700;
       font-size: 16px;   
       color: #07101C;
     }
     .company-badge {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 200px;
       cursor: pointer;
+      @media only screen and (min-width : $desktop) {
+        max-width: 320px;
+      }
     }
   }
 </style>
