@@ -26,12 +26,18 @@
         </router-link> -->
       </div>
       <div class="home-header__right">
-        <VLayout v-if="loggedIn" align-end justify-center column fill-height class="company-badge">
+        <VLayout
+          v-if="loggedIn"
+          align-center
+          justify-center
+          class="company-badge"
+          @click="goToBusiness"
+        >
           <VFlex class="text-truncate company-badge__name">
-            {{ businessInfo.name }}
+            {{ badge.j.name }}
           </VFlex>
-          <VFlex class="company-badge__category">
-            {{ businessInfo.category }}
+          <VFlex v-if="badge.j.category" class="company-badge__category">
+            {{ badge.j.category }}
           </VFlex>
         </VLayout>
         <v-btn 
@@ -66,19 +72,31 @@
     components: {
       ProfileMenu,
     },
-    computed: {
-      ...mapGetters([
-        'businessInfo',
-        'loggedIn'
-      ]),
-      isDesktop () {
-        return window && window.innerWidth > 1159
-      }
-    },
     data () {
       return {
         firstSection: null,
         isFirstSectionInView: true
+      }
+    },
+    computed: {
+      ...mapGetters([
+        'loggedIn',
+        'myBusinessList'
+      ]),
+      isDesktop () {
+        return window && window.innerWidth > 1159
+      },
+      badge () {
+        if (!this.myBusinessList.length) {
+          return {
+            j: {
+              name: '',
+              category: ''
+            }
+          }
+        }
+        const company = this.myBusinessList.find(b => b.type === 'C')
+        return company? company : this.myBusinessList[0]
       }
     },
     watch: {
@@ -106,6 +124,11 @@
             document.addEventListener('scroll', this.onScroll)
           }
         })
+      },
+      goToBusiness () {
+        if (this.badge.id) {
+          this.$router.push({ name: 'businessCard', params: { id: this.badge.id } })
+        }
       },
       isOutOfViewport (elem) {
         if (!elem) {
@@ -231,6 +254,9 @@
       font-weight: 400;
       font-size: 16px;   
       color: #07101C;
+    }
+    .company-badge {
+      cursor: pointer;
     }
   }
 </style>
