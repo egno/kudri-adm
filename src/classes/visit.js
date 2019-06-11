@@ -1,4 +1,4 @@
-import { displayRESTDate, displayRESTTime } from '@/components/calendar/utils'
+import { displayRESTDate, displayRESTTime, dateFromISO } from '@/components/calendar/utils'
 
 class Visit {
   constructor (val) {
@@ -69,7 +69,7 @@ class Visit {
 
   get isFuture () {
     const now = new Date()
-    const date = new Date(Date.parse(this.ts_begin))
+    const date = dateFromISO(this.ts_begin)
 
     return date > now
   }
@@ -107,8 +107,8 @@ class Visit {
 
   getCurrentStatus (date = new Date()) {
     const now = date
-    const t1 = new Date(Date.parse(this.ts_begin))
-    const t2 = this.ts_end? new Date(Date.parse(this.ts_end)) : 0
+    const t1 = dateFromISO(this.ts_begin)
+    const t2 = this.ts_end? dateFromISO(this.ts_end) : 0
 
     if (this.status) {
       return this.statuses.find(x => x.code === this.status)

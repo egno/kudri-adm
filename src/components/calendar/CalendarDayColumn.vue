@@ -78,6 +78,7 @@
 import VisitCard from '@/components/calendar/VisitCard.vue'
 import {
   areSameDates,
+  dateFromISO,
   dowDisplay,
   formatDate,
   formatTime
@@ -291,7 +292,7 @@ export default {
       return formatTime(date)
     },
     parseTime (timeString) {
-      return Date.parse(`${this.day.dateKey}T${timeString}:00`) 
+      return dateFromISO(`${this.day.dateKey}T${timeString}:00`).getTime()
     }
   }
 }

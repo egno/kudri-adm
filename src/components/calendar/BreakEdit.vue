@@ -71,7 +71,7 @@
   import Api from '@/api/backend'
   import { mapActions } from 'vuex'
   import { makeAlert } from '@/api/utils'
-  import { dateISOInLocalTimeZone } from '@/components/calendar/utils'
+  import { dateISOInLocalTimeZone, dateFromISO } from '@/components/calendar/utils'
   import Counter from '@/components/common/Counter'
   import DeleteButton from '@/components/common/DeleteButton'
 
@@ -123,7 +123,7 @@
     },
     computed: {
       date () {
-        return this.workBreak && this.workBreak.ts_begin? new Date(Date.parse(this.workBreak.ts_begin)) : new Date()
+        return this.workBreak && this.workBreak.ts_begin? dateFromISO(this.workBreak.ts_begin) : new Date()
       },
       dateString () {
         return this.workBreak.ts_begin? this.workBreak.ts_begin.substring(0,10): ''
@@ -144,7 +144,7 @@
           if (!(this.workBreak && this.workBreak.ts_begin && this.workBreak.ts_end)) {
             return 0
           }
-          return (Date.parse(this.workBreak.ts_end) - Date.parse(this.workBreak.ts_begin)) / (1000 * 60)
+          return (dateFromISO(this.workBreak.ts_end).getTime() - dateFromISO(this.workBreak.ts_begin).getTime()) / (1000 * 60)
         }
       },
       selectedDateFormatted () {

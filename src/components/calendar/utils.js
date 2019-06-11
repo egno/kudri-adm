@@ -1,5 +1,12 @@
 import Visit from '@/classes/visit'
 
+// Safari fix
+export function dateFromISO (s) {
+  const a = s.split(/[^0-9]/)
+  let d = new Date (a[0],a[1]-1,a[2],a[3],a[4],a[5] )
+  return d
+}
+
 export function dateInTimeZone (date, tz) {
   if (!tz) {
     return date
@@ -35,7 +42,7 @@ export function getISODate (s) {
 }
 
 export function valueDate (value) {
-  return value ? Date.parse(value) : undefined
+  return value ? dateFromISO(value).getTime() : undefined
 }
 
 // converts Date instance to yyyy-mm-dd String
@@ -94,12 +101,12 @@ export function getRESTTime (s) {
 }
 
 export function displayRESTDate (s) {
-  const d = new Date(Date.parse(s))
+  const d = dateFromISO(s)
   return displayDate(d)
 }
 
 export function displayRESTTime (s) {
-  const d = new Date(Date.parse(s))
+  const d = dateFromISO(s)
   return formatTime(d)
 }
 
@@ -172,7 +179,7 @@ export function visitStatus (status, time) {
     unvisited: 'Не пришел'
   }
   const now = new Date()
-  const t = new Date(Date.parse(time))
+  const t = dateFromISO(time)
 
   return s[status] || t - now > 0 ? 'Запись' : 'Завершен'
 }
@@ -232,3 +239,4 @@ export function ceilMinutes (date, interval = 15) {
 
   return newDate.setHours(date.getHours(), integerPart * interval + interval, 0)  
 }
+
