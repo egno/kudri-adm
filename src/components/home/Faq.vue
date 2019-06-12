@@ -118,6 +118,17 @@
 
 <style lang="scss">
   @import '../../assets/styles/common';
+
+  @mixin dots {
+    position: absolute;
+    top: 260px;
+    left: 172px;
+    content: '';
+    width: 118px;
+    height: 86px;
+    background: url('../../assets/images/dots.png') center/contain no-repeat;
+  }
+
   .faq {
     &__content {
       @media only screen and (min-width : $desktop) {
@@ -134,16 +145,34 @@
         width: 607px;
         margin-left: 50px;
       }
+      @media only screen and (min-width: 1440px) {
+        position: relative;
+        margin-left: 230px;
+        &:before {
+          content: '';
+          position: absolute;
+          width: 470px;
+          height: 470px;
+          top: 0;
+          left: 400px;
+          border-radius: 50%;
+          box-shadow: 0 4px 50px rgba(0, 0, 0, 0.05);
+        }
+      }
     }
     .main-page__heading {
       padding-left: 48px;
       text-align: left;
       @media only screen and (min-width : $tablet) {
+        max-width: 410px;
         padding-left: 78px;
       }
       @media only screen and (min-width : $desktop) {
-        width: 410px;
+        position: relative;
         padding-left: 172px;
+        &:after {
+          @include dots;
+        }
       }
     }
     .accordion {

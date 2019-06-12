@@ -159,6 +159,26 @@ export default {
     }
   }
 
+  @mixin dots {
+    position: absolute;
+    top: 386px;
+    right: 90px;
+    content: '';
+    width: 118px;
+    height: 86px;
+    background: url('../assets/images/dots.png') center/contain no-repeat;
+  }
+
+  @mixin circle {
+    content: '';
+    position: absolute;
+    width: 304px;
+    height: 304px;
+    border-radius: 50%;
+    box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.05);
+  }
+
+
   .main-page {
     height: 100%;
     padding-top: $padding-top;
@@ -214,7 +234,8 @@ export default {
         align-items: flex-start;
         background-image: url('../assets/images/bg_home_first_tablet.png');
       }
-      @media only screen and (min-width : $desktop) { 
+      @media only screen and (min-width : $desktop) {
+        position: relative;
         $header-height: 146px;
         $padding-top: 96px;
         height: calc(100vh - #{$header-height + $padding-top} - 42px);
@@ -234,8 +255,29 @@ export default {
         @media only screen and (min-width : $tablet) {
           padding-left: 80px;
         }
-        @media only screen and (min-width : $desktop) { 
+        @media only screen and (min-width : $desktop) {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          height: 100%;
           padding-left: 280px;
+          &:before {
+            @include dots;
+            right: 207px;
+            top: -65px;
+          }
+        }
+        @media only screen and (min-width: 1440px) {
+
+          &:after {
+            position: absolute;
+            right: 134px;
+            width: 2px;
+            height: calc(100% + 180px);
+            top: -76px;
+            content: '';
+            background-color: #07101C;
+          }
         }
       }
       .main-page__register-link {
@@ -307,7 +349,6 @@ export default {
       @media only screen and (min-height : $min-height) {
         display: block;
       }
-
       @media only screen and (min-height : $min-height) and (min-width : $tablet) {
         background-position: left;
         left: 185px;
@@ -316,6 +357,7 @@ export default {
         align-items: center;
       }
       @media only screen and (min-height : $min-height) and (min-width : $desktop) {
+        top: 99%;
         left: 360px;
       }
       span {
@@ -332,6 +374,12 @@ export default {
     
     .target-audience {
       padding: 0 6px;
+      @media only screen and (min-width : $tablet) {
+        margin-top: 55px;
+      }
+      @media only screen and (min-width : $desktop) {
+        margin-bottom: 30px;
+      }
       &__list {
         display: flex;
         flex-wrap: wrap;
@@ -377,6 +425,9 @@ export default {
         margin-bottom: 55px;
         padding-left: 14px;
         text-align: left;
+        @media only screen and (min-width : $desktop) {
+          margin-bottom: 80px;
+        }
       }
       .main-page__register-link {
         margin: 0 auto;
@@ -385,11 +436,11 @@ export default {
     .about {
       padding: 50px 0;
       &__text {
-        margin-bottom: 55px;
         padding: 0 20px 0 48px;
         @media only screen and (min-width : $desktop) {
           display: flex;
           padding-left: 142px;
+          margin-bottom: 80px;
         }
       }
       &__left,
@@ -402,10 +453,42 @@ export default {
         @media only screen and (min-width : $tablet) {
           padding-left: 30px;
         }
+        @media only screen and (min-width: $desktop) {
+          position: relative;
+          &:before {
+            @include circle;
+            top: 200px;
+            left: 15%;
+          }
+          &:after {
+            @include dots;
+          }
+        }
       }
       &__right {
         @media only screen and (min-width : $tablet) {
-          width: 50%;
+          position: relative;
+          width: 40%;
+          padding-bottom: 34px;
+          &:after {
+            position: absolute;
+            width: 110px;
+            height: 2px;
+            left: -55px;
+            top: 100%;
+            background: #C9A15D;
+            content: '';
+          }
+        }
+        @media only screen and (min-width: $desktop) {
+          position: relative;
+          &:before {
+            @include circle;
+            width: 470px;
+            height: 470px;
+            top: 490px;
+            left: 455px;
+          }
         }
       }
       &__heading {
