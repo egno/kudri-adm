@@ -8,7 +8,7 @@
   >
     <div class="home-header__logo" />
     <VToolbarItems>
-      <div class="home-header__desktop">
+      <div class="home-header__desktop-menu">
         <a 
           v-if="$route.name === 'home'" 
           v-smooth-scroll 
@@ -52,7 +52,7 @@
           </div>
         </v-btn>
         <ProfileMenu v-if="loggedIn" />
-        <v-btn v-else flat class="home-header__button" @click="$router.push({ name: 'login' })">
+        <v-btn v-else flat class="home-header__button _login" @click="$router.push({ name: 'login' })">
           <div class="home-header__desktop">
             ВХОД
           </div>
@@ -145,8 +145,7 @@
 <style lang="scss">
   @import '../../assets/styles/common';
 
-  .home-header { 
-    box-sizing: content-box; 
+  .home-header {
     background-color: #fff !important;
 
     @media only screen and (min-width : $tablet) { 
@@ -166,17 +165,21 @@
         max-width: 100%;
       }
     }
-    &__desktop {
+    &__desktop-menu {
       display: none;
       @media only screen and (min-width : $desktop) {
         display: flex;
-        width: 50%;
-        justify-content: space-around;
+        width: 55%;
+        justify-content: flex-start;
       }
       a {
         line-height: 37px;
+        margin-right: 15%;
         padding: 0 8px;
         border-bottom: 1px solid transparent;
+        &:last-child {
+          margin-right: 0;
+        }
         &.current {
           color: #BA9462;
           border-bottom-color: #BA9462;
@@ -209,7 +212,8 @@
     }
     &__button {
       padding: 0 30px;
-      &:first-child {
+      &._register {
+        border-radius: 0;
         border-right: 2px solid #07101C;
         &.active {
           @media only screen and (min-width : $tablet) {
@@ -226,8 +230,22 @@
           }
         }
       }
+      &._login {
+        @media only screen and (min-width : $desktop) {
+          width: 134px;
+        }
+      }
+    }
+    &__desktop {
+      display: none;
+      @media only screen and (min-width : $desktop) {
+        display: block;
+        margin-right: 10px;
+      }
     }
     .v-toolbar__content {
+      max-width: 1496px;
+      margin: 0 auto;
       padding-right: 0;
     }
     .v-toolbar__items {
@@ -239,16 +257,10 @@
       box-sizing: border-box;
       @media only screen and (min-width : $desktop) {
         justify-content: space-between;
-        margin-left: 96px;
+        margin-left: 102px;
       }
     }
-    .v-btn {
-      .home-header__desktop {
-        @media only screen and (min-width : $desktop) {
-          margin-right: 10px;
-        }
-      }
-    }
+
     a {
       text-decoration: none;
       font-weight: 700;
@@ -262,6 +274,12 @@
       cursor: pointer;
       @media only screen and (min-width : $desktop) {
         max-width: 320px;
+      }
+    }
+    .profile-menu {
+      border-left: 2px solid #07101C;
+      @media only screen and (min-width : $desktop) {
+        width: 136px;
       }
     }
   }
