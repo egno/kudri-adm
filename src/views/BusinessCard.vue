@@ -1,6 +1,6 @@
 <template>
   <div class="businesscard" :class="{ '_edit-mode': editMode }">
-    <VLayout xs12 align-center justify-start row class="businesscard__header">
+    <VLayout xs12 align-center justify-space-between row class="businesscard__header">
       <VFlex class="businesscard__heading">
         <h1 class="businesscard__h1">
           {{ businessInfo && businessInfo.category }}
@@ -113,7 +113,7 @@ export default {
     &__header {
       min-height: 128px;
       flex-grow: 0;
-      padding: 44px 0 44px 48px;
+      padding: 44px 11px 44px 47px;
       background: #fff;
       border-bottom: 1px solid rgba(137,149,175,0.1);
       @media only screen and (min-width : $desktop) {
@@ -135,7 +135,6 @@ export default {
     }
 
     &__edit {
-      padding-left: 40px;
       &:hover {
         path {
           fill: #000;
