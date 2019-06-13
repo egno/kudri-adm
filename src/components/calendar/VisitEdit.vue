@@ -214,7 +214,7 @@
 <script>
 import TimeSelect from '@/components/calendar/TimeSelect.vue'
 import {
-  dateInLocalTimeZone,
+  dateFromISO,
   formatDate,
   formatTime,
   visitInit,
@@ -423,17 +423,17 @@ export default {
     },
     onSave () {
       const duration = this.duration
-      const ts1 = dateInLocalTimeZone(
-        new Date(`${this.selectedDate} ${this.selectedTime}`)
-      )
+      const startTime = `${this.selectedDate}T${this.selectedTime}:00`
+      const ts1 = dateFromISO(startTime)
       let ts2 = new Date()
+
       ts2.setTime(ts1.getTime() + 60000 * duration) 
       this.visit.business_id = this.selectedEmployee? this.selectedEmployee.id : this.businessId
       this.visit.j.duration = duration
       this.visit.j.client.name = this.expressRecord? null : this.name.trim()
       this.visit.j.client.phone = this.expressRecord? null : this.phone.trim()
-      this.visit.ts_begin = ts1.toJSON().slice(0, 19)
-      this.visit.ts_end = ts2.toJSON().slice(0, 19)
+      this.visit.ts_begin = startTime
+      this.visit.ts_end = `${formatDate(ts2)}T${formatTime(ts2)}`
       this.visit.j.services = this.selectedServices
       if (!this.visit.j.color) {
         this.visit.j.color = '#' + this.colors[Math.floor(Math.random() * this.colors.length)]
