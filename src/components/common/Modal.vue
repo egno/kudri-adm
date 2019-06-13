@@ -47,7 +47,7 @@
     padding: 30px 30px 25px;
     background-color: #fff;
     text-align: center;
-    @media only screen and (min-width : 1160px) {
+    @media only screen and (min-width : $desktop) {
       padding: 59px 62px 56px;
     }
     &__close {

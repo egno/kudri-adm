@@ -50,7 +50,7 @@ export default {
     &__header {
       position: relative;
       padding: 11px 17px 10px 36px;
-      min-width: 280px;
+      min-width: 246px;
       border-radius: 20px;
       cursor: pointer;
       background: rgba(137, 149, 175, 0.1);

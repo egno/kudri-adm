@@ -392,13 +392,17 @@ export default {
   }
 
   .section-add-button {
-    margin-right: 16px;
+    position: fixed;
+    top: 99px;
+    right: 0px;
+    margin-right: 13px;
     background: url('./assets/images/svg/plus-white.svg') no-repeat center/16px
       #ef4d37;
     span {
       display: none;
     }
     @media only screen and (min-width: $desktop) {
+      position: static;
       background-image: none;
       span {
         display: inline;
