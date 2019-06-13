@@ -43,6 +43,9 @@ export default {
     padding-left: 20px;
     align-items: center;
     @media only screen and (min-width : $tablet) {
+      padding-left: 28px;
+    }
+    @media only screen and (min-width : $desktop) {
       display: none;
     }
     &__activator {
@@ -52,6 +55,9 @@ export default {
       font-weight: 400;
       font-size: 16px;
       outline: none;
+      @media only screen and (min-width : $tablet) {
+        display: none;
+      }
 
       span {
         display: block;
@@ -71,17 +77,33 @@ export default {
       }
     }
     &__items {
+      display: flex;
       width: 0;
-      height: 16px;
       overflow: hidden;
+      align-items: center;
       transition: width 0.3s;
+      @media only screen and (min-width : $tablet) {
+        width: auto;
+      }
       a {
         margin-right: 24px;
+        white-space: nowrap;
         color: #07101C;
         text-transform: uppercase;
         text-decoration: none;
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 34px;
+        border-bottom: 1px solid transparent;
         &.current {
           color: #BA9462;
+          @media only screen and (min-width : $tablet) {
+            border-bottom-color: #BA9462;
+            padding: 0 8px;
+          }
+          @media only screen and (min-width : $desktop) {
+            display: none;
+          }
         }
       }
       &.active {

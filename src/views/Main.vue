@@ -434,7 +434,7 @@ export default {
       }
     }
     .about {
-      padding: 50px 0;
+      padding-bottom: 50px;
       &__text {
         padding: 0 20px 0 48px;
         @media only screen and (min-width : $desktop) {
@@ -443,18 +443,14 @@ export default {
           margin-bottom: 80px;
         }
       }
-      &__left,
-      &__right {
-        @media only screen and (min-width : $desktop) {
-          width: 39%;
-        }
-      }
+
       &__left {
         @media only screen and (min-width : $tablet) {
           padding-left: 30px;
         }
         @media only screen and (min-width: $desktop) {
           position: relative;
+          width: 39%;
           &:before {
             @include circle;
             top: 200px;
@@ -468,13 +464,13 @@ export default {
       &__right {
         @media only screen and (min-width : $tablet) {
           position: relative;
-          width: 40%;
-          padding-bottom: 34px;
+          width: 64%;
+          padding: 0 0 34px 90px;
           &:after {
             position: absolute;
             width: 110px;
             height: 2px;
-            left: -55px;
+            left: 30px;
             top: 100%;
             background: #C9A15D;
             content: '';
@@ -482,6 +478,7 @@ export default {
         }
         @media only screen and (min-width: $desktop) {
           position: relative;
+          width: 40%;
           &:before {
             @include circle;
             width: 470px;

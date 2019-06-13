@@ -195,6 +195,7 @@
       @media only screen and (min-width : $tablet) {
         display: inline;
         margin-left: 10px;
+        font-weight: 700;
       }
     }
     &__icon {
@@ -215,13 +216,20 @@
       &._register {
         border-radius: 0;
         border-right: 2px solid #07101C;
+        @media only screen and (min-width : $tablet) {
+          width: 283px;
+        }
         &.active {
           @media only screen and (min-width : $tablet) {
-            border-right: none;
+            border-right-color: transparent;
             background: linear-gradient(90deg, #C9A15D 0%, #BA9462 100%) #b69768;
             color: #fff;
             .home-header__icon {
               background-image: url('../../assets/images/svg/user_white.svg');
+            }
+            .home-header__tablet-text {
+              font-weight: 500;
+              letter-spacing: 0.005em;
             }
             &:hover {
               background-color: #07101C;
@@ -241,6 +249,7 @@
       @media only screen and (min-width : $desktop) {
         display: block;
         margin-right: 10px;
+        font-weight: 700;
       }
     }
     .v-toolbar__content {
