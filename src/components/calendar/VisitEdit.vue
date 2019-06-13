@@ -432,9 +432,8 @@ export default {
       this.visit.j.duration = duration
       this.visit.j.client.name = this.expressRecord? null : this.name.trim()
       this.visit.j.client.phone = this.expressRecord? null : this.phone.trim()
-      this.visit.ts_begin = ts1.toJSON().slice(0, -1)
-      this.visit.ts_end = ts2.toJSON().slice(0, -1)
-
+      this.visit.ts_begin = ts1.toJSON().slice(0, 19)
+      this.visit.ts_end = ts2.toJSON().slice(0, 19)
       this.visit.j.services = this.selectedServices
       if (!this.visit.j.color) {
         this.visit.j.color = '#' + this.colors[Math.floor(Math.random() * this.colors.length)]
