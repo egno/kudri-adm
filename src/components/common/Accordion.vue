@@ -29,7 +29,7 @@
 
     &__header {
       position: relative;
-      padding: 11px 17px 10px 36px;
+      padding: 11px 36px 10px 36px;
       border-radius: 20px;
       cursor: pointer;
       background: rgba(137, 149, 175, 0.1);
@@ -40,11 +40,12 @@
 
       &:after {
         position: absolute;
-        top: 18px;
+        top: 50%;
         right: 20px;
         content: '';
         width: 10px;
         height: 6px;
+        margin-top: -3px;
         background: url('../../assets/images/svg/down.svg') center no-repeat;
       }
     }

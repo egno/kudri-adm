@@ -18,9 +18,9 @@
       <router-link :to="{ name: 'faq' }" :class="{ current: $route.name === 'faq' }">
         ПРОДУКТ
       </router-link>
-      <!-- <router-link :to="{ name: 'news' }">
-          НОВОСТИ
-        </router-link> -->
+      <router-link :to="{ name: 'news' }" :class="{ current: $route.name === 'news' }">
+        НОВОСТИ
+      </router-link>
     </div>
   </v-layout>
 </template>
@@ -52,9 +52,8 @@ export default {
       height: 35px;
       padding-left: 40px;
       background: url('../../assets/images/svg/home_menu.svg') center left no-repeat #fff;
-      font-weight: 400;
-      font-size: 16px;
       outline: none;
+
       @media only screen and (min-width : $tablet) {
         display: none;
       }
@@ -66,10 +65,17 @@ export default {
         transition: width 0.3s;
         overflow: hidden;
         font-weight: bold;
-        font-size: 16px;
+        font-size: 14px;
+        @media only screen and (min-width : 414px) {
+          font-size: 16px;
+        }
       }
       &.active {
+        width: 40px;
         background: url('../../assets/images/svg/home_menu_open.svg') center left no-repeat #fff;
+        @media only screen and (min-width : 414px) {
+          width: auto;
+        }
 
         span {
           width: 0;
@@ -86,15 +92,19 @@ export default {
         width: auto;
       }
       a {
-        margin-right: 24px;
+        margin-right: 12px;
         white-space: nowrap;
         color: #07101C;
         text-transform: uppercase;
         text-decoration: none;
         font-weight: 700;
-        font-size: 16px;
+        font-size: 14px;
         line-height: 34px;
         border-bottom: 1px solid transparent;
+        @media only screen and (min-width : 414px) {
+          margin-right: 24px;
+          font-size: 16px;
+        }
         &.current {
           color: #BA9462;
           @media only screen and (min-width : $tablet) {

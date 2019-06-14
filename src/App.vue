@@ -77,7 +77,8 @@ export default {
       if (!this.$route) {
         return false
       }
-      return this.$route.name !== 'home' && this.$route.name !== 'login' && this.$route.name !== 'restorePassword' && this.$route.name !== 'register' && this.$route.name !== 'faq'
+      return this.$route.name !== 'home' && this.$route.name !== 'login' && this.$route.name !== 'restorePassword'
+        && this.$route.name !== 'register' && this.$route.name !== 'faq' && this.$route.name !== 'news'
     }
   },
   watch: {
