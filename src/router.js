@@ -27,6 +27,11 @@ export default new Router({
       component: () => import('./views/Main.vue')
     },
     {
+      path: '/news',
+      name: 'news',
+      component: () => import('./views/Main.vue')
+    },
+    {
       path: '/account/changeemail',
       name: 'AccountChangeEmail',
       component: () => import('./views/account/ChangeEmail.vue')

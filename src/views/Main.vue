@@ -3,6 +3,9 @@
     <template v-if="$route.name === 'faq'">
       <Faq />
     </template>
+    <template v-else-if="$route.name === 'news'">
+      <News />
+    </template>
     <template v-else>
       <section class="main-page__first">
         <div class="main-page__container">
@@ -117,29 +120,19 @@
         </div>
       </section>
     </template>
-    <!-- <section id="news">
-      <div class="main-page__container">
-        <div class="main-page__section-header _news"></div>
-        <ReleaseNotes v-for="(note, noteIndex) in news" :key="noteIndex" :note="note" />
-      </div>
-    </section> -->
   </div>
 </template>
 
 <script>
-  // import ReleaseNotes from "../components/home/ReleaseNotes"
   import Faq from "../components/home/Faq"
+  import News from "../components/home/News"
   import MobileMenu from "../components/home/MobileMenu"
 
 export default {
   components: {
     Faq,
-    MobileMenu
-  },
-  data () {
-    return {
-      news: []
-    }
+    MobileMenu,
+    News
   },
   methods: {
   }

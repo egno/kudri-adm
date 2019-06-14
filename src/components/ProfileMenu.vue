@@ -200,6 +200,9 @@ export default {
 .v-menu.profile-menu {
   border-left: 1px solid rgba(137, 149, 175, 0.1);
   box-sizing: border-box;
+  @media only screen and (min-width : 1160px) {
+    width: 100px;
+  }
 
   button {
     position: relative;

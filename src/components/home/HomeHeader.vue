@@ -21,9 +21,9 @@
         <router-link :to="{ name: 'faq' }" :class="{ current: $route.name === 'faq' }">
           ПРОДУКТ
         </router-link>
-        <!-- <router-link :to="{ name: 'news' }">
+        <router-link :to="{ name: 'news' }" :class="{ current: $route.name === 'news' }">
           НОВОСТИ
-        </router-link> -->
+        </router-link>
       </div>
       <div class="home-header__right">
         <VLayout
@@ -68,7 +68,7 @@
   import { mapGetters } from 'vuex'
 
   export default {
-    name: 'HomeHeaderVue',
+    name: 'HomeHeader',
     components: {
       ProfileMenu,
     },

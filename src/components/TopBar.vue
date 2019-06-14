@@ -1,5 +1,5 @@
 <template>
-  <HomeHeader v-if="$route.name === 'home' || $route.name === 'faq'" /><!--todo make a slot inside HomeHeader for authenticated user -->
+  <HomeHeader v-if="$route.name === 'home' || $route.name === 'faq' || $route.name === 'news'" /><!--todo make a slot inside HomeHeader for authenticated user -->
   <VToolbar
     v-else
     class="topbar"
@@ -157,6 +157,7 @@ export default {
       flex-wrap: wrap;
     }
     &__name {
+      width: 100%;
       font-family: Roboto Slab, Times New Roman, Times, serif;
       font-style: normal;
       font-weight: normal;
@@ -182,6 +183,7 @@ export default {
       height: 100%;
       outline: none;
       background: url('../assets/images/svg/home_blue.svg') center/24px no-repeat;
+      border-left: 1px solid rgba(137, 149, 175, 0.1);
       &.active {
         background-color: rgba(137, 149, 175, 0.2);
       }

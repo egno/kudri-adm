@@ -1,13 +1,13 @@
 <template>
-  <section id="faq" class="faq">
+  <section id="faq" class="faq home-section">
     <div class="main-page__container">
       <div class="main-page__section-header _faq" />
       <MobileMenu />
-      <div class="faq__content">
+      <div class="home-section__content">
         <h2 class="main-page__heading">
           Все, что вы хотели узнать об UNO CRM
         </h2>
-        <div class="faq__text">
+        <div class="home-section__text">
           <Accordion>
             <template slot="heading">
               Для кого подойдет эта система?
@@ -41,16 +41,26 @@
               <p>
                 В нашей системе Вы получаете все необходимое  для качественного ведения клиентов:
               </p>
-              <p>
-                <ul>
-                  <li>Онлайн-запись клиентов из социальных сетей и Вашего сайта</li>
-                  <li>Журнал записи клиентов по мастерам </li>
-                  <li>Графики сотрудников</li>
-                  <li>Задачи и напоминания для сотрудников</li>
-                  <li>Удобная клиентская база и история посещений</li>
-                  <li>Sms-уведомления и напоминания для клиентов</li>
-                </ul>
-              </p>
+              <ul>
+                <li class="li-text">
+                  Онлайн-запись клиентов из социальных сетей и Вашего сайта
+                </li>
+                <li class="li-text">
+                  Журнал записи клиентов по мастерам
+                </li>
+                <li class="li-text">
+                  Графики сотрудников
+                </li>
+                <li class="li-text">
+                  Задачи и напоминания для сотрудников
+                </li>
+                <li class="li-text">
+                  Удобная клиентская база и история посещений
+                </li>
+                <li class="li-text">
+                  Sms-уведомления и напоминания для клиентов
+                </li>
+              </ul>
             </template>
           </Accordion>
           <Accordion>
@@ -117,94 +127,13 @@
 </script>
 
 <style lang="scss">
-  @import '../../assets/styles/common';
-
-  @mixin dots {
-    position: absolute;
-    top: 260px;
-    left: 172px;
-    content: '';
-    width: 118px;
-    height: 86px;
-    background: url('../../assets/images/dots.png') center/contain no-repeat;
-  }
-
+  @import '../../assets/styles/home-section';
   .faq {
-    &__content {
-      @media only screen and (min-width : $desktop) {
-        display: flex;
-      }
+    .accordion._expanded .accordion__header {
+      border-bottom-color: #BA9462;
     }
-    &__text {
-      max-width: 768px;
-      padding: 0 20px;
-      @media only screen and (min-width : $tablet) {
-        padding: 0 40px;
-      }
-      @media only screen and (min-width : $desktop) {
-        width: 607px;
-        margin-left: 50px;
-      }
-      @media only screen and (min-width: 1440px) {
-        position: relative;
-        margin-left: 230px;
-        &:before {
-          content: '';
-          position: absolute;
-          width: 470px;
-          height: 470px;
-          top: 0;
-          left: 400px;
-          border-radius: 50%;
-          box-shadow: 0 4px 50px rgba(0, 0, 0, 0.05);
-        }
-      }
-    }
-    .main-page__heading {
-      padding-left: 48px;
-      text-align: left;
-      @media only screen and (min-width : $tablet) {
-        max-width: 410px;
-        padding-left: 78px;
-      }
-      @media only screen and (min-width : $desktop) {
-        position: relative;
-        padding-left: 172px;
-        &:after {
-          @include dots;
-        }
-      }
-    }
-    .accordion {
-      &__container {
-        background-color: transparent;
-      }
-      &._expanded .accordion__header {
-        border-bottom-left-radius: 20px;
-        border-bottom-right-radius: 20px;
-      }
-      &__header {
-        font-weight: 400;
-        font-size: 16px;
-        color: #fff;
-        background: linear-gradient(90deg, #C9A15D 0%, #BA9462 100%);
-        &:after {
-          width: 12px;
-          background-image: url('../../assets/angle-down.svg');
-        }
-      }
-      p {
-        padding-top: 15px;
-        margin-bottom: 0;
-      }
-      ul {
-        list-style: none;
-        font-weight: 400;
-      }
-      li {
-        margin: 5px 0;
-      }
+    .li-text {
+      font-weight: 700;
     }
   }
-
 </style>
