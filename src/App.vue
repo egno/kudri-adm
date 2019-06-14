@@ -155,6 +155,10 @@ export default {
 #amoforms_action_btn {
   display: none !important; 
 }
+#amoforms_overlay iframe {
+  max-height: 726px !important;
+  overflow: hidden !important;
+}
 .application {
   line-height: normal;
 }
