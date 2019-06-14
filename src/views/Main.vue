@@ -171,7 +171,6 @@ export default {
     box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.05);
   }
 
-
   .main-page {
     height: 100%;
     padding-top: $padding-top;
@@ -189,9 +188,9 @@ export default {
       height: 30px;
       margin-left: 20px;
       margin-bottom: 30px;
-      background-position: left center;
+      background-position: left top;
       background-repeat: no-repeat;
-      background-size: contain;
+      background-size: auto 30px;
       @media only screen and (min-width : $tablet) {
         margin-left: 40px;
         margin-bottom: 70px;
@@ -200,6 +199,7 @@ export default {
         margin-left: 172px;
         height: 60px;
         margin-bottom: 90px;
+        background-size: auto 60px;
       }
       &._about {
         background-image: url('../assets/images/svg/about.svg');
@@ -209,6 +209,10 @@ export default {
       }
       &._news {
         background-image: url('../assets/images/svg/news.svg');
+        background-size: auto 24px;
+        @media only screen and (min-width : $desktop) {
+          background-size: auto 48px;
+        }
       }
     }
     &__first {
@@ -428,6 +432,9 @@ export default {
     }
     .about {
       padding-bottom: 50px;
+      @media only screen and (min-width: $desktop) {
+        padding-top: 70px;
+      }
       &__text {
         padding: 0 20px 0 48px;
         @media only screen and (min-width : $desktop) {

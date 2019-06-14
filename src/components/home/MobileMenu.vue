@@ -105,11 +105,13 @@ export default {
           margin-right: 24px;
           font-size: 16px;
         }
+        @media only screen and (min-width : $tablet) {
+          padding: 0 8px;
+        }
         &.current {
           color: #BA9462;
           @media only screen and (min-width : $tablet) {
             border-bottom-color: #BA9462;
-            padding: 0 8px;
           }
           @media only screen and (min-width : $desktop) {
             display: none;

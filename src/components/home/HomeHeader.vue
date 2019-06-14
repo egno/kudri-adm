@@ -6,7 +6,7 @@
     fixed
     :height="isDesktop? 146 : 91"
   >
-    <div class="home-header__logo" />
+    <router-link :to="{ name: 'home' }" class="home-header__logo" />
     <VToolbarItems>
       <div class="home-header__desktop-menu">
         <a 
@@ -43,7 +43,7 @@
         <v-btn 
           v-else 
           flat 
-          :class="['home-header__button _register', { active: !isFirstSectionInView || $route.name === 'faq' }]" 
+          :class="['home-header__button _register', { active: !isFirstSectionInView || $route.name === 'faq' || $route.name === 'news'}]"
           @click="$router.push({ name: 'register' })"
         >
           <div class="home-header__icon _register" />
