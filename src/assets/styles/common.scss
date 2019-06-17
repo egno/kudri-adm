@@ -90,7 +90,7 @@ $lato: Lato, sans-serif;
 %inline-svg-close {
   width: 40px;
   height: 40px;
-  margin: 0 0 0 40px;
+  margin-right: 11px;
   padding: 10px 0 0;
   background-color: #fff;
   border-radius: 50%;
@@ -103,5 +103,8 @@ $lato: Lato, sans-serif;
     path {
       fill: #000;
     }
+  }
+  @media only screen and (min-width : $desktop) {
+    margin-left: 40px;
   }
 }

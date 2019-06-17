@@ -44,10 +44,11 @@
     <div class="dropdown-select">
       <v-select
         v-model="employee.j.category"
-        label="Должность*"
+        placeholder="Должность*"
         :items="employeeCategories"
         :disabled="!employee.access"
         :rules="[ rules.required ]"
+        attach=".infocard._edit .dropdown-select"
         class="businesscard-form__field"
       />
     </div>
@@ -113,4 +114,6 @@ export default {
 
 <style lang="scss">
 @import '../../assets/styles/phone-input';
+@import '../../assets/styles/dropdown-select';
+
 </style>

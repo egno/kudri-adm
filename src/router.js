@@ -84,11 +84,11 @@ export default new Router({
     {
       path: '/businessCard/:id/i',
       name: 'businessCard',
-      component: () => import('./views/BusinessCard.vue')
+      component: () => import('./views/BusinessInfo.vue')
     },
     {
       path: '/businessCard/:id/c',
-      name: 'BusinessClientsTable',
+      name: 'businessClientsTable',
       component: () => import('./views/BusinessClientsTable.vue')
     },
     {

@@ -164,7 +164,6 @@ export default {
 
     &__close {
       @extend %inline-svg-close;
-      margin: 0 11px 0 0;
     }
 
     &__phone {
@@ -192,10 +191,11 @@ export default {
         width: 18px;
         height: 18px;
         top: 23px;
-        left: 0px;
+        left: 16px;
         content: '';
         background: url('../assets/sllink.svg') no-repeat center center;
         background-size: 18px;
+        z-index: 1;
       }
       &._ig {
         &:before {
@@ -209,7 +209,7 @@ export default {
       }
 
       input {
-        padding-left: 30px;
+        padding-left: 44px;
       }
     }
     &__value {
@@ -219,7 +219,7 @@ export default {
         position: absolute;
         width: 18px;
         height: 18px;
-        top: 22px;
+        top: 19px;
         left: 0;
         content: '';
         background: url('../assets/sllink.svg') no-repeat center;

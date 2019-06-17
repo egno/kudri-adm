@@ -27,6 +27,7 @@
   .v-menu__content {
     overflow-x: visible;
     max-width: fit-content;
+    top: 100% !important;
   }
   .v-text-field__details {
     display: none;

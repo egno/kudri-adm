@@ -1,17 +1,16 @@
 <template>
-  <!--todo use Accordion component -->
-  <div class="schedule" :class="{_expanded: expanded }">
-    <div class="schedule__header" @click="$emit('toggleSchedule')">
-      Режим работы
-    </div>
-    <VLayout v-show="expanded" column class="schedule__container">
+  <Accordion>
+    <template slot="heading">
+      <div>Режим работы</div>
+    </template>
+    <template slot="content">
       <VFlex
         v-for="(day, j) in days"
         :key="j" xs12
         class="day-schedule"
       >
-        <div 
-          v-if="day.value && day.value.start && day.value.end" 
+        <div
+          v-if="day.value && day.value.start && day.value.end"
           class="day-schedule__wrapper"
         >
           <div class="day-schedule__dayname">
@@ -28,14 +27,16 @@
           </div>
         </div>
       </VFlex>
-    </VLayout>
-  </div>
+    </template>
+  </Accordion>
 </template>
 
 <script>
 import { scheduleMixin} from './mixins'
+import Accordion from '@/components/common/Accordion.vue'
 
 export default {
+  components: { Accordion },
   mixins: [ scheduleMixin ],
   props: {
     expanded: { type: Boolean, default: false }

@@ -34,6 +34,8 @@
   }
 
   &__field-value {
+    max-width: calc(100% - 12px);
+    overflow: hidden;
     padding-top: 8px;
     padding-left: 8px;
     font-family: $lato;
@@ -47,28 +49,23 @@
     }
   }
 
-  .soc {
-    padding: 0 10px;
-  }
-
   .top-bordered {
     padding-top: 20px;
     margin: 15px 2px 0;
     border-top: 1px solid  rgba(137, 149, 175, 0.1);
-    .infocard__field-title:first-child,
-    .infocard__field-value:first-child {
+    .infocard__field-title,
+    .infocard__field-value {
       padding-top: 0;
+      padding-left: 6px;
     }
   }
 
   &._view {
     .infocard__field-title {
-      margin-right: 10px;
-      margin-left: 2px;
+      margin-right: 8px;
     }
     .infocard__field-value {
-      margin-right: 10px;
-      margin-left: 2px;
+      margin-right: 8px;
     }
     .soc {
       padding: 0 10px;

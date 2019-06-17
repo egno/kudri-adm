@@ -168,9 +168,10 @@ export default {
     &__clear {
       width: 16px;
       height: 16px;
+      margin-top: -1px;
       margin-left: 7px;
       cursor: pointer;
-      background: url('../../assets/images/svg/cross.svg') center no-repeat;
+      background: url('../../assets/images/svg/cross.svg') center/10px no-repeat;
     }
 
     &__description {

@@ -7,17 +7,16 @@
   }
   &__field {
     label {
-      padding-left: 20px;
       font-family: $lato;
       font-style: normal;
       font-weight: normal;
-      font-size: 12px;
+      font-size: 14px;
       line-height: normal;
       color: rgba(7, 16, 28, 0.35);
     }
 
-    .v-select__selection, input, textarea {
-      padding-left: 20px;
+    .v-select__selection {
+      padding-left: 16px;
       font-weight: 400;
       font-size: 14px;
     }
@@ -32,14 +31,21 @@
         text-align: left;
       }
       .v-text-field__prefix {
-        padding-left: 10px;
+        padding-left: 16px;
         font-weight: 400;
+        font-size: 14px;
       }
     }
 
     &._office {
       width: 79px;
       padding-left: 12px;
+      label {
+        margin-left: 5px;
+      }
+      input {
+        padding-left: 9px;
+      }
     }
 
     &._select {

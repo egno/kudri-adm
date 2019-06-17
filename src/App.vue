@@ -191,6 +191,7 @@ export default {
       }
     }
     .v-input__slot {
+      border: none;
       &:after {
         display: none !important;
       }
@@ -213,12 +214,13 @@ export default {
   }
   .v-menu__content {
     box-shadow: none;
-    border: 1px solid rgba(137, 149, 175, 0.1);
+    border: 1px solid #f3f4f7;
+    border-top: none;
   }
   .topbar {
     z-index: 5;
     box-shadow: none;
-    border-bottom: 1px solid #f4f5f7; // rgba(137, 149, 175, 0.1);
+    border-bottom: 1px solid #f4f5f7;
     .v-toolbar__content {
       background: #fff;
       padding-right: 0;
@@ -354,7 +356,7 @@ export default {
     }
   }
   .v-input__slot {
-    margin-bottom: 3px;
+     margin-bottom: 0;
   }
   .title {
     font-size: 18px !important;
@@ -474,18 +476,15 @@ export default {
   }
 }
 .v-text-field {
-  .v-input--is-focused {
-    border-bottom: 1px solid #5699ff !important;
-  }
   textarea {
-    padding-top: 12px;
+    padding-top: 8px;
+    padding-left: 16px;
     font-family: Lato;
     font-style: normal;
     font-weight: normal;
     line-height: normal;
     font-size: 14px;
     color: #07101c;
-    text-align: center;
     &::placeholder {
       color: rgba(7, 16, 28, 0.35) !important;
       font-size: 13px;
@@ -501,34 +500,54 @@ export default {
   input,
   label {
     max-width: 100%;
-    width: 100%;
     font-size: 14px;
-    font-family: Lato;
     font-style: normal;
-    font-weight: 300;
     line-height: normal;
+    background: #fff;
     &.v-label {
-      max-width: 100%;
-      padding-left: 0;
-      text-align: center;
-      font-size: 12px;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
+      display: inline-block;
+      margin-left: 12px;
+      padding: 0 4px;
+      color: rgba(137, 149, 175, 0.8) !important;
+      letter-spacing: 25%;
+      animation: none !important;
+      z-index: 10;
     }
     &.v-label--active {
-      opacity: 1;
-      font-size: 10px;
-      color: rgba(7, 16, 28, 0.35) !important;
+      font-size: 12px;
       transform: scale(1) translateY(-18px);
+      z-index: 10;
     }
   }
   input {
     color: #07101c;
+    padding-left: 16px;
   }
-  label {
-    color: #07101c;
-    opacity: 0.35;
-    letter-spacing: 25%;
+  .v-input__slot {
+    border: 1px solid rgba(137, 149, 175, 0.8);
+    border-radius: 1px;
+  }
+  .v-input__slot:before,
+  .v-input__slot:after {
+    display: none;
+    content: none;
+  }
+  &.error--text {
+    label {
+      color: #EF4D37 !important;
+    }
+    .v-input__slot {
+      border: 1px solid #EF4D37;
+    }
+  }
+  &.v-input--is-focused {
+    .v-input__slot {
+      border-color:  #5699ff;
+    }
+    .v-label {
+      color: #5699ff !important;
+    }
+
   }
   &.centered-input {
     text-transform: uppercase !important;
@@ -576,9 +595,6 @@ export default {
   .text-primary {
     line-height: 24px;
   }
-}
-.v-input--selection-controls .v-input__slot {
-  margin-bottom: 0 !important;
 }
 
 .v-navigation-drawer {
