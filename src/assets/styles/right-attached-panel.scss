@@ -1,5 +1,15 @@
 @import './common';
 
+%local-placeholder {
+  text-align: center;
+  letter-spacing: 0.25em;
+  color: rgba(137, 149, 175, 0.8) !important;
+  font-weight: 400;
+  font-size: 12px;
+  opacity: 1;
+  text-transform: uppercase;
+}
+
 %button {
   display: block;
   height: 56px;
@@ -70,7 +80,7 @@
     text-transform: capitalize;
   }
   &__field-block {
-    margin-top: 28px;
+    margin-top: 20px;
     padding-top: 20px;
     &._select .v-input__slot {
       margin-bottom: 0;
@@ -83,13 +93,13 @@
     border-color: currentColor;
   }
   textarea {
-    font-weight: 400;
     text-align: center;
+    padding-left: 0;
   }
   input {
     text-align: center;
     padding-bottom: 6px;
-    font-weight: 400;
+    padding-left: 0;
   }
   .counter input {
     padding-bottom: 0;
@@ -108,7 +118,7 @@
     display: inline-block;
     height: 28px;
     padding: 0 12px;
-    margin: 0 12px 15px;
+    margin: 0 12px 4px;
   }
   &__from {
     margin-right: 19px;
@@ -126,7 +136,7 @@
 
   input::placeholder,
   textarea::placeholder {
-    @extend %placeholder;
+    @extend %local-placeholder;
   }
   &__price {
     max-width: 100px;
@@ -134,9 +144,14 @@
     input::placeholder {
       font-size: 14px;
     }
+    .v-input__slot {
+      border-top: none;
+      border-left: none;
+      border-right: none;
+    }
   }
   &__buttons {
-    margin-top: 15px;
+    margin-top: 50px;
   }
   &__save {
     @extend %button;
@@ -209,15 +224,14 @@
     display: none;
   }
   .v-label {
-    @extend %placeholder;
+    @extend %local-placeholder;
     max-width: 100%;
+    margin: 0 auto !important;
+    right: 0 !important;
+    width: fit-content;
     &.v-label--active {
       top: 0;
-    }
-  }
-  .error--text {
-    label {
-      color: rgba(7, 16, 28, 0.35) !important;
+      font-size: 10px;
     }
   }
   .v-input__slot {
@@ -242,7 +256,7 @@
   ._employees {
     position: relative;
     .v-select__selections>div {
-      @extend %placeholder;
+      @extend %local-placeholder;
     }
     .filters__item {
       display: inline-block;
@@ -271,8 +285,16 @@
   .v-select__selection {
     font-size: 14px;
   }
-  .v-select--chips .v-select__selections {
-    min-height: auto;
+  .v-select--chips {
+    .v-select__selections {
+      min-height: auto;
+    }
+    .v-input__slot {
+      border-top: none;
+      border-left: none;
+      border-right: none;
+    }
+
   }
   .v-text-field__prefix {
     padding-bottom: 4px;

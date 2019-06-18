@@ -110,7 +110,7 @@
         <div class="right-attached-panel__field-block">
           <VTextarea
             v-model="description"
-            placeholder="ОПИСАНИЕ"
+            label="ОПИСАНИЕ"
             counter="1000" rows="1"
             :auto-grow="true"
             @input.native="sliceByLength('description', 1000, $event.target.value)"

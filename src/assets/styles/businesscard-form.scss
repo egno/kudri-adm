@@ -55,7 +55,7 @@
     .v-input__append-inner {
       display: none;
     }
-    .v-messages__message {
+    .v-messages {
       display: none;
     }
     .v-select__selection--comma {
@@ -153,6 +153,12 @@
     }
   }
 
+  .v-text-field {
+    margin-top: 12px;
+  }
+  .day-schedule .v-text-field {
+    margin-top: 0;
+  }
   .v-text-field__prefix {
     color: #07101C;
     caret-color: #07101C !important;

@@ -190,7 +190,7 @@ export default {
         position: absolute;
         width: 18px;
         height: 18px;
-        top: 23px;
+        bottom: 8px;
         left: 16px;
         content: '';
         background: url('../assets/sllink.svg') no-repeat center center;

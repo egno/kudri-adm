@@ -14,7 +14,7 @@ $lato: Lato, sans-serif;
 
 %filter-active {
   color: #fff;
-  background-color: rgba(137, 149, 175, 0.35);
+  background-color: rgba(137, 149, 175, 0.5);
   transition: color, background-color 0.4s 0s;
 }
 
@@ -42,21 +42,11 @@ $lato: Lato, sans-serif;
   @media only screen and (min-width : $desktop) {
     &:hover {
       color: #fff;
-      background-color: rgba(137, 149, 175, 0.35);
+      background-color: rgba(137, 149, 175, 0.5);
       transition: color, background-color 0.4s 0s;
     }
   }
   
-}
-
-%placeholder {
-  text-align: center;
-  letter-spacing: 0.25em;
-  color: rgba(7, 16, 28, 0.35);
-  font-weight: 400;
-  font-size: 12px;
-  opacity: 1;
-  text-transform: uppercase;
 }
 
 %gold-gradient {

@@ -476,6 +476,10 @@ export default {
   }
 }
 .v-text-field {
+  %text-input-placeholder {
+    color: rgba(137, 149, 175, 0.8) !important;
+    font-size: 14px;
+  }
   textarea {
     padding-top: 8px;
     padding-left: 16px;
@@ -486,8 +490,7 @@ export default {
     font-size: 14px;
     color: #07101c;
     &::placeholder {
-      color: rgba(7, 16, 28, 0.35) !important;
-      font-size: 13px;
+      @extend %text-input-placeholder;
     }
   }
   .v-text-field__prefix {
@@ -511,17 +514,19 @@ export default {
       color: rgba(137, 149, 175, 0.8) !important;
       letter-spacing: 25%;
       animation: none !important;
-      z-index: 10;
+      z-index: 1;
     }
     &.v-label--active {
       font-size: 12px;
-      transform: scale(1) translateY(-18px);
-      z-index: 10;
+      transform: scale(1) translateY(-17px);
     }
   }
   input {
     color: #07101c;
     padding-left: 16px;
+    &::placeholder {
+      @extend %text-input-placeholder;
+    }
   }
   .v-input__slot {
     border: 1px solid rgba(137, 149, 175, 0.8);
@@ -637,6 +642,7 @@ export default {
 }
 .v-counter {
   order: -1;
+  margin-top: 5px;
   font-size: 14px;
 }
 .v-chip__close .v-icon {
