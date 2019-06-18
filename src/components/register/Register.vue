@@ -433,10 +433,6 @@ export default {
     .businesscard-form__field {
       margin-top: 22px;
     }
-    input {
-      text-align: center;
-      padding: 9px 0 7px 0;
-    }
     .button {
       width: 240px !important;
       height: 56px !important;
@@ -466,9 +462,6 @@ export default {
     .v-input--selection-controls {
       max-width: 32px;
       margin-top: 0;
-    }
-    ._phone .v-text-field__prefix {
-      padding: 2px 4px 0 73px !important;
     }
     .v-messages__message {
       text-align: center;

@@ -27,7 +27,7 @@
       </div>
       <div class="home-header__right">
         <VLayout
-          v-if="loggedIn"
+          v-if="loggedIn && userRole !== 'manager' && userRole !== 'admin'"
           align-center
           justify-center
           class="company-badge"
@@ -41,7 +41,7 @@
           </VFlex>
         </VLayout>
         <v-btn 
-          v-else 
+          v-else-if="!loggedIn"
           flat 
           :class="['home-header__button _register', { active: !isFirstSectionInView || $route.name === 'faq' || $route.name === 'news'}]"
           @click="$router.push({ name: 'register' })"
@@ -81,7 +81,8 @@
     computed: {
       ...mapGetters([
         'loggedIn',
-        'myBusinessList'
+        'myBusinessList',
+        'userRole'
       ]),
       isDesktop () {
         return window && window.innerWidth > 1159

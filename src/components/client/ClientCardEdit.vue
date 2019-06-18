@@ -17,7 +17,7 @@
           :value="client.fullName"
           :items="suggestedClients"
           :item-text="clientDisplay"
-          label="ИМЯ И ФАМИЛИЯ КЛИЕНТА"
+          label="ИМЯ И ФАМИЛИЯ"
           maxlength="50"
           return-object
           required
@@ -38,7 +38,7 @@
           </template>
         </v-combobox>
       </div>
-      <div class="businesscard-form__field">
+      <div>
         <div
           v-for="(phone, i) in client.phones"
           :key="i"
@@ -401,19 +401,23 @@ export default {
   .right-attached-panel._clients {
 
     .businesscard-form__field {
-      margin-top: 28px;
+      margin-top: 20px;
       padding-top: 20px;
     }
     .v-btn-toggle {
-      button {
+      .v-btn {
         @extend %filter;
         padding: 0 12px;
         margin: 0 12px 15px;
         border-radius: 14px !important;
         text-transform: capitalize;
+        opacity: 1;
         &:hover {
           @extend %filter-active
         }
+      }
+      .v-btn--active {
+        @extend %filter-active
       }
     }
     .v-btn-toggle--selected {
@@ -422,8 +426,16 @@ export default {
     .error--text {
       font-size: 12px;
     }
-    .phone-input .v-input--is-disabled .v-input__slot:before {
-      display: none;
+    .phone-input {
+      .v-input--is-disabled .v-input__slot:before {
+        display: none;
+      }
+      .layout {
+        align-items: flex-end;
+      }
+      .businesscard-form__delete {
+        margin-left: 10px;
+      }
     }
     .accordion {
       text-align: left;

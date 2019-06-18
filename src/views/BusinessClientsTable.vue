@@ -271,7 +271,7 @@ export default {
     closeClientEditor () {
       if (!this.edit) {
         this.$router.push({
-          name: 'BusinessClientsTable',
+          name: 'businessClientsTable',
           params: { id: this.businessId }
         })
       }

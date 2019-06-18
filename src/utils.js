@@ -1,7 +1,7 @@
 const businessCards = [
   'businessCard',
   'businessCardClient',
-  'BusinessClientsTable',
+  'businessClientsTable',
   'employeeList',
   'filialList',
   'businessCardServiceGallery',

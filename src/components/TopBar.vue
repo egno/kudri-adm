@@ -17,7 +17,7 @@
       align-center
       justify-start
     >
-      <VFlex v-show="$route.name === 'services' || $route.name === 'employeeList' || $route.name === 'BusinessClientsTable'">
+      <VFlex v-show="$route.name === 'services' || $route.name === 'employeeList' || $route.name === 'businessClientsTable'">
         <VTextField
           key="mainSearch"
           v-model="searchString"

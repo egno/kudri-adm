@@ -51,7 +51,7 @@ export default {
     }
     input {
       width: 280px;
-      padding: 8px 0 7px;
+      padding: 8px 0 7px 18px;
     }
     .businesscard-form__field:first-child {
       margin-bottom: 38px;

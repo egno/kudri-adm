@@ -273,7 +273,7 @@ export default {
           title: 'Клиенты',
           count: this.clientsCount,
           route: {
-            name: 'BusinessClientsTable',
+            name: 'businessClientsTable',
             params: { id: this.businessId }
           },
           show: this.hasSalonLevelAccess && this.hasName && this.isEditorUser,
