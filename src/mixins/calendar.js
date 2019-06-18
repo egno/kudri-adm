@@ -51,6 +51,9 @@ export default {
         })
     },
     isHoliday (dt) {
+      if (!dt) {
+        return false
+      }
       const dow = this.selectedWeek.findIndex(d => d.dateKey === dt)
       const irregularDay = this.getIrregularDay(dt)
 

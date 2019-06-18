@@ -90,7 +90,7 @@
           :value="name"
           :items="suggestedClients"
           :item-text="clientDisplay"
-          label="ИМЯ И ФАМИЛИЯ КЛИЕНТА"
+          label="ИМЯ И ФАМИЛИЯ"
           return-object
           required
           attach=".visit-edit ._client-name"

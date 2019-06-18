@@ -9,25 +9,30 @@
     <div v-show="!isLoading">      
       <div v-show="!showEmployeeSelection">
         <div class="header">
-          <div class="header__info ">
-            <ul class="visit-log__info-list">
-              <li class="visit-log__info-item">
-                В процессе/Завершен
-              </li>
-              <li class="visit-log__info-item _missed">
-                Не пришел
-              </li>
-              <li class="visit-log__info-item _cancelled">
-                Отмена
-              </li>
-              <li class="visit-log__info-item _day-off">
-                Выходной
-              </li>
-              <li class="visit-log__info-item _break">
-                Перерыв
-              </li>
-            </ul>
-          </div>
+          <VLayout row align-center class="calendar-controls__right">
+            <router-link
+              :disabled="selectedDateObj.dateKey === todayString"
+              class="calendar-controls__today"
+              :to="{ name: 'visitCalendar', params: { id: businessId, date: todayString } }"
+            >
+              Сегодня
+            </router-link>
+            <div class="calendar-controls__toggle desktop">
+              <input id="day-mode" v-model="displayMode" type="radio" value="day">
+              <label for="day-mode">День</label>
+              <input id="week-mode" v-model="displayMode" type="radio" value="week">
+              <label for="week-mode">Неделя</label>
+            </div>
+            <v-btn
+              class="mobile calendar-controls__button"
+              depressed
+              flat
+              small
+              @click.stop="addMonth(1)"
+            >
+              <v-icon>navigate_next</v-icon>
+            </v-btn>
+          </VLayout>
           <div class="header__button">
             <MainButton
               v-if="selectedEmployee"
@@ -94,19 +99,44 @@
               </v-btn>
             </VLayout>
           </VLayout>
-          <VLayout row justify-space-between class="calendar-controls__days">
-            <div 
-              v-for="(day, dayIndex) in selectedWeek" 
-              :key="dayIndex" 
-              :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate }"
-              @click="goDate(day.dateKey)"
-            >
-              <div>{{ day.display }}</div>
-              <div class="calendar-controls__dow">
-                {{ dow[dayIndex] }}
+          <VLayout>
+            <div class="week-controls">
+              <v-btn
+                class="week-controls__button"
+                depressed
+                flat
+                small
+                @click.stop="changeWeek(-1)"
+              >
+                <v-icon>navigate_before</v-icon>
+              </v-btn>
+              <v-btn
+                class="week-controls__button"
+                depressed
+                flat
+                small
+                @click.stop="changeWeek(1)"
+              >
+                <v-icon>navigate_next</v-icon>
+              </v-btn>
+            </div>
+            <VLayout row justify-space-between class="calendar-controls__days">
+              <div
+                v-for="(day, dayIndex) in selectedWeek"
+                :key="dayIndex"
+                :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate }"
+                @click="goDate(day.dateKey)"
+              >
+                <div class="calendar-controls__number">
+                  {{ day.display }}
+                </div>
+                <div class="calendar-controls__dow">
+                  <span class="mobile">{{ dow[dayIndex] }}</span>
+                  <span class="desktop">{{ day.date.toLocaleString('ru-RU', { weekday: 'long' }) }}</span>
+                </div>
               </div>
-            </div> 
-          </VLayout>          
+            </VLayout>
+          </VLayout>
         </div>
         <VLayout 
           v-if="businessEmployees && !businessEmployees.length" 
@@ -127,26 +157,6 @@
         </VLayout>
         
         <div v-if="selectedEmployee && selectedEmployee.j" :class="['main-table', { 'one-day': displayMode === 'day' }]">
-          <div class="week-controls">
-            <v-btn
-              class="week-controls__button"
-              depressed
-              flat
-              small
-              @click.stop="changeWeek(-1)"
-            >
-              <v-icon>navigate_before</v-icon>
-            </v-btn>
-            <v-btn
-              class="week-controls__button"
-              depressed
-              flat
-              small
-              @click.stop="changeWeek(1)"
-            >
-              <v-icon>navigate_next</v-icon>
-            </v-btn>
-          </div>
           <div class="employees">
             <button type="button" class="employees__menu" @click="showEmployeeSelection = true" />
             <div 
@@ -176,16 +186,17 @@
           </div>
           <div row class="main-table__times">
             <CalendarDayColumn
-              v-for="(day, i) in selectedWeek"
-              v-show="day.dateKey === selectedDate || displayMode === 'week'"
-              :key="selectedEmployee.j.name + day.dateKey"
-              :class="{ desktop: day.dateKey !== selectedDate, selected: day.dateKey === selectedDate }"
-              :show-time="!i || day.dateKey === selectedDate"
-              :day="day"
+              v-for="employee in businessEmployees"
+              v-show="isColumnVisible(employee)"
+              :key="employee.id"
+              :employee="employee"
+              :class="{ desktop: employee.id !== selectedEmployee.id, selected: employee.id === selectedEmployee.id }"
+              :show-time="true"
+              :day="selectedDateObj"
               :now="now"
-              :holiday="isHoliday(day.dateKey)"
-              :visits="dayVisits(day.dateKey, selectedEmployee)"
-              :employee-schedule="getIrregularDay(day.dateKey)? getIrregularDay(day.dateKey).schedule : selectedEmployee.j.schedule.data[i]"
+              :holiday="isHoliday(selectedDate.dateKey)"
+              :visits="dayVisits(selectedDate.dateKey, selectedEmployee)"
+              :employee-schedule="employee.j.schedule.data[selectedDOW]"
               :display-from="displayTimes.start"
               :display-to="displayTimes.end"
               @onSlotClick="createVisit"
@@ -353,7 +364,7 @@ export default {
     return {
       currentBreak: undefined,
       currentVisit: undefined,
-      displayMode: 'week', /* day or week */
+      displayMode: 'day', /* day or week */
       dow: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
       edit: false,
       editVisitPage: undefined,
@@ -361,6 +372,7 @@ export default {
       now: new Date(),
       selectedEmployee: {},
       selectedEmpGroups: [],
+      visibleEmployees: [],
       notifyHasVisits: false,
       formActions: [
         { label: 'Добавить запись', action: 'newVisit', default: true }
@@ -392,6 +404,9 @@ export default {
         )
       ].sort((a, b) => (a < b ? -1 : 1))
     },
+    selectedDOW () {
+      return this.selectedWeek.findIndex(day => day.dateKey === this.selectedDate)
+    },
     selectedDateObj () {
       return hyphenStrToDay(this.selectedDate)
     },
@@ -403,21 +418,24 @@ export default {
       return getWeek(date.getFullYear(), date.getMonth(), this.selectedDateObj.display)
     },
     displayTimes () {
-      const schedule = this.selectedEmployee.j.schedule.data
-      let start = schedule && schedule.find(day => !!day[0])[0]
-      let end = schedule && schedule.find(day => !!day[1])[1]
+      const selectedEmployeeSchedule = this.selectedEmployee.j.schedule.data
+      let start = selectedEmployeeSchedule && selectedEmployeeSchedule.find(day => !!day[0])[0]
+      let end = selectedEmployeeSchedule && selectedEmployeeSchedule.find(day => !!day[1])[1]
 
-      //todo disable 'Журнал Записи' in Navigation if no businessSchedule, businessEmployees or businessServices
-      schedule.forEach(day => {
-        if (!day[0] || !day[1]) {
-          return
-        }
-        if (day[0] < start) {
-          start = day[0]
-        }
-        if (day[1] > end) {
-          end = day[1]
-        }
+      this.businessEmployees.forEach(employee => {
+        const schedule = employee.j.schedule.data
+
+        schedule.forEach(day => {
+          if (!day[0] || !day[1]) {
+            return
+          }
+          if (day[0] < start) {
+            start = day[0]
+          }
+          if (day[1] > end) {
+            end = day[1]
+          }
+        })
       })
 
       return { start, end }
@@ -558,6 +576,12 @@ export default {
           break
         }
       }
+
+      this.businessEmployees.forEach((employee, index) => (index < 6) && this.visibleEmployees.push(employee.id))
+    },
+    isColumnVisible (employee) {
+      return employee.id === this.selectedEmployee.id
+        || this.displayMode === 'day' && this.visibleEmployees.includes(employee.id)
     },
     onAction () {
       this.createVisit()
@@ -672,15 +696,18 @@ export default {
     }
   }
   .visit-log {
+    background-color: #e7eaef;
     .v-progress-linear {
       margin: 0;
     }
     .header {
       display: none;
       justify-content: space-between;
+      background-color: #fff;
+      border-bottom: 1px solid rgba(137, 149, 175, 0.2);
       @media only screen and (min-width : $desktop) {
         display: flex;
-        padding-right: 40px;
+        padding: 0 40px 0 127px;
       }
       
       &__info {
@@ -694,10 +721,6 @@ export default {
     .calendar-controls {
       background-color: #fff;
       border-bottom: 1px solid rgba(137, 149, 175, 0.2);
-      @media only screen and (min-width : $desktop) {
-        padding: 0 38px;
-      }
-
       &__left {
         flex-grow: 1;
         display: flex;
@@ -712,13 +735,14 @@ export default {
       &__container {
         height: 44px;
         @media only screen and (min-width : $desktop) {
-          height: 40px;
+          display: none;
         }
       }
       &__button {
         width: 55px;
         box-sizing: border-box;
         min-width: 0;
+        margin: 0;
         @media only screen and (min-width : $desktop) {
           width: 24px;
           padding: 0;
@@ -732,21 +756,27 @@ export default {
         }
       }
       &__heading {
-        padding-left: 5px;
         font-family: Roboto Slab;
-        font-size: 18px;
+        font-size: 14px;
         color: #07101C;
         text-transform: capitalize;
+        @media only screen and (min-width : $tablet) {
+          padding-left: 5px;
+          font-size: 18px;
+        }
       }
       &__today {
         height: 24px;
-        margin-right: 16px;
-        padding: 0 35px;
+        padding: 0 25px;
         line-height: 24px;
         border: 1px solid #5699FF;
         border-radius: 16px;
         color: #5699FF;
         text-decoration: none;
+        @media only screen and (min-width : $tablet) {
+          margin-right: 16px;
+          padding: 0 35px;
+        }
         &[disabled="disabled"] {
           border-color: rgba(137, 149, 175, 0.2);
           color: rgba(137, 149, 175, 0.35);
@@ -781,11 +811,15 @@ export default {
       &__days {
         padding: 0 35px;
         @media only screen and (min-width : $desktop) {
-          display: none;
+          padding: 0;
         }
       }
       &__day {
         padding: 14px 12px;
+        @media only screen and (min-width : $desktop) {
+          width: 14.28%;
+          padding: 14px 20px;
+        }
         &.selected {
           background-color: #5699FF;
           border-radius: 4px;
@@ -794,9 +828,14 @@ export default {
           }
         }
       }
+      &__number {
+        font-size: 18px;
+        font-family: $roboto;
+      }
       &__dow {
         margin-top: 9px;
         font-weight: bold;
+        text-transform: capitalize;
       }
     }
 
@@ -854,28 +893,13 @@ export default {
 
     .main-table {
       position: relative;
-      @media only screen and (min-width : $desktop) {
-        display: flex;
-        overflow: auto;
-      }
 
       &__times { 
         padding-left: 58px;
         @media only screen and (min-width : $desktop) {
           display: flex;
           width: 100%;
-          padding-left: 70px;
-        }
-      }
-
-      &.one-day .day-column.selected {
-        width: 100%;
-        .day-column__header {
-          background-color: #fff;
-          border-radius: 0;
-        }
-        .time-mark {
-          display: block;
+          padding-left: 125px;
         }
       }
     }
@@ -897,7 +921,7 @@ export default {
         }
       }
       &.selected .time-mark {
-        @media only screen and (max-width : $desktop) {
+        @media only screen and (max-width : ($desktop - 1px)) {
           display: block;      
         }
       }
@@ -905,9 +929,6 @@ export default {
 
     .week-controls {
       display: none;
-      position: absolute;
-      z-index: 1;
-      left: 0;
       width: 126px;
       height: 82px;
       padding: 0 14px 0 55px;
@@ -932,9 +953,7 @@ export default {
       padding: 18px;
       background-color: #fff;
       @media only screen and (min-width : $desktop) {
-        display: block;
-        width: 55px;
-        padding: 100px 8px 0;
+        display: none;
       }
 
       &__menu {

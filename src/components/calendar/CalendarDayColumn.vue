@@ -2,7 +2,7 @@
   <div
     :class="['day-column', { today: isToday }]"
   >
-    <v-menu v-model="showMenu" offset-y :disabled="day.dateKey <= todayString">
+    <!--<v-menu v-model="showMenu" offset-y :disabled="day.dateKey <= todayString">
       <template v-slot:activator="{ on }">
         <div v-on="on">
           <div :class="{ 'day-column__header': true, active: showMenu }">
@@ -26,7 +26,24 @@
           {{ isDayOff? 'Сделать рабочим' : 'Сделать выходным' }}
         </div>        
       </div>
-    </v-menu>
+    </v-menu>-->
+
+    <div v-if="employee.j" class="day-column__employee">
+      <Avatar
+        class="day-column__avatar"
+        :name="employee.j.name || employee.j.email"
+        :src="employee.j.image"
+        size="40px"
+      />
+      <div class="day-column__badge">
+        <div v-if="employee.j.category" class="day-column__emp-title">
+          {{ employee.j.category }}
+        </div>
+        <h2 class="day-column__emp-name">
+          {{ employee.j.name && employee.j.name.length > 70? employee.j.name.substring(0, 70) + '...' : employee.j.name }}
+        </h2>
+      </div>
+    </div>
     
     <div
       v-for="(time, i) in times"
@@ -85,9 +102,10 @@ import {
 } from '@/components/calendar/utils'
 import { mapGetters } from 'vuex'
 import { setInterval, clearInterval } from 'timers'
+import Avatar from '@/components/avatar/Avatar.vue'
 
 export default {
-  components: { VisitCard },
+  components: { Avatar, VisitCard },
   props: {
     day: {
       type: Object,
@@ -102,6 +120,12 @@ export default {
     displayTo: {
       type: String,
       default: ''
+    },
+    employee: {
+      type: Object,
+      default () {
+        return {}
+      }
     },
     employeeSchedule: {
       type: Array,
@@ -132,7 +156,7 @@ export default {
     const slotDuration = 15
 
     return {
-      headerHeight: 82, /* height of column header in pixels */
+      headerHeight: 80, /* height of column header in pixels */
       hours: 24,
       minutes: 60,
       offsetTop: 0,
@@ -247,7 +271,7 @@ export default {
  
       /* we show one slot before the first (displayFrom) slot, for the first time mark to be visible,
         so we have to add slot's height here */
-      this.offsetTop = minutes * this.minuteHeight + this.headerHeight + this.slotHeight
+      this.offsetTop = minutes * this.minuteHeight + this.slotHeight
     },
     isWorkingTime (i) {
       if (!this.employeeSchedule) {
@@ -303,10 +327,8 @@ export default {
 @mixin active-header {
     background-color: rgba(137, 149, 175, 0.35);
     border-radius: 4px;
-    .day-column__date,
-    .day-column__day {
-      font-weight: bold;
-    }
+
+
 }
 .time-mark {
   position: absolute;
@@ -380,31 +402,8 @@ export default {
   position: relative;
   min-width: 136px;
   @media only screen and (min-width : $desktop) {
-    width: 14.28%;
-    padding-top: 82px;
+    flex-grow: 1;
   }
-  &.today {
-    .day-column__header {
-      border-left: 2px solid #5699FF;
-    }
-    .day-column__date,
-    .day-column__day {
-      color: #5699FF;
-      font-weight: bold;
-    }
-  }
-  &.selected .day-column__header {
-    @media only screen and (min-width : $desktop) {
-      @include active-header
-    }
-  }
-  &.selected.today .day-column__header {
-    @media only screen and (min-width : $desktop) {
-      background-color: #fff;
-      border-radius: 0;
-    }
-  }
-
   &__item {
     height: 56px;
     &:nth-child(odd) {
@@ -434,26 +433,11 @@ export default {
       content: '';
       border-radius: 50%;
     }
-  }
-  &__header {
-    position: absolute;
-    top: 0;
-    left: 0; right: 0;
-    height: 82px;
-    padding: 12px 24px;
-    border-right: 1px solid rgba(137, 149, 175, 0.1);
-    border-left: 2px solid transparent;
-    background-color: #fff;
-    border-bottom: 1px solid rgba(137, 149, 175, 0.2);
-    cursor: pointer;
-    &.active {
-      @media only screen and (min-width : $desktop) {
-        @include active-header;
-        background-color: rgba(137, 149, 175, 0.2);
-      }
+    @media only screen and (min-width : $desktop) {
+      margin-top: 80px;
     }
   }
-  &__dropdown {
+  /*&__dropdown {
     padding: 20px 0;
     font-size: 13px;
     color: #2D333B;
@@ -463,18 +447,32 @@ export default {
     &>div {
       text-align: center;
     }
+  }*/
+  &__employee {
+    display: none;
+    @media only screen and (min-width : $desktop) {
+      display: flex;
+      height: 80px;
+      padding-left: 18px;
+      justify-content: flex-start;
+      align-items: center;
+      font-family: Lato, sans-serif;
+      font-style: normal;
+      line-height: normal;
+      background-color: #fff;
+    }
   }
-  &__date {
-    font-size: 18px;
-    font-family: Roboto Slab;
+  &__badge {
+    padding-left: 10px;
   }
-  &__day {
-    text-transform: capitalize;
-  }
-  &__schedule {
-    margin-top: 4px;
+  &__emp-title {
     font-size: 12px;
     color: #8995AF;
+  }
+  &__emp-name {
+    font-size: 14px;
+    color: #07101C;
+    font-weight: 400;
   }
   .day-off {
     color: #8995AF;
