@@ -28,21 +28,23 @@
       </div>
     </v-menu>-->
 
-    <div v-if="employee.j" class="day-column__employee">
-      <Avatar
-        class="day-column__avatar"
-        :name="employee.j.name || employee.j.email"
-        :src="employee.j.image"
-        size="40px"
-      />
-      <div class="day-column__badge">
-        <div v-if="employee.j.category" class="day-column__emp-title">
-          {{ employee.j.category }}
+    <div class="day-column__employee">
+      <template v-if="employee.j">
+        <Avatar
+          class="day-column__avatar"
+          :name="employee.j.name || employee.j.email"
+          :src="employee.j.image"
+          size="40px"
+        />
+        <div class="day-column__badge">
+          <div v-if="employee.j.category" class="day-column__emp-title">
+            {{ employee.j.category }}
+          </div>
+          <h2 class="day-column__emp-name">
+            {{ employee.j.name && employee.j.name.length > 70? employee.j.name.substring(0, 70) + '...' : employee.j.name }}
+          </h2>
         </div>
-        <h2 class="day-column__emp-name">
-          {{ employee.j.name && employee.j.name.length > 70? employee.j.name.substring(0, 70) + '...' : employee.j.name }}
-        </h2>
-      </div>
+      </template>
     </div>
     
     <div
