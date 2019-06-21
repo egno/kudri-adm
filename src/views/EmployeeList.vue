@@ -13,9 +13,9 @@
       <div class="employees-list">
         <div class="filters">
           <div
-            v-for="category in categories"
+            v-for="category in employeesCategories"
             :key="category"
-            @click="toggleFilter(category)"
+            @click="toggleCategory(category)"
           >
             <div
               v-if="category"
@@ -30,7 +30,7 @@
             :class="{
               _active: searchString
                 ? businessEmployees.filter(e => isMatchingSearch(e)).length === businessEmployees.length 
-                : selectedCategories && selectedCategories.length >= categories.length                 
+                : selectedCategories && selectedCategories.length >= employeesCategories.length
             }"
             @click="toggleAll"
           >
@@ -104,6 +104,7 @@ import { mapState, mapActions, mapGetters } from 'vuex'
 import { employeeMixin } from '@/mixins/employee'
 import { formatDate } from '@/components/calendar/utils'
 import { conjugateVisits } from '@/components/utils'
+import { employeesCategorized } from '@/mixins/employee'
 
 export default {
   params: {
@@ -116,7 +117,7 @@ export default {
       return conjugateVisits(n)
     }
   },
-  mixins: [employeeMixin],
+  mixins: [employeesCategorized, employeeMixin],
   data () {
     return {
       edit: false,
@@ -128,30 +129,20 @@ export default {
       },
       hasVisits: false,
       newEmp: undefined,
-      selectedCategories: [],
       selectedOnStart: false
     }
   },
   computed: {
     ...mapState({
       businessServices: state => state.business.businessServices,
-      businessEmployees: state => state.business.businessEmployees
     }),
     ...mapGetters(['searchString']),
     id () {
       return this.$route.params.id
     },
-    categories () {
-      return [
-        ...new Set(
-          this.businessEmployees &&
-            this.businessEmployees.map(x => x.j && x.j.category)
-        )
-      ].sort((a, b) => (a < b ? -1 : 1))
-    },
   },
   watch: {
-    categories: {
+    employeesCategories: {
       handler (newVal) {
         if (this.selectedOnStart) {
           return
@@ -226,12 +217,6 @@ export default {
         Api().patch(`employee?id=eq.${data.id}`, data)
       }
     },
-    selectAll () {
-      if (!this.categories || !this.categories.length) {
-        return
-      }
-      this.selectedCategories = this.categories.slice()
-    },
     showDeleteDialog (emp) {
       Api()
         .get(`/visit?salon_id=eq.${this.$route.params.id}&business_id=eq.${emp.id}&ts_begin=gte.${formatDate(new Date())}`)
@@ -242,22 +227,6 @@ export default {
         })      
     },
     showEditPanel () {},
-    toggleAll () {
-      if (this.selectedCategories.length === this.categories.length) {
-        this.selectedCategories = []
-      } else {
-        this.selectAll()
-      }
-    },
-    toggleFilter (category) {
-      const index = this.selectedCategories.indexOf(category)
-
-      if (index !== -1) {
-        this.selectedCategories.splice(index, 1)
-      } else {
-        this.selectedCategories.push(category)
-      }
-    }
   }
 }
 </script>

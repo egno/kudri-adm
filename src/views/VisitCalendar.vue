@@ -6,69 +6,10 @@
       indeterminate
       color="#5699FF"
     />
-    <div v-show="!isLoading">      
-      <div v-show="!showEmployeeSelection">
-        <div class="header">
-          <div class="header__info ">
-            <ul class="visit-log__info-list">
-              <li class="visit-log__info-item">
-                В процессе/Завершен
-              </li>
-              <li class="visit-log__info-item _missed">
-                Не пришел
-              </li>
-              <li class="visit-log__info-item _cancelled">
-                Отмена
-              </li>
-              <li class="visit-log__info-item _day-off">
-                Выходной
-              </li>
-              <li class="visit-log__info-item _break">
-                Перерыв
-              </li>
-            </ul>
-          </div>
-          <div class="header__button">
-            <MainButton
-              v-if="selectedEmployee"
-              :class="{ button_disabled: false }"
-              class="button_attractive"
-              @click="createVisit()"
-            >
-              Создать запись
-            </MainButton>
-          </div>
-        </div>
-        <div class="calendar-controls">
-          <VLayout
-            align-center
-            justify-space-between
-            row
-            class="calendar-controls__container"
-          >
-            <div class="calendar-controls__left">
-              <v-btn
-                class="calendar-controls__button"
-                depressed
-                flat
-                small
-                @click.stop="addMonth(-1)"
-              >
-                <v-icon>navigate_before</v-icon>
-              </v-btn>
-              <v-btn
-                class="desktop calendar-controls__button"
-                depressed
-                flat
-                small
-                @click.stop="addMonth(1)"
-              >
-                <v-icon>navigate_next</v-icon>
-              </v-btn>
-              <div class="calendar-controls__heading">
-                {{ dateMonthHeader }}
-              </div>
-            </div>
+    <template v-if="!isLoading">
+      <div v-show="!showMobileMenu">
+        <div class="visit-log__header">
+          <div class="header">
             <VLayout row align-center class="calendar-controls__right">
               <router-link
                 :disabled="selectedDateObj.dateKey === todayString"
@@ -93,21 +34,138 @@
                 <v-icon>navigate_next</v-icon>
               </v-btn>
             </VLayout>
-          </VLayout>
-          <VLayout row justify-space-between class="calendar-controls__days">
-            <div 
-              v-for="(day, dayIndex) in selectedWeek" 
-              :key="dayIndex" 
-              :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate }"
-              @click="goDate(day.dateKey)"
+            <div class="header__button">
+              <MainButton
+                v-if="selectedEmployee"
+                :class="{ button_disabled: false }"
+                class="button_attractive"
+                @click="createVisit()"
+              >
+                Создать запись
+              </MainButton>
+            </div>
+          </div>
+          <div class="calendar-controls">
+            <VLayout
+              align-center
+              justify-space-between
+              row
+              class="calendar-controls__container"
             >
-              <div>{{ day.display }}</div>
-              <div class="calendar-controls__dow">
-                {{ dow[dayIndex] }}
+              <div class="calendar-controls__left">
+                <v-btn
+                  class="calendar-controls__button"
+                  depressed
+                  flat
+                  small
+                  @click.stop="addMonth(-1)"
+                >
+                  <v-icon>navigate_before</v-icon>
+                </v-btn>
+                <v-btn
+                  class="desktop calendar-controls__button"
+                  depressed
+                  flat
+                  small
+                  @click.stop="addMonth(1)"
+                >
+                  <v-icon>navigate_next</v-icon>
+                </v-btn>
+                <div class="calendar-controls__heading">
+                  {{ dateMonthHeader }}
+                </div>
               </div>
-            </div> 
-          </VLayout>          
+              <VLayout row align-center class="calendar-controls__right">
+                <router-link
+                  :disabled="selectedDateObj.dateKey === todayString"
+                  class="calendar-controls__today"
+                  :to="{ name: 'visitCalendar', params: { id: businessId, date: todayString } }"
+                >
+                  Сегодня
+                </router-link>
+                <div class="calendar-controls__toggle desktop">
+                  <input id="day-mode" v-model="displayMode" type="radio" value="day">
+                  <label for="day-mode">День</label>
+                  <input id="week-mode" v-model="displayMode" type="radio" value="week">
+                  <label for="week-mode">Неделя</label>
+                </div>
+                <v-btn
+                  class="mobile calendar-controls__button"
+                  depressed
+                  flat
+                  small
+                  @click.stop="addMonth(1)"
+                >
+                  <v-icon>navigate_next</v-icon>
+                </v-btn>
+              </VLayout>
+            </VLayout>
+            <VLayout>
+              <div class="visit-log__controls">
+                <v-btn
+                  class="visit-log__controls-button"
+                  depressed
+                  flat
+                  small
+                  @click.stop="changeWeek(-1)"
+                >
+                  <v-icon>navigate_before</v-icon>
+                </v-btn>
+                <v-btn
+                  class="visit-log__controls-button"
+                  depressed
+                  flat
+                  small
+                  @click.stop="changeWeek(1)"
+                >
+                  <v-icon>navigate_next</v-icon>
+                </v-btn>
+              </div>
+              <VLayout row justify-space-between class="calendar-controls__days _desktop">
+                <div
+                  v-for="(day, dayIndex) in selectedWeek"
+                  :key="dayIndex"
+                  :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate }"
+                  @click="goDate(day.dateKey)"
+                >
+                  <!--todo make a component -->
+                  <div class="calendar-controls__number">
+                    {{ day.display }}
+                  </div>
+                  <div class="calendar-controls__dow">
+                    <span class="mobile">{{ dow[dayIndex] }}</span>
+                    <span class="desktop">{{ day.date.toLocaleString('ru-RU', { weekday: 'long' }) }}</span>
+                  </div>
+                </div>
+              </VLayout>
+              <div v-if="displayMode === 'week'" class="visit-log__week-spacer" />
+            </VLayout>
+            <div v-if="dates.length" class="calendar-controls__dates-container mobile">
+              <carousel :pagination-enabled="false" :min-swipe-distance="25" :per-page="1">
+                <slide v-for="(week, weekIndex) in dates" :key="weekIndex">
+                  <VLayout row justify-space-between class="calendar-controls__days">
+                    <div
+                      v-for="(day, dayIndex) in week"
+                      :key="dayIndex"
+                      :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate }"
+                      @click="goDate(day.dateKey)"
+                    >
+                      <!--todo make a component -->
+                      <div class="calendar-controls__number">
+                        {{ day.display }}
+                      </div>
+                      <div class="calendar-controls__dow">
+                        <span class="mobile">{{ dow[dayIndex] }}</span>
+                        <span class="desktop">{{ day.date.toLocaleString('ru-RU', { weekday: 'long' }) }}</span>
+                      </div>
+                    </div>
+                  </VLayout>
+                </slide>
+              </carousel>
+            </div>
+          </div>
         </div>
+
         <VLayout 
           v-if="businessEmployees && !businessEmployees.length" 
           class="visit-log__no-employees"
@@ -126,29 +184,12 @@
           </MainButton>
         </VLayout>
         
-        <div v-if="selectedEmployee && selectedEmployee.j" :class="['main-table', { 'one-day': displayMode === 'day' }]">
-          <div class="week-controls">
-            <v-btn
-              class="week-controls__button"
-              depressed
-              flat
-              small
-              @click.stop="changeWeek(-1)"
-            >
-              <v-icon>navigate_before</v-icon>
-            </v-btn>
-            <v-btn
-              class="week-controls__button"
-              depressed
-              flat
-              small
-              @click.stop="changeWeek(1)"
-            >
-              <v-icon>navigate_next</v-icon>
-            </v-btn>
-          </div>
+        <div
+          v-if="selectedEmployee && selectedEmployee.j"
+          :class="['main-table', { 'one-day': displayMode === 'day', 'week': displayMode === 'week' }]"
+        >
           <div class="employees">
-            <button type="button" class="employees__menu" @click="showEmployeeSelection = true" />
+            <button type="button" class="employee-menu-trigger" @click="showMobileMenu = true" />
             <div 
               v-for="employee in businessEmployees" 
               :key="employee.id" 
@@ -174,37 +215,149 @@
               </div>
             </div>
           </div>
-          <div row class="main-table__times">
-            <CalendarDayColumn
-              v-for="(day, i) in selectedWeek"
-              v-show="day.dateKey === selectedDate || displayMode === 'week'"
-              :key="selectedEmployee.j.name + day.dateKey"
-              :class="{ desktop: day.dateKey !== selectedDate, selected: day.dateKey === selectedDate }"
-              :show-time="!i || day.dateKey === selectedDate"
-              :day="day"
-              :now="now"
-              :holiday="isHoliday(day.dateKey)"
-              :visits="dayVisits(day.dateKey, selectedEmployee)"
-              :employee-schedule="getIrregularDay(day.dateKey)? getIrregularDay(day.dateKey).schedule : selectedEmployee.j.schedule.data[i]"
-              :display-from="displayTimes.start"
-              :display-to="displayTimes.end"
-              @onSlotClick="createVisit"
-              @onBreakClick="createBreak"
-              @onDayEdit="onDayEdit"
-              @makeDayOffTry="notifyHasVisits = true"
-            />
+          <div class="main-table__desktop-menu desktop">
+            <div class="employees-selection">
+              <v-menu
+                v-model="showDesktopMenu"
+                :close-on-content-click="false"
+                min-width="182"
+                max-width="200"
+                offset-x
+                attach=".main-table__desktop-menu .employees-selection"
+              >
+                <template v-slot:activator="{ on }">
+                  <div class="employee-menu-trigger" v-on="on" />
+                </template>
+                <div class="employees-selection__menu">
+                  <!--<div :class="['employees-selection__item']" @click="toggleAll">
+                    Все мастера
+                  </div>-->
+                  <v-expansion-panel>
+                    <v-expansion-panel-content
+                      v-for="category in employeesCategories"
+                      :key="category"
+                      :hide-actions="true"
+                    >
+                      <template v-slot:header>
+                        <VLayout
+                          align-center
+                          justify-space-between
+                        >
+                          <div>{{ category }} {{ groupedEmployees[category].length }}</div>
+                          <AppCheckbox
+                            :id="category"
+                            :checked="groupedEmployees[category].length === visibleEmployees.filter(e => e.j.category === category).length"
+                            label=""
+                            :value="category"
+                            @click.native.stop
+                            @change="onGroupsChange(category, $event)"
+                          />
+                        </VLayout>
+                      </template>
+
+                      <VLayout
+                        v-for="(emp, i) in groupedEmployees[category]"
+                        :key="emp.id"
+                        justify-space-between
+                        class="employees-selection__item"
+                      >
+                        <div>{{ emp.j.name }}</div>
+                        <AppCheckbox
+                          :id="emp.j.name + i"
+                          :checked="visibleEmployees.some(e => e.id === emp.id)"
+                          label=""
+                          :value="emp.id"
+                          @click.native.stop
+                          @change="changeVisibleEmployees(emp, $event)"
+                        />
+                      </VLayout>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </div>
+              </v-menu>
+            </div>
           </div>
+          <template v-if="displayMode === 'day'">
+            <div row class="main-table__times">
+              <CalendarDayColumn
+                v-for="employee in businessEmployees"
+                v-show="visibleEmployees.some(e => e.id === employee.id)"
+                :key="employee.id"
+                :employee="employee"
+                :class="{ desktop: employee.id !== selectedEmployee.id, selected: employee.id === selectedEmployee.id }"
+                :show-time="true"
+                :day="selectedDateObj"
+                :now="now"
+                :holiday="isHoliday(selectedDate, employee)"
+                :visits="dayVisits(selectedDate, employee)"
+                :employee-schedule="getIrregularDay(selectedDate, employee)? getIrregularDay(selectedDate, employee).schedule : employee.j.schedule.data[selectedDOW]"
+                :display-from="displayTimes.start"
+                :display-to="displayTimes.end"
+                @onSlotClick="createVisit(employee.id, $event)"
+                @onBreakClick="createBreak($event, employee.id)"
+                @onDayEdit="onDayEdit"
+                @makeDayOffTry="notifyHasVisits = true"
+              />
+            </div>
+          </template>
+          <template v-else>
+            <VLayout row>
+              <div row class="main-table__times">
+                <CalendarDayColumn
+                  v-for="(day, i) in selectedWeek"
+                  v-show="day.dateKey === selectedDate || displayMode === 'week'"
+                  :key="selectedEmployee.j.name + day.dateKey"
+                  :employee="!i? selectedEmployee : {}"
+                  :class="{ desktop: day.dateKey !== selectedDate, selected: day.dateKey === selectedDate }"
+                  :show-time="!i || day.dateKey === selectedDate"
+                  :day="day"
+                  :now="now"
+                  :holiday="isHoliday(day.dateKey, selectedEmployee)"
+                  :visits="dayVisits(day.dateKey, selectedEmployee)"
+                  :employee-schedule="getIrregularDay(day.dateKey, selectedEmployee)? getIrregularDay(day.dateKey, selectedEmployee).schedule : selectedEmployee.j.schedule.data[i]"
+                  :display-from="displayTimes.start"
+                  :display-to="displayTimes.end"
+                  @onSlotClick="createVisit(selectedEmployee.id, $event)"
+                  @onBreakClick="createBreak($event, selectedEmployee.id)"
+                  @onDayEdit="onDayEdit"
+                  @makeDayOffTry="notifyHasVisits = true"
+                />
+              </div>
+              <div class="main-table__employees-switch">
+                <div class="visit-log__controls">
+                  <v-btn
+                    class="visit-log__controls-button"
+                    depressed
+                    flat
+                    small
+                    @click="selectPrevEmployee"
+                  >
+                    <v-icon>navigate_before</v-icon>
+                  </v-btn>
+                  <v-btn
+                    class="visit-log__controls-button"
+                    depressed
+                    flat
+                    small
+                    @click="selectNextEmployee"
+                  >
+                    <v-icon>navigate_next</v-icon>
+                  </v-btn>
+                </div>
+              </div>
+            </VLayout>
+          </template>
         </div>
       </div>
       
-      <div v-show="showEmployeeSelection" class="modal-content">
+      <div v-show="showMobileMenu" class="modal-content">
         <div class="modal-content__header">
           <v-btn
             class="controls__button"
             depressed
             flat
             small
-            @click.stop="showEmployeeSelection = false"
+            @click.stop="showMobileMenu = false"
           >
             <v-icon>navigate_before</v-icon>
           </v-btn>
@@ -220,10 +373,10 @@
             </template>
             <template slot="content">
               <AppCheckbox
-                v-for="(category, i) in empCategories"
+                v-for="(category, i) in employeesCategories"
                 :id="category"
                 :key="i"
-                :checked="selectedEmpGroups.includes(category)"
+                :checked="selectedCategories.includes(category)"
                 :label="category"
                 name="employee_category"
                 :value="category"
@@ -232,7 +385,7 @@
             </template>
           </Accordion>
           <div
-            v-for="category in selectedEmpGroups"
+            v-for="category in selectedCategories"
             :key="category"
             class="filter-results__group"
           >
@@ -246,7 +399,7 @@
                     v-if="employee.j.category === category"
                     :employee="employee"
                     :services-count="employee.j.services ? employee.j.services.length : 0"
-                    @calendarClick="selectedEmployee = employee; showEmployeeSelection = false"
+                    @calendarClick="selectedEmployee = employee; showMobileMenu = false"
                   />
                 </div>
               </div>
@@ -254,7 +407,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </template>
     
     <VisitEdit
       v-if="currentVisit"
@@ -262,7 +415,7 @@
       :visible="edit"
       :company-id="businessInfo.parent? businessInfo.parent : businessId"
       :employees="businessEmployees.filter(e => e.j.services && e.j.services.length)"
-      :employee="selectedEmployee"
+      :employee="businessEmployees.find(e => e.id === currentVisit.business_id) || selectedEmployee"
       :visit="currentVisit"
       :page="editVisitPage"
       @onSave="onVisitSave"
@@ -320,7 +473,6 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from 'vuex'
 import Api from '@/api/backend'
 import MainButton from '@/components/common/MainButton.vue'
 import Accordion from '@/components/common/Accordion.vue'
@@ -329,44 +481,57 @@ import Avatar from '@/components/avatar/Avatar.vue'
 import CalendarDayColumn from '@/components/calendar/CalendarDayColumn.vue'
 import EmployeeCard from '@/components/employee/EmployeeCard.vue'
 import BreakEdit from '@/components/calendar/BreakEdit.vue'
+import Modal from '@/components/common/Modal'
+import VisitEdit from '@/components/calendar/VisitEdit.vue'
+import Visit from '@/classes/visit'
+import { Carousel, Slide } from 'vue-carousel'
+import { mapState, mapActions, mapGetters } from 'vuex'
+import { makeAlert } from '@/api/utils'
+import { setInterval, clearInterval } from 'timers'
+import { employeesCategorized } from '@/mixins/employee'
+import calendarMixin from '@/mixins/calendar'
 import {
-  ceilMinutes, 
-  dateISOInLocalTimeZone, 
-  formatDate, 
+  ceilMinutes,
+  dateISOInLocalTimeZone,
+  formatDate,
   hyphenStrToDay,
   hyphensStringToDate,
-  getWeek, 
-  visitInit 
+  visitInit
 } from '@/components/calendar/utils'
-import VisitEdit from '@/components/calendar/VisitEdit.vue'
-import { makeAlert } from '@/api/utils'
-import Visit from '@/classes/visit'
-import { setInterval, clearInterval } from 'timers'
-import Modal from '@/components/common/Modal'
-
-import calendarMixin from '@/mixins/calendar'
 
 export default {
-  components: { Accordion, AppCheckbox, Avatar, BreakEdit, EmployeeCard, MainButton, Modal, CalendarDayColumn, VisitEdit },
-  mixins: [ calendarMixin ],
+  components: {
+    Accordion,
+    AppCheckbox,
+    Avatar,
+    BreakEdit,
+    EmployeeCard,
+    MainButton,
+    Modal,
+    CalendarDayColumn,
+    VisitEdit,
+    Carousel,
+    Slide },
+  mixins: [ calendarMixin, employeesCategorized ],
   data () {
     return {
       currentBreak: undefined,
       currentVisit: undefined,
-      displayMode: 'week', /* day or week */
+      displayMode: 'day', /* day or week */
       dow: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
       edit: false,
       editVisitPage: undefined,
       isLoading: false,
       now: new Date(),
       selectedEmployee: {},
-      selectedEmpGroups: [],
+      visibleEmployees: [],
       notifyHasVisits: false,
       formActions: [
         { label: 'Добавить запись', action: 'newVisit', default: true }
       ],
       showEditBreak: false,
-      showEmployeeSelection: false,
+      showDesktopMenu: false,
+      showMobileMenu: false,
       showSuccessModal: false,
       successTemplate : {
         master: '',
@@ -380,45 +545,74 @@ export default {
   },
   computed: {
     ...mapState({
-      businessEmployees: state => state.business.businessEmployees,
       businessServices: state => state.business.businessServices
     }),
     ...mapGetters(['businessSchedule', 'selectedBreak', 'selectedVisit', 'businessInfo']),
-    empCategories () { // todo make a mixin
-      return [
-        ...new Set(
-          this.businessEmployees &&
-            this.businessEmployees.map(x => x.j && x.j.category)
-        )
-      ].sort((a, b) => (a < b ? -1 : 1))
+    groupedEmployees () {
+      let obj = {}
+
+      this.businessEmployees.forEach(emp => {
+        if (!emp.j || !emp.j.category) {
+          return
+        }
+        const category = emp.j.category
+
+        if (!obj[category]) {
+          obj[category] = []
+        }
+
+        if (!obj[category].includes(emp)) {
+          obj[category].push(emp)
+        }
+      })
+
+      return obj
+    },
+    selectedDOW () {
+      return this.selectedWeek.findIndex(day => day.dateKey === this.selectedDate)
     },
     selectedDateObj () {
       return hyphenStrToDay(this.selectedDate)
     },
     selectedWeek () {
-      if (!this.selectedDateObj) return []
+      if (!this.selectedDate) return []
 
-      const date = this.selectedDateObj.date
-
-      return getWeek(date.getFullYear(), date.getMonth(), this.selectedDateObj.display)
+      return this.getWeek()
     },
     displayTimes () {
-      const schedule = this.selectedEmployee.j.schedule.data
-      let start = schedule && schedule.find(day => !!day[0])[0]
-      let end = schedule && schedule.find(day => !!day[1])[1]
+      const selectedEmployeeSchedule = this.selectedEmployee.j.schedule.data
+      let start = selectedEmployeeSchedule && selectedEmployeeSchedule.find(day => !!day[0])[0]
+      let end = selectedEmployeeSchedule && selectedEmployeeSchedule.find(day => !!day[1])[1]
 
-      //todo disable 'Журнал Записи' in Navigation if no businessSchedule, businessEmployees or businessServices
-      schedule.forEach(day => {
-        if (!day[0] || !day[1]) {
-          return
-        }
-        if (day[0] < start) {
-          start = day[0]
-        }
-        if (day[1] > end) {
-          end = day[1]
-        }
-      })
+      if (this.displayMode === 'day') {
+        this.businessEmployees.forEach(employee => {
+          const schedule = employee.j.schedule.data
+
+          schedule.forEach(day => {
+            if (!day[0] || !day[1]) {
+              return
+            }
+            if (day[0] < start) {
+              start = day[0]
+            }
+            if (day[1] > end) {
+              end = day[1]
+            }
+          })
+        })
+      } else {
+        selectedEmployeeSchedule.forEach(day => {
+          if (!day[0] || !day[1]) {
+            return
+          }
+          if (day[0] < start) {
+            start = day[0]
+          }
+          if (day[1] > end) {
+            end = day[1]
+          }
+        })
+      }
 
       return { start, end }
     },
@@ -473,8 +667,21 @@ export default {
     addNotesToBreak (payload) {
       this.currentBreak.j.notes = payload
     },
+    changeVisibleEmployees (employee, selected) {
+      if (selected) {
+        if (!this.visibleEmployees.some(e => e.id === employee.id)) {
+          this.visibleEmployees.push(employee)
+        }
+      } else {
+        const i = this.visibleEmployees.findIndex(e => e.id === employee.id)
+
+        if (i > -1) {
+          this.visibleEmployees.splice(i, 1)
+        }
+      }
+    },
     changeWeek (vector) {
-      let dt = new Date(this.actualDate)
+      let dt = new Date(this.selectedDate)
 
       dt.setDate(dt.getDate() + 7*vector)
       this.goDate(formatDate(dt))
@@ -488,7 +695,7 @@ export default {
         time: ''
       }
     },
-    createBreak (date) {
+    createBreak (date, employeeId) {
       let newBreak = visitInit({
         ts_begin: dateISOInLocalTimeZone(date),
         business_id: this.selectedEmployee.id,
@@ -497,14 +704,24 @@ export default {
         }
       })
 
+      if (employeeId) {
+        newBreak.business_id = employeeId
+        this.selectedEmployee = this.businessEmployees.find(e => e.id === employeeId)
+      }
+
       this.selectBreak(newBreak)
     },
-    createVisit (date) {
+    createVisit (employeeId, date) {
       let visit = visitInit({ ts_begin: dateISOInLocalTimeZone(ceilMinutes(new Date())) })
-      
+
       if (date) {
         visit.ts_begin = date.toISOString()
-      }  
+      }
+      if (employeeId) {
+        visit.business_id = employeeId
+        this.selectedEmployee = this.businessEmployees.find(e => e.id === employeeId)
+      }
+
       this.selectVisit(visit)
     },
     fetchData () {
@@ -534,11 +751,16 @@ export default {
       const nextMonday = new Date(sunday.date)
 
       nextMonday.setDate(sunday.date.getDate() + 1)
-      Api() 
+      Api()
         .get(`/business_calendar?business_id=eq.${this.selectedEmployee.id}&changed=eq.true&dt=gte.${this.selectedWeek[0].dateKey}&dt=lt.${formatDate(nextMonday)}`)
         .then(({ data }) => {
           this.irregularDays = data.map(x => ({ date: x.dt, schedule: x.j.schedule, employeeId: x.business_id }))
         })
+    },
+    getWeek () {
+      const includesDay = day => day.dateKey === this.selectedDate
+
+      return this.dates.find(week => week.some(includesDay))
     },
     initEmployee () {
       if (!this.businessEmployees || !this.businessEmployees.length ||
@@ -558,6 +780,15 @@ export default {
           break
         }
       }
+
+      this.businessEmployees.forEach(employee => {
+        if (!this.visibleEmployees.some(emp => emp.id === employee.id)) {
+          this.visibleEmployees.push(employee)
+          if (!this.selectedCategories.includes(employee.j.category)) {
+            this.selectedCategories.push(employee.j.category)
+          }
+        }
+      })
     },
     onAction () {
       this.createVisit()
@@ -585,14 +816,17 @@ export default {
     },
     onGroupsChange (category, selected) {
       if (selected) {
-        this.selectedEmpGroups.push(category)
+        if (!this.selectedCategories.includes(category)) {
+          this.selectedCategories.push(category)
+        }
       } else {
-        const i = this.selectedEmpGroups.indexOf(category)
+        const i = this.selectedCategories.indexOf(category)
 
         if (i > -1) {
-          this.selectedEmpGroups.splice(i, 1)
+          this.selectedCategories.splice(i, 1)
         }
       }
+      this.groupedEmployees[category].forEach(e => this.changeVisibleEmployees(e, selected))
     },
     onInputBreakEnd (payload) {
       const time = payload.substring(11,16)
@@ -602,11 +836,12 @@ export default {
     },
     onVisitSave (payload) {
       //todo move saving into Visit class
+      const master = this.businessEmployees.find(e => e.id === payload.business_id)
 
       this.editVisitPage = undefined
       this.successTemplate.date = hyphensStringToDate(payload.ts_begin.substring(0, 10)).toLocaleString('ru-RU', { day: 'numeric', month: 'long', weekday: 'short' })
       this.successTemplate.time = payload.ts_begin.substring(11, 16)
-      this.successTemplate.master = this.selectedEmployee.j.name
+      this.successTemplate.master = master? master.j.name : this.selectedEmployee.j.name
       this.sendData(payload)
         .then(() => {
           this.edit = false
@@ -625,7 +860,7 @@ export default {
           }
         })
     },
-    onDelete () { 
+    onDelete () {
       this.edit = false
       Api()
         .delete(`visit?id=eq.${this.currentVisit.id}`)
@@ -636,6 +871,20 @@ export default {
         })
         .catch(err => {
           this.alert(makeAlert(err))})
+    },
+    selectNextEmployee () {
+      const index = this.businessEmployees.findIndex(e => e.id === this.selectedEmployee.id)
+
+      this.selectedEmployee = index < (this.businessEmployees.length - 1)
+        ? this.businessEmployees[index + 1]
+        : this.businessEmployees[0]
+    },
+    selectPrevEmployee () {
+      const index = this.businessEmployees.findIndex(e => e.id === this.selectedEmployee.id)
+
+      this.selectedEmployee = index === 0
+        ? this.businessEmployees[this.businessEmployees.length - 1]
+        : this.businessEmployees[index - 1]
     },
     sendData (data) {
       if (data && data.id) {
@@ -672,15 +921,94 @@ export default {
     }
   }
   .visit-log {
+    background-color: #e7eaef;
+
+    &__header {
+      @media only screen and (min-width : $desktop) {
+        position: sticky;
+        top: 57px;
+        z-index: 1;
+      }
+    }
+    &__no-employees {
+      padding: 12px 0;
+      background-color: #fff;
+    }
+    &__info-list {
+      display: flex;
+      flex-grow: 1;
+      max-width: 772px;
+      justify-content: space-between;
+      list-style: none;
+      padding: 0 4% 0 56px;
+    }
+    &__info-item {
+      font-size: 12px;
+      &:before {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 4px;
+        content: '';
+        border-left: 2px solid #fff;
+        background-color: #fff;
+      }
+      &._missed:before {
+        border-color: #EF4D37;
+      }
+      &._cancelled:before {
+        border-color: #8995AF;
+      }
+      &._day-off:before {
+        background-color: rgba(137, 149, 175, 0.1);
+        border-color: transparent;
+      }
+      &._break:before {
+        background: url('../assets/images/svg/cup.svg') left center no-repeat;
+        border-color: transparent;
+      }
+    }
+    &__controls {
+      display: none;
+      width: 126px;
+      height: 80px;
+      padding: 0 14px 0 55px;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #fff;
+      border-right: 1px solid rgba(137, 149, 175, 0.1);
+      @media only screen and (min-width : $desktop) {
+        display: flex;
+      }
+
+    }
+    &__controls-button {
+      @extend %round-arrow-button;
+      color: #8995AF !important;
+      &:hover {
+        background-color: rgba(137, 149, 175, 0.1);;
+      }
+    }
+    &__week-spacer {
+      width: 126px;
+    }
+
     .v-progress-linear {
+      position: sticky;
+      top: 56px;
+      z-index: 1;
       margin: 0;
+      background: #fff;
     }
     .header {
       display: none;
       justify-content: space-between;
+      background-color: #fff;
+      border-bottom: 1px solid #f4f5f7;
       @media only screen and (min-width : $desktop) {
         display: flex;
-        padding-right: 40px;
+        padding: 0 40px 0 127px;
       }
       
       &__info {
@@ -694,10 +1022,6 @@ export default {
     .calendar-controls {
       background-color: #fff;
       border-bottom: 1px solid rgba(137, 149, 175, 0.2);
-      @media only screen and (min-width : $desktop) {
-        padding: 0 38px;
-      }
-
       &__left {
         flex-grow: 1;
         display: flex;
@@ -712,13 +1036,14 @@ export default {
       &__container {
         height: 44px;
         @media only screen and (min-width : $desktop) {
-          height: 40px;
+          display: none;
         }
       }
       &__button {
         width: 55px;
         box-sizing: border-box;
         min-width: 0;
+        margin: 0;
         @media only screen and (min-width : $desktop) {
           width: 24px;
           padding: 0;
@@ -732,21 +1057,27 @@ export default {
         }
       }
       &__heading {
-        padding-left: 5px;
         font-family: Roboto Slab;
-        font-size: 18px;
+        font-size: 14px;
         color: #07101C;
         text-transform: capitalize;
+        @media only screen and (min-width : $tablet) {
+          padding-left: 5px;
+          font-size: 18px;
+        }
       }
       &__today {
         height: 24px;
-        margin-right: 16px;
-        padding: 0 35px;
+        padding: 0 25px;
         line-height: 24px;
         border: 1px solid #5699FF;
         border-radius: 16px;
         color: #5699FF;
         text-decoration: none;
+        @media only screen and (min-width : $tablet) {
+          margin-right: 16px;
+          padding: 0 35px;
+        }
         &[disabled="disabled"] {
           border-color: rgba(137, 149, 175, 0.2);
           color: rgba(137, 149, 175, 0.35);
@@ -781,22 +1112,59 @@ export default {
       &__days {
         padding: 0 35px;
         @media only screen and (min-width : $desktop) {
+          padding: 0;
+        }
+        &._desktop {
           display: none;
+          @media only screen and (min-width : $desktop) {
+            display: flex;
+          }
         }
       }
       &__day {
         padding: 14px 12px;
+        @media only screen and (min-width : $desktop) {
+          position: relative;
+          width: 14.28%;
+          padding: 14px 20px;
+          &:after {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            content: '';
+            background: rgba(137, 149, 175, 0.2);
+            width: 1px;
+            height: 34px;
+          }
+        }
         &.selected {
           background-color: #5699FF;
           border-radius: 4px;
+          @media only screen and (min-width : $desktop) {
+            background-color: #fff;
+            border-left: 2px solid #5699ff;
+            border-radius: 0;
+          }
           * {
             color: #fff;
+            font-weight: bold;
+            @media only screen and (min-width : $desktop) {
+              color: #5699FF;
+            }
           }
         }
+      }
+      &__number {
+        font-size: 18px;
+        font-family: $roboto;
       }
       &__dow {
         margin-top: 9px;
         font-weight: bold;
+        text-transform: capitalize;
+        @media only screen and (min-width : $desktop) {
+          font-weight: normal;
+        }
       }
     }
 
@@ -812,51 +1180,18 @@ export default {
       }
     }
 
-    &__no-employees {
-      padding: 12px 0;
-      background-color: #fff;
-    }
-    &__info-list {
-      display: flex; 
-      flex-grow: 1;
-      max-width: 772px;
-      justify-content: space-between;
-      list-style: none;
-      padding: 0 4% 0 56px;
-    }
-    &__info-item {
-      font-size: 12px; 
-      &:before {
-        width: 16px;
-        height: 16px;
-        display: inline-block;
-        vertical-align: middle;
-        margin-right: 4px;
-        content: '';
-        border-left: 2px solid #fff;
-        background-color: #fff;
-      }
-      &._missed:before {
-        border-color: #EF4D37;
-      }
-      &._cancelled:before {
-        border-color: #8995AF;
-      }
-      &._day-off:before {
-        background-color: rgba(137, 149, 175, 0.1);
-        border-color: transparent;
-      }
-      &._break:before {
-        background: url('../assets/images/svg/cup.svg') left center no-repeat;
-        border-color: transparent;
-      }
-    }
-
     .main-table {
       position: relative;
-      @media only screen and (min-width : $desktop) {
-        display: flex;
-        overflow: auto;
+
+      &__desktop-menu {
+        position: sticky;
+        top: 195px;
+        z-index: 2;
+        background-color: #fff;
+        .employee-menu-trigger {
+          height: 100%;
+          margin-left: 66px;
+        }
       }
 
       &__times { 
@@ -864,18 +1199,24 @@ export default {
         @media only screen and (min-width : $desktop) {
           display: flex;
           width: 100%;
-          padding-left: 70px;
+          padding-left: 125px;
         }
       }
 
-      &.one-day .day-column.selected {
-        width: 100%;
-        .day-column__header {
-          background-color: #fff;
-          border-radius: 0;
+      &__employees-switch {
+        position: sticky;
+        top: 195px;
+        z-index: 1;
+        height: 80px;
+        .visit-log__controls {
+          padding: 0 30px 0 40px;
+          border-left: 1px solid rgba(137, 149, 175, 0.1);
         }
-        .time-mark {
-          display: block;
+      }
+
+      &.week {
+        .day-column__employee {
+          border-right: none;
         }
       }
     }
@@ -897,56 +1238,23 @@ export default {
         }
       }
       &.selected .time-mark {
-        @media only screen and (max-width : $desktop) {
+        @media only screen and (max-width : ($desktop - 1px)) {
           display: block;      
         }
       }
     }
 
-    .week-controls {
-      display: none;
-      position: absolute;
-      z-index: 1;
-      left: 0;
-      width: 126px;
-      height: 82px;
-      padding: 0 14px 0 55px;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #fff;
-      border-bottom: 1px solid rgba(137, 149, 175, 0.2);
-      @media only screen and (min-width : $desktop) {
-        display: flex;
-      }
-      &__button {
-        @extend %round-arrow-button;
-        &:hover {
-          background-color: rgba(137, 149, 175, 0.1);;
-        }
-      }
-    }
-
     .employees {
+      position: sticky;
+      width: 100%;
+      top: 56px;
       display: flex;
       align-items: center;
-      padding: 18px;
+      padding: 0 18px;
+      z-index: 1;
       background-color: #fff;
       @media only screen and (min-width : $desktop) {
-        display: block;
-        width: 55px;
-        padding: 100px 8px 0;
-      }
-
-      &__menu {
-        width: 24px;
-        height: 24px;
-        background: url('../assets/images/svg/dots.svg') center no-repeat;
-        outline: none;
-        margin-right: 36px;
-        @media only screen and (min-width : $desktop) {
-          display: none;
-          margin: 0 7.5px;
-        }
+        display: none;
       }
     }
     .employee {
@@ -1005,6 +1313,62 @@ export default {
       }
     }
 
+    .employees-selection {
+      position: absolute;
+      width: 126px;
+      height: 79px;
+      background: #fff;
+      border-right: 1px solid rgba(137, 149, 175, 0.1);
+      border-bottom: 1px solid rgba(137, 149, 175, 0.1);
+      box-shadow: 0 2px 8px rgba(137, 149, 175, 0.1);
+      &__menu {
+        width: 182px;
+        background-color: #fff;
+      }
+      &__item {
+        padding: 7px 8px 8px 16px;
+        border-bottom: 1px solid rgba(137, 149, 175, 0.1);
+        &:last-child {
+          border: none;
+        }
+      }
+      .v-menu__content {
+        overflow: hidden;
+      }
+      .v-expansion-panel__header {
+        min-height: 32px;
+        padding: 7px 8px 8px 16px;
+        border-bottom: 1px solid rgba(137, 149, 175, 0.1);
+        background-color: rgba(137, 149, 175, 0.1);
+      }
+      .v-expansion-panel__container {
+        border: none;
+      }
+      .v-expansion-panel__container--active .v-expansion-panel__header {
+        background-color: #fff;
+      }
+      .checkbox {
+        display: inline-flex;
+      }
+    }
+    .checkbox__label {
+      height: 16px;
+      margin: 0;
+      padding: 0 7px;
+      border-radius: 2px;
+      border: 1px solid rgba(137, 149, 175, 0.2);
+      background-color: #fff;
+    }
+    .checkbox__input:checked + .checkbox__label {
+      background: url('../assets/images/svg/selection.svg') center/10px 8px no-repeat #5699ff;
+    }
+    .employee-menu-trigger {
+      width: 24px;
+      height: 24px;
+      background: url('../assets/images/svg/dots.svg') center no-repeat;
+      outline: none;
+      margin-right: 36px;
+    }
   }
 
   .modal-content { 
@@ -1067,4 +1431,6 @@ export default {
     }
 
   }
+  
+
 </style>
