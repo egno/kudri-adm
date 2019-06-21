@@ -120,13 +120,14 @@
                 <v-icon>navigate_next</v-icon>
               </v-btn>
             </div>
-            <VLayout row justify-space-between class="calendar-controls__days">
+            <VLayout row justify-space-between class="calendar-controls__days _desktop">
               <div
                 v-for="(day, dayIndex) in selectedWeek"
                 :key="dayIndex"
                 :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate }"
                 @click="goDate(day.dateKey)"
               >
+                <!--todo make a component -->
                 <div class="calendar-controls__number">
                   {{ day.display }}
                 </div>
@@ -137,6 +138,29 @@
               </div>
             </VLayout>
           </VLayout>
+          <div v-if="dates.length" class="calendar-controls__dates-container mobile">
+            <carousel :pagination-enabled="false" :min-swipe-distance="25" :per-page="1">
+              <slide v-for="(week, weekIndex) in dates" :key="weekIndex">
+                <VLayout row justify-space-between class="calendar-controls__days">
+                  <div
+                    v-for="(day, dayIndex) in week"
+                    :key="dayIndex"
+                    :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate }"
+                    @click="goDate(day.dateKey)"
+                  >
+                    <!--todo make a component -->
+                    <div class="calendar-controls__number">
+                      {{ day.display }}
+                    </div>
+                    <div class="calendar-controls__dow">
+                      <span class="mobile">{{ dow[dayIndex] }}</span>
+                      <span class="desktop">{{ day.date.toLocaleString('ru-RU', { weekday: 'long' }) }}</span>
+                    </div>
+                  </div>
+                </VLayout>
+              </slide>
+            </carousel>
+          </div>
         </div>
         <VLayout 
           v-if="businessEmployees && !businessEmployees.length" 
@@ -184,7 +208,7 @@
               </div>
             </div>
           </div>
-          <div class="main-table__desktop-menu">
+          <div class="main-table__desktop-menu desktop">
             <div class="employees-selection">
               <v-menu
                 v-model="showDesktopMenu"
@@ -198,9 +222,9 @@
                   <div class="employee-menu-trigger" v-on="on" />
                 </template>
                 <div class="employees-selection__menu">
-                  <div :class="['employees-selection__item']" @click="toggleAll">
+                  <!--<div :class="['employees-selection__item']" @click="toggleAll">
                     Все мастера
-                  </div>
+                  </div>-->
                   <v-expansion-panel>
                     <v-expansion-panel-content
                       v-for="category in employeesCategories"
@@ -218,6 +242,7 @@
                             :checked="groupedEmployees[category].length === visibleEmployees.filter(e => e.j.category === category).length"
                             label=""
                             :value="category"
+                            @click.native.stop
                             @change="onGroupsChange(category, $event)"
                           />
                         </VLayout>
@@ -235,6 +260,7 @@
                           :checked="visibleEmployees.some(e => e.id === emp.id)"
                           label=""
                           :value="emp.id"
+                          @click.native.stop
                           @change="changeVisibleEmployees(emp, $event)"
                         />
                       </VLayout>
@@ -244,10 +270,11 @@
               </v-menu>
             </div>
           </div>
-          <div row class="main-table__times">
-            <template v-if="displayMode === 'day'">
+          <template v-if="displayMode === 'day'">
+            <div row class="main-table__times">
               <CalendarDayColumn
-                v-for="employee in visibleEmployees"
+                v-for="employee in businessEmployees"
+                v-show="visibleEmployees.some(e => e.id === employee.id)"
                 :key="employee.id"
                 :employee="employee"
                 :class="{ desktop: employee.id !== selectedEmployee.id, selected: employee.id === selectedEmployee.id }"
@@ -264,29 +291,34 @@
                 @onDayEdit="onDayEdit"
                 @makeDayOffTry="notifyHasVisits = true"
               />
-            </template>
-            <template v-else>
-              <CalendarDayColumn
-                v-for="(day, i) in selectedWeek"
-                v-show="day.dateKey === selectedDate || displayMode === 'week'"
-                :key="selectedEmployee.j.name + day.dateKey"
-                :employee="!i? selectedEmployee : {}"
-                :class="{ desktop: day.dateKey !== selectedDate, selected: day.dateKey === selectedDate }"
-                :show-time="!i || day.dateKey === selectedDate"
-                :day="day"
-                :now="now"
-                :holiday="isHoliday(day.dateKey, selectedEmployee)"
-                :visits="dayVisits(day.dateKey, selectedEmployee)"
-                :employee-schedule="getIrregularDay(day.dateKey, selectedEmployee)? getIrregularDay(day.dateKey, selectedEmployee).schedule : selectedEmployee.j.schedule.data[i]"
-                :display-from="displayTimes.start"
-                :display-to="displayTimes.end"
-                @onSlotClick="createVisit"
-                @onBreakClick="createBreak"
-                @onDayEdit="onDayEdit"
-                @makeDayOffTry="notifyHasVisits = true"
-              />
-            </template>
-          </div>
+            </div>
+          </template>
+          <template v-else>
+            <VLayout row>
+              <div row class="main-table__times">
+                <CalendarDayColumn
+                  v-for="(day, i) in selectedWeek"
+                  v-show="day.dateKey === selectedDate || displayMode === 'week'"
+                  :key="selectedEmployee.j.name + day.dateKey"
+                  :employee="!i? selectedEmployee : {}"
+                  :class="{ desktop: day.dateKey !== selectedDate, selected: day.dateKey === selectedDate }"
+                  :show-time="!i || day.dateKey === selectedDate"
+                  :day="day"
+                  :now="now"
+                  :holiday="isHoliday(day.dateKey, selectedEmployee)"
+                  :visits="dayVisits(day.dateKey, selectedEmployee)"
+                  :employee-schedule="getIrregularDay(day.dateKey, selectedEmployee)? getIrregularDay(day.dateKey, selectedEmployee).schedule : selectedEmployee.j.schedule.data[i]"
+                  :display-from="displayTimes.start"
+                  :display-to="displayTimes.end"
+                  @onSlotClick="createVisit"
+                  @onBreakClick="createBreak"
+                  @onDayEdit="onDayEdit"
+                  @makeDayOffTry="notifyHasVisits = true"
+                />
+              </div>
+              <div class="main-table__employees-switch" />
+            </VLayout>
+          </template>
         </div>
       </div>
       
@@ -413,7 +445,6 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from 'vuex'
 import Api from '@/api/backend'
 import MainButton from '@/components/common/MainButton.vue'
 import Accordion from '@/components/common/Accordion.vue'
@@ -422,26 +453,37 @@ import Avatar from '@/components/avatar/Avatar.vue'
 import CalendarDayColumn from '@/components/calendar/CalendarDayColumn.vue'
 import EmployeeCard from '@/components/employee/EmployeeCard.vue'
 import BreakEdit from '@/components/calendar/BreakEdit.vue'
+import Modal from '@/components/common/Modal'
+import VisitEdit from '@/components/calendar/VisitEdit.vue'
+import Visit from '@/classes/visit'
+import { Carousel, Slide } from 'vue-carousel'
+import { mapState, mapActions, mapGetters } from 'vuex'
+import { makeAlert } from '@/api/utils'
+import { setInterval, clearInterval } from 'timers'
+import { employeesCategorized } from '@/mixins/employee'
+import calendarMixin from '@/mixins/calendar'
 import {
-  ceilMinutes, 
-  dateISOInLocalTimeZone, 
-  formatDate, 
+  ceilMinutes,
+  dateISOInLocalTimeZone,
+  formatDate,
   hyphenStrToDay,
   hyphensStringToDate,
-  getWeek, 
-  visitInit 
+  visitInit
 } from '@/components/calendar/utils'
-import VisitEdit from '@/components/calendar/VisitEdit.vue'
-import { makeAlert } from '@/api/utils'
-import Visit from '@/classes/visit'
-import { setInterval, clearInterval } from 'timers'
-import Modal from '@/components/common/Modal'
-import { employeesCategorized } from '@/mixins/employee'
-
-import calendarMixin from '@/mixins/calendar'
 
 export default {
-  components: { Accordion, AppCheckbox, Avatar, BreakEdit, EmployeeCard, MainButton, Modal, CalendarDayColumn, VisitEdit },
+  components: {
+    Accordion,
+    AppCheckbox,
+    Avatar,
+    BreakEdit,
+    EmployeeCard,
+    MainButton,
+    Modal,
+    CalendarDayColumn,
+    VisitEdit,
+    Carousel,
+    Slide },
   mixins: [ calendarMixin, employeesCategorized ],
   data () {
     return {
@@ -505,11 +547,9 @@ export default {
       return hyphenStrToDay(this.selectedDate)
     },
     selectedWeek () {
-      if (!this.selectedDateObj) return []
+      if (!this.selectedDate) return []
 
-      const date = this.selectedDateObj.date
-
-      return getWeek(date.getFullYear(), date.getMonth(), this.selectedDateObj.display)
+      return this.getWeek()
     },
     displayTimes () {
       const selectedEmployeeSchedule = this.selectedEmployee.j.schedule.data
@@ -613,7 +653,7 @@ export default {
       }
     },
     changeWeek (vector) {
-      let dt = new Date(this.actualDate)
+      let dt = new Date(this.selectedDate)
 
       dt.setDate(dt.getDate() + 7*vector)
       this.goDate(formatDate(dt))
@@ -640,10 +680,10 @@ export default {
     },
     createVisit (date) {
       let visit = visitInit({ ts_begin: dateISOInLocalTimeZone(ceilMinutes(new Date())) })
-      
+
       if (date) {
         visit.ts_begin = date.toISOString()
-      }  
+      }
       this.selectVisit(visit)
     },
     fetchData () {
@@ -673,11 +713,16 @@ export default {
       const nextMonday = new Date(sunday.date)
 
       nextMonday.setDate(sunday.date.getDate() + 1)
-      Api() 
+      Api()
         .get(`/business_calendar?business_id=eq.${this.selectedEmployee.id}&changed=eq.true&dt=gte.${this.selectedWeek[0].dateKey}&dt=lt.${formatDate(nextMonday)}`)
         .then(({ data }) => {
           this.irregularDays = data.map(x => ({ date: x.dt, schedule: x.j.schedule, employeeId: x.business_id }))
         })
+    },
+    getWeek () {
+      const includesDay = day => day.dateKey === this.selectedDate
+
+      return this.dates.find(week => week.some(includesDay))
     },
     initEmployee () {
       if (!this.businessEmployees || !this.businessEmployees.length ||
@@ -776,7 +821,7 @@ export default {
           }
         })
     },
-    onDelete () { 
+    onDelete () {
       this.edit = false
       Api()
         .delete(`visit?id=eq.${this.currentVisit.id}`)
@@ -796,6 +841,12 @@ export default {
         return Api()
           .post('visit', data)
       }
+    },
+    swipeRight () {
+      this.changeWeek(-1)
+    },
+    swipeLeft () {
+      this.changeWeek(1)
     },
     updateStatus () {
       this.now = new Date()
@@ -940,6 +991,12 @@ export default {
         @media only screen and (min-width : $desktop) {
           padding: 0;
         }
+        &._desktop {
+          display: none;
+          @media only screen and (min-width : $desktop) {
+            display: flex;
+          }
+        }
       }
       &__day {
         padding: 14px 12px;
@@ -1024,6 +1081,11 @@ export default {
       &__desktop-menu {
         position: relative;
         width: 125px;
+        background-color: #fff;
+        .employee-menu-trigger {
+          height: 80px;
+          margin-left: 66px;
+        }
       }
 
       &__times { 
@@ -1033,6 +1095,10 @@ export default {
           width: 100%;
           padding-left: 125px;
         }
+      }
+
+      &__employees-switch {
+        width: 179px;
       }
     }
 
@@ -1144,7 +1210,10 @@ export default {
     }
 
     .employees-selection {
-      position: relative;
+      height: 80px;
+      position: absolute;
+      width: 125px;
+      background: #fff;
       &__menu {
         width: 182px;
         background-color: #fff;
@@ -1163,9 +1232,16 @@ export default {
         min-height: 32px;
         padding: 7px 8px 8px 16px;
         border-bottom: 1px solid rgba(137, 149, 175, 0.1);
+        background-color: rgba(137, 149, 175, 0.1);
       }
       .v-expansion-panel__container {
         border: none;
+      }
+      .v-expansion-panel__container--active .v-expansion-panel__header {
+        background-color: #fff;
+      }
+      .checkbox {
+        display: inline-flex;
       }
     }
     .checkbox__label {

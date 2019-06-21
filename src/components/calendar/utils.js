@@ -131,11 +131,14 @@ export function getWeeks (year, month) {
 
   // append next month dates
   const daysLeft = 7 - (days.length % 7)
-  for (let i = 1; i <= daysLeft; i++) {
-    const nextDate = new Date(date)
-    nextDate.setDate(i)
-    days.push({ outOfRange: true, date: nextDate })
+  if (daysLeft < 7) {
+    for (let i = 1; i <= daysLeft; i++) {
+      const nextDate = new Date(date)
+      nextDate.setDate(i)
+      days.push({ outOfRange: true, date: nextDate })
+    }
   }
+
   // define day states
   days.forEach(day => {
     day.today = areSameDates(day.date, today)
@@ -144,13 +147,6 @@ export function getWeeks (year, month) {
   })
 
   return splitArray(days, 7)
-}
-
-export function getWeek (year, month, dd) {
-  const monthWeeks = getWeeks(year, month)
-  const includesDay = day => day.display === dd && day.date.getMonth() === month
-
-  return monthWeeks.find(week => week.some(includesDay))
 }
 
 export function visitInit (visit) {
