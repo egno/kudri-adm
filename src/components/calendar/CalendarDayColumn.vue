@@ -408,11 +408,11 @@ export default {
   }
   &__item {
     height: 56px;
-    &:nth-child(odd) {
+    /*&:nth-child(odd) {
       .slot {
         border-bottom: 1px solid rgba(137, 149, 175, .20);
       }
-    }
+    }*/
   }
   &__time {
     position: relative;
@@ -420,7 +420,7 @@ export default {
 
   &__now {
     position: absolute;
-    z-index: 4;
+    z-index: 0;
     right: 0;
     left: 0;
     border-top: 2px solid #EF4D37;
@@ -453,6 +453,9 @@ export default {
   &__employee {
     display: none;
     @media only screen and (min-width : $desktop) {
+      position: sticky;
+      top: 197px;
+      z-index: 1;
       display: flex;
       height: 80px;
       padding-left: 18px;
@@ -462,6 +465,9 @@ export default {
       font-style: normal;
       line-height: normal;
       background-color: #fff;
+      border-left: 1px solid rgba(137, 149, 175, 0.1);
+      border-bottom: 1px solid rgba(137, 149, 175, 0.1);
+      box-shadow: 4px 2px 8px rgba(137, 149, 175, 0.1);
     }
   }
   &__badge {

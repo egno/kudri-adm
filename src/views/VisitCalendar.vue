@@ -6,74 +6,10 @@
       indeterminate
       color="#5699FF"
     />
-    <div v-show="!isLoading">      
+    <template v-if="!isLoading">
       <div v-show="!showMobileMenu">
-        <div class="header">
-          <VLayout row align-center class="calendar-controls__right">
-            <router-link
-              :disabled="selectedDateObj.dateKey === todayString"
-              class="calendar-controls__today"
-              :to="{ name: 'visitCalendar', params: { id: businessId, date: todayString } }"
-            >
-              Сегодня
-            </router-link>
-            <div class="calendar-controls__toggle desktop">
-              <input id="day-mode" v-model="displayMode" type="radio" value="day">
-              <label for="day-mode">День</label>
-              <input id="week-mode" v-model="displayMode" type="radio" value="week">
-              <label for="week-mode">Неделя</label>
-            </div>
-            <v-btn
-              class="mobile calendar-controls__button"
-              depressed
-              flat
-              small
-              @click.stop="addMonth(1)"
-            >
-              <v-icon>navigate_next</v-icon>
-            </v-btn>
-          </VLayout>
-          <div class="header__button">
-            <MainButton
-              v-if="selectedEmployee"
-              :class="{ button_disabled: false }"
-              class="button_attractive"
-              @click="createVisit()"
-            >
-              Создать запись
-            </MainButton>
-          </div>
-        </div>
-        <div class="calendar-controls">
-          <VLayout
-            align-center
-            justify-space-between
-            row
-            class="calendar-controls__container"
-          >
-            <div class="calendar-controls__left">
-              <v-btn
-                class="calendar-controls__button"
-                depressed
-                flat
-                small
-                @click.stop="addMonth(-1)"
-              >
-                <v-icon>navigate_before</v-icon>
-              </v-btn>
-              <v-btn
-                class="desktop calendar-controls__button"
-                depressed
-                flat
-                small
-                @click.stop="addMonth(1)"
-              >
-                <v-icon>navigate_next</v-icon>
-              </v-btn>
-              <div class="calendar-controls__heading">
-                {{ dateMonthHeader }}
-              </div>
-            </div>
+        <div class="visit-log__header">
+          <div class="header">
             <VLayout row align-center class="calendar-controls__right">
               <router-link
                 :disabled="selectedDateObj.dateKey === todayString"
@@ -98,70 +34,137 @@
                 <v-icon>navigate_next</v-icon>
               </v-btn>
             </VLayout>
-          </VLayout>
-          <VLayout>
-            <div class="week-controls">
-              <v-btn
-                class="week-controls__button"
-                depressed
-                flat
-                small
-                @click.stop="changeWeek(-1)"
+            <div class="header__button">
+              <MainButton
+                v-if="selectedEmployee"
+                :class="{ button_disabled: false }"
+                class="button_attractive"
+                @click="createVisit()"
               >
-                <v-icon>navigate_before</v-icon>
-              </v-btn>
-              <v-btn
-                class="week-controls__button"
-                depressed
-                flat
-                small
-                @click.stop="changeWeek(1)"
-              >
-                <v-icon>navigate_next</v-icon>
-              </v-btn>
+                Создать запись
+              </MainButton>
             </div>
-            <VLayout row justify-space-between class="calendar-controls__days _desktop">
-              <div
-                v-for="(day, dayIndex) in selectedWeek"
-                :key="dayIndex"
-                :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate }"
-                @click="goDate(day.dateKey)"
-              >
-                <!--todo make a component -->
-                <div class="calendar-controls__number">
-                  {{ day.display }}
-                </div>
-                <div class="calendar-controls__dow">
-                  <span class="mobile">{{ dow[dayIndex] }}</span>
-                  <span class="desktop">{{ day.date.toLocaleString('ru-RU', { weekday: 'long' }) }}</span>
+          </div>
+          <div class="calendar-controls">
+            <VLayout
+              align-center
+              justify-space-between
+              row
+              class="calendar-controls__container"
+            >
+              <div class="calendar-controls__left">
+                <v-btn
+                  class="calendar-controls__button"
+                  depressed
+                  flat
+                  small
+                  @click.stop="addMonth(-1)"
+                >
+                  <v-icon>navigate_before</v-icon>
+                </v-btn>
+                <v-btn
+                  class="desktop calendar-controls__button"
+                  depressed
+                  flat
+                  small
+                  @click.stop="addMonth(1)"
+                >
+                  <v-icon>navigate_next</v-icon>
+                </v-btn>
+                <div class="calendar-controls__heading">
+                  {{ dateMonthHeader }}
                 </div>
               </div>
+              <VLayout row align-center class="calendar-controls__right">
+                <router-link
+                  :disabled="selectedDateObj.dateKey === todayString"
+                  class="calendar-controls__today"
+                  :to="{ name: 'visitCalendar', params: { id: businessId, date: todayString } }"
+                >
+                  Сегодня
+                </router-link>
+                <div class="calendar-controls__toggle desktop">
+                  <input id="day-mode" v-model="displayMode" type="radio" value="day">
+                  <label for="day-mode">День</label>
+                  <input id="week-mode" v-model="displayMode" type="radio" value="week">
+                  <label for="week-mode">Неделя</label>
+                </div>
+                <v-btn
+                  class="mobile calendar-controls__button"
+                  depressed
+                  flat
+                  small
+                  @click.stop="addMonth(1)"
+                >
+                  <v-icon>navigate_next</v-icon>
+                </v-btn>
+              </VLayout>
             </VLayout>
-          </VLayout>
-          <div v-if="dates.length" class="calendar-controls__dates-container mobile">
-            <carousel :pagination-enabled="false" :min-swipe-distance="25" :per-page="1">
-              <slide v-for="(week, weekIndex) in dates" :key="weekIndex">
-                <VLayout row justify-space-between class="calendar-controls__days">
-                  <div
-                    v-for="(day, dayIndex) in week"
-                    :key="dayIndex"
-                    :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate }"
-                    @click="goDate(day.dateKey)"
-                  >
-                    <!--todo make a component -->
-                    <div class="calendar-controls__number">
-                      {{ day.display }}
-                    </div>
-                    <div class="calendar-controls__dow">
-                      <span class="mobile">{{ dow[dayIndex] }}</span>
-                      <span class="desktop">{{ day.date.toLocaleString('ru-RU', { weekday: 'long' }) }}</span>
-                    </div>
+            <VLayout>
+              <div class="week-controls">
+                <v-btn
+                  class="week-controls__button"
+                  depressed
+                  flat
+                  small
+                  @click.stop="changeWeek(-1)"
+                >
+                  <v-icon>navigate_before</v-icon>
+                </v-btn>
+                <v-btn
+                  class="week-controls__button"
+                  depressed
+                  flat
+                  small
+                  @click.stop="changeWeek(1)"
+                >
+                  <v-icon>navigate_next</v-icon>
+                </v-btn>
+              </div>
+              <VLayout row justify-space-between class="calendar-controls__days _desktop">
+                <div
+                  v-for="(day, dayIndex) in selectedWeek"
+                  :key="dayIndex"
+                  :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate }"
+                  @click="goDate(day.dateKey)"
+                >
+                  <!--todo make a component -->
+                  <div class="calendar-controls__number">
+                    {{ day.display }}
                   </div>
-                </VLayout>
-              </slide>
-            </carousel>
+                  <div class="calendar-controls__dow">
+                    <span class="mobile">{{ dow[dayIndex] }}</span>
+                    <span class="desktop">{{ day.date.toLocaleString('ru-RU', { weekday: 'long' }) }}</span>
+                  </div>
+                </div>
+              </VLayout>
+            </VLayout>
+            <div v-if="dates.length" class="calendar-controls__dates-container mobile">
+              <carousel :pagination-enabled="false" :min-swipe-distance="25" :per-page="1">
+                <slide v-for="(week, weekIndex) in dates" :key="weekIndex">
+                  <VLayout row justify-space-between class="calendar-controls__days">
+                    <div
+                      v-for="(day, dayIndex) in week"
+                      :key="dayIndex"
+                      :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate }"
+                      @click="goDate(day.dateKey)"
+                    >
+                      <!--todo make a component -->
+                      <div class="calendar-controls__number">
+                        {{ day.display }}
+                      </div>
+                      <div class="calendar-controls__dow">
+                        <span class="mobile">{{ dow[dayIndex] }}</span>
+                        <span class="desktop">{{ day.date.toLocaleString('ru-RU', { weekday: 'long' }) }}</span>
+                      </div>
+                    </div>
+                  </VLayout>
+                </slide>
+              </carousel>
+            </div>
           </div>
         </div>
+
         <VLayout 
           v-if="businessEmployees && !businessEmployees.length" 
           class="visit-log__no-employees"
@@ -379,7 +382,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </template>
     
     <VisitEdit
       v-if="currentVisit"
@@ -875,14 +878,66 @@ export default {
   }
   .visit-log {
     background-color: #e7eaef;
+
+    &__header {
+      @media only screen and (min-width : $desktop) {
+        position: sticky;
+        top: 57px;
+        z-index: 1;
+      }
+    }
+    &__no-employees {
+      padding: 12px 0;
+      background-color: #fff;
+    }
+    &__info-list {
+      display: flex;
+      flex-grow: 1;
+      max-width: 772px;
+      justify-content: space-between;
+      list-style: none;
+      padding: 0 4% 0 56px;
+    }
+    &__info-item {
+      font-size: 12px;
+      &:before {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 4px;
+        content: '';
+        border-left: 2px solid #fff;
+        background-color: #fff;
+      }
+      &._missed:before {
+        border-color: #EF4D37;
+      }
+      &._cancelled:before {
+        border-color: #8995AF;
+      }
+      &._day-off:before {
+        background-color: rgba(137, 149, 175, 0.1);
+        border-color: transparent;
+      }
+      &._break:before {
+        background: url('../assets/images/svg/cup.svg') left center no-repeat;
+        border-color: transparent;
+      }
+    }
+
     .v-progress-linear {
+      position: sticky;
+      top: 56px;
+      z-index: 1;
       margin: 0;
+      background: #fff;
     }
     .header {
       display: none;
       justify-content: space-between;
       background-color: #fff;
-      border-bottom: 1px solid rgba(137, 149, 175, 0.2);
+      border-bottom: 1px solid #f4f5f7;
       @media only screen and (min-width : $desktop) {
         display: flex;
         padding: 0 40px 0 127px;
@@ -1035,55 +1090,16 @@ export default {
       }
     }
 
-    &__no-employees {
-      padding: 12px 0;
-      background-color: #fff;
-    }
-    &__info-list {
-      display: flex; 
-      flex-grow: 1;
-      max-width: 772px;
-      justify-content: space-between;
-      list-style: none;
-      padding: 0 4% 0 56px;
-    }
-    &__info-item {
-      font-size: 12px; 
-      &:before {
-        width: 16px;
-        height: 16px;
-        display: inline-block;
-        vertical-align: middle;
-        margin-right: 4px;
-        content: '';
-        border-left: 2px solid #fff;
-        background-color: #fff;
-      }
-      &._missed:before {
-        border-color: #EF4D37;
-      }
-      &._cancelled:before {
-        border-color: #8995AF;
-      }
-      &._day-off:before {
-        background-color: rgba(137, 149, 175, 0.1);
-        border-color: transparent;
-      }
-      &._break:before {
-        background: url('../assets/images/svg/cup.svg') left center no-repeat;
-        border-color: transparent;
-      }
-    }
-
     .main-table {
       position: relative;
 
       &__desktop-menu {
-        position: relative;
-        width: 125px;
+        position: sticky;
+        top: 197px;
+        z-index: 1;
         background-color: #fff;
         .employee-menu-trigger {
-          height: 80px;
+          height: 79px;
           margin-left: 66px;
         }
       }
@@ -1145,9 +1161,13 @@ export default {
     }
 
     .employees {
+      position: sticky;
+      width: 100%;
+      top: 56px;
       display: flex;
       align-items: center;
-      padding: 18px;
+      padding: 0 18px;
+      z-index: 1;
       background-color: #fff;
       @media only screen and (min-width : $desktop) {
         display: none;
@@ -1210,10 +1230,12 @@ export default {
     }
 
     .employees-selection {
-      height: 80px;
       position: absolute;
       width: 125px;
+      height: 79px;
       background: #fff;
+      border-bottom: 1px solid rgba(137, 149, 175, 0.1);
+      box-shadow: 0 2px 8px rgba(137, 149, 175, 0.1);
       &__menu {
         width: 182px;
         background-color: #fff;
