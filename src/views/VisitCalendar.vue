@@ -138,6 +138,7 @@
                   </div>
                 </div>
               </VLayout>
+              <div v-if="displayMode === 'week'" class="visit-log__week-spacer" />
             </VLayout>
             <div v-if="dates.length" class="calendar-controls__dates-container mobile">
               <carousel :pagination-enabled="false" :min-swipe-distance="25" :per-page="1">
@@ -183,7 +184,10 @@
           </MainButton>
         </VLayout>
         
-        <div v-if="selectedEmployee && selectedEmployee.j" :class="['main-table', { 'one-day': displayMode === 'day' }]">
+        <div
+          v-if="selectedEmployee && selectedEmployee.j"
+          :class="['main-table', { 'one-day': displayMode === 'day', 'week': displayMode === 'week' }]"
+        >
           <div class="employees">
             <button type="button" class="employee-menu-trigger" @click="showMobileMenu = true" />
             <div 
@@ -326,7 +330,7 @@
                     depressed
                     flat
                     small
-                    @click.stop=""
+                    @click="selectPrevEmployee"
                   >
                     <v-icon>navigate_before</v-icon>
                   </v-btn>
@@ -335,7 +339,7 @@
                     depressed
                     flat
                     small
-                    @click.stop=""
+                    @click="selectNextEmployee"
                   >
                     <v-icon>navigate_next</v-icon>
                   </v-btn>
@@ -832,11 +836,12 @@ export default {
     },
     onVisitSave (payload) {
       //todo move saving into Visit class
+      const master = this.businessEmployees.find(e => e.id === payload.business_id)
 
       this.editVisitPage = undefined
       this.successTemplate.date = hyphensStringToDate(payload.ts_begin.substring(0, 10)).toLocaleString('ru-RU', { day: 'numeric', month: 'long', weekday: 'short' })
       this.successTemplate.time = payload.ts_begin.substring(11, 16)
-      this.successTemplate.master = this.selectedEmployee.j.name
+      this.successTemplate.master = master? master.j.name : this.selectedEmployee.j.name
       this.sendData(payload)
         .then(() => {
           this.edit = false
@@ -867,6 +872,20 @@ export default {
         .catch(err => {
           this.alert(makeAlert(err))})
     },
+    selectNextEmployee () {
+      const index = this.businessEmployees.findIndex(e => e.id === this.selectedEmployee.id)
+
+      this.selectedEmployee = index < (this.businessEmployees.length - 1)
+        ? this.businessEmployees[index + 1]
+        : this.businessEmployees[0]
+    },
+    selectPrevEmployee () {
+      const index = this.businessEmployees.findIndex(e => e.id === this.selectedEmployee.id)
+
+      this.selectedEmployee = index === 0
+        ? this.businessEmployees[this.businessEmployees.length - 1]
+        : this.businessEmployees[index - 1]
+    },
     sendData (data) {
       if (data && data.id) {
         return Api()
@@ -875,12 +894,6 @@ export default {
         return Api()
           .post('visit', data)
       }
-    },
-    swipeRight () {
-      this.changeWeek(-1)
-    },
-    swipeLeft () {
-      this.changeWeek(1)
     },
     updateStatus () {
       this.now = new Date()
@@ -964,6 +977,7 @@ export default {
       justify-content: space-between;
       align-items: center;
       background-color: #fff;
+      border-right: 1px solid rgba(137, 149, 175, 0.1);
       @media only screen and (min-width : $desktop) {
         display: flex;
       }
@@ -971,9 +985,13 @@ export default {
     }
     &__controls-button {
       @extend %round-arrow-button;
+      color: #8995AF !important;
       &:hover {
         background-color: rgba(137, 149, 175, 0.1);;
       }
+    }
+    &__week-spacer {
+      width: 126px;
     }
 
     .v-progress-linear {
@@ -1106,14 +1124,33 @@ export default {
       &__day {
         padding: 14px 12px;
         @media only screen and (min-width : $desktop) {
+          position: relative;
           width: 14.28%;
           padding: 14px 20px;
+          &:after {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            content: '';
+            background: rgba(137, 149, 175, 0.2);
+            width: 1px;
+            height: 34px;
+          }
         }
         &.selected {
           background-color: #5699FF;
           border-radius: 4px;
+          @media only screen and (min-width : $desktop) {
+            background-color: #fff;
+            border-left: 2px solid #5699ff;
+            border-radius: 0;
+          }
           * {
             color: #fff;
+            font-weight: bold;
+            @media only screen and (min-width : $desktop) {
+              color: #5699FF;
+            }
           }
         }
       }
@@ -1125,6 +1162,9 @@ export default {
         margin-top: 9px;
         font-weight: bold;
         text-transform: capitalize;
+        @media only screen and (min-width : $desktop) {
+          font-weight: normal;
+        }
       }
     }
 
@@ -1146,7 +1186,7 @@ export default {
       &__desktop-menu {
         position: sticky;
         top: 195px;
-        z-index: 1;
+        z-index: 2;
         background-color: #fff;
         .employee-menu-trigger {
           height: 100%;
@@ -1170,6 +1210,13 @@ export default {
         height: 80px;
         .visit-log__controls {
           padding: 0 30px 0 40px;
+          border-left: 1px solid rgba(137, 149, 175, 0.1);
+        }
+      }
+
+      &.week {
+        .day-column__employee {
+          border-right: none;
         }
       }
     }
@@ -1268,9 +1315,10 @@ export default {
 
     .employees-selection {
       position: absolute;
-      width: 125px;
+      width: 126px;
       height: 79px;
       background: #fff;
+      border-right: 1px solid rgba(137, 149, 175, 0.1);
       border-bottom: 1px solid rgba(137, 149, 175, 0.1);
       box-shadow: 0 2px 8px rgba(137, 149, 175, 0.1);
       &__menu {

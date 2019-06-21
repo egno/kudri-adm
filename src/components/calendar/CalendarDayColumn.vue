@@ -329,9 +329,8 @@ export default {
 @mixin active-header {
     background-color: rgba(137, 149, 175, 0.35);
     border-radius: 4px;
-
-
 }
+
 .time-mark {
   position: absolute;
   right: 100%;
@@ -465,7 +464,7 @@ export default {
       font-style: normal;
       line-height: normal;
       background-color: #fff;
-      border-left: 1px solid rgba(137, 149, 175, 0.1);
+      border-right: 1px solid rgba(137, 149, 175, 0.1);
       border-bottom: 1px solid rgba(137, 149, 175, 0.1);
       box-shadow: 4px 2px 8px rgba(137, 149, 175, 0.1);
     }
@@ -481,6 +480,7 @@ export default {
     font-size: 14px;
     color: #07101C;
     font-weight: 400;
+    text-transform: capitalize;
   }
   .day-off {
     color: #8995AF;

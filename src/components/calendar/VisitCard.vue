@@ -282,10 +282,10 @@ export default {
   }
   .break-time {
     height: 100%;
-    background: url('../../assets/images/svg/cup-big.svg') center/48px no-repeat #e7eaef;
+    background: url('../../assets/images/svg/cup-big.svg') center/48px no-repeat #d6dae3;
     border-radius: 4px;
     &._long {
-      background: url('../../assets/images/svg/cup-title.svg') center/65px 81px no-repeat #e7eaef;
+      background: url('../../assets/images/svg/cup-title.svg') center/65px 81px no-repeat #d6dae3;
     }
   }
 }
