@@ -454,7 +454,7 @@ export default {
     display: none;
     @media only screen and (min-width : $desktop) {
       position: sticky;
-      top: 197px;
+      top: 195px;
       z-index: 1;
       display: flex;
       height: 80px;

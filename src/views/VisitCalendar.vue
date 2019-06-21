@@ -101,9 +101,9 @@
               </VLayout>
             </VLayout>
             <VLayout>
-              <div class="week-controls">
+              <div class="visit-log__controls">
                 <v-btn
-                  class="week-controls__button"
+                  class="visit-log__controls-button"
                   depressed
                   flat
                   small
@@ -112,7 +112,7 @@
                   <v-icon>navigate_before</v-icon>
                 </v-btn>
                 <v-btn
-                  class="week-controls__button"
+                  class="visit-log__controls-button"
                   depressed
                   flat
                   small
@@ -289,8 +289,8 @@
                 :employee-schedule="getIrregularDay(selectedDate, employee)? getIrregularDay(selectedDate, employee).schedule : employee.j.schedule.data[selectedDOW]"
                 :display-from="displayTimes.start"
                 :display-to="displayTimes.end"
-                @onSlotClick="createVisit"
-                @onBreakClick="createBreak"
+                @onSlotClick="createVisit(employee.id, $event)"
+                @onBreakClick="createBreak($event, employee.id)"
                 @onDayEdit="onDayEdit"
                 @makeDayOffTry="notifyHasVisits = true"
               />
@@ -313,13 +313,34 @@
                   :employee-schedule="getIrregularDay(day.dateKey, selectedEmployee)? getIrregularDay(day.dateKey, selectedEmployee).schedule : selectedEmployee.j.schedule.data[i]"
                   :display-from="displayTimes.start"
                   :display-to="displayTimes.end"
-                  @onSlotClick="createVisit"
-                  @onBreakClick="createBreak"
+                  @onSlotClick="createVisit(selectedEmployee.id, $event)"
+                  @onBreakClick="createBreak($event, selectedEmployee.id)"
                   @onDayEdit="onDayEdit"
                   @makeDayOffTry="notifyHasVisits = true"
                 />
               </div>
-              <div class="main-table__employees-switch" />
+              <div class="main-table__employees-switch">
+                <div class="visit-log__controls">
+                  <v-btn
+                    class="visit-log__controls-button"
+                    depressed
+                    flat
+                    small
+                    @click.stop=""
+                  >
+                    <v-icon>navigate_before</v-icon>
+                  </v-btn>
+                  <v-btn
+                    class="visit-log__controls-button"
+                    depressed
+                    flat
+                    small
+                    @click.stop=""
+                  >
+                    <v-icon>navigate_next</v-icon>
+                  </v-btn>
+                </div>
+              </div>
             </VLayout>
           </template>
         </div>
@@ -390,7 +411,7 @@
       :visible="edit"
       :company-id="businessInfo.parent? businessInfo.parent : businessId"
       :employees="businessEmployees.filter(e => e.j.services && e.j.services.length)"
-      :employee="selectedEmployee"
+      :employee="businessEmployees.find(e => e.id === currentVisit.business_id) || selectedEmployee"
       :visit="currentVisit"
       :page="editVisitPage"
       @onSave="onVisitSave"
@@ -670,7 +691,7 @@ export default {
         time: ''
       }
     },
-    createBreak (date) {
+    createBreak (date, employeeId) {
       let newBreak = visitInit({
         ts_begin: dateISOInLocalTimeZone(date),
         business_id: this.selectedEmployee.id,
@@ -679,14 +700,24 @@ export default {
         }
       })
 
+      if (employeeId) {
+        newBreak.business_id = employeeId
+        this.selectedEmployee = this.businessEmployees.find(e => e.id === employeeId)
+      }
+
       this.selectBreak(newBreak)
     },
-    createVisit (date) {
+    createVisit (employeeId, date) {
       let visit = visitInit({ ts_begin: dateISOInLocalTimeZone(ceilMinutes(new Date())) })
 
       if (date) {
         visit.ts_begin = date.toISOString()
       }
+      if (employeeId) {
+        visit.business_id = employeeId
+        this.selectedEmployee = this.businessEmployees.find(e => e.id === employeeId)
+      }
+
       this.selectVisit(visit)
     },
     fetchData () {
@@ -925,6 +956,25 @@ export default {
         border-color: transparent;
       }
     }
+    &__controls {
+      display: none;
+      width: 126px;
+      height: 80px;
+      padding: 0 14px 0 55px;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #fff;
+      @media only screen and (min-width : $desktop) {
+        display: flex;
+      }
+
+    }
+    &__controls-button {
+      @extend %round-arrow-button;
+      &:hover {
+        background-color: rgba(137, 149, 175, 0.1);;
+      }
+    }
 
     .v-progress-linear {
       position: sticky;
@@ -1095,11 +1145,11 @@ export default {
 
       &__desktop-menu {
         position: sticky;
-        top: 197px;
+        top: 195px;
         z-index: 1;
         background-color: #fff;
         .employee-menu-trigger {
-          height: 79px;
+          height: 100%;
           margin-left: 66px;
         }
       }
@@ -1114,7 +1164,13 @@ export default {
       }
 
       &__employees-switch {
-        width: 179px;
+        position: sticky;
+        top: 195px;
+        z-index: 1;
+        height: 80px;
+        .visit-log__controls {
+          padding: 0 30px 0 40px;
+        }
       }
     }
 
@@ -1137,25 +1193,6 @@ export default {
       &.selected .time-mark {
         @media only screen and (max-width : ($desktop - 1px)) {
           display: block;      
-        }
-      }
-    }
-
-    .week-controls {
-      display: none;
-      width: 126px;
-      height: 82px;
-      padding: 0 14px 0 55px;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #fff;
-      @media only screen and (min-width : $desktop) {
-        display: flex;
-      }
-      &__button {
-        @extend %round-arrow-button;
-        &:hover {
-          background-color: rgba(137, 149, 175, 0.1);;
         }
       }
     }
