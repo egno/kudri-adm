@@ -210,7 +210,7 @@ export default {
     color: #fff;
   }
   &__top {
-    width: 100%;
+    flex-basis: 100%;
   }
   &__time {
     color: rgba(255, 255, 255, 0.8);

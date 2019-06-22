@@ -72,7 +72,7 @@
       </div>
       <div
         v-else
-        :class="['slot', { working: isWorkingTime(i) }]"
+        :class="['slot', { working: isWorkingTime(i), clicked: time === selectedTime }]"
         @click="onSlotClick(time, i)"
       >
         <div class="slot__time">
@@ -347,16 +347,25 @@ export default {
   font-size: 0.75em;
 
   &.working {
-    background: #fff; 
+    background: #fff;
+    &:hover {
+      .slot__time {
+        display: block;
+      }
+    }
+  }
+  &.clicked:hover {
+    .slot__time {
+      display: none;
+    }
   }
 
   &__time {
     position: absolute;
     z-index: 1;
-    top: 0; left: 0;
     display: none;
     padding: 20px 14px 0;
-    color: transparent;
+    color: rgba(137, 149, 175, 0.35);
     font-size: 12px;
   }
 
@@ -400,10 +409,10 @@ export default {
 }
 
 .day-column {
-  position: relative;
-  min-width: 136px;
+  width: 14.28%;
   @media only screen and (min-width : $desktop) {
     flex-grow: 1;
+    flex-shrink: 0;
   }
   &__item {
     height: 56px;
@@ -453,7 +462,7 @@ export default {
     display: none;
     @media only screen and (min-width : $desktop) {
       position: sticky;
-      top: 195px;
+      top: 0;
       z-index: 1;
       display: flex;
       height: 80px;

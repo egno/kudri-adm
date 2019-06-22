@@ -934,14 +934,6 @@ export default {
       padding: 12px 0;
       background-color: #fff;
     }
-    &__info-list {
-      display: flex;
-      flex-grow: 1;
-      max-width: 772px;
-      justify-content: space-between;
-      list-style: none;
-      padding: 0 4% 0 56px;
-    }
     &__info-item {
       font-size: 12px;
       &:before {
@@ -991,7 +983,7 @@ export default {
       }
     }
     &__week-spacer {
-      width: 126px;
+      width: 140px;
     }
 
     .v-progress-linear {
@@ -1057,7 +1049,7 @@ export default {
         }
       }
       &__heading {
-        font-family: Roboto Slab;
+        font-family: $roboto;
         font-size: 14px;
         color: #07101C;
         text-transform: capitalize;
@@ -1125,6 +1117,7 @@ export default {
         padding: 14px 12px;
         @media only screen and (min-width : $desktop) {
           position: relative;
+          min-width: 136px;
           width: 14.28%;
           padding: 14px 20px;
           &:after {
@@ -1182,10 +1175,13 @@ export default {
 
     .main-table {
       position: relative;
-
+      @media only screen and (min-width : $desktop) {
+        height: calc(100vh - 195px);
+        overflow: auto;
+      }
       &__desktop-menu {
         position: sticky;
-        top: 195px;
+        top: 0;
         z-index: 2;
         background-color: #fff;
         .employee-menu-trigger {
@@ -1194,18 +1190,19 @@ export default {
         }
       }
 
-      &__times { 
-        padding-left: 58px;
+      &__times {
+        position: relative;
+        margin-left: 58px;
         @media only screen and (min-width : $desktop) {
           display: flex;
-          width: 100%;
-          padding-left: 125px;
+          flex: 1 0 auto;
+          margin-left: 125px;
         }
       }
 
       &__employees-switch {
         position: sticky;
-        top: 195px;
+        top: 0;
         z-index: 1;
         height: 80px;
         .visit-log__controls {
@@ -1215,6 +1212,9 @@ export default {
       }
 
       &.week {
+        .day-column {
+          position: relative;
+        }
         .day-column__employee {
           border-right: none;
         }
