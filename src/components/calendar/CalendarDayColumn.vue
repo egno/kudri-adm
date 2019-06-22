@@ -2,32 +2,6 @@
   <div
     :class="['day-column', { today: isToday }]"
   >
-    <!--<v-menu v-model="showMenu" offset-y :disabled="day.dateKey <= todayString">
-      <template v-slot:activator="{ on }">
-        <div v-on="on">
-          <div :class="{ 'day-column__header': true, active: showMenu }">
-            <div class="day-column__date">
-              {{ day.display }}
-            </div>
-            <div :class="['day-column__day', { 'day-off': isDayOff }]">
-              {{ dowLong }}
-            </div>
-            <div v-if="!isDayOff" class="day-column__schedule">
-              {{ employeeSchedule[0] }} – {{ employeeSchedule[1] }}
-            </div>
-            <div v-else class="day-column__schedule">
-              Выходной
-            </div>      
-          </div>
-        </div>
-      </template>
-      <div class="day-column__dropdown" @click="onDayEdit">
-        <div>
-          {{ isDayOff? 'Сделать рабочим' : 'Сделать выходным' }}
-        </div>        
-      </div>
-    </v-menu>-->
-
     <div class="day-column__employee">
       <template v-if="employee.j">
         <Avatar
@@ -98,7 +72,6 @@ import VisitCard from '@/components/calendar/VisitCard.vue'
 import {
   areSameDates,
   dateFromISO,
-  dowDisplay,
   formatDate,
   formatTime
 } from '@/components/calendar/utils'
@@ -165,7 +138,6 @@ export default {
       slotDuration,
       slotHeight: 56, /* slot height in pixels */
       displayStep: 4,
-      showMenu: false,
       selectVisit: false,
       timeEditBlock: false,
       selectedTime: undefined,
@@ -182,9 +154,6 @@ export default {
   },
   computed: {
     ...mapGetters(['apiTimeZone', 'calendar']),
-    dowLong () {
-      return dowDisplay(this.day.date)
-    },
     minuteHeight () { /* height in pixels */
       return this.slotHeight / this.slotDuration 
     },
@@ -303,14 +272,6 @@ export default {
         this.selectedTime = time
       }
     },
-    onDayEdit () {
-      if (!this.isDayOff && this.visits.length) {
-        this.$emit('makeDayOffTry')
-        return
-      }
-
-      this.$emit('onDayEdit', { day: this.day, isDayOff: this.isDayOff })
-    },
     onVisitDelete (id) {
       this.$emit('onVisitDelete', id)
     },
@@ -362,7 +323,7 @@ export default {
 
   &__time {
     position: absolute;
-    z-index: 1;
+    z-index: 0;
     display: none;
     padding: 20px 14px 0;
     color: rgba(137, 149, 175, 0.35);
@@ -409,8 +370,8 @@ export default {
 }
 
 .day-column {
-  width: 14.28%;
   @media only screen and (min-width : $desktop) {
+    width: 14.28%;
     flex-grow: 1;
     flex-shrink: 0;
   }
@@ -447,17 +408,6 @@ export default {
       margin-top: 80px;
     }
   }
-  /*&__dropdown {
-    padding: 20px 0;
-    font-size: 13px;
-    color: #2D333B;
-    background-color: #fff;
-    box-shadow: 0px 2px 8px rgba(137, 149, 175, 0.1);
-    cursor: pointer;
-    &>div {
-      text-align: center;
-    }
-  }*/
   &__employee {
     display: none;
     @media only screen and (min-width : $desktop) {

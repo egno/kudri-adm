@@ -10,7 +10,7 @@
       <div v-show="!showMobileMenu">
         <div class="visit-log__header">
           <div class="header">
-            <VLayout row align-center class="calendar-controls__right">
+            <VLayout row align-center class="header__right">
               <router-link
                 :disabled="selectedDateObj.dateKey === todayString"
                 class="calendar-controls__today"
@@ -50,7 +50,7 @@
               align-center
               justify-space-between
               row
-              class="calendar-controls__container"
+              class="calendar-controls__container mobile"
             >
               <div class="calendar-controls__left">
                 <v-btn
@@ -122,21 +122,60 @@
                 </v-btn>
               </div>
               <VLayout row justify-space-between class="calendar-controls__days _desktop">
-                <div
-                  v-for="(day, dayIndex) in selectedWeek"
-                  :key="dayIndex"
-                  :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate }"
-                  @click="goDate(day.dateKey)"
-                >
-                  <!--todo make a component -->
-                  <div class="calendar-controls__number">
-                    {{ day.display }}
+                <!--todo make a component -->
+                <template v-if="displayMode === 'day'">
+                  <div
+                    v-for="(day, dayIndex) in selectedWeek"
+                    :key="dayIndex"
+                    :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate }"
+                    @click="goDate(day.dateKey)"
+                  >
+                    <div class="calendar-controls__number">
+                      {{ day.display }}
+                    </div>
+                    <div class="calendar-controls__dow">
+                      <!--<span class="mobile">{{ dow[dayIndex] }}</span>-->
+                      <span class="desktop">{{ day.date.toLocaleString('ru-RU', { weekday: 'long' }) }}</span>
+                    </div>
                   </div>
-                  <div class="calendar-controls__dow">
-                    <span class="mobile">{{ dow[dayIndex] }}</span>
-                    <span class="desktop">{{ day.date.toLocaleString('ru-RU', { weekday: 'long' }) }}</span>
+                </template>
+                <template v-else>
+                  <div
+                    v-for="(day, dayIndex) in selectedWeek"
+                    :key="dayIndex"
+                    :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate, active: showDateMenu[dayIndex] }"
+                  >
+                    <v-menu
+                      v-model="showDateMenu[dayIndex]"
+                      :disabled="day.dateKey <= todayString"
+                      offset-y
+                      :attach="`.calendar-controls__day:nth-child(${dayIndex + 1})`"
+                      max-width="100"
+                    >
+                      <template v-slot:activator="{ on }">
+                        <div v-on="on">
+                          <div class="calendar-controls__number">
+                            {{ day.display }}
+                          </div>
+                          <div :class="['calendar-controls__dow', { 'day-off': isDayOff(day.dateKey, dayIndex) }]">
+                            <span class="desktop">{{ day.date.toLocaleString('ru-RU', { weekday: 'long' }) }}</span>
+                          </div>
+                          <!--<div v-if="!isDayOff(day.dateKey, dayIndex)" class="day-column__schedule">
+                            {{ employeeSchedule[0] }} – {{ employeeSchedule[1] }}
+                          </div>
+                          <div v-else class="day-column__schedule">
+                            Выходной
+                          </div>-->
+                        </div>
+                      </template>
+                      <div v-if="showDateMenu[dayIndex]" class="calendar-controls__dropdown" @click="onDayEdit({ day, isDayOff: isDayOff(day.dateKey, dayIndex) })">
+                        <div>
+                          {{ isDayOff(day.dateKey, dayIndex)? 'Сделать рабочим' : 'Сделать выходным' }}
+                        </div>
+                      </div>
+                    </v-menu>
                   </div>
-                </div>
+                </template>
               </VLayout>
               <div v-if="displayMode === 'week'" class="visit-log__week-spacer" />
             </VLayout>
@@ -295,7 +334,7 @@
                 :display-to="displayTimes.end"
                 @onSlotClick="createVisit(employee.id, $event)"
                 @onBreakClick="createBreak($event, employee.id)"
-                @onDayEdit="onDayEdit"
+
                 @makeDayOffTry="notifyHasVisits = true"
               />
             </div>
@@ -319,7 +358,7 @@
                   :display-to="displayTimes.end"
                   @onSlotClick="createVisit(selectedEmployee.id, $event)"
                   @onBreakClick="createBreak($event, selectedEmployee.id)"
-                  @onDayEdit="onDayEdit"
+
                   @makeDayOffTry="notifyHasVisits = true"
                 />
               </div>
@@ -530,6 +569,7 @@ export default {
         { label: 'Добавить запись', action: 'newVisit', default: true }
       ],
       showEditBreak: false,
+      showDateMenu: [false, false, false, false, false, false, false],
       showDesktopMenu: false,
       showMobileMenu: false,
       showSuccessModal: false,
@@ -790,6 +830,17 @@ export default {
         }
       })
     },
+    isDayOff (dateString, dayIndex) {
+      const employeeSchedule = this.getIrregularDay(dateString, this.selectedEmployee)
+        ? this.getIrregularDay(dateString, this.selectedEmployee).schedule
+        : this.selectedEmployee.j.schedule.data[dayIndex]
+
+      if (!employeeSchedule || !employeeSchedule[0] || !employeeSchedule[1]) {
+        return true
+      }
+
+      return this.isHoliday(dateString, this.selectedEmployee)
+    },
     onAction () {
       this.createVisit()
     },
@@ -800,6 +851,12 @@ export default {
       }, 300)
     },
     onDayEdit ({ day, isDayOff }) {
+
+      if (!isDayOff && this.dayVisits(day.dateKey, this.selectedEmployee) .length) {
+        this.notifyHasVisits = true
+        return
+      }
+
       const isWorkingDay = day => day && day[0] && day[1]
       const averageDay = this.selectedEmployee.j.schedule
         ? this.selectedEmployee.j.schedule.data.find(isWorkingDay)
@@ -813,6 +870,7 @@ export default {
         .then(() => {
           this.getIrregularDays()
         })
+
     },
     onGroupsChange (category, selected) {
       if (selected) {
@@ -927,7 +985,7 @@ export default {
       @media only screen and (min-width : $desktop) {
         position: sticky;
         top: 57px;
-        z-index: 1;
+        z-index: 2;
       }
     }
     &__no-employees {
@@ -1027,9 +1085,6 @@ export default {
       }
       &__container {
         height: 44px;
-        @media only screen and (min-width : $desktop) {
-          display: none;
-        }
       }
       &__button {
         width: 55px;
@@ -1117,7 +1172,6 @@ export default {
         padding: 14px 12px;
         @media only screen and (min-width : $desktop) {
           position: relative;
-          min-width: 136px;
           width: 14.28%;
           padding: 14px 20px;
           &:after {
@@ -1146,6 +1200,10 @@ export default {
             }
           }
         }
+        .v-menu__content {
+          min-width: 100% !important;
+          left: 0 !important;
+        }
       }
       &__number {
         font-size: 18px;
@@ -1157,6 +1215,17 @@ export default {
         text-transform: capitalize;
         @media only screen and (min-width : $desktop) {
           font-weight: normal;
+        }
+      }
+      &__dropdown {
+        padding: 20px 9px;
+        font-size: 13px;
+        color: #2D333B;
+        background-color: #fff;
+        box-shadow: 0px 2px 8px rgba(137, 149, 175, 0.1);
+        cursor: pointer;
+        &>div {
+          text-align: center;
         }
       }
     }
@@ -1182,7 +1251,7 @@ export default {
       &__desktop-menu {
         position: sticky;
         top: 0;
-        z-index: 2;
+        z-index: 3;
         background-color: #fff;
         .employee-menu-trigger {
           height: 100%;
@@ -1214,6 +1283,12 @@ export default {
       &.week {
         .day-column {
           position: relative;
+          &:first-child {
+            z-index: 2;
+            .day-column__employee {
+              box-shadow: none;
+            }
+          }
         }
         .day-column__employee {
           border-right: none;
@@ -1429,8 +1504,6 @@ export default {
     .uno-modal__left {
       display: none;
     }
-
   }
-  
 
 </style>
