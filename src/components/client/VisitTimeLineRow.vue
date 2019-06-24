@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="client-visit-log" :class="{ [visit.status]: visit.status, done: visit.currentStatus && visit.currentStatus.done }">
+  <v-layout class="client-visit-log" :class="{ [visit.status]: visit.status, done: status && status.done }">
     <div
       class="client-visit-log__left"
     >
@@ -7,7 +7,7 @@
         {{ visit.date }}
       </div>
       <div class="client-visit-log__status">
-        {{ visit.displayStatus }}
+        {{ status.display }}
       </div>
     </div>
     <div
@@ -29,10 +29,10 @@
             {{ service.name }}
           </div>
           <div
-            v-if="service.price"
+            v-if="service.j && service.j.price"
             class="client-visit-log__price"
           >
-            {{ service.price }} ₽
+            {{ service.j.price }} ₽
           </div>
         </v-layout>
       </div>
@@ -65,10 +65,15 @@ export default {
   },
   computed: {
     master () {
-      return this.visit && this.visit.master && this.visit.master.name
+      return this.visit && this.visit.j && this.visit.j.master && this.visit.j.master.name
     },
     services () {
       return this.visit && this.visit.j && this.visit.j.services
+    },
+    status () {
+      return this.visit.status
+        ? this.visit.statuses.find(s => s.code === this.visit.status)
+        : this.visit.getCurrentStatus(new Date())
     }
   }
 }
@@ -91,7 +96,7 @@ export default {
   .client-visit-log {
 
     &__left {
-      width: 102px;
+      width: 110px;
       flex-shrink: 0;
       padding: $log-top-gap 0 $log-bottom-gap;
       border-right: solid 2px rgba(137, 149, 175, 0.2);

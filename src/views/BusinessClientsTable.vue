@@ -57,11 +57,8 @@
                 </div>
               </v-layout>
             </td>
-            <td @click="clientVisits(props.item)">
-              <div
-                v-if="props.item.visit.visits.total"
-                class="hidden-button"
-              >
+            <td>
+              <div v-if="props.item.visit.visits.total">
                 <span class="clients__visit-total">{{ props.item.visit.visits.total }}</span>
                 <span
                   v-if="props.item.visit.visits.unvisited"
@@ -72,7 +69,7 @@
               </div>
             </td>
             <td>
-              <v-layout v-if="props.item.lastVisit.ts_begin" column>
+              <v-layout v-if="props.item.lastVisit.ts_begin" column class="hidden-button" @click="clientVisits(props.item)">
                 <v-flex>
                   <span>{{ props.item.lastVisit.date }}</span>
                   <span> — </span>
@@ -562,7 +559,7 @@ export default {
       border: 1px solid rgba(137, 149, 175, 0.1);
       border-radius: 50%;
     }
-    &__unvisited {
+    &__visit-unvisited {
       display: inline-block;
       vertical-align: baseline;
       margin-left: 11px;

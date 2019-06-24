@@ -23,9 +23,9 @@
 import Visit from '@/classes/visit'
 import { newClient } from '@/components/client/utils'
 import VisitTimeLineRow from '@/components/client/VisitTimeLineRow.vue'
-// import Api from '@/api/backend'
+import Api from '@/api/backend'
 import { mapActions, mapGetters } from 'vuex'
-// import { makeAlert } from '@/api/utils'
+import { makeAlert } from '@/api/utils'
 
 export default {
   components: { VisitTimeLineRow },
@@ -70,96 +70,8 @@ export default {
     load () {
       if (!this.clientId || this.clientId === 'new') return
       if (!this.businessId) return
-      this.visits = [
-        new Visit({
-          id: 1,
-          business_id: this.businessId,
-          ts_begin: '2019-04-21T15:20:00.000',
-          status: 'unvisited',
-          master: {
-            id: '7abf57ca-6666-11e9-9e07-7f8af87678ec',
-            name: 'Маргарита Забылина-Непомнящая'
-          },
-          j: {
-            client: this.client.id,
-            services: [{
-              price: 312,
-              name: 'Коррекция на которую не пришли'
-            }]
-          },
-        }),
-        new Visit({
-          id: 2,
-          business_id: this.businessId,
-          ts_begin: '2019-04-30T20:00:00.000',
-          master:  {
-            id: '7abf57ca-6666-11e9-9e07-7f8af87678ec',
-            name: 'Ирина Михайлова'
-          },
-          j: {
-            client: this.client.id,
-            services: [{
-              price: 512,
-              name: 'Здесь название услуги будущей'
-            }]
-          },
-        }),
-        new Visit({
-          id: 3,
-          business_id: this.businessId,
-          ts_begin: '2019-04-24T12:15:00.000',
-          status: 'canceled',
-          master:  {
-            id: '7abf57ca-6666-11e9-9e07-7f8af87678ec',
-            name: 'Ирина Михайлова'
-          },
-          j: {
-            client: this.client.id,
-            services: [{
-              price: 2312,
-              name: 'Услугу отменили (и название забыли)'
-            }]
-          },
-        }),
-        new Visit({
-          id: 4,
-          business_id: this.businessId,
-          ts_begin: '2019-04-24T10:30:00.000',
-          master:  {
-            id: '7abf57ca-6666-11e9-9e07-7f8af87678ec',
-            name: 'Ирина Михайлова'
-          },
-          j: {
-            client: this.client.id,
-            services: [{
-              price: 2312,
-              name: 'Какая-то из этих услуг'
-            },
-            {
-              price: 312,
-              name: 'В процессе оказания'
-            }]
-          },
-        }),
-        new Visit({
-          id: 5,
-          business_id: this.businessId,
-          ts_begin: '2019-04-24T10:30:00.000',
-          ts_end: '2019-04-24T11:30:00.000',
-          master:  {
-            id: '7abf57ca-6666-11e9-9e07-7f8af87678ec',
-            name: 'Ирина Михайлова'
-          },
-          j: {
-            client: this.client.id,
-            services: [{
-              price: 2312,
-              name: 'Эта услуга завершена'
-            }]
-          },
-        })
-      ]
-      /*Api()
+
+      Api()
         .get(
           `visit?and=(client_id.eq.${this.clientId},salon_id.eq.${
             this.businessId
@@ -167,11 +79,22 @@ export default {
         )
         .then(res => res.data)
         .then(res => {
+          const compare = (a, b) => {
+            if (a.date > b.date) {
+              return -1
+            } else if (a.date === b.date) {
+              return a.time < b.time? -1: 1
+            } else {
+              return 1
+            }
+          }
           this.visits = res.map(x => new Visit(x))
+          this.visits.sort(compare)
+
         })
         .catch(res => {
           this.alert(makeAlert(res))
-        })*/
+        })
     },
     onDelete () {
       this.$emit('onDelete', this.client)
@@ -191,7 +114,7 @@ export default {
       margin: 53px 0 0;
     }
     .scrollable {
-      height: calc(100vh - 128px);
+      height: calc(100% - 128px);
       overflow: auto;
     }
   }

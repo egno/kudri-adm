@@ -157,7 +157,7 @@ export default {
     display: none;
     max-width: 324px;
     padding: 8px 24px 8px 0;
-    @media only screen and (min-width: 1160px) {
+    @media only screen and (min-width: 1360px) {
       display: flex;
       flex-wrap: wrap;
     }
