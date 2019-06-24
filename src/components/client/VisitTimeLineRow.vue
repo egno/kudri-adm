@@ -96,7 +96,7 @@ export default {
   .client-visit-log {
 
     &__left {
-      width: 102px;
+      width: 110px;
       flex-shrink: 0;
       padding: $log-top-gap 0 $log-bottom-gap;
       border-right: solid 2px rgba(137, 149, 175, 0.2);

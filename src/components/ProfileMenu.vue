@@ -200,7 +200,7 @@ export default {
 .v-menu.profile-menu {
   border-left: 1px solid rgba(137, 149, 175, 0.1);
   box-sizing: border-box;
-  @media only screen and (min-width : 1160px) {
+  @media only screen and (min-width : 1360px) {
     width: 100px;
   }
 
@@ -220,7 +220,7 @@ export default {
 }
 .menu-list {
   padding: 13px 0;
-  @media only screen and (min-width: 1160px) {
+  @media only screen and (min-width: 1360px) {
     padding: 17px 0;
   }
   .v-list__tile {
@@ -229,7 +229,7 @@ export default {
     height: 36px;
     padding-left: 20px;
     font-weight: 400;
-    @media only screen and (min-width: 1160px) {
+    @media only screen and (min-width: 1360px) {
       height: 24px;
     }
     &__title {
@@ -263,7 +263,7 @@ export default {
 }
 .profile-expand-more {
   display: none;
-  @media only screen and (min-width: 1160px) {
+  @media only screen and (min-width: 1360px) {
     display: block;
     width: 10px;
     height: 6px;

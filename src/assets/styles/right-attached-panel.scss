@@ -34,8 +34,7 @@
   bottom: 0;
   width: 100%;
   max-width: 440px;
-  height: 100vh;
-  max-height: 100vh !important;
+  max-height: none !important;
   background-color: #fff;
   text-align: center;
   font-family: $lato;
@@ -155,7 +154,7 @@
   }
   &__save {
     @extend %button;
-    width: 240px;
+
     color: #FFFFFF;
     background: linear-gradient(270deg, #C9A15D -9.86%, #BA9462 103.49%);
     &:hover {
@@ -163,6 +162,9 @@
     }
     &._disabled {
       @extend %button-disabled
+    }
+    @media only screen and (min-width : $desktop) {
+      width: 240px;
     }
   }
   &__cancel {

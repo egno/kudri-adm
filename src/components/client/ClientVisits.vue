@@ -79,7 +79,18 @@ export default {
         )
         .then(res => res.data)
         .then(res => {
+          const compare = (a, b) => {
+            if (a.date > b.date) {
+              return -1
+            } else if (a.date === b.date) {
+              return a.time < b.time? -1: 1
+            } else {
+              return 1
+            }
+          }
           this.visits = res.map(x => new Visit(x))
+          this.visits.sort(compare)
+
         })
         .catch(res => {
           this.alert(makeAlert(res))
@@ -103,7 +114,7 @@ export default {
       margin: 53px 0 0;
     }
     .scrollable {
-      height: calc(100vh - 128px);
+      height: calc(100% - 128px);
       overflow: auto;
     }
   }

@@ -95,7 +95,7 @@ export default {
   background-position: right top;
   background-repeat: no-repeat;
   background-color: #fff;
-  @media only screen and (min-width : 1160px) {
+  @media only screen and (min-width : 1360px) {
     padding-left: 24px;
   }
   &:hover {
