@@ -175,6 +175,7 @@ import BusinessCardEdit from '@/components/business/BusinessCardEdit.vue'
 import { formatDate } from '@/components/calendar/utils'
 import { filials} from "../components/business/mixins"
 import { conjugateFilial } from '@/components/utils'
+import Users from '@/mixins/users'
 
 export default {
   params: {
@@ -187,7 +188,7 @@ export default {
       return conjugateFilial(n)
     }
   },
-  mixins: [filials],
+  mixins: [filials, Users],
   data () {
     return {
       isCreating: false,
@@ -246,7 +247,8 @@ export default {
   },
   watch: {
     businessId: 'getFilials',
-    businessParent: 'goToParent'
+    businessParent: 'goToParent',
+    'user.business': 'getFilials'
   },
   created () {
     this.getFilials()
@@ -297,6 +299,19 @@ export default {
           return false
         })
     },
+    filterUserFilials (res) {
+      const userBusinessList = this.user.business.map(b => b.id)
+      if (this.user.role === 'Менеджер филиала') {
+        this.branchesList = res.filter(resultFilial => userBusinessList.includes(resultFilial.id))
+      } else if (this.userRole === 'manager' ||
+        this.userRole === 'admin' ||
+        this.user.role === 'Администратор компании') {
+        this.branchesList = res
+      }
+
+      this.sortedUniqueCities = [...new Set(this.branchesList.map(branch => branch.j && branch.j.address && branch.j.address.city))].sort()
+      this.groupBranches()
+    },
     getFilials () {
       const id = this.businessIsFilial
         ? this.businessInfo && this.businessInfo.parent
@@ -305,10 +320,10 @@ export default {
       if (!id) return
       this.getFilialsOf(id)
         .then(res => {
-          this.branchesList = res
-          this.sortedUniqueCities = [...new Set(res.map(branch => branch.j && branch.j.address && branch.j.address.city))].sort()
-          this.groupBranches()
-          this.setBusiness(id)
+          if (this.user && this.user.business) {
+            this.filterUserFilials(res)
+            this.setBusiness(id)
+          }
         })
     },
     groupBranches () {
@@ -316,7 +331,7 @@ export default {
         'Другие': []
       }
       this.branchesList.forEach(branch => {
-        if ( branch.j && branch.j.address && branch.j.address.city) {
+        if (branch.j && branch.j.address && branch.j.address.city) {
           const city = branch.j.address.city
 
           if (!this.branchesByCities[city]) {

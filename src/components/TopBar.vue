@@ -51,16 +51,21 @@
             />
           </template>
           <VList class="menu-list">
-            <template v-for="(item, index) in menuList">
-              <VListTile
-                :key="index"
-                @click="$router.push(item.route)"
-              >
-                <VListTileTitle>
-                  {{ item.title }}
-                </VListTileTitle>
-              </VListTile>
-            </template>
+            <VListTile
+              @click="$router.push({ name: 'home' })"
+            >
+              <VListTileTitle>
+                На главную UNO
+              </VListTileTitle>
+            </VListTile>
+            <VListTile
+              v-if="isEditorUser && businessIsFilial"
+              @click="goToCompany"
+            >
+              <VListTileTitle>
+                Перейти к выбору филиала
+              </VListTileTitle>
+            </VListTile>
           </VList>
         </v-menu>
       </div>
@@ -75,24 +80,17 @@ import router from '@/router'
 import { mapActions, mapGetters } from 'vuex'
 import { isBusinessRoute } from '@/utils'
 import HomeHeader from '@/components/home/HomeHeader.vue'
+import Users from '@/mixins/users'
 
 export default {
   components: {
     HomeHeader,
     ProfileMenu,
   },
+  mixins: [Users],
   data () {
     return {
       searchString: '',
-      menuList: [
-        {
-          title: 'На главную UNO',
-          route: { name: 'home' },
-        },
-        /*{
-          title: 'Мой рабочий стол'
-        }*/
-      ],
       goHomeMenuActive: false
     }
   },
@@ -102,7 +100,8 @@ export default {
       'businessInfo',
       'navigationVisible',
       'userID',
-      'myBusinessList'
+      'myBusinessList',
+      'businessIsFilial'
     ]),
     defaultAction () {
       if (!(this.actions && Array.isArray(this.actions))) {
@@ -135,11 +134,17 @@ export default {
   methods: {
     ...mapActions([
       'setActions',
+      'setBusiness',
       'setNavigationVisible',
       'setSearchString'
     ]),
     goHome () {
       router.push({ name: 'home' })
+    },
+    goToCompany () {
+      const parentId = this.businessInfo.parent
+      this.setBusiness(parentId)
+      this.$router.push({ name: 'filialList', params: { id: parentId } })
     },
     setStoreSearchString (newVal) {
       this.setSearchString(newVal && newVal.toLowerCase())

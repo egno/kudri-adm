@@ -42,19 +42,6 @@
           </v-icon>
         </v-btn>
       </v-list-tile-action>
-      <v-list-tile-action
-        v-else-if="isEditorUser && businessIsFilial"
-        class="title-action"
-      >
-        <v-btn
-          icon
-          @click.stop="goToCompany"
-        >
-          <v-icon>
-            arrow_back
-          </v-icon>
-        </v-btn>
-      </v-list-tile-action>
     </VToolbar>
 
     <VCalendar v-if="isCalendarVisible" />
@@ -419,11 +406,6 @@ export default {
     },
     goHome () {
       this.$router.push({ name: 'home' })
-    },
-    goToCompany () {
-      const parentId = this.businessInfo.parent
-      this.setBusiness(parentId)
-      this.$router.push({ name: 'filialList', params: { id: parentId } })
     },
     onAction (action) {
       if (action && action.to) {
