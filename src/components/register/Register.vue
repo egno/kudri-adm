@@ -44,7 +44,7 @@
           </div>
         </div>
         <!--show disclaimer with animation v-show="companyName && userName && flogin"-->
-        <v-layout v-show="!alreadyUsedPhone" justify-center>
+        <v-layout v-show="$route.name !== 'restorePassword' && !alreadyUsedPhone" justify-center>
           <v-checkbox
             v-model="offerAgree"
             color="#5699FF"
@@ -58,7 +58,7 @@
         </v-layout>
         <v-layout v-show="!alreadyUsedPhone" justify-center>
           <MainButton
-            :class="{ button_disabled: !offerAgree || !flogin || !loginIsCorrect }"
+            :class="{ button_disabled: $route.name !== 'restorePassword' && !offerAgree || !flogin || !loginIsCorrect }"
             class="button"
             type="button"
             @click="sendLogin"
@@ -425,6 +425,7 @@ export default {
     }
     &__disclaimer {
       width: 220px;
+      margin-top: 5px;
       font-size: 10px;
     }
     &__confirm-code {

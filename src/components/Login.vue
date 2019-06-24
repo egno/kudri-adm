@@ -186,6 +186,7 @@ export default {
   .login-form__restore-link {
     display: block;
     text-align: center;
+    margin-top: 10px;
   }
 }
 </style>
