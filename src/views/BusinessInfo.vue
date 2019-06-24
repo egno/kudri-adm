@@ -1,32 +1,40 @@
 <template>
   <div class="businesscard" :class="{ '_edit-mode': editMode }">
-    <VLayout xs12 align-center justify-space-between row class="businesscard__header">
-      <VFlex class="businesscard__heading">
-        <h1 class="businesscard__h1">
-          {{ businessInfo && businessInfo.category }}
-        </h1>
-      </VFlex>
-      <div v-if="!editMode && businessInfo && businessInfo.access" class="businesscard__edit">
-        <v-btn
-          icon
-          fab
-          flat
-          ripple
-          @click="editMode = true"
-        >
-          <svg width="13" height="20" viewBox="0 0 13 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.40402 0L13 2.13162L11.3998 4.82815L7.80374 2.69653L9.40402 0ZM7.27032 3.59534L10.8663 5.72696L4.46522 16.5131L4.46514 16.5131L0 19.9415L0.869124 14.3814L0.869208 14.3815L7.27032 3.59534Z" fill="#8995AF" fill-opacity="0.35" />
-          </svg>
-        </v-btn>
+    <div class="businesscard__header">
+      <div class="businesscard__header-content">
+        <VFlex class="businesscard__heading">
+          <h1 class="businesscard__h1">
+            {{ businessInfo && businessInfo.category }}
+          </h1>
+        </VFlex>
+        <div v-if="!editMode && businessInfo && businessInfo.access" class="businesscard__edit">
+          <v-btn
+            icon
+            fab
+            flat
+            ripple
+            @click="editMode = true"
+          >
+            <svg width="13" height="20" viewBox="0 0 13 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M9.40402 0L13 2.13162L11.3998 4.82815L7.80374 2.69653L9.40402 0ZM7.27032 3.59534L10.8663 5.72696L4.46522 16.5131L4.46514 16.5131L0 19.9415L0.869124 14.3814L0.869208 14.3815L7.27032 3.59534Z" fill="#8995AF" fill-opacity="0.35" />
+            </svg>
+          </v-btn>
+        </div>
+        <div v-if="editMode">
+          <button class="businesscard__close" @click="editMode = false">
+            <svg width="22" height="22" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M13 4L12 3L8 7L4 3L3 4L7 8L3 12L4 13L8 9L12 13L13 12L9 8L13 4Z" fill="#8995AF" fill-opacity="0.35" />
+            </svg>
+          </button>
+        </div>
       </div>
-      <div v-if="editMode">
-        <button class="businesscard__close" @click="editMode = false">
-          <svg width="22" height="22" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M13 4L12 3L8 7L4 3L3 4L7 8L3 12L4 13L8 9L12 13L13 12L9 8L13 4Z" fill="#8995AF" fill-opacity="0.35" />
-          </svg>
-        </button>
+      <div class="businesscard__instructions">
+        <a href="https://drive.google.com/open?id=1m_AFYItiKC64SGfXfjQbqzNeJZZvMJGC" target="_blank">
+          Краткая инструкция для пользователей
+        </a>
       </div>
-    </VLayout>
+    </div>
+
     <div v-if="editMode" class="businesscard-tabs__tab-wrapper">
       <div class="businesscard-tabs__tab">
         <div class="businesscard-tabs__tab-header" :class="{_active: infoTab}" @click="infoTab = !infoTab">
@@ -109,27 +117,51 @@ export default {
     flex-direction: column;
 
     &__header {
+      position: relative;
       min-height: 128px;
       flex-grow: 0;
-      padding: 44px 0 44px 47px;
       background: #fff;
       border-bottom: 1px solid rgba(137,149,175,0.1);
+    }
+    &__header-content {
+      display: flex;
+      justify-content: space-between;
+      padding: 44px 0 44px 47px;
       @media only screen and (min-width : $tablet) {
+        width: 524px;
+        margin: 0 auto;
         padding-left: 0;
+        justify-content: flex-start;
       }
       @media only screen and (min-width : $desktop) {
-        padding-left: 127px;
+        margin-left: 127px;
         justify-content: flex-start;
       }
     }
 
     &__heading {
       flex-grow: 0;
-      @media only screen and (min-width : $tablet) {
-        margin: 0 calc((100% - 524px) / 2);
-      }
+    }
+
+    &__instructions {
+      position: absolute;
+      display: none;
+      top: 0;
+      bottom: 0;
+      right: 40px;
+
       @media only screen and (min-width : $desktop) {
-        margin: 0;
+        display: flex;
+        align-items: center;
+      }
+
+      a {
+        font-weight: bold;
+        font-size: 16px;
+        text-decoration: none;
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
 
@@ -144,7 +176,7 @@ export default {
 
     &__edit {
       margin-right: 11px;
-      @media only screen and (min-width : $desktop) {
+      @media only screen and (min-width : $tablet) {
         margin-left: 40px;
       }
       &:hover {
@@ -164,6 +196,7 @@ export default {
 
     &__close {
       @extend %inline-svg-close;
+      padding-top: 0;
     }
 
     &__phone {
