@@ -1184,6 +1184,7 @@ export default {
           position: relative;
           width: 14.28%;
           padding: 14px 20px;
+          margin: 0;
           &:after {
             position: absolute;
             right: 0;
