@@ -7,6 +7,7 @@
     width="240"
     :mini-variant.sync="mini"
     :mini-variant-width="40"
+    touchless
     class="navigation"
     @input="onInput($event)"
   >

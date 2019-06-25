@@ -180,13 +180,13 @@
               <div v-if="displayMode === 'week'" class="visit-log__week-spacer" />
             </VLayout>
             <div v-if="dates.length" class="calendar-controls__dates-container mobile">
-              <carousel :pagination-enabled="false" :min-swipe-distance="25" :per-page="1">
+              <carousel :key="selectedDate" :pagination-enabled="false" :min-swipe-distance="25" :per-page="1" :navigate-to="activeSlide">
                 <slide v-for="(week, weekIndex) in dates" :key="weekIndex">
                   <VLayout row justify-space-between class="calendar-controls__days">
                     <div
                       v-for="(day, dayIndex) in week"
-                      :key="dayIndex"
-                      :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate }"
+                      :key="selectedDate + weekIndex + dayIndex"
+                      :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate, 'out': day.outOfRange, 'today': day.dateKey === todayString }"
                       @click="goDate(day.dateKey)"
                     >
                       <!--todo make a component -->
@@ -554,6 +554,7 @@ export default {
   mixins: [ calendarMixin, employeesCategorized ],
   data () {
     return {
+      activeSlide: 0,
       currentBreak: undefined,
       currentVisit: undefined,
       displayMode: 'day', /* day or week */
@@ -609,6 +610,9 @@ export default {
       return obj
     },
     selectedDOW () {
+      if (!this.selectedWeek) {
+        return
+      }
       return this.selectedWeek.findIndex(day => day.dateKey === this.selectedDate)
     },
     selectedDateObj () {
@@ -800,7 +804,9 @@ export default {
     getWeek () {
       const includesDay = day => day.dateKey === this.selectedDate
 
-      return this.dates.find(week => week.some(includesDay))
+      this.activeSlide = this.dates.findIndex(week => week.some(includesDay))
+
+      return this.dates[this.activeSlide]
     },
     initEmployee () {
       if (!this.businessEmployees || !this.businessEmployees.length ||
@@ -1157,7 +1163,10 @@ export default {
         }
       }
       &__days {
-        padding: 0 35px;
+        padding: 0 10px;
+        @media only screen and (min-width : $tablet) {
+          padding: 0 35px;
+        }
         @media only screen and (min-width : $desktop) {
           padding: 0;
         }
@@ -1169,7 +1178,8 @@ export default {
         }
       }
       &__day {
-        padding: 14px 12px;
+        padding: 10px 8px;
+        margin: 0 2px;
         @media only screen and (min-width : $desktop) {
           position: relative;
           width: 14.28%;
@@ -1184,7 +1194,7 @@ export default {
             height: 34px;
           }
         }
-        &.selected {
+        &.today {
           background-color: #5699FF;
           border-radius: 4px;
           @media only screen and (min-width : $desktop) {
@@ -1199,6 +1209,17 @@ export default {
               color: #5699FF;
             }
           }
+        }
+        &.selected {
+          background-color: rgba(137, 149, 175, 0.35);
+          border-radius: 4px;
+          * {
+            color: #07101C;
+            font-weight: bold;
+          }
+        }
+        &.out {
+          color: rgba(137, 149, 175, 0.35);
         }
         .v-menu__content {
           min-width: 100% !important;

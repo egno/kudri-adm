@@ -32,6 +32,7 @@ export default {
       let dt = new Date(this.actualDate)
       dt.setMonth(dt.getMonth() + i)
       this.goDate(formatDate(dt))
+      this.setDates()
     },
     dayVisits (dt, employee) {
       if (!this.visits || !this.visits.length) {
@@ -51,7 +52,7 @@ export default {
         })
     },
     isHoliday (dt, employee) {
-      if (!dt) {
+      if (!dt || !this.selectedWeek) {
         return false
       }
       const dow = this.selectedWeek.findIndex(d => d.dateKey === dt)
