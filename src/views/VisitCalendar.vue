@@ -127,7 +127,7 @@
                   <div
                     v-for="(day, dayIndex) in selectedWeek"
                     :key="dayIndex"
-                    :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate }"
+                    :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate, 'out': day.outOfRange, 'today': day.dateKey === todayString }"
                     @click="goDate(day.dateKey)"
                   >
                     <div class="calendar-controls__number">
@@ -143,7 +143,7 @@
                   <div
                     v-for="(day, dayIndex) in selectedWeek"
                     :key="dayIndex"
-                    :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate, active: showDateMenu[dayIndex] }"
+                    :class="{ 'calendar-controls__day': true, 'selected': day.dateKey === selectedDate, active: showDateMenu[dayIndex], 'out': day.outOfRange, 'today': day.dateKey === todayString }"
                   >
                     <v-menu
                       v-model="showDateMenu[dayIndex]"
@@ -680,6 +680,7 @@ export default {
         this.showEditBreak = false
       }
     },
+    selectedDate: 'setDates',
     selectedVisit () {
       if (this.selectedVisit) {
         this.currentVisit = this.selectedVisit
