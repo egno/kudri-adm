@@ -203,15 +203,23 @@ export default {
     }
   },
   created () {
-    this.setTopOffset()
     this.timerId = setInterval(this.setTopOffset, 60 * 1000)
   },
   mounted () {
+    this.setTopOffset()
     if (this.offsetTop > 0) {
-      const elem = document.querySelector('.in-view')
+      const elem = this.$el.querySelector('.today.selected .in-view')
       const top = elem && (this.documentOffsetTop(elem) - (window.innerHeight / 2)) || 0
 
-      window.scrollTo({ top, behavior: 'smooth' })
+      if (!elem|| !top) {
+        return
+      }
+
+      if (window.innerWidth < 1360) {
+        window.scrollTo({ top, behavior: 'smooth' })
+      } else {
+        elem && elem.closest('.main-table').scrollTo({ top, behavior: 'smooth' })
+      }
     }
   },
   beforeDestroy () {
