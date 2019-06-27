@@ -297,7 +297,7 @@ export default {
         let data = {
             login: this.flogin,
             code: null,
-            j: { business_category: this.ftype }
+            j: { business_category: this.ftype, company_name: this.companyName, user_name: this.userName }
           }
         if (this.restoreMode) {
           data.j.restore = true
