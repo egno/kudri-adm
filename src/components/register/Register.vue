@@ -69,23 +69,6 @@
       </div>
     </VForm>
 
-    <!--<div v-if="loginIsEmail === true && !keyCode">
-      <div>
-        Вам на почту
-        <strong>{{ flogin }}</strong>
-        отправлено письмо с сылкой
-        для авторизации
-      </div>
-      <div>Перейдите по ссылке в письме</div>
-
-      <div>Не пришло письмо?</div>
-
-      <a href="#">
-        Отправить еще раз
-      </a>
-      <br>
-    </div>-->
-
     <VForm
       v-if="loginIsEmail === false && !showPasswordInputs && !keyCode"
       ref="formCode"
