@@ -11,7 +11,7 @@
         mask="phone"
         prefix="+7"
         :rules="[rules.counter]"
-        class="businesscard-form__field _phone"
+        class="_phone"
         :required="!removable"
         @input="onEdit"
         @focus="focused = true"
@@ -31,7 +31,7 @@ export default {
   props: {
     disabled: { type: Boolean, default: false },
     label: { type: String, default: null },
-    placeholder: { type: String, default: 'Телефон' },
+    placeholder: { type: String, default: '(000) 000-00-00' },
     phone: {
       type: String,
       default () {
