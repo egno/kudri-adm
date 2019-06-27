@@ -48,9 +48,12 @@ export default {
     }
     .v-tabs__item {
       padding: 0;
+      color: #8995AF;
+      opacity: 1;
     }
     .v-tabs__item--active {
       font-weight: bold;
+      color: #07101C;
     }
   }
 

@@ -13,20 +13,26 @@
         >
           Уведомления
         </v-tab>
-        <v-tab
+        <!--<v-tab
           :key="1"
           ripple
         >
           Оператор рассылки
+        </v-tab>-->
+        <v-tab
+          :key="1"
+          ripple
+        >
+          Журнал сообщений
         </v-tab>
         <v-tab
           :key="2"
           ripple
         >
-          Журнал сообщений
+          Баланс
         </v-tab>
       </AppTabs>
-      <div :class="['tab-content', 'log', { wide: activeTab === 2 }]">
+      <div :class="['tab-content', { log: activeTab === 1 }]">
         <v-form ref="form">
           <div
             v-show="activeTab === 0"
@@ -37,56 +43,44 @@
                 align-left
                 column
               >
-                <v-flex pb-3>
-                  <h3>Настройте необходимые вам события рассылки уведомлений</h3>
-                </v-flex>
-                <v-flex
+                <h3 class="settings__content-heading">
+                  Настройте необходимые вам события рассылки уведомлений
+                </h3>
+                <div
                   v-for="(event, i) in businessSettings.notifications.events"
                   :key="i"
+                  class="settings__checkbox-block"
                 >
-                  <v-layout
-                    row
-                    wrap
-                  >
-                    <v-flex
-                      xs12
-                      md8
-                    >
-                      <v-switch
-                        v-model="event.enabled"
-                        :label="event.title"
-                        color="blue"
-                      />
-                    </v-flex>
-                    <v-flex
-                      v-if="event.enabled "
-                      offset-xs1
-                      xs11
-                      sm8
-                    >
-                      <v-card flat>
-                        <v-card-text v-if="typeof event.phone !== 'undefined'">
-                          <PhoneEdit
-                            :phone="event.phone"
-                            label="Телефон для уведомлений"
-                            @onEdit="event.phone = $event"
-                          />
-                        </v-card-text>
-                      </v-card>
-                    </v-flex>
-                  </v-layout>
-                </v-flex>
+                  <v-switch
+                    v-model="event.enabled"
+                    :label="event.title"
+                  />
+
+                  <div v-if="event.enabled" flat>
+                    <div v-if="typeof event.phone !== 'undefined' || event.description">
+                      <div v-if="event.description" class="settings__description" v-html="event.description" />
+                      <v-flex v-if="typeof event.phone !== 'undefined'" sm6>
+                        <PhoneEdit
+                          :phone="event.phone"
+                          :removable="false"
+                          label="Телефон для уведомлений"
+                          @onEdit="event.phone = $event"
+                        />
+                      </v-flex>
+                    </div>
+                  </div>
+                </div>
               </v-layout>
               <MainButton
-                color="success"
                 class="button save-info"
+                type="button"
                 @click.native.prevent="save"
               >
                 Сохранить
               </MainButton>
             </div>
           </div>
-          <div
+          <!--<div
             v-show="activeTab === 1"
             class="infocard _edit"
           >
@@ -96,15 +90,14 @@
                 @change="businessSettings.notifications.provider = $event; save()"
               />
             </div>
-          </div>
-          <div>
+          </div>-->
+          <div v-show="activeTab === 1">
             <v-data-table
-              v-show="activeTab === 2"
-              :headers="headers"
-              :items="items"
-              :loading="isLoading"
-              :pagination.sync="pagination"
-              :total-items="totalItems"
+              :headers="smsHeaders"
+              :items="smsItems"
+              :loading="smsIsLoading"
+              :pagination.sync="smsPagination"
+              :total-items="smsTotalItems"
               class="elevation-0 sms"
               sort-icon="mdi-menu-down"
               hide-actions
@@ -145,22 +138,81 @@
                     top
                   >
                     <template v-slot:activator="{ on }">
-                      <div class="sms__status not_delivered" v-on="on">
+                      <div class="settings__status _error" v-on="on">
                         Не доставлено
                       </div>
                     </template>
                     <span>{{ props.item.status.display }}</span>
                   </v-tooltip>
 
-                  <div v-else :class="['sms__status', { [props.item.status.code]: true }]">
+                  <div
+                    v-else
+                    :class="['settings__status', { _waiting: props.item.status.code === 'sent', _success: props.item.status.code === 'delivered' }]"
+                  >
                     {{ props.item.status.display }}
                   </div>
                 </td>
                 <td>
-                  <div class="sms__update" @click="update(props.item.id)" />
+                  <div class="settings__update" @click="update(props.item.id)" />
                 </td>
               </template>
             </v-data-table>
+          </div>
+          <div
+            v-show="activeTab === 2"
+            class="infocard _edit balance"
+          >
+            <div class="infocard__content">
+              <v-layout align-center>
+                <v-flex class="balance__level">
+                  Остаток на счете: <span>{{ balance }}&nbsp;руб.</span>
+                </v-flex>
+                <button class="balance__update settings__update" type="button">
+                  <span>Обновить</span>
+                </button>
+              </v-layout>
+              <MainButton
+                class="button businesscard-form__next balance__add"
+                type="button"
+                @click.native.prevent="add"
+              >
+                ПОПОЛНИТЬ
+              </MainButton>
+            </div>
+            <div class="payment">
+              <h2 class="payment__heading">
+                История платежей
+              </h2>
+              <v-data-table
+                :headers="paymentHeaders"
+                :items="paymentItems"
+                :loading="paymentIsLoading"
+                :pagination.sync="paymentPagination"
+                :total-items="paymentTotalItems"
+                class="elevation-0"
+                sort-icon="mdi-menu-down"
+                hide-actions
+                must-sort
+              >
+                <template
+                  slot="items"
+                  slot-scope="props"
+                >
+                  <td class="payment__event">
+                    {{ props.item.name }}
+                  </td>
+                  <td class="payment__date">
+                    {{ getTime(props.item.time) }}
+                  </td>
+                  <td class="payment__total">
+                    + {{ props.item.totalPrice }} руб.
+                  </td>
+                  <td :class="['settings__status', { [`_${props.item.status.code}`]: true }]">
+                    {{ props.item.status.display }}
+                  </td>
+                </template>
+              </v-data-table>
+            </div>
           </div>
         </v-form>
       </div>
@@ -175,24 +227,23 @@ import PhoneEdit from '@/components/common/PhoneEdit.vue'
 import MainButton from '@/components/common/MainButton.vue'
 import AppTabs from '@/components/common/AppTabs.vue'
 import PageLayout from '@/components/common/PageLayout.vue'
-import ProviderSettings from '@/components/provider/ProviderSettings.vue'
 import { displayRESTDate, displayRESTTime } from '@/components/calendar/utils'
 
 export default {
-  components: { AppTabs, PhoneEdit, MainButton, PageLayout, ProviderSettings },
+  components: { AppTabs, PhoneEdit, MainButton, PageLayout },
   data () {
     return {
       activeTab: 0,
       businessSettings: new BusinessSettings(),
-      headers: [
+      smsHeaders: [
         { text: 'Событие', value: 'name' },
         { text: 'Телефон получателя', value: 'receiver->phone' },
-        { text: 'Стоимость', value: 'totalPrice', class: '' },
+        { text: 'Стоимость', value: 'totalPrice' },
         { text: 'Идентификатор', value: 'numberId', },
         { text: 'Статус сообщения', value: 'status->code', },
-        { text: 'Обновить все', value: '', sortable: false, width: '80px', class: 'sms__update' }
+        { text: 'Обновить все', value: '', sortable: false, width: '80px', class: 'settings__update' }
       ],
-      items: [
+      smsItems: [
         {
           id: "b2177622-8e5b-11e9-b72c-eb1d767cd701",
           numberId: 1234567890,
@@ -306,9 +357,81 @@ export default {
           totalPrice: 12
         }
       ],
-      isLoading: false,
-      pagination: { rowsPerPage: 20 },
-      totalItems: 3
+      smsIsLoading: false,
+      smsPagination: { rowsPerPage: 20 },
+      smsTotalItems: 3,
+      paymentHeaders: [
+        { text: 'Платежи', value: 'name' },
+        { text: 'Дата', value: 'time' },
+        { text: 'Сумма', value: 'totalPrice' },
+        { text: 'Статус', value: 'status->code', },
+      ],
+      paymentItems: [
+        {
+          id: "b2177622-8e5b-11e9-b72c-12312",
+          name: 'Платеж № 5678594785695',
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'waiting',
+            display: 'Ожидает проведения'
+          },
+          totalPrice: 1212
+        },
+        {
+          id: "b2177622-8e5b-11e9-b72c-134234",
+          name: 'Платеж № 5678594785695',
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'success',
+            display: 'Платеж проведен'
+          },
+          totalPrice: 1212
+        },
+        {
+          id: "b2177622-8e5b-11e9-b72c-34534",
+          name: 'Платеж № 5678594785695',
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'error',
+            display: 'Ошибка. Код 02'
+          },
+          totalPrice: 1212
+        },
+        {
+          id: "b2177622-8e5b-11e9-b72c-4544",
+          name: 'Платеж № 5678594785695',
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'waiting',
+            display: 'Ожидает проведения'
+          },
+          totalPrice: 1212
+        },
+        {
+          id: "b2177622-8e5b-11e9-b72c-246",
+          name: 'Платеж № 5678594785695',
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'success',
+            display: 'Платеж проведен'
+          },
+          totalPrice: 1212
+        },
+        {
+          id: "b2177622-8e5b-11e9-b72c-4547",
+          name: 'Платеж № 5678594785695',
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'error',
+            display: 'Ошибка. Код 02'
+          },
+          totalPrice: 1212
+        },
+      ],
+      paymentPagination: { rowsPerPage: 3 },
+      paymentIsLoading: false,
+      paymentTotalItems: 3,
+      balance: 1456.76
     }
   },
   computed: {
@@ -319,20 +442,23 @@ export default {
   },
   mounted () {
     this.load()
-    const updateElement = this.$el.querySelector('th.sms__update')
+    const updateElement = this.$el.querySelector('.sms th.settings__update')
 
     if (updateElement) {
       updateElement.addEventListener('click', this.updateAll)
     }
   },
   beforeDestroy () {
-    const updateElement = this.$el.querySelector('th.sms__update')
+    const updateElement = this.$el.querySelector('.sms th.settings__update')
 
     if (updateElement) {
       updateElement.removeEventListener('click', this.updateAll)
     }
   },
   methods: {
+    add () {
+      console.log('add ')
+    },
     load () {
       if (!this.businessId) return
       this.businessSettings.load(this.businessId)
@@ -354,12 +480,86 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../assets/styles/settings';
+@import '../assets/styles/common';
+@import '../assets/styles/infocard';
 @import '../assets/styles/businesscard-form';
 
 .settings {
-  .page-layout__content {
-    background-color: #fff;
+  color: #07101C;
+  &__content-heading {
+    margin-top: 23px;
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: #07101C;
+  }
+  &__description {
+    max-width: 445px;
+    margin-top: 16px;
+    margin-left: 28px;
+    padding: 6px 0 6px 24px;
+    border-left: 1px solid rgba(137, 149, 175, 0.1);
+    color: #8995AF;
+    font-size: 12px;
+  }
+  &__checkbox-block {
+    margin: 9px 0;
+  }
+  &__update {
+    text-align: center;
+    cursor: pointer;
+
+    &:after {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      background: url('../assets/images/update.png') center/contain no-repeat;
+      content: '';
+      opacity: 0.5;
+    }
+  }
+  &__status {
+    white-space: nowrap;
+
+    &:before {
+      display: inline-block;
+      vertical-align: sub;
+      width: 16px;
+      height: 16px;
+      margin-right: 5px;
+      content: '';
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    &._waiting {
+      color: #8995AF;
+      &:before {
+        background-image: url('../assets/images/svg/clock_opacity_1.svg');
+      }
+    }
+    &._success {
+      color: #5BCD5E;
+      &:before {
+        width: 19px;
+        background-image: url('../assets/images/delivered.png');
+      }
+    }
+    &._error {
+      color: #EF4D37;
+      &:before {
+        background-image: url('../assets/images/error.png');
+      }
+      &:after {
+        display: inline-block;
+        vertical-align: middle;
+        width: 14px;
+        height: 14px;
+        margin-left: 5px;
+        content: '';
+        background: url('../assets/images/svg/question.svg') center no-repeat;
+      }
+    }
   }
   .v-tabs__item {
     padding: 0 10px;
@@ -368,27 +568,34 @@ export default {
     @media only screen and (min-width: $desktop) {
       padding-left: 127px;
     }
-    &.wide {
-      @media only screen and (min-width: $desktop) {
-        padding-left: 0;
-      }
-    }
     &.log {
       position: relative;
       padding-left: 210px;
       padding-top: 36px;
       overflow-x: auto;
-      background-color: rgba(137, 149, 175, 0.1);;
+      background-color: rgba(137, 149, 175, 0.1);
     }
-    .infocard._emp-serv {
-      max-width: 100%;
-      width: auto;
+    .infocard {
+      @media only screen and (min-width : $tablet) {
+        width: 724px;
+      }
+      @media only screen and (min-width : $desktop) {
+        width: 960px;
+      }
       .infocard__content {
-        max-width: 100%;
+        @media only screen and (min-width: $desktop) {
+          padding-left: 132px;
+        }
       }
     }
   }
-
+  .phone-edit {
+    margin-top: 25px;
+    margin-left: 30px;
+  }
+  .businesscard-form__field._phone {
+    margin-top: 0;
+  }
   .sms {
     * {
       color: #07101C;
@@ -416,65 +623,9 @@ export default {
       font-size: 12px;
       color: #8995AF;
     }
-    &__status {
-      white-space: nowrap;
 
-      &:before {
-        display: inline-block;
-        vertical-align: sub;
-        width: 16px;
-        height: 16px;
-        margin-right: 5px;
-        content: '';
-        background-size: contain;
-        background-position: center;
-        background-repeat: no-repeat;
-      }
-
-      &.sent {
-        color: #8995AF;
-        &:before {
-          background-image: url('../assets/images/svg/clock_opacity_1.svg');
-        }
-      }
-      &.delivered {
-        color: #5BCD5E;
-        &:before {
-          width: 19px;
-          background-image: url('../assets/images/delivered.png');
-        }
-      }
-      &.not_delivered {
-        color: #EF4D37;
-        &:before {
-          background-image: url('../assets/images/error.png');
-        }
-        &:after {
-          display: inline-block;
-          vertical-align: middle;
-          width: 14px;
-          height: 14px;
-          margin-left: 5px;
-          content: '';
-          background: url('../assets/images/svg/question.svg') center no-repeat;
-        }
-      }
-    }
-    &__update {
-      text-align: center;
-      cursor: pointer;
-
-      &:after {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        background: url('../assets/images/update.png') center/contain no-repeat;
-        content: '';
-        opacity: 0.5;
-      }
-    }
     thead {
-      background-color: rgba(137, 149, 175, 0.2);
+      background-color: #e7eaef;
       tr:first-child {
         height: 40px;
         border-bottom: none;
@@ -489,7 +640,8 @@ export default {
             display: flex;
             align-items: center;
             padding-left: 35px;
-            background-color: rgba(137, 149, 175, 0.1);
+            background-color: #e7eaef;
+
             @media only screen and (min-width: $desktop) {
               padding-left: 56px !important;
             }
@@ -498,7 +650,7 @@ export default {
             color: #8995AF !important;
             vertical-align: top;
           }
-          &.sms__update:after {
+          &.settings__update:after {
             margin-left: 5px;
             opacity: 1;
           }
@@ -536,7 +688,87 @@ export default {
       }
 
     }
-
+  }
+  .balance {
+    &__level {
+      font-weight: 500;
+      font-size: 18px;
+      @media only screen and (min-width: $tablet) {
+        max-width: 50%;
+      }
+      span {
+        font: normal 24px $roboto;
+        @media only screen and (min-width: $tablet) {
+          margin-left: 24px;
+        }
+      }
+    }
+    &__update {
+      @extend %button-bordered;
+      width: auto;
+      padding: 0 24px;
+      @media only screen and (min-width: $tablet) {
+        width: 160px;
+      }
+      &:hover:after {
+        background: url('../assets/images/update_black.png') center/contain no-repeat;
+      }
+      &:after {
+        float: left;
+        @media only screen and (min-width: $tablet) {
+          margin: 0 8px;
+        }
+      }
+      span {
+        display: none;
+        @media only screen and (min-width: $tablet) {
+          display: inline;
+        }
+      }
+    }
+    &__add {
+      margin-left: 0;
+    }
+  }
+  .payment {
+    margin-top: 86px;
+    &__heading {
+      margin-bottom: 35px;
+      font-size: 24px;
+      color: #07101C;
+    }
+  }
+  .v-input--switch {
+    .v-messages {
+      display: none;
+    }
+    &__track {
+      width: 32px;
+      height: 16px;
+      top: calc(50% - 8px);
+      left: 0;
+      background-color:  rgba(137, 149, 175, 0.5) !important;
+      border-radius: 12px;
+    }
+    &__thumb {
+      width: 14px;
+      height: 14px;
+      top: calc(50% - 8px);
+      margin: 1px;
+      box-shadow: none;
+    }
+  }
+  .v-input--is-label-active {
+    .v-input--switch__track {
+      background-color: #5699FF !important;
+    }
+    .v-input--switch__thumb {
+      color: #fff !important;
+    }
+  }
+  .v-label {
+    font-size: 14px;
+    color: #07101C;
   }
 }
 </style>

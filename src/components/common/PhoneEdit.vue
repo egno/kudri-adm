@@ -1,5 +1,5 @@
 <template>
-  <VLayout row align-center>
+  <VLayout row align-center class="phone-edit">
     <div class="select-code" />
     <VFlex>
       <VTextField

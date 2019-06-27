@@ -29,6 +29,9 @@ class Event extends ApiObject {
   set jsonObject (newVal) {
     this._title = newVal && newVal.title
     this.enabled = (newVal && newVal.enabled) || false
+    if (newVal && newVal.description) {
+      this.description = newVal.description
+    }
     if (newVal && (newVal.phone || newVal.phone === null)) {
       this.phone = newVal && newVal.phone
     }
@@ -61,12 +64,23 @@ class Event extends ApiObject {
 
 class Events extends ApiObject {
   set jsonObject (newVal) {
+    this.balance_level = new Event({
+      ...{ title: 'SMS-уведомление по остатку на счете' },
+      ...(newVal && newVal.balance_level)
+    })
     this.new_visit_client = new Event({
-      ...{ title: 'Уведомлять клиента о новой онлайн-записи' },
+      ...{
+        title: 'Уведомлять клиента о новой онлайн-записи',
+        description: 'Шаблон рассылки: <br/> Вы записаны на визит к&nbsp;&lt;Должность&nbsp;мастера&gt; &lt;Имя&nbsp;и&nbsp;Фамилия Мастера&gt; на&nbsp;&lt;время&nbsp;записи&gt; в&nbsp;&lt;Название&nbsp;филиала&gt;'
+      },
       ...(newVal && newVal.new_visit_client)
     })
     this.new_visit_manager = new Event({
-      ...{ title: 'Уведомлять менеджера филиала о новой онлайн-записи', phone: null },
+      ...{
+        title: 'Уведомлять менеджера филиала о новой онлайн-записи',
+        description: 'Шаблон рассылки: <br/> Новая онлайн запись к&nbsp;&lt;Мастер&gt; на&nbsp;&lt;Время&nbsp;записи&gt; в&nbsp;&lt;Название&nbsp;филиала&gt;',
+        phone: null
+      },
       ...(newVal && newVal.new_visit_manager)
     })
     this.cancel_visit = new Event({
