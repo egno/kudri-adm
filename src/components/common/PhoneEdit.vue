@@ -11,7 +11,7 @@
         mask="phone"
         prefix="+7"
         :rules="[rules.counter]"
-        class="_phone"
+        class="businesscard-form__field _phone"
         :required="!removable"
         @input="onEdit"
         @focus="focused = true"
