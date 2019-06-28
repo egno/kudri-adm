@@ -10,6 +10,7 @@
   outline: none;
   transition: background-color 0.4s 0s;
   cursor: pointer;
+  font: bold 18px Roboto Slab, Times New Roman, Times, serif;
   @media only screen and (min-width : 1360px) {
     width: 240px;
     height: 56px;
@@ -27,8 +28,7 @@
 
   &_attractive {
     @extend .button;
-    font: 400 18px Roboto Slab, Times New Roman, Times, serif;
-    font-size: 18px;
+    font-weight: normal;
     background-color: #EF4D37;
     &:hover {
       background-color: #EC2E2E;

@@ -3,7 +3,7 @@
     :is-edit-mode="true"
     :is-edit-visible="false"
     :template="{ headerText: 'Онлайн запись', buttonText: '' }"
-    class="businesscard-form"
+    class="businesscard-form widget-settings"
   >
     <template slot="content">
       <AppTabs v-model="activeTab">

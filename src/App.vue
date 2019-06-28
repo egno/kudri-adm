@@ -156,9 +156,12 @@ export default {
 #amoforms_action_btn {
   display: none !important; 
 }
-#amoforms_overlay iframe {
-  max-height: 726px !important;
-  overflow: hidden !important;
+#amoforms_overlay {
+  position: fixed !important;
+  iframe {
+    max-height: 726px !important;
+    overflow: hidden !important;
+  }
 }
 .application {
   line-height: normal;
@@ -211,6 +214,7 @@ export default {
     line-height: normal;
     font-size: 13px;
     color: #5699ff;
+    outline: none;
   }
   .v-menu__content {
     box-shadow: none;
@@ -451,6 +455,7 @@ export default {
     box-shadow: none;
     color: #8995af;
     background: transparent;
+    outline: none;
     &--active {
       color: #07101c;
     }
@@ -518,7 +523,7 @@ export default {
     }
     &.v-label--active {
       font-size: 12px;
-      transform: scale(1) translateY(-17px);
+      transform: scale(1) translateY(-19px);
     }
   }
   input {

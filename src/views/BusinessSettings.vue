@@ -3,7 +3,7 @@
     :is-edit-mode="true"
     :is-edit-visible="false"
     :template="{ headerText: 'Настройки', buttonText: '' }"
-    class="businesscard-form"
+    class="businesscard-form settings"
   >
     <template slot="content">
       <AppTabs v-model="activeTab">
@@ -13,14 +13,26 @@
         >
           Уведомления
         </v-tab>
-        <v-tab
+        <!--<v-tab
           :key="1"
           ripple
         >
           Оператор рассылки
+        </v-tab>-->
+        <v-tab
+          :key="1"
+          ripple
+        >
+          Журнал сообщений
+        </v-tab>
+        <v-tab
+          :key="2"
+          ripple
+        >
+          Баланс
         </v-tab>
       </AppTabs>
-      <div class="tab-content">
+      <div :class="['tab-content', { log: activeTab === 1 }]">
         <v-form ref="form">
           <div
             v-show="activeTab === 0"
@@ -31,56 +43,45 @@
                 align-left
                 column
               >
-                <v-flex pb-3>
-                  <h3>Настройте необходимые вам события рассылки уведомлений</h3>
-                </v-flex>
-                <v-flex
+                <h3 class="settings__content-heading">
+                  Настройте необходимые вам события рассылки уведомлений
+                </h3>
+                <div
                   v-for="(event, i) in businessSettings.notifications.events"
                   :key="i"
+                  class="settings__checkbox-block"
                 >
-                  <v-layout
-                    row
-                    wrap
-                  >
-                    <v-flex
-                      xs12
-                      md8
-                    >
-                      <v-switch
-                        v-model="event.enabled"
-                        :label="event.title"
-                        color="blue"
-                      />
-                    </v-flex>
-                    <v-flex
-                      v-if="event.enabled "
-                      offset-xs1
-                      xs11
-                      sm8
-                    >
-                      <v-card flat>
-                        <v-card-text v-if="typeof event.phone !== 'undefined'">
-                          <PhoneEdit
-                            :phone="event.phone"
-                            label="Телефон для уведомлений"
-                            @onEdit="event.phone = $event"
-                          />
-                        </v-card-text>
-                      </v-card>
-                    </v-flex>
-                  </v-layout>
-                </v-flex>
+                  <v-switch
+                    v-model="event.enabled"
+                    :label="event.title"
+                  />
+
+                  <div v-if="event.enabled" flat>
+                    <div v-if="typeof event.phone !== 'undefined' || event.description">
+                      <div v-if="event.description" class="settings__description" v-html="event.description" />
+                      <v-flex v-if="typeof event.phone !== 'undefined'" sm6 class="phone-input">
+                        <PhoneEdit
+                          :phone="event.phone"
+                          :removable="false"
+                          label="Телефон для уведомлений"
+                          @onEdit="event.phone = $event"
+                        />
+                      </v-flex>
+                    </div>
+                  </div>
+                </div>
               </v-layout>
               <MainButton
-                color="success"
                 class="button save-info"
+                :class="{ button_disabled: saveDisabled }"
+                type="button"
                 @click.native.prevent="save"
               >
                 Сохранить
               </MainButton>
             </div>
           </div>
-          <div
+          <!--<div
             v-show="activeTab === 1"
             class="infocard _edit"
           >
@@ -89,6 +90,142 @@
                 :provider="businessSettings && businessSettings.notifications && businessSettings.notifications.provider"
                 @change="businessSettings.notifications.provider = $event; save()"
               />
+            </div>
+          </div>-->
+          <div v-show="activeTab === 1">
+            <v-data-table
+              :headers="smsHeaders"
+              :items="smsItems"
+              :loading="smsIsLoading"
+              :pagination.sync="smsPagination"
+              :total-items="smsTotalItems"
+              class="elevation-0 sms"
+              sort-icon="mdi-menu-down"
+              hide-actions
+              must-sort
+            >
+              <template
+                slot="items"
+                slot-scope="props"
+              >
+                <td class="sms__event-name">
+                  {{ props.item.name }}
+                </td>
+                <td class="sms__receiver">
+                  <div class="sms__receiver-phone">
+                    {{ props.item.receiver.phone | phoneFormat }}
+                  </div>
+                  <div class="sms__receiver-operator">
+                    {{ props.item.receiver.operator }}
+                  </div>
+                </td>
+                <td class="sms__total">
+                  <div class="sms__total-price">
+                    {{ props.item.totalPrice }} рублей
+                  </div>
+                  <div class="sms__length">
+                    {{ props.item.length }} SMS
+                  </div>
+                </td>
+                <td>
+                  <div>ID {{ props.item.numberId }}</div>
+                  <div class="sms__time">
+                    {{ getTime(props.item.time) }}
+                  </div>
+                </td>
+                <td>
+                  <v-tooltip
+                    v-if="props.item.status.code === 'not_delivered'"
+                    top
+                  >
+                    <template v-slot:activator="{ on }">
+                      <div class="settings__status _error" v-on="on">
+                        Не доставлено
+                      </div>
+                      <div class="sms__time">
+                        {{ getTime(props.item.status.updated) }}
+                      </div>
+                    </template>
+                    <span>{{ props.item.status.display }}</span>
+                  </v-tooltip>
+                  <template v-else>
+                    <div :class="['settings__status', { _waiting: props.item.status.code === 'sent', _success: props.item.status.code === 'delivered' }]">
+                      {{ props.item.status.display }}
+                    </div>
+                    <div class="sms__time">
+                      {{ getTime(props.item.status.updated) }}
+                    </div>
+                  </template>
+                </td>
+                <td>
+                  <div class="settings__update" @click="update(props.item.id)" />
+                </td>
+              </template>
+            </v-data-table>
+            <div class="text-xs-right">
+              <v-pagination v-model="smsPagination.page" :length="smsPages" :total-visible="smsPagination.rowsPerPage" circle color="rgba(137, 149, 175, 0.35)" />
+            </div>
+          </div>
+          <div
+            v-show="activeTab === 2"
+            class="infocard _edit balance"
+          >
+            <div class="infocard__content">
+              <v-layout align-center>
+                <v-flex class="balance__level">
+                  Остаток на счете: <span>{{ balance }}&nbsp;руб.</span>
+                </v-flex>
+                <button class="balance__update settings__update" type="button">
+                  <span>Обновить</span>
+                </button>
+              </v-layout>
+              <MainButton
+                class="button businesscard-form__next balance__add"
+                type="button"
+                @click.native.prevent="add"
+              >
+                ПОПОЛНИТЬ
+              </MainButton>
+            </div>
+            <div class="payment">
+              <h2 class="payment__heading">
+                История платежей
+              </h2>
+              <v-data-table
+                :headers="paymentHeaders"
+                :items="paymentItems"
+                :loading="paymentIsLoading"
+                :pagination.sync="paymentPagination"
+                :total-items="paymentTotalItems"
+                class="elevation-0"
+                sort-icon="mdi-menu-down"
+                hide-actions
+                must-sort
+              >
+                <template
+                  slot="items"
+                  slot-scope="props"
+                >
+                  <td class="payment__event">
+                    {{ props.item.name }}
+                  </td>
+                  <td class="payment__date">
+                    {{ getTime(props.item.time) }}
+                  </td>
+                  <td class="payment__total">
+                    + {{ props.item.totalPrice }} руб.
+                  </td>
+                  <td :class="['settings__status', { [`_${props.item.status.code}`]: true }]">
+                    <span>{{ props.item.status.display }}</span>
+                    <button v-if="props.item.status.code === 'error'" type="button" class="blue-link help-link" @click="openMessageWindow">
+                      Сообщить о проблеме
+                    </button>
+                  </td>
+                </template>
+              </v-data-table>
+              <div class="text-xs-right">
+                <v-pagination v-model="paymentPagination.page" :length="paymentPages" :total-visible="paymentPagination.rowsPerPage" circle color="rgba(137, 149, 175, 0.35)" />
+              </div>
             </div>
           </div>
         </v-form>
@@ -99,104 +236,616 @@
 
 <script>
 import BusinessSettings from '@/classes/business_settings'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import PhoneEdit from '@/components/common/PhoneEdit.vue'
 import MainButton from '@/components/common/MainButton.vue'
 import AppTabs from '@/components/common/AppTabs.vue'
 import PageLayout from '@/components/common/PageLayout.vue'
-import ProviderSettings from '@/components/provider/ProviderSettings.vue'
+import { displayRESTDate, displayRESTTime } from '@/components/calendar/utils'
 
 export default {
-  components: { AppTabs, PhoneEdit, MainButton, PageLayout, ProviderSettings },
+  components: { AppTabs, PhoneEdit, MainButton, PageLayout },
   data () {
     return {
       activeTab: 0,
-      businessSettings: new BusinessSettings()
+      businessSettings: new BusinessSettings(),
+      smsHeaders: [
+        { text: 'Событие', value: 'name' },
+        { text: 'Телефон получателя', value: 'receiver->phone' },
+        { text: 'Стоимость', value: 'totalPrice' },
+        { text: 'Идентификатор', value: 'numberId', },
+        { text: 'Статус сообщения', value: 'status->code', },
+        { text: 'Обновить все', value: '', sortable: false, width: '80px', class: 'settings__update' }
+      ],
+      smsItems: [
+        {
+          id: "b2177622-8e5b-11e9-b72c-eb1d767cd701",
+          numberId: 1234567890,
+          name: 'Запрос Клиенту на подтверждение номера телефона',
+          receiver: {
+            phone: '71005001213',
+            operator: 'МТС'
+          },
+          length: 2,
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'sent',
+            display: 'Отправлено',
+            updated: '2019-05-06T18:10:00'
+          },
+          totalPrice: 12
+        },
+        {
+          id: "b2177622-8e5b-11e9-b72c-eb1d767cd702",
+          numberId: 1234567890,
+          name: 'О новой онлайн-записи',
+          receiver: {
+            phone: '71005001213',
+            operator: 'Мегафон Сибирь'
+          },
+          length: 2,
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'delivered',
+            display: 'Доставлено',
+            updated: '2019-05-06T18:10:00'
+          },
+          totalPrice: 12
+        },
+        {
+          id: "b2177622-8e5b-11e9-b72c-eb1d767cd703",
+          numberId: 1234567890,
+          name: 'Об отмене онлайн-записи',
+          receiver: {
+            phone: '71005001213',
+            operator: 'Мегафон Сибирь'
+          },
+          length: 2,
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'delivered',
+            display: 'Доставлено',
+            updated: '2019-05-06T18:10:00'
+          },
+          totalPrice: 12
+        },
+        {
+          id: "b2177622-8e5b-11e9-b72c-eb1d767cd704",
+          numberId: 1234567890,
+          name: 'Напоминание о предстоящем визите',
+          receiver: {
+            phone: '71005001213',
+            operator: 'Мегафон Сибирь'
+          },
+          length: 2,
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'delivered',
+            display: 'Доставлено',
+            updated: '2019-05-06T18:10:00'
+          },
+          totalPrice: 12
+        },
+        {
+          id: "b2177622-8e5b-11e9-b72c-eb1d767cd705",
+          numberId: 1234567890,
+          name: 'Денежные средства заканчиваются',
+          receiver: {
+            phone: '71005001213',
+            operator: 'Мегафон Сибирь'
+          },
+          length: 2,
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'not_delivered',
+            display: 'Номер телефона абонента недоступен',
+            updated: '2019-05-06T18:10:00'
+          },
+          totalPrice: 12
+        },
+        {
+          id: "b2177622-8e5b-11e9-b72c-eb1d767cd706",
+          numberId: 1234567890,
+          name: 'Денежные средства заканчиваются',
+          receiver: {
+            phone: '71005001213',
+            operator: 'Мегафон Сибирь'
+          },
+          length: 2,
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'not_delivered',
+            display: 'Абонент с таким номером не существует',
+            updated: '2019-05-06T18:10:00'
+          },
+          totalPrice: 12
+        },
+        {
+          id: "b2177622-8e5b-11e9-b72c-eb1d767cd707",
+          numberId: 1234567890,
+          name: 'Рекламное сообщение',
+          receiver: {
+            phone: '71005001213',
+            operator: 'Мегафон Сибирь'
+          },
+          length: 2,
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'delivered',
+            display: 'Доставлено',
+            updated: '2019-05-06T18:10:00'
+          },
+          totalPrice: 12
+        }
+      ],
+      smsIsLoading: false,
+      smsPagination: { rowsPerPage: 3 },
+      smsTotalItems: 7,
+      paymentHeaders: [
+        { text: 'Платежи', value: 'name' },
+        { text: 'Дата', value: 'time' },
+        { text: 'Сумма', value: 'totalPrice' },
+        { text: 'Статус', value: 'status->code', },
+      ],
+      paymentItems: [
+        {
+          id: "b2177622-8e5b-11e9-b72c-12312",
+          name: 'Платеж № 5678594785695',
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'waiting',
+            display: 'Ожидает проведения'
+          },
+          totalPrice: 1212
+        },
+        {
+          id: "b2177622-8e5b-11e9-b72c-134234",
+          name: 'Платеж № 5678594785695',
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'success',
+            display: 'Платеж проведен'
+          },
+          totalPrice: 1212
+        },
+        {
+          id: "b2177622-8e5b-11e9-b72c-34534",
+          name: 'Платеж № 5678594785695',
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'error',
+            display: 'Ошибка. Код 02'
+          },
+          totalPrice: 1212
+        },
+        {
+          id: "b2177622-8e5b-11e9-b72c-4544",
+          name: 'Платеж № 5678594785695',
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'waiting',
+            display: 'Ожидает проведения'
+          },
+          totalPrice: 1212
+        },
+        {
+          id: "b2177622-8e5b-11e9-b72c-246",
+          name: 'Платеж № 5678594785695',
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'success',
+            display: 'Платеж проведен'
+          },
+          totalPrice: 1212
+        },
+        {
+          id: "b2177622-8e5b-11e9-b72c-4547",
+          name: 'Платеж № 5678594785695',
+          time: '2019-05-06T18:00:00',
+          status: {
+            code: 'error',
+            display: 'Ошибка. Код 02'
+          },
+          totalPrice: 1212
+        },
+      ],
+      paymentPagination: { rowsPerPage: 3 },
+      paymentIsLoading: false,
+      paymentTotalItems: 6,
+      balance: 1456.76
     }
   },
   computed: {
-    ...mapGetters(['businessId'])
+    ...mapGetters(['businessId']),
+    saveDisabled () {
+      return this.settings.cancel_visit.enabled && (!this.settings.cancel_visit.phone || this.settings.cancel_visit.phone.length < 10)
+        || this.settings.new_visit_manager.enabled && (!this.settings.new_visit_manager.phone || this.settings.new_visit_manager.phone.length < 10)
+    },
+    smsPages () {
+      if (!this.smsPagination.rowsPerPage || !this.smsTotalItems)
+        return 0
+
+      return Math.ceil(this.smsTotalItems / this.smsPagination.rowsPerPage)
+    },
+    paymentPages () {
+      if (!this.paymentPagination.rowsPerPage || !this.paymentTotalItems)
+        return 0
+
+      return Math.ceil(this.paymentTotalItems / this.paymentPagination.rowsPerPage)
+    },
+    settings () {
+      return this.businessSettings.settings.notifications.events
+    }
   },
   watch: {
     businessId: 'load'
   },
   mounted () {
     this.load()
+    const updateElement = this.$el.querySelector('.sms th.settings__update')
+
+    if (updateElement) {
+      updateElement.addEventListener('click', this.updateAll)
+    }
+  },
+  beforeDestroy () {
+    const updateElement = this.$el.querySelector('.sms th.settings__update')
+
+    if (updateElement) {
+      updateElement.removeEventListener('click', this.updateAll)
+    }
   },
   methods: {
+    ...mapActions([
+      'openMessageWindow'
+    ]),
+    add () {
+      console.log('add ')
+    },
     load () {
       if (!this.businessId) return
       this.businessSettings.load(this.businessId)
     },
+    getTime (ts) {
+      return `${displayRESTDate(ts)} ${displayRESTTime(ts)}`
+    },
     save () {
       this.businessSettings.save()
+    },
+    update (id) {
+      console.log(id)
+    },
+    updateAll () {
+      console.log('sdlfjsjdf')
     }
   }
 }
 </script>
 
 <style lang="scss">
-@import '../assets/styles/settings';
+@import '../assets/styles/common';
+@import '../assets/styles/infocard';
 @import '../assets/styles/businesscard-form';
 
-.tab-content {
-  @media only screen and (min-width: $desktop) {
-    padding-left: 127px;
+.settings {
+  color: #07101C;
+  &__content-heading {
+    margin-top: 23px;
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: #07101C;
   }
-  .infocard._emp-serv {
-    max-width: 100%;
-    width: auto;
-    // padding-right: 40px;
-    .infocard__content {
-      max-width: 100%;
+  &__description {
+    max-width: 445px;
+    margin-top: 16px;
+    margin-left: 28px;
+    padding: 6px 0 6px 24px;
+    border-left: 1px solid rgba(137, 149, 175, 0.1);
+    color: #8995AF;
+    font-size: 12px;
+  }
+  &__checkbox-block {
+    margin: 9px 0;
+  }
+  &__update {
+    text-align: center;
+    cursor: pointer;
+
+    &:after {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      background: url('../assets/images/update.png') center/contain no-repeat;
+      content: '';
+      opacity: 0.5;
     }
   }
-}
-.employee-profile {
-  color: #07101c;
-  @media only screen and (min-width: $tablet) {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
+  &__status {
+    white-space: nowrap;
+
+    &:before {
+      display: inline-block;
+      vertical-align: sub;
+      width: 16px;
+      height: 16px;
+      margin-right: 5px;
+      content: '';
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    &._waiting {
+      color: #8995AF;
+      &:before {
+        background-image: url('../assets/images/svg/clock_opacity_1.svg');
+      }
+    }
+    &._success {
+      color: #5BCD5E;
+      &:before {
+        width: 19px;
+        background-image: url('../assets/images/delivered.png');
+      }
+    }
+    &._error {
+      color: #EF4D37;
+      &:before {
+        background-image: url('../assets/images/error.png');
+      }
+      &:after {
+        display: inline-block;
+        vertical-align: middle;
+        width: 14px;
+        height: 14px;
+        margin-left: 5px;
+        content: '';
+        background: url('../assets/images/svg/question.svg') center no-repeat;
+      }
+    }
+  }
+  .v-tabs__item {
+    padding: 0 10px;
+  }
+  .tab-content {
+    @media only screen and (min-width: $desktop) {
+      padding-left: 127px;
+    }
+    &.log {
+      position: relative;
+      padding-left: 210px;
+      padding-top: 36px;
+      overflow-x: auto;
+      background-color: rgba(137, 149, 175, 0.1);
+    }
+    .infocard {
+      @media only screen and (min-width : $tablet) {
+        width: 724px;
+      }
+      @media only screen and (min-width : $desktop) {
+        width: 960px;
+      }
+      .infocard__content {
+        @media only screen and (min-width: $desktop) {
+          padding-left: 132px;
+        }
+      }
+    }
+  }
+  .phone-input {
+    .v-text-field__slot {
+      position: relative;
+      padding-left: 56px;
+      background: url('../assets/images/svg/ru.svg') 20px 8px no-repeat;
+      &:after {
+        position: absolute;
+        left: 41px;
+        top: 12px;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 5px 5px 0 5px;
+        border-color: #8995af transparent transparent transparent;
+        content: '';
+      }
+    }
+  }
+  .phone-edit {
+    margin-top: 25px;
+    margin-left: 30px;
+  }
+  .businesscard-form__field._phone {
+    margin-top: 0;
   }
 
-  &__title {
-    font-size: 24px;
-    &._name {
-      text-align: center;
+  .sms {
+    * {
+      color: #07101C;
+      font-size: 14px;
+    }
+    &__event-name {
+      position: absolute;
+      left: 0;
+      width: 210px;
+      height: 88px;
+      font-weight: bold;
+    }
+    &__receiver-phone {
+      font-weight: bold;
+    }
+    &__receiver-operator {
+      margin-top: 5px;
+      color: #8995AF;
+    }
+    &__length {
+      margin-top: 5px;
+      font-size: 12px;
+      color: #8995AF;
+    }
+    &__time {
+      margin-top: 5px;
+      font-size: 12px;
+      color: #8995AF;
+    }
+    thead tr:first-child th:first-child {
+      position: absolute;
+      left: 0;
+      width: 210px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+
+      background-color: #d6dae3;
+
+
     }
   }
-  &__position {
+
+  thead {
+    background-color: #d6dae3;
+    tr:first-child {
+      height: 40px;
+      border-bottom: none !important;
+      th {
+        color: #8995AF !important;
+        font-size: 12px !important;
+        &:first-child {
+          padding-left: 35px;
+          @media only screen and (min-width: $desktop) {
+            padding-left: 56px !important;
+          }
+        }
+        &.sortable i {
+          color: #8995AF !important;
+          vertical-align: top;
+        }
+        &.settings__update:after {
+          margin-left: 5px;
+          opacity: 1;
+        }
+      }
+    }
+  }
+  tbody {
+    tr {
+      height: 88px;
+      border-bottom: 1px solid #f3f4f7 !important;
+      &:hover {
+        background-color: #fff !important;
+      }
+      &:first-child {
+        .sms__event-name {
+          height: 89px;
+        }
+        @-moz-document url-prefix() {
+          .sms__event-name {
+            height: 88px;
+          }
+        }
+      }
+    }
+    td {
+      /*padding: 18px 24px !important;*/
+      &:first-child {
+        padding: 18px 10px 18px 35px !important;
+        background-color: #fff;
+        border-bottom: 1px solid #f3f4f7;
+        @media only screen and (min-width: $desktop) {
+          padding-left: 56px !important;
+        }
+      }
+    }
+
+  }
+
+  .balance {
+    &__level {
+      font-weight: 500;
+      font-size: 18px;
+      @media only screen and (min-width: $tablet) {
+        max-width: 50%;
+      }
+      span {
+        font: normal 24px $roboto;
+        @media only screen and (min-width: $tablet) {
+          margin-left: 24px;
+        }
+      }
+    }
+    &__update {
+      @extend %button-bordered;
+      width: auto;
+      padding: 0 24px;
+      @media only screen and (min-width: $tablet) {
+        width: 160px;
+      }
+      &:hover:after {
+        background: url('../assets/images/update_black.png') center/contain no-repeat;
+        opacity: 1;
+      }
+      &:after {
+        float: left;
+        @media only screen and (min-width: $tablet) {
+          margin: 0 8px;
+        }
+      }
+      span {
+        display: none;
+        @media only screen and (min-width: $tablet) {
+          display: inline;
+        }
+      }
+    }
+    &__add {
+      margin-left: 0;
+    }
+  }
+  .payment {
+    margin-top: 86px;
+    &__heading {
+      margin-bottom: 35px;
+      font-size: 24px;
+      color: #07101C;
+    }
+    .settings__status:after {
+      display: none;
+    }
+  }
+
+  .help-link {
+    display: block;
+  }
+  .v-input--switch {
+    .v-messages {
+      display: none;
+    }
+    &__track {
+      width: 32px;
+      height: 16px;
+      top: calc(50% - 8px);
+      left: 0;
+      background-color:  rgba(137, 149, 175, 0.5) !important;
+      border-radius: 12px;
+    }
+    &__thumb {
+      width: 14px;
+      height: 14px;
+      top: calc(50% - 8px);
+      margin: 1px;
+      box-shadow: none;
+    }
+  }
+  .v-input--is-label-active {
+    .v-input--switch__track {
+      background-color: #5699FF !important;
+    }
+    .v-input--switch__thumb {
+      color: #fff !important;
+    }
+  }
+  .v-label {
     font-size: 14px;
-    color: #8995af;
-  }
-  .v-avatar {
-    margin-bottom: 24px !important;
-  }
-  .infocard._view {
-    @media only screen and (min-width: $tablet) {
-      width: 400px;
-      margin: 0 auto 10px;
-    }
-    @media only screen and (min-width: $desktop) {
-      margin: 0 10px 10px 0;
-    }
-  }
-  ._view .infocard__content {
-    @media only screen and (min-width: $desktop) {
-      padding: 40px 60px 60px;
-    }
-  }
-  ._view._services {
-    @media only screen and (min-width: 1350px) {
-      width: 540px;
-    }
-  }
-}
-.employee-profile-edit {
-  .infocard__content {
-    @media only screen and (min-width: $tablet) {
-    }
+    color: #07101C;
   }
 }
 </style>

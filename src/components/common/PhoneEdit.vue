@@ -1,5 +1,5 @@
 <template>
-  <VLayout row align-center>
+  <VLayout row align-center class="phone-edit">
     <div class="select-code" />
     <VFlex>
       <VTextField
@@ -31,7 +31,7 @@ export default {
   props: {
     disabled: { type: Boolean, default: false },
     label: { type: String, default: null },
-    placeholder: { type: String, default: 'Телефон' },
+    placeholder: { type: String, default: '(000) 000-00-00' },
     phone: {
       type: String,
       default () {
