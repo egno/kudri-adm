@@ -59,7 +59,7 @@
                   <div v-if="event.enabled" flat>
                     <div v-if="typeof event.phone !== 'undefined' || event.description">
                       <div v-if="event.description" class="settings__description" v-html="event.description" />
-                      <v-flex v-if="typeof event.phone !== 'undefined'" sm6>
+                      <v-flex v-if="typeof event.phone !== 'undefined'" sm6 class="phone-input">
                         <PhoneEdit
                           :phone="event.phone"
                           :removable="false"
@@ -73,6 +73,7 @@
               </v-layout>
               <MainButton
                 class="button save-info"
+                :class="{ button_disabled: saveDisabled }"
                 type="button"
                 @click.native.prevent="save"
               >
@@ -141,22 +142,29 @@
                       <div class="settings__status _error" v-on="on">
                         Не доставлено
                       </div>
+                      <div class="sms__time">
+                        {{ getTime(props.item.status.updated) }}
+                      </div>
                     </template>
                     <span>{{ props.item.status.display }}</span>
                   </v-tooltip>
-
-                  <div
-                    v-else
-                    :class="['settings__status', { _waiting: props.item.status.code === 'sent', _success: props.item.status.code === 'delivered' }]"
-                  >
-                    {{ props.item.status.display }}
-                  </div>
+                  <template v-else>
+                    <div :class="['settings__status', { _waiting: props.item.status.code === 'sent', _success: props.item.status.code === 'delivered' }]">
+                      {{ props.item.status.display }}
+                    </div>
+                    <div class="sms__time">
+                      {{ getTime(props.item.status.updated) }}
+                    </div>
+                  </template>
                 </td>
                 <td>
                   <div class="settings__update" @click="update(props.item.id)" />
                 </td>
               </template>
             </v-data-table>
+            <div class="text-xs-right">
+              <v-pagination v-model="smsPagination.page" :length="smsPages" :total-visible="smsPagination.rowsPerPage" circle color="rgba(137, 149, 175, 0.35)" />
+            </div>
           </div>
           <div
             v-show="activeTab === 2"
@@ -208,10 +216,16 @@
                     + {{ props.item.totalPrice }} руб.
                   </td>
                   <td :class="['settings__status', { [`_${props.item.status.code}`]: true }]">
-                    {{ props.item.status.display }}
+                    <span>{{ props.item.status.display }}</span>
+                    <button v-if="props.item.status.code === 'error'" type="button" class="blue-link help-link" @click="openMessageWindow">
+                      Сообщить о проблеме
+                    </button>
                   </td>
                 </template>
               </v-data-table>
+              <div class="text-xs-right">
+                <v-pagination v-model="paymentPagination.page" :length="paymentPages" :total-visible="paymentPagination.rowsPerPage" circle color="rgba(137, 149, 175, 0.35)" />
+              </div>
             </div>
           </div>
         </v-form>
@@ -222,7 +236,7 @@
 
 <script>
 import BusinessSettings from '@/classes/business_settings'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import PhoneEdit from '@/components/common/PhoneEdit.vue'
 import MainButton from '@/components/common/MainButton.vue'
 import AppTabs from '@/components/common/AppTabs.vue'
@@ -256,7 +270,8 @@ export default {
           time: '2019-05-06T18:00:00',
           status: {
             code: 'sent',
-            display: 'Отправлено'
+            display: 'Отправлено',
+            updated: '2019-05-06T18:10:00'
           },
           totalPrice: 12
         },
@@ -272,7 +287,8 @@ export default {
           time: '2019-05-06T18:00:00',
           status: {
             code: 'delivered',
-            display: 'Доставлено'
+            display: 'Доставлено',
+            updated: '2019-05-06T18:10:00'
           },
           totalPrice: 12
         },
@@ -288,7 +304,8 @@ export default {
           time: '2019-05-06T18:00:00',
           status: {
             code: 'delivered',
-            display: 'Доставлено'
+            display: 'Доставлено',
+            updated: '2019-05-06T18:10:00'
           },
           totalPrice: 12
         },
@@ -304,7 +321,8 @@ export default {
           time: '2019-05-06T18:00:00',
           status: {
             code: 'delivered',
-            display: 'Доставлено'
+            display: 'Доставлено',
+            updated: '2019-05-06T18:10:00'
           },
           totalPrice: 12
         },
@@ -320,7 +338,8 @@ export default {
           time: '2019-05-06T18:00:00',
           status: {
             code: 'not_delivered',
-            display: 'Номер телефона абонента недоступен'
+            display: 'Номер телефона абонента недоступен',
+            updated: '2019-05-06T18:10:00'
           },
           totalPrice: 12
         },
@@ -336,7 +355,8 @@ export default {
           time: '2019-05-06T18:00:00',
           status: {
             code: 'not_delivered',
-            display: 'Абонент с таким номером не существует'
+            display: 'Абонент с таким номером не существует',
+            updated: '2019-05-06T18:10:00'
           },
           totalPrice: 12
         },
@@ -352,14 +372,15 @@ export default {
           time: '2019-05-06T18:00:00',
           status: {
             code: 'delivered',
-            display: 'Доставлено'
+            display: 'Доставлено',
+            updated: '2019-05-06T18:10:00'
           },
           totalPrice: 12
         }
       ],
       smsIsLoading: false,
-      smsPagination: { rowsPerPage: 20 },
-      smsTotalItems: 3,
+      smsPagination: { rowsPerPage: 3 },
+      smsTotalItems: 7,
       paymentHeaders: [
         { text: 'Платежи', value: 'name' },
         { text: 'Дата', value: 'time' },
@@ -430,12 +451,31 @@ export default {
       ],
       paymentPagination: { rowsPerPage: 3 },
       paymentIsLoading: false,
-      paymentTotalItems: 3,
+      paymentTotalItems: 6,
       balance: 1456.76
     }
   },
   computed: {
-    ...mapGetters(['businessId'])
+    ...mapGetters(['businessId']),
+    saveDisabled () {
+      return this.settings.cancel_visit.enabled && (!this.settings.cancel_visit.phone || this.settings.cancel_visit.phone.length < 10)
+        || this.settings.new_visit_manager.enabled && (!this.settings.new_visit_manager.phone || this.settings.new_visit_manager.phone.length < 10)
+    },
+    smsPages () {
+      if (!this.smsPagination.rowsPerPage || !this.smsTotalItems)
+        return 0
+
+      return Math.ceil(this.smsTotalItems / this.smsPagination.rowsPerPage)
+    },
+    paymentPages () {
+      if (!this.paymentPagination.rowsPerPage || !this.paymentTotalItems)
+        return 0
+
+      return Math.ceil(this.paymentTotalItems / this.paymentPagination.rowsPerPage)
+    },
+    settings () {
+      return this.businessSettings.settings.notifications.events
+    }
   },
   watch: {
     businessId: 'load'
@@ -456,6 +496,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      'openMessageWindow'
+    ]),
     add () {
       console.log('add ')
     },
@@ -589,6 +632,24 @@ export default {
       }
     }
   }
+  .phone-input {
+    .v-text-field__slot {
+      position: relative;
+      padding-left: 56px;
+      background: url('../assets/images/svg/ru.svg') 20px 8px no-repeat;
+      &:after {
+        position: absolute;
+        left: 41px;
+        top: 12px;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 5px 5px 0 5px;
+        border-color: #8995af transparent transparent transparent;
+        content: '';
+      }
+    }
+  }
   .phone-edit {
     margin-top: 25px;
     margin-left: 30px;
@@ -596,6 +657,7 @@ export default {
   .businesscard-form__field._phone {
     margin-top: 0;
   }
+
   .sms {
     * {
       color: #07101C;
@@ -616,79 +678,86 @@ export default {
       color: #8995AF;
     }
     &__length {
+      margin-top: 5px;
       font-size: 12px;
       color: #8995AF;
     }
     &__time {
+      margin-top: 5px;
       font-size: 12px;
       color: #8995AF;
     }
+    thead tr:first-child th:first-child {
+      position: absolute;
+      left: 0;
+      width: 210px;
+      height: 40px;
+      display: flex;
+      align-items: center;
 
-    thead {
-      background-color: #e7eaef;
-      tr:first-child {
-        height: 40px;
-        border-bottom: none;
-        th {
-          color: #8995AF !important;
-          font-size: 12px !important;
-          &:first-child {
-            position: absolute;
-            left: 0;
-            width: 210px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            padding-left: 35px;
-            background-color: #e7eaef;
+      background-color: #d6dae3;
 
-            @media only screen and (min-width: $desktop) {
-              padding-left: 56px !important;
-            }
-          }
-          &.sortable i {
-            color: #8995AF !important;
-            vertical-align: top;
-          }
-          &.settings__update:after {
-            margin-left: 5px;
-            opacity: 1;
-          }
-        }
-      }
+
     }
-    tbody {
-      tr {
-        height: 88px;
-        border-bottom: 1px solid #f3f4f7 !important;
-        &:hover {
-          background-color: #fff !important;
-        }
+  }
+
+  thead {
+    background-color: #d6dae3;
+    tr:first-child {
+      height: 40px;
+      border-bottom: none !important;
+      th {
+        color: #8995AF !important;
+        font-size: 12px !important;
         &:first-child {
-          .sms__event-name {
-            height: 89px;
-          }
-          @-moz-document url-prefix() {
-            .sms__event-name {
-              height: 88px;
-            }
-          }
-        }
-      }
-      td {
-        /*padding: 18px 24px !important;*/
-        &:first-child {
-          padding: 18px 10px 18px 35px !important;
-          background-color: #fff;
-          border-bottom: 1px solid #f3f4f7;
+          padding-left: 35px;
           @media only screen and (min-width: $desktop) {
             padding-left: 56px !important;
           }
         }
+        &.sortable i {
+          color: #8995AF !important;
+          vertical-align: top;
+        }
+        &.settings__update:after {
+          margin-left: 5px;
+          opacity: 1;
+        }
       }
-
     }
   }
+  tbody {
+    tr {
+      height: 88px;
+      border-bottom: 1px solid #f3f4f7 !important;
+      &:hover {
+        background-color: #fff !important;
+      }
+      &:first-child {
+        .sms__event-name {
+          height: 89px;
+        }
+        @-moz-document url-prefix() {
+          .sms__event-name {
+            height: 88px;
+          }
+        }
+      }
+    }
+    td {
+      /*padding: 18px 24px !important;*/
+      &:first-child {
+        padding: 18px 10px 18px 35px !important;
+        background-color: #fff;
+        border-bottom: 1px solid #f3f4f7;
+        @media only screen and (min-width: $desktop) {
+          padding-left: 56px !important;
+        }
+      }
+    }
+
+  }
+
   .balance {
     &__level {
       font-weight: 500;
@@ -712,6 +781,7 @@ export default {
       }
       &:hover:after {
         background: url('../assets/images/update_black.png') center/contain no-repeat;
+        opacity: 1;
       }
       &:after {
         float: left;
@@ -737,6 +807,13 @@ export default {
       font-size: 24px;
       color: #07101C;
     }
+    .settings__status:after {
+      display: none;
+    }
+  }
+
+  .help-link {
+    display: block;
   }
   .v-input--switch {
     .v-messages {
