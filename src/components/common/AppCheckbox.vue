@@ -8,9 +8,8 @@
       v-bind="$attrs"
       type="checkbox"
       class="checkbox__input"
-      @change="$emit('change', $event.target.checked)"
     >
-    <label :for="id" class="checkbox__label">{{ label }}</label>
+    <label class="checkbox__label" @click="$emit('change', !checked)">{{ label }}</label>
   </div>
 </template>
 <script>
