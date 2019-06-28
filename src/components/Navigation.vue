@@ -308,13 +308,12 @@ export default {
             name: 'businessSettings',
             params: { id: this.businessId }
           },
-          show: false
-            /*(this.hasCompanyLevelAccess) &&
+          show: (this.hasCompanyLevelAccess) &&
             this.hasName &&
             !this.isManagerMenu &&
             (this.userRole === 'manager' ||
               this.userRole === 'admin' ||
-              this.user.role === 'Администратор компании')*/
+              this.user.role === 'Администратор компании')
         }
       ]
     },
