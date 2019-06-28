@@ -268,10 +268,10 @@
                   <div class="employee-menu-trigger" v-on="on" />
                 </template>
                 <div class="employees-selection__menu">
-                  <!--<div :class="['employees-selection__item']" @click="toggleAll">
+                  <!--<div v-if="displayMode === 'day'" :class="['employees-selection__item', 'v-expansion-panel__header']" @click="toggleAll">
                     Все мастера
                   </div>-->
-                  <v-expansion-panel>
+                  <v-expansion-panel expand>
                     <v-expansion-panel-content
                       v-for="category in employeesCategories"
                       :key="category"
@@ -284,6 +284,7 @@
                         >
                           <div>{{ category }} {{ groupedEmployees[category].length }}</div>
                           <AppCheckbox
+                            v-if="displayMode === 'day'"
                             :id="category"
                             :checked="groupedEmployees[category].length === visibleEmployees.filter(e => e.j.category === category).length"
                             label=""
@@ -298,15 +299,35 @@
                         v-for="(emp, i) in groupedEmployees[category]"
                         :key="emp.id"
                         justify-space-between
+                        align-center
                         class="employees-selection__item"
                       >
-                        <div>{{ emp.j.name }}</div>
+                        <VLayout row align-center>
+                          <Avatar
+                            class="employee__avatar"
+                            :name="emp.j.name"
+                            :src="emp.j.image"
+                            size="44px"
+                          />
+                          <div class="employees-selection__emp-name">
+                            {{ emp.j.name }}
+                          </div>
+                        </VLayout>
+
                         <AppCheckbox
+                          v-if="displayMode === 'day'"
                           :id="emp.j.name + i"
                           :checked="visibleEmployees.some(e => e.id === emp.id)"
                           label=""
                           :value="emp.id"
-                          @click.native.stop
+                          @change="changeVisibleEmployees(emp, $event)"
+                        />
+                        <AppCheckbox
+                          v-else
+                          :id="emp.j.name + i"
+                          :checked="selectedEmployee.id === emp.id"
+                          label=""
+                          :value="emp.id"
                           @change="changeVisibleEmployees(emp, $event)"
                         />
                       </VLayout>
@@ -358,7 +379,6 @@
                   :display-to="displayTimes.end"
                   @onSlotClick="createVisit(selectedEmployee.id, $event)"
                   @onBreakClick="createBreak($event, selectedEmployee.id)"
-
                   @makeDayOffTry="notifyHasVisits = true"
                 />
               </div>
@@ -713,6 +733,12 @@ export default {
       this.currentBreak.j.notes = payload
     },
     changeVisibleEmployees (employee, selected) {
+      if (this.displayMode === 'week') {
+        if (selected) {
+          this.selectedEmployee = employee
+        }
+        return
+      }
       if (selected) {
         if (!this.visibleEmployees.some(e => e.id === employee.id)) {
           this.visibleEmployees.push(employee)
@@ -789,7 +815,7 @@ export default {
         })
     },
     getIrregularDays () {
-      if (!this.selectedEmployee || !this.selectedWeek) {
+      if (!this.selectedEmployee || !this.selectedEmployee.id || !this.selectedWeek) {
         return
       }
       const sunday = this.selectedWeek[6]
@@ -838,9 +864,10 @@ export default {
       })
     },
     isDayOff (dateString, dayIndex) {
-      const employeeSchedule = this.getIrregularDay(dateString, this.selectedEmployee)
-        ? this.getIrregularDay(dateString, this.selectedEmployee).schedule
-        : this.selectedEmployee.j.schedule.data[dayIndex]
+      const irregularDay = this.getIrregularDay(dateString, this.selectedEmployee)
+      let employeeSchedule = irregularDay
+        ? irregularDay.schedule
+        : this.selectedEmployee && this.selectedEmployee.j && this.selectedEmployee.j.schedule.data[dayIndex] || false
 
       if (!employeeSchedule || !employeeSchedule[0] || !employeeSchedule[1]) {
         return true
@@ -1426,9 +1453,12 @@ export default {
       &__item {
         padding: 7px 8px 8px 16px;
         border-bottom: 1px solid rgba(137, 149, 175, 0.1);
-        &:last-child {
+       /* &:last-child {
           border: none;
-        }
+        }*/
+      }
+      &__emp-name {
+        margin-left: 8px;
       }
       .v-menu__content {
         overflow: hidden;
