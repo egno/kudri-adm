@@ -71,14 +71,12 @@ class Events extends ApiObject {
     this.new_visit_client = new Event({
       ...{
         title: 'Уведомлять клиента о новой онлайн-записи',
-        description: 'Шаблон рассылки: <br/> Вы записаны на визит к&nbsp;&lt;Должность&nbsp;мастера&gt; &lt;Имя&nbsp;и&nbsp;Фамилия Мастера&gt; на&nbsp;&lt;время&nbsp;записи&gt; в&nbsp;&lt;Название&nbsp;филиала&gt;'
       },
       ...(newVal && newVal.new_visit_client)
     })
     this.new_visit_manager = new Event({
       ...{
         title: 'Уведомлять менеджера филиала о новой онлайн-записи',
-        description: 'Шаблон рассылки: <br/> Новая онлайн запись к&nbsp;&lt;Мастер&gt; на&nbsp;&lt;Время&nbsp;записи&gt; в&nbsp;&lt;Название&nbsp;филиала&gt;',
         phone: null
       },
       ...(newVal && newVal.new_visit_manager)

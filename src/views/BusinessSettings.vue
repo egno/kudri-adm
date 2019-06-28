@@ -47,8 +47,8 @@
                   Настройте необходимые вам события рассылки уведомлений
                 </h3>
                 <div
-                  v-for="(event, i) in businessSettings.notifications.events"
-                  :key="i"
+                  v-for="(event, propName) in businessSettings.notifications.events"
+                  :key="propName"
                   class="settings__checkbox-block"
                 >
                   <v-switch
@@ -58,7 +58,12 @@
 
                   <div v-if="event.enabled" flat>
                     <div v-if="typeof event.phone !== 'undefined' || event.description">
-                      <div v-if="event.description" class="settings__description" v-html="event.description" />
+                      <div v-if="propName === 'new_visit_client'" class="settings__description">
+                        Шаблон рассылки: <br> Вы записаны на визит к&nbsp;&lt;Должность&nbsp;мастера&gt; &lt;Имя&nbsp;и&nbsp;Фамилия Мастера&gt; на&nbsp;&lt;время&nbsp;записи&gt; в&nbsp;&lt;Название&nbsp;филиала&gt;
+                      </div>
+                      <div v-else-if="propName === 'new_visit_manager'" class="settings__description">
+                        Шаблон рассылки: <br> Новая онлайн запись к&nbsp;&lt;Мастер&gt; на&nbsp;&lt;Время&nbsp;записи&gt; в&nbsp;&lt;Название&nbsp;филиала&gt;
+                      </div>
                       <v-flex v-if="typeof event.phone !== 'undefined'" sm6 class="phone-input">
                         <PhoneEdit
                           :phone="event.phone"
