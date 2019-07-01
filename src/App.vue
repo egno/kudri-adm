@@ -86,7 +86,7 @@ export default {
       handler: 'loadBusiness',
       deep: true
     },
-    actualDate: 'loadBusiness',
+    actualDate: 'loadVisits',
     loggedIn (newVal) {
       if (newVal) {
         this.loadMyBusinessList()
@@ -129,6 +129,8 @@ export default {
         return
       }
       this.setBusiness(this.businessId)
+    },
+    loadVisits () {
       if (!this.actualDate) return
       const month = this.actualDate.replace(/\d{2}$/, '01')
       this.loadDayVisits({
