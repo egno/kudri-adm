@@ -1,6 +1,6 @@
 <template>
   <div class="visit-log">
-    <Spinner v-if="isLoadingEmployees" />
+    <Spinner v-if="isLoadingEmployees || isLoading" />
     <v-progress-linear
       :active="isLoading"
       height="2"
