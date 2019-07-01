@@ -1,7 +1,7 @@
 <template>
   <div
     :class="['service-card', { '_not-hoverable': !hoverable, '_responsive': responsive, '_selected': isSelected }]"
-    :style="{ 'background-image': `url(/images/service_group/${image}` }"
+    :style="{ 'background-image': `url(${imagePath}service_group/${image}` }"
     @click="$emit('click')"
   >
     <div class="service-card__top">
@@ -60,6 +60,9 @@ export default {
   },
   computed: {
     ...mapGetters(['serviceGroups']),
+    imagePath () {
+      return  process.env.VUE_APP_IMAGES || '/images/'
+    },
     image () {
       const group = this.serviceGroups.find(
         gr => gr.name === this.service.j.group
