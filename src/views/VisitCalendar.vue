@@ -1,23 +1,25 @@
 <template>
   <div class="visit-log">
+    <Spinner v-if="isLoadingEmployees" />
     <v-progress-linear
       :active="isLoading"
       height="2"
       indeterminate
       color="#5699FF"
     />
-    <template v-if="!isLoading">
+    <template v-if="!isLoading && !isLoadingEmployees">
       <div v-show="!showMobileMenu">
         <div class="visit-log__header">
           <div class="header">
             <VLayout row align-center class="header__right">
-              <router-link
+              <button
+                type="button"
                 :disabled="selectedDateObj.dateKey === todayString"
                 class="calendar-controls__today"
-                :to="{ name: 'visitCalendar', params: { id: businessId, date: todayString } }"
+                @click="goDate(todayString)"
               >
                 Сегодня
-              </router-link>
+              </button>
               <div class="calendar-controls__toggle desktop">
                 <input id="day-mode" v-model="displayMode" type="radio" value="day">
                 <label for="day-mode">День</label>
@@ -36,8 +38,7 @@
             </VLayout>
             <div class="header__button">
               <MainButton
-                v-if="selectedEmployee"
-                :class="{ button_disabled: false }"
+                v-if="businessEmployees && businessEmployees.length && selectedEmployee"
                 class="button_attractive"
                 @click="createVisit()"
               >
@@ -76,13 +77,14 @@
                 </div>
               </div>
               <VLayout row align-center class="calendar-controls__right">
-                <router-link
+                <button
+                  type="button"
                   :disabled="selectedDateObj.dateKey === todayString"
                   class="calendar-controls__today"
-                  :to="{ name: 'visitCalendar', params: { id: businessId, date: todayString } }"
+                  @click="goDate(todayString)"
                 >
                   Сегодня
-                </router-link>
+                </button>
                 <div class="calendar-controls__toggle desktop">
                   <input id="day-mode" v-model="displayMode" type="radio" value="day">
                   <label for="day-mode">День</label>
@@ -210,7 +212,7 @@
         </div>
 
         <VLayout 
-          v-if="businessEmployees && !businessEmployees.length" 
+          v-if="!isLoadingEmployees && businessEmployees && !businessEmployees.length"
           class="visit-log__no-employees"
           align-center 
           justify-space-between 
@@ -218,12 +220,14 @@
           fill-height
         >
           <div>У вас нет ни одного мастера.</div>
-          <MainButton class="button_attractive" @click="$router.push({
-            name: 'employeeProfile',
-            params: { id: $route.params.id, employee: 'new' }
-          })"
+          <MainButton
+            class="button_attractive"
+            @click="$router.push({
+              name: 'employeeProfile',
+              params: { id: $route.params.id, employee: 'new' }
+            })"
           >
-            Создать мастера
+            <span>Создать мастера</span>
           </MainButton>
         </VLayout>
         
@@ -546,6 +550,7 @@ import EmployeeCard from '@/components/employee/EmployeeCard.vue'
 import BreakEdit from '@/components/calendar/BreakEdit.vue'
 import Modal from '@/components/common/Modal'
 import VisitEdit from '@/components/calendar/VisitEdit.vue'
+import Spinner from '@/components/common/Spinner.vue'
 import { Carousel, Slide } from 'vue-carousel'
 import { mapState, mapActions, mapGetters } from 'vuex'
 import { makeAlert } from '@/api/utils'
@@ -573,7 +578,9 @@ export default {
     CalendarDayColumn,
     VisitEdit,
     Carousel,
-    Slide },
+    Slide,
+    Spinner,
+  },
   mixins: [ calendarMixin, employeesCategorized ],
   data () {
     return {
@@ -606,7 +613,8 @@ export default {
   },
   computed: {
     ...mapState({
-      businessServices: state => state.business.businessServices
+      businessServices: state => state.business.businessServices,
+      isLoadingEmployees: state => state.business.isLoadingEmployees
     }),
     ...mapGetters(['businessSchedule', 'selectedBreak', 'selectedVisit', 'businessInfo']),
     groupedEmployees () {
@@ -992,8 +1000,25 @@ export default {
       }
     }
     &__no-employees {
-      padding: 12px 0;
+      padding: 12px;
       background-color: #fff;
+      @media only screen and (min-width : $desktop) {
+        padding: 12px 40px 12px 126px;
+      }
+
+      .button_attractive {
+        background: url('../assets/images/svg/plus-white.svg') no-repeat center/16px #ef4d37;
+        span {
+          display: none;
+        }
+        @media only screen and (min-width: $desktop) {
+          position: static;
+          background-image: none;
+          span {
+            display: inline;
+          }
+        }
+      }
     }
     &__info-item {
       font-size: 12px;
@@ -1061,6 +1086,7 @@ export default {
       border-bottom: 1px solid #f4f5f7;
       @media only screen and (min-width : $desktop) {
         display: flex;
+        min-height: 55px;
         padding: 0 40px 0 127px;
       }
       
@@ -1124,6 +1150,7 @@ export default {
         border-radius: 16px;
         color: #5699FF;
         text-decoration: none;
+        outline: none;
         @media only screen and (min-width : $tablet) {
           margin-right: 16px;
           padding: 0 35px;
@@ -1222,6 +1249,7 @@ export default {
         .v-menu__content {
           min-width: 100% !important;
           left: 0 !important;
+          top: 100% !important;
         }
       }
       &__number {
@@ -1237,14 +1265,19 @@ export default {
         }
       }
       &__dropdown {
-        padding: 20px 9px;
-        font-size: 13px;
-        color: #2D333B;
+        padding: 17px 0;
         background-color: #fff;
-        box-shadow: 0px 2px 8px rgba(137, 149, 175, 0.1);
+        box-shadow: 0 2px 8px rgba(137, 149, 175, 0.1);
         cursor: pointer;
         &>div {
+          padding: 3px 9px;
           text-align: center;
+          font-size: 13px;
+          font-weight: normal !important;
+          color: #07101C;
+          &:hover {
+            background: rgba(137, 149, 175, 0.2);
+          }
         }
       }
     }

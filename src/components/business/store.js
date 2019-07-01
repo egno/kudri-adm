@@ -18,6 +18,7 @@ const state = {
   dayVisits: [],
   businessEmployees: [],
   businessServices: [],
+  isLoadingEmployees: false
 }
 
 const getters = {
@@ -84,6 +85,9 @@ const mutations = {
   },
   SET_BUSINESS_EMPLOYEES (state, payload) {
     state.businessEmployees = payload
+  },
+  SET_LOADING_EMPLOYEES (state, payload) {
+    state.isLoadingEmployees = payload
   }
 }
 
@@ -159,6 +163,7 @@ const actions = {
 
     const path = `employee?parent=eq.${branchId}`
 
+    commit('SET_LOADING_EMPLOYEES', true)
     Api()
       .get(path)
       .then(res => res.data)
@@ -166,6 +171,9 @@ const actions = {
         commit('SET_BUSINESS_EMPLOYEES', sortBy(res, e => e.j.name ))
       })
       .catch(err => commit('ADD_ALERT', makeAlert(err)))
+      .finally(() => {
+        commit('SET_LOADING_EMPLOYEES', false)
+      })
   }
 }
 
