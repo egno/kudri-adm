@@ -71,7 +71,7 @@
               </ul>
             </template>
           </Accordion>-->
-          <Accordion class="critical">
+          <!--<Accordion class="critical">
             <template slot="heading">
               Критическое обновление
             </template>
@@ -109,7 +109,7 @@
             </template>
           </Accordion>
 
-          <Accordion class="visit-log">
+          <Accordion class="visit-calendar">
             <template slot="heading">
               Журнал записи
             </template>
@@ -175,6 +175,81 @@
                 </li>
               </ul>
             </template>
+          </Accordion>-->
+
+          <Accordion class="critical">
+            <template slot="heading">
+              Критическое обновление
+            </template>
+            <template slot="content">
+              <ul>
+                <li class="update-item">
+                  <p>
+                    Добавлено автоматическое создание пользователя “Администратор компании”  по регистрационным данным.
+                    Теперь, зарегистрировав свой бизнес, Вы автоматически становитесь администратором всей компании и Вам не нужно заполнять дополнительную информацию.
+                  </p>
+                </li>
+                <li class="update-item">
+                  <p>
+                    Добавлено автоматическое заполнение первого филиала компании. Теперь, после заполнения информации о компании,
+                    данные автоматически переносятся в первый филиал, и Вам не нужно заполнять информацию повторно.
+                  </p>
+                </li>
+                <li class="update-item">
+                  <p>
+                    Удалена дополнительная проверка согласия с договором оферты при смене пароля.
+                  </p>
+                </li>
+              </ul>
+            </template>
+          </Accordion>
+
+          <Accordion class="visit-calendar">
+            <template slot="heading">
+              Журнал записи
+            </template>
+            <template slot="content">
+              <ul>
+                <li class="update-item">
+                  <p>
+                    Добавлено автоматическое пролистывание журнала записи до текущего времени.
+                    Теперь, заходя в журнал записи, Вы будете видеть ближайшие записи, и Вам не придется пролистывать ленту в поисках нужного времени.
+                  </p>
+                </li>
+
+                <li class="update-item">
+                  <p>
+                    Добавлено изменение мастера, отображаемого в журнале в режиме “Неделя”, через стрелки навигации.
+                    Для более быстрого просмотра журнала на неделю, вы можете выбирать сотрудников пролистыванием.
+                  </p>
+                </li>
+              </ul>
+            </template>
+          </Accordion>
+
+          <Accordion class="visual">
+            <template slot="heading">
+              Визуал
+            </template>
+            <template slot="content">
+              <ul>
+                <li>
+                  <p>
+                    Изменено выделение сегодняшнего дня в журнале записи.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    Изменено выделение выбранной даты в журнале записи.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    Изменен цвет шрифта для дат будущего и прошлого месяца для мобильных устройств в журнале записи.
+                  </p>
+                </li>
+              </ul>
+            </template>
           </Accordion>
         </div>
       </div>
@@ -200,7 +275,7 @@
             date: '24.06.2019',
             items: [
               { class: 'critical', color: '#EF4D37', active: true },
-              { class: 'visit-log', color: '#5699FF', active: true },
+              { class: 'visit-calendar', color: '#5699FF', active: true },
               { class: 'visual', color: '#5BCD5E', active: true },
               { class: 'additional', color: '#07101C', active: false },
               { class: 'stats', color: '#C9A15D', active: false },
@@ -211,7 +286,7 @@
             date: '17.06.2019',
             items: [
               { class: 'critical', color: '#EF4D37', active: true },
-              { class: 'visit-log', color: '#5699FF', active: false },
+              { class: 'visit-calendar', color: '#5699FF', active: false },
               { class: 'visual', color: '#5BCD5E', active: true },
               { class: 'additional', color: '#07101C', active: false },
               { class: 'stats', color: '#C9A15D', active: false },
@@ -236,7 +311,7 @@
   $indicators: (
     critical: #EF4D37,
     visual: #5BCD5E,
-    visit-log: #5699FF,
+    visit-calendar: #5699FF,
     additional: #07101C,
     stats: #C9A15D
   );
@@ -280,7 +355,7 @@
         }
       }
 
-      &.visit-log {
+      &.visit-calendar {
         .accordion__header {
           background: #5699FF;
         }
