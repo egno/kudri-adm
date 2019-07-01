@@ -99,6 +99,7 @@
                 v-for="(day, di) in week"
                 :key="di"
                 xs2
+                justify-center
               >
                 <CalendarDayBtn
                   v-if="kind === 'mini'"
@@ -227,7 +228,7 @@ export default {
   position: relative;
   display: flex;
   align-items: center;
-  padding: 0 38px 0 39px;
+  padding: 0 37px 0 39px;
   background: url('../../assets/images/svg/calendar.svg') 199px center no-repeat, linear-gradient(270deg, #c9a15d -9.86%, #ba9462 103.49%);
   height: 40px;
   cursor: pointer;
@@ -255,7 +256,7 @@ export default {
   margin-bottom: 24px;
 }
 .calendar-container {
-  padding: 4px 40px 4px 36px;
+  padding: 4px 38px 4px 36px;
 }
 .cal-month {
   width: 160px;
@@ -265,6 +266,7 @@ export default {
   font-size: 18px;
   text-transform: capitalize;
   color: #fff;
+  white-space: nowrap;
 }
 .cal-next-prev {
   position: relative;
