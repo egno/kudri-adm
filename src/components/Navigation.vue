@@ -283,7 +283,7 @@ export default {
           },
           show: this.hasSalonLevelAccess && this.hasName && !this.isManagerMenu,
           action: {
-            label: 'Добавить запись',
+            label: 'Создать запись',
             action: 'newVisit',
             default: true
           }
@@ -346,11 +346,6 @@ export default {
     currentToken: 'onNewToken',
     isBusinessCard: 'checkUserInfo',
     userLoadingState: 'checkUserInfo',
-    '$route.params': {
-      handler: 'loadBusiness',
-      deep: true
-    },
-    actualDate: 'loadBusiness',
     businessInfo: {
       handler: 'getFilialsCount',
       deep: true
@@ -383,18 +378,6 @@ export default {
         ) {
           this.$router.push({ name: 'login' })
         }
-      })
-    },
-    loadBusiness () {
-      if (!this.businessId || this.businessId === 'new') {
-        return
-      }
-      this.setBusiness(this.businessId)
-      if (!this.actualDate) return
-      const month = this.actualDate.replace(/\d{2}$/, '01')
-      this.loadDayVisits({
-        business: this.businessId,
-        month: month
       })
     },
     getFilialsCount () {

@@ -1,20 +1,29 @@
-import { mapGetters, mapActions } from 'vuex'
+import Api from '@/api/backend'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 import { formatDate, getWeeks, monthDisplay } from '@/components/calendar/utils'
+import Visit from '@/classes/visit'
 
 export default {
   data () {
     return {
-      dates: []
+      activeSlide: 0,
+      isLoading: false,
+      visits: [],
     }
   },
   computed: {
-    ...mapGetters(['actualDate', 'businessId']),
+    ...mapGetters(['actualDate', 'businessId', 'calendarMonth']),
     dateMonthHeader () {
       const d = new Date(this.selectedDate)
       return monthDisplay(d)
     },
     selectedDate () {
-      return this.$route.params.date || this.actualDate
+      return this.actualDate || this.$route.params.date
+    },
+    selectedWeek () {
+      if (!this.selectedDate) return []
+
+      return this.getWeek()
     },
     workMonth () {
       return +this.selectedDate.slice(5, 7) - 1
@@ -27,6 +36,7 @@ export default {
     this.setDates()
   },
   methods: {
+    ...mapMutations(['SET_CALENDAR_MONTH']),
     ...mapActions(['setActualDate']),
     addMonth (i) {
       let dt = new Date(this.actualDate)
@@ -49,6 +59,32 @@ export default {
           x.j.duration = (ts2.getTime() - ts1.getTime()) / 60000
           return x
         })
+    },
+    fetchData () {
+      if (!this.$route || !this.$route.params || !this.$route.params.id) return
+
+      if (!this.selectedWeek) return
+
+      const sunday = this.selectedWeek[6]
+      const nextMonday = new Date(sunday.date)
+      nextMonday.setDate(sunday.date.getDate() + 1)
+      this.isLoading = true
+      Api()
+        .get(`/visit?salon_id=eq.${this.$route.params.id}&ts_begin=gt.${this.selectedWeek[0].dateKey}&ts_begin=lt.${formatDate(nextMonday)}`)
+        .then(({ data }) => {
+          this.visits = data.map(v => new Visit(v))
+        })
+        .finally(() => {
+          this.isLoading = false
+        })
+    },
+    getWeek () {
+      const includesDay = day => day.dateKey === this.selectedDate
+
+      // todo make a separate method for changing active slide
+      this.activeSlide = this.calendarMonth.findIndex(week => week.some(includesDay))
+
+      return this.calendarMonth[this.activeSlide]
     },
     isHoliday (dt, employee) {
       if (!dt || !this.selectedWeek) {
@@ -76,18 +112,14 @@ export default {
       return this.irregularDays.find(d => d.date === dt && d.employeeId === employee.id)
     },
     goDate (dt) {
-      // this.setActualDate(dt)
-      this.$router.push({
-        name: 'visitCalendar',
-        params: { id: this.businessId, date: dt }
-      })
+      this.setActualDate(dt)
     },
     setDates () {
-      this.dates = getWeeks(this.workYear, this.workMonth)
+      this.SET_CALENDAR_MONTH(getWeeks(this.workYear, this.workMonth))
       if (this.period === 'week') {
-        this.dates = this.dates.filter(w =>
+        this.SET_CALENDAR_MONTH(this.calendarMonth.filter(w =>
           w.some(d => d.dateKey === this.selectedDate)
-        )
+        ))
       }
     },
   }

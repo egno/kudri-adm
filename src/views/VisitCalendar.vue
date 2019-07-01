@@ -100,7 +100,10 @@
                 </v-btn>
               </VLayout>
             </VLayout>
+
+            <!-- desktop block with dates and change week buttons -->
             <VLayout>
+              <!-- desktop change week buttons block goes below -->
               <div class="visit-log__controls">
                 <v-btn
                   class="visit-log__controls-button"
@@ -178,10 +181,11 @@
                 </template>
               </VLayout>
               <div v-if="displayMode === 'week'" class="visit-log__week-spacer" />
-            </VLayout>
-            <div v-if="dates.length" class="calendar-controls__dates-container mobile">
+            </VLayout><!-- end of desktop block with dates and change week buttons -->
+
+            <div v-if="calendarMonth.length" class="calendar-controls__dates-container mobile">
               <carousel :key="selectedDate" :pagination-enabled="false" :min-swipe-distance="25" :per-page="1" :navigate-to="activeSlide">
-                <slide v-for="(week, weekIndex) in dates" :key="weekIndex">
+                <slide v-for="(week, weekIndex) in calendarMonth" :key="weekIndex">
                   <VLayout row justify-space-between class="calendar-controls__days">
                     <div
                       v-for="(day, dayIndex) in week"
@@ -542,7 +546,6 @@ import EmployeeCard from '@/components/employee/EmployeeCard.vue'
 import BreakEdit from '@/components/calendar/BreakEdit.vue'
 import Modal from '@/components/common/Modal'
 import VisitEdit from '@/components/calendar/VisitEdit.vue'
-import Visit from '@/classes/visit'
 import { Carousel, Slide } from 'vue-carousel'
 import { mapState, mapActions, mapGetters } from 'vuex'
 import { makeAlert } from '@/api/utils'
@@ -574,20 +577,18 @@ export default {
   mixins: [ calendarMixin, employeesCategorized ],
   data () {
     return {
-      activeSlide: 0,
       currentBreak: undefined,
       currentVisit: undefined,
       displayMode: 'day', /* day or week */
       dow: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
       edit: false,
       editVisitPage: undefined,
-      isLoading: false,
       now: new Date(),
       selectedEmployee: {},
       visibleEmployees: [],
       notifyHasVisits: false,
       formActions: [
-        { label: 'Добавить запись', action: 'newVisit', default: true }
+        { label: 'Создать запись', action: 'newVisit', default: true }
       ],
       showEditBreak: false,
       showDateMenu: [false, false, false, false, false, false, false],
@@ -600,7 +601,6 @@ export default {
         time: ''
       },
       timerId: null,
-      visits: [],
       irregularDays: []
     }
   },
@@ -637,11 +637,6 @@ export default {
     },
     selectedDateObj () {
       return hyphenStrToDay(this.selectedDate)
-    },
-    selectedWeek () {
-      if (!this.selectedDate) return []
-
-      return this.getWeek()
     },
     displayTimes () {
       const selectedEmployeeSchedule = this.selectedEmployee.j.schedule.data
@@ -720,6 +715,7 @@ export default {
     this.initEmployee()
     // TODO проверить, не утекает ли память
     this.fetchData()
+    this.setActions(this.formActions)
     this.$root.$on('onAction', this.onAction)
     this.timerId = setInterval(this.updateStatus, 60 * 1000)
   },
@@ -728,7 +724,7 @@ export default {
     clearInterval(this.timerId)
   },
   methods: {
-    ...mapActions(['alert', 'setActions', 'setBusiness', 'selectBreak', 'selectVisit']),
+    ...mapActions(['alert', 'setActions', 'selectBreak', 'selectVisit']),
     addNotesToBreak (payload) {
       this.currentBreak.j.notes = payload
     },
@@ -756,7 +752,6 @@ export default {
 
       dt.setDate(dt.getDate() + 7*vector)
       this.goDate(formatDate(dt))
-      this.setDates()
     },
     closeModal () {
       this.showSuccessModal = false
@@ -795,25 +790,6 @@ export default {
 
       this.selectVisit(visit)
     },
-    fetchData () {
-      if (!this.$route || !this.$route.params || !this.$route.params.id) return
-      this.setActions(this.formActions)
-
-      if (!this.selectedWeek) return
-
-      const sunday = this.selectedWeek[6]
-      const nextMonday = new Date(sunday.date)
-      nextMonday.setDate(sunday.date.getDate() + 1)
-      this.isLoading = true
-      Api()
-        .get(`/visit?salon_id=eq.${this.$route.params.id}&ts_begin=gt.${this.selectedWeek[0].dateKey}&ts_begin=lt.${formatDate(nextMonday)}`)
-        .then(({ data }) => {
-          this.visits = data.map(v => new Visit(v))
-        })
-        .finally(() => {
-          this.isLoading = false
-        })
-    },
     getIrregularDays () {
       if (!this.selectedEmployee || !this.selectedEmployee.id || !this.selectedWeek) {
         return
@@ -827,13 +803,6 @@ export default {
         .then(({ data }) => {
           this.irregularDays = data.map(x => ({ date: x.dt, schedule: x.j.schedule, employeeId: x.business_id }))
         })
-    },
-    getWeek () {
-      const includesDay = day => day.dateKey === this.selectedDate
-
-      this.activeSlide = this.dates.findIndex(week => week.some(includesDay))
-
-      return this.dates[this.activeSlide]
     },
     initEmployee () {
       if (!this.businessEmployees || !this.businessEmployees.length ||

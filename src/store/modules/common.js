@@ -17,6 +17,7 @@ const state = {
   appTitle: '',
 
   calendar: [],
+  calendarMonth: [],
   defaultAppTitle: 'UNO',
 
   messageWindow: false,
@@ -33,6 +34,7 @@ const state = {
 const getters = {
   actions: state => state.actions,
   actualDate: state => state.actualDate,
+  calendarMonth: state => state.calendarMonth,
   apiTime: state => state.apiTime,
   apiTimeZone: state => {
     if (!state.apiTime) {
@@ -97,6 +99,9 @@ const mutations = {
   },
   SET_ACTUAL_DATE (state, payload) {
     state.actualDate = payload
+  },
+  SET_CALENDAR_MONTH (state, payload) {
+    state.calendarMonth = payload
   },
   SET_API_TIME (state, payload) {
     state.apiTime = payload
@@ -165,6 +170,8 @@ const actions = {
       const dt = new Date()
       payload = formatDate(dt)
     }
+
+    /* if another year or month */
     if (
       state.actualDate.slice(0, 7) !== payload.slice(0, 7) ||
       Object.keys(state.calendar).length === 0
