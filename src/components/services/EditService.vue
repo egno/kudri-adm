@@ -1,6 +1,6 @@
 <template>
   <v-dialog :value="visible" :content-class="`right-attached-panel ${create? 'create': 'edit'}`" persistent transition="slide" @input="onClose">
-    <VForm ref="form" :value="!saveDisabled" class="right-attached-panel__container" @input="$event && (error = '')">
+    <VForm ref="form" :value="!saveDisabled" class="right-attached-panel__container" @input="onFormInput">
       <button type="button" class="right-attached-panel__close" @click="onClose" />
       <div class="right-attached-panel__content">
         <div class="right-attached-panel__header">
@@ -11,10 +11,12 @@
           <SearchSelect
             :searching-value="name"
             :options="suggestedServiceNames"
+            :error="nameHasError"
             :required="true"
             :max-length="150"
             label="НАЗВАНИЕ УСЛУГИ"
             attach=".right-attached-panel__field-block._select"
+            @blur="onNameInputBlur"
             @input="onInputName"
             @select="name = $event"
             @error="error = $event"
@@ -189,6 +191,7 @@
       return {
         companyServices: [],
         name: '',
+        nameHasError: false,
         group: '',
         sex: [],
         price: '',
@@ -332,12 +335,28 @@
       },
       onInputName (val) {
         this.error = ''
+        this.nameHasError = false
         this.sliceByLength('name', 150, val)
         if (this.name.length < 2) {
           return
         }
 
         this.debouncedGetServices()
+      },
+      onNameInputBlur (event) {
+        const newName = event.target.value.toLowerCase()
+        const branchServices = this.businessServices.map(s => s.j.name.toLowerCase())
+
+        if (branchServices.includes(newName)) {
+          this.error = 'Услуга с таким названием уже существует'
+          this.nameHasError = true
+        }
+      },
+      onFormInput (valid) {
+        if (valid) {
+          this.error = ''
+          this.nameHasError = false
+        }
       },
       onSave () {
         this.$emit('save', this.prepareNewService())

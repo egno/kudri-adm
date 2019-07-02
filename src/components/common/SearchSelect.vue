@@ -8,8 +8,9 @@
       :maxlength="maxLength"
       class="dropdown-select"
       :attach="attach"
+      :error="error"
       @input.native="onInput"
-      @blur="visible = false; required && !searchingValue && $emit('error', 'Необходимо заполнить все обязательные поля')"
+      @blur="onBlur"
     />
     <div v-if="visible && filteredOptions && filteredOptions.length" class="custom-select__dropdown">
       <div
@@ -56,6 +57,10 @@
       attach: {
         type: String,
         default: ''
+      },
+      error: {
+        type: Boolean,
+        default: false
       }
     },
     data () {
@@ -78,6 +83,13 @@
       }
     },
     methods: {
+      onBlur (event) {
+        this.visible = false
+        if (this.required && !this.searchingValue) {
+          this.$emit('error', 'Необходимо заполнить все обязательные поля')
+        }
+        this.$emit('blur', event)
+      },
       onInput (e) {
         this.visible = true
         this.$emit('input',  e.target.value)
