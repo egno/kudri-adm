@@ -271,7 +271,7 @@
       return {
         news: [
           {
-            version: '1.0.7',
+            version: '1.0.6',
             date: '01.07.2019',
             items: [
               { class: 'critical', color: '#EF4D37', active: true },
