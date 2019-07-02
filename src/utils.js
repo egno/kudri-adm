@@ -1,4 +1,4 @@
-const businessCards = [
+export const businessCards = [
   'businessCard',
   'businessCardClient',
   'businessClientsTable',

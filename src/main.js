@@ -4,6 +4,7 @@ import Meta from 'vue-meta'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import VueYandexMetrika from 'vue-yandex-metrika'
 import './registerServiceWorker'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import 'roboto-fontface/css/roboto-slab/roboto-slab-fontface.css'
@@ -13,8 +14,19 @@ import '@mdi/font/css/materialdesignicons.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import vueSmoothScroll from 'vue2-smooth-scroll'
 
+import { businessCards } from './utils'
+
 Vue.config.productionTip = false
 Vue.use(Meta)
+
+Vue.use(VueYandexMetrika, {
+  id: process.env.VUE_APP_YANDEX_ID,
+  router: router,
+  env: process.env.NODE_ENV,
+  debug: true,
+  ignoreRoutes: businessCards,
+  options: { clickmap: true, trackLinks: true, accurateTrackBounce: true, webvisor: true }
+})
 
 Vue.use(vueSmoothScroll)
 Vue.filter('phoneFormat', function (value) {
