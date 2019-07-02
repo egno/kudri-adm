@@ -271,6 +271,17 @@
       return {
         news: [
           {
+            version: '1.0.7',
+            date: '01.07.2019',
+            items: [
+              { class: 'critical', color: '#EF4D37', active: true },
+              { class: 'visit-calendar', color: '#5699FF', active: true },
+              { class: 'visual', color: '#5BCD5E', active: true },
+              { class: 'additional', color: '#07101C', active: false },
+              { class: 'stats', color: '#C9A15D', active: false },
+            ]
+          },
+          {
             version: '1.0.5',
             date: '24.06.2019',
             items: [
