@@ -14,8 +14,6 @@ import '@mdi/font/css/materialdesignicons.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import vueSmoothScroll from 'vue2-smooth-scroll'
 
-import { businessCards } from './utils'
-
 Vue.config.productionTip = false
 Vue.use(Meta)
 
@@ -24,7 +22,7 @@ Vue.use(VueYandexMetrika, {
   router: router,
   env: process.env.NODE_ENV,
   debug: true,
-  ignoreRoutes: businessCards,
+  scriptSrc: 'https://mc.yandex.ru/metrika/tag.js',
   options: { clickmap: true, trackLinks: true, accurateTrackBounce: true, webvisor: true }
 })
 
