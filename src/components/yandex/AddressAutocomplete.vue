@@ -17,6 +17,7 @@
         :prepend-icon="prependIcon"
         :rules="[rules.found]"
         :search-input.sync="search"
+        :maxlength="200"
         attach=".address .dropdown-select"
         class="businesscard-form__field dropdown-select"
         @blur="edited = true"
