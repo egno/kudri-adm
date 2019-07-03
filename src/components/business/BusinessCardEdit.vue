@@ -72,6 +72,7 @@
             <VTextField
               v-model="data.j.office"
               label="Офис"
+              maxlength="20"
               class="businesscard-form__field"
               @change="$emit('formChange')"
             />
