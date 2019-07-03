@@ -441,8 +441,7 @@
     }
 
     .VueCarousel-navigation-button {
-      position: static;
-      transform: none;
+      position: static !important;
       width: 24px;
       height: 24px;
       margin: 0 5px !important;
@@ -453,11 +452,11 @@
     }
 
     .VueCarousel-navigation-prev {
-      transform: rotate(90deg);
+      transform: rotate(90deg) !important;
     }
 
     .VueCarousel-navigation-next {
-      transform: rotate(-90deg);
+      transform: rotate(-90deg) !important;
     }
 
     .accordion {
