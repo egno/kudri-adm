@@ -447,7 +447,7 @@
       margin: 0 5px !important;
       outline: none !important;
       background: url('../../assets/images/svg/down.svg') center no-repeat;
-      border: 1px solid #07101C;
+      border: 1px solid #07101C !important;
       border-radius: 50%;
     }
 
