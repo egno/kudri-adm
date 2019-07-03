@@ -34,7 +34,7 @@
       cursor: pointer;
       background: rgba(137, 149, 175, 0.1);
       font-family: Lato, sans-serif;
-      font-weight: bold;
+      font-weight: 900;
       font-size: 14px;
       border-bottom: 1px solid transparent;
 

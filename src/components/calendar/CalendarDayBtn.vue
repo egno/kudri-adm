@@ -119,7 +119,7 @@ export default {
       &.v-btn--outline {
         background: #fff !important;
         color: #142941;
-        font-weight: bold;
+        font-weight: 900;
         &.badge {
           &:after {
             top: 20px;

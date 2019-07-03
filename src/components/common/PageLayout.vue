@@ -143,7 +143,7 @@
       padding: 0 5px;
       font-family: $lato;
       font-style: normal;
-      font-weight: bold;
+      font-weight: 900;
       font-size: 16px;
       line-height: normal;
       color: #07101C;

@@ -425,7 +425,7 @@ export default {
       margin-bottom: 10px;
       font-family: $roboto;
       font-style: normal;
-      font-weight: bold;
+      font-weight: 900;
       font-size: 18px;
       text-align: center;
       letter-spacing: 0.05em;

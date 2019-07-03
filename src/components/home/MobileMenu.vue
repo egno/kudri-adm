@@ -64,7 +64,7 @@ export default {
         margin-left: 10px;
         transition: width 0.3s;
         overflow: hidden;
-        font-weight: bold;
+        font-weight: 900;
         font-size: 14px;
         @media only screen and (min-width : 414px) {
           font-size: 16px;

@@ -152,7 +152,7 @@ export default {
     }
     &__master {
       margin-top: 7px;
-      font-weight: bold;
+      font-weight: 900;
       text-transform: capitalize;
     }
     

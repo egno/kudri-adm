@@ -156,7 +156,7 @@ export default {
       }
 
       a {
-        font-weight: bold;
+        font-weight: 900;
         font-size: 16px;
         text-decoration: none;
         &:hover {

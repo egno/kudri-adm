@@ -1229,7 +1229,7 @@ export default {
           }
           * {
             color: #fff;
-            font-weight: bold;
+            font-weight: 900;
             @media only screen and (min-width : $desktop) {
               color: #5699FF;
             }
@@ -1240,7 +1240,7 @@ export default {
           border-radius: 4px;
           * {
             color: #07101C;
-            font-weight: bold;
+            font-weight: 900;
           }
         }
         &.out {
@@ -1258,7 +1258,7 @@ export default {
       }
       &__dow {
         margin-top: 9px;
-        font-weight: bold;
+        font-weight: 900;
         text-transform: capitalize;
         @media only screen and (min-width : $desktop) {
           font-weight: normal;
@@ -1419,7 +1419,7 @@ export default {
         }
       }
       &__title {
-        font-weight: bold;
+        font-weight: 900;
         font-size: 16px;
         color: #07101C;
         text-transform: capitalize;
