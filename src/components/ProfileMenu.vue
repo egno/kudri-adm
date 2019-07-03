@@ -258,7 +258,7 @@ export default {
     border: 1px solid #ef4d37;
   }
   ._bold {
-    font-weight: bold;
+    font-weight: 900;
   }
 }
 .profile-expand-more {

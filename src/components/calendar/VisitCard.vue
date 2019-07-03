@@ -220,7 +220,7 @@ export default {
   }
   &__name {
     margin-top: 7px;
-    font-weight: bold;
+    font-weight: 900;
     font-size: 14px;
     text-transform: capitalize;
   }

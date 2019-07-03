@@ -266,7 +266,7 @@
       margin-top: 25px;
       margin-bottom: 16px;
       font-size: 16px;
-      font-weight: bold;
+      font-weight: 900;
       text-align: center;
     }
     &__content {

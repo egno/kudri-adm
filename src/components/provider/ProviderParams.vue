@@ -85,7 +85,7 @@ export default {
 <style scoped>
 .styled-button {
   font-family: Roboto Slab, Times New Roman, Times, serif;
-  font-weight: bold;
+  font-weight: 900;
   letter-spacing: 0.05em;
 }
 </style>

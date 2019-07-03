@@ -194,7 +194,7 @@ export default {
     }
     &__title {
       margin: 0 auto;
-      font-weight: bold;
+      font-weight: 900;
       font-size: 16px;
       color: #07101C;
       @media only screen and (min-width : $tablet) {

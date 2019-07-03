@@ -124,7 +124,7 @@ export default {
   }
   &__title {
     margin-bottom: 10px;
-    font-weight: bold;
+    font-weight: 900;
     font-size: 18px;
     color: #07101c;
     text-transform: capitalize;

@@ -673,10 +673,10 @@ export default {
       left: 0;
       width: 210px;
       height: 88px;
-      font-weight: bold;
+      font-weight: 900;
     }
     &__receiver-phone {
-      font-weight: bold;
+      font-weight: 900;
     }
     &__receiver-operator {
       margin-top: 5px;

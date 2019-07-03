@@ -117,7 +117,7 @@ export default {
     }
 
     &__title {
-      font-weight: bold;
+      font-weight: 900;
       font-size: 18px;
       color: #07101C;
       overflow: hidden;
