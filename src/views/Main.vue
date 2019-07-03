@@ -321,7 +321,7 @@ export default {
       text-decoration: none;
       text-align: center;
       font-size: 16px;
-      font-weight: 400;
+      font-weight: 900;
       transition: background-color 0.6s 0s;
       @media only screen and (min-width : $tablet) {
         max-width: 447px;

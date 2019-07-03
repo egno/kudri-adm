@@ -123,13 +123,13 @@ export default {
     &__subtitle-text {
       padding: 1px 4px !important;
       color: #8995AF;
-      font: 14px Lato, sans-serif;
+      font: 14px $lato;
     }
 
     &__title-text {
       padding: 1px 4px !important;
       color: #07101C;
-      font: 700 16px Lato, sans-serif;
+      font: 700 16px $lato, sans-serif;
     }
 
     &__bottom {

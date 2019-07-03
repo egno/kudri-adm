@@ -413,7 +413,7 @@ export default {
 
     &__city {
       padding-right: 11px;
-      font-family: Roboto Slab, serif;
+      font-family: $roboto;
       font-style: normal;
       font-weight: normal;
       font-size: 18px;
@@ -422,7 +422,7 @@ export default {
 
     &__count {
       padding-left: 11px;
-      font-family: Lato, sans-serif;
+      font-family: $lato;
       font-style: normal;
       font-weight: normal;
       font-size: 14px;

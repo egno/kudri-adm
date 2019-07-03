@@ -196,7 +196,7 @@
       @media only screen and (min-width : $tablet) {
         display: inline;
         margin-left: 10px;
-        font-weight: 700;
+        font-weight: 900;
       }
     }
     &__icon {
@@ -227,10 +227,6 @@
             color: #fff;
             .home-header__icon {
               background-image: url('../../assets/images/svg/user_white.svg');
-            }
-            .home-header__tablet-text {
-              font-weight: 500;
-              letter-spacing: 0.005em;
             }
             &:hover {
               background-color: #07101C;
@@ -273,7 +269,7 @@
 
     a {
       text-decoration: none;
-      font-weight: 700;
+      font-weight: 900;
       font-size: 16px;   
       color: #07101C;
     }

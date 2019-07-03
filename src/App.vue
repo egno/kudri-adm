@@ -154,7 +154,13 @@ export default {
 </script>
 
 <style lang="scss">
+@import '~lato-font/scss/_public-api.scss';
+$lato-font-path: '~lato-font/fonts';
+@include lato-include-font('normal');
+@include lato-include-font('bold');
+
 @import './assets/styles/common';
+
 #amoforms_action_btn {
   display: none !important; 
 }
@@ -183,7 +189,7 @@ export default {
     padding-left: 32px;
     background: url('assets/images/svg/search.svg') no-repeat left 0px center;
     background-size: 24px;
-    font-family: Lato;
+    font-family: $lato;
     font-style: normal;
     font-weight: 300;
     line-height: normal;

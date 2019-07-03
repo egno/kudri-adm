@@ -605,7 +605,7 @@ export default {
       text-align: left;
       background: rgba(137, 149, 175, 0.1);
       color: #8995AF;
-      font-family: Lato, sans-serif;
+      font-family: $lato;
       font-style: normal;
       font-weight: normal;
       font-size: 14px;
