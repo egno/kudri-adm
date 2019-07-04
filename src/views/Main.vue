@@ -503,7 +503,10 @@ export default {
         }
       }
       &__heading {
-        margin: 33px 0 22px;
+        margin: 70px 0 22px;
+        @media only screen and (min-width : $desktop) {
+          margin-top: 33px;
+        }
       }
       &__quote {
         width: 90%;

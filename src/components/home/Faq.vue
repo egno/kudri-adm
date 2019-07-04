@@ -158,6 +158,9 @@
 <style lang="scss">
   @import '../../assets/styles/home-section';
   .faq {
+    .main-page__heading {
+      margin-bottom: 30px;
+    }
     .accordion._expanded .accordion__header {
       border-bottom-color: #BA9462;
     }
