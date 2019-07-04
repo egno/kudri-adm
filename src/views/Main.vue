@@ -385,6 +385,7 @@ export default {
     
     .target-audience {
       padding: 0 6px;
+      margin-top: 80px;
       @media only screen and (min-width : $tablet) {
         margin-top: 55px;
       }
