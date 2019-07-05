@@ -35,30 +35,18 @@
       </div>
     </div>
 
-    <div v-if="editMode" class="businesscard-tabs__tab-wrapper">
-      <div class="businesscard-tabs__tab">
-        <div class="businesscard-tabs__tab-header" :class="{_active: infoTab}" @click="infoTab = !infoTab">
-          Информация
-        </div>
-        <div class="businesscard-tabs__tab-header" :class="{_active: !infoTab}" @click="infoTab = !infoTab">
-          Режим работы
-        </div>
-      </div>
-    </div>
-    <VLayout class="businesscard-tabs__content">
-      <BusinessCardEdit
-        v-if="editMode"
-        :business-info="businessInfo"
-        :current-tab="infoTab? 'infoTab' : 'scheduleTab'"
-        @tabChange="infoTab=!infoTab"
-        @saved="editMode=false"
-      />
-      <BusinessCard
-        v-else
-        :business-info="businessInfo"
-        @onEditClick="editMode=true"
-      />
-    </VLayout>
+    <BusinessCardEdit
+      v-if="editMode"
+      :business-info="businessInfo"
+      :current-tab="infoTab? 'infoTab' : 'scheduleTab'"
+      @tabChange="onTabChange"
+      @saved="editMode=false"
+    />
+    <BusinessCard
+      v-else
+      :business-info="businessInfo"
+      @onEditClick="editMode=true"
+    />
   </div>
 </template>
 
@@ -66,16 +54,19 @@
 import BusinessCard from '@/components/business/BusinessCard.vue'
 import BusinessCardEdit from '@/components/business/BusinessCardEdit.vue'
 import { mapActions, mapGetters } from 'vuex'
+import { filials} from "../components/business/mixins"
 
 export default {
   components: {
     BusinessCard: BusinessCard,
     BusinessCardEdit: BusinessCardEdit
   },
+  mixins: [filials],
   data () {
     return {
       editMode: false,
-      infoTab: true
+      infoTab: true,
+      newBusinessInfo: {}
     }
   },
   computed: {

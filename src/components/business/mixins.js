@@ -176,6 +176,20 @@ export const scheduleMixin = {
 
 export const filials = {
   methods: {
+    onTabChange (newBusinessInfo) {
+      if (!this.infoTab) {
+        this.infoTab = true
+        return
+      }
+
+      if (newBusinessInfo.name
+        && newBusinessInfo.j.address && newBusinessInfo.j.address.name
+        && newBusinessInfo.j.phones && newBusinessInfo.j.phones.length && newBusinessInfo.j.phones.some(p => p.length >= 10)
+        && (!newBusinessInfo.parent || newBusinessInfo.j.category)
+      ) {
+        this.infoTab = false
+      }
+    },
     getFilialsOf (id) {
       if (!id) return []
       return Api()

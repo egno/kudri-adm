@@ -1,25 +1,13 @@
 <template>
   <BranchesLayout :is-creating="!businessIsFilial && isCreating" :is-button-visible="!businessIsFilial" @add="createBranch('newFilial')" @close="onClose">
     <template v-if="!businessIsFilial && isCreating" slot="content">
-      <div class="businesscard-tabs__tab-wrapper">
-        <div class="businesscard-tabs__tab">
-          <div class="businesscard-tabs__tab-header" :class="{_active: infoTab}" @click="infoTab = !infoTab">
-            Информация
-          </div>
-          <div class="businesscard-tabs__tab-header" :class="{_active: !infoTab}" @click="infoTab = !infoTab">
-            Режим работы
-          </div>
-        </div>
-      </div>
-      <VLayout class="businesscard-tabs__content">
-        <BusinessCardEdit
-          :business-info="newBranch"
-          :current-tab="infoTab? 'infoTab' : 'scheduleTab'"
-          @tabChange="infoTab=!infoTab"
-          @saved="onSaved"
-          @formChange="isFormChanged = true"
-        />
-      </VLayout>
+      <BusinessCardEdit
+        :business-info="newBranch"
+        :current-tab="infoTab? 'infoTab' : 'scheduleTab'"
+        @tabChange="onTabChange"
+        @saved="onSaved"
+        @formChange="isFormChanged = true"
+      />
       <Modal
         :visible="showSave"
         :template="saveModalTemplate"

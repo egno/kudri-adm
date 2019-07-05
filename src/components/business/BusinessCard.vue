@@ -1,86 +1,88 @@
 <template>
-  <div class="infocard _view">
-    <div class="infocard__content">
-      <VLayout justify-center>
-        <Avatar
-          size=""
-          :src="avatar"
-          :is-company-avatar="true"
-          :name="businessInfo.name"
-          class="business-avatar"
-        />
-      </VLayout>
-      <VLayout column>
-        <div class="infocard__field-title">
-          Название
-        </div>
-        <div class="infocard__field-value">
-          {{ title }}
-        </div>
-        <div class="infocard__field-title">
-          ИНН
-        </div>
-        <div class="infocard__field-value">
-          {{ INN }}
-        </div>
-        <div v-if="address">
+  <VLayout class="businesscard-tabs__content">
+    <div class="infocard _view">
+      <div class="infocard__content">
+        <VLayout justify-center>
+          <Avatar
+            size=""
+            :src="avatar"
+            :is-company-avatar="true"
+            :name="businessInfo.name"
+            class="business-avatar"
+          />
+        </VLayout>
+        <VLayout column>
           <div class="infocard__field-title">
-            Адрес
+            Название
           </div>
           <div class="infocard__field-value">
-            {{ address.name }}{{ office? ', оф. ' + office : '' }}
+            {{ title }}
           </div>
-        </div>
+          <div class="infocard__field-title">
+            ИНН
+          </div>
+          <div class="infocard__field-value">
+            {{ INN }}
+          </div>
+          <div v-if="address">
+            <div class="infocard__field-title">
+              Адрес
+            </div>
+            <div class="infocard__field-value">
+              {{ address.name }}{{ office? ', оф. ' + office : '' }}
+            </div>
+          </div>
 
-        <div v-if="phones && phones.length" class="top-bordered">
-          <div
-            v-for="(item, i) in phones"
-            :key="i"
-            class="infocard__field-value"
-          >
-            <PhoneView :phone="item" />
-          </div>
-        </div>
-        <div v-if="businessInfo.j && businessInfo.j.schedule">
-          <BusinessSchedule
-            :caption-class="captionClass"
-            :week-schedule="businessInfo.j.schedule"
-            :expanded="expanded"
-            @toggleSchedule="expanded = !expanded"
-          />
-        </div>
-        <div v-if="businessInfo.j && businessInfo.j.links" class="soc">
-          <div v-if="businessInfo.j.links.instagram" class="soc__value _ig">
-            {{ businessInfo.j.links.instagram }}
-          </div>
-          <div v-if="businessInfo.j.links.vk" class="soc__value _vk">
-            {{ businessInfo.j.links.vk }}
-          </div>
-          <div v-if="businessInfo.j.links.others && businessInfo.j.links.others.length">
+          <div v-if="phones && phones.length" class="top-bordered">
             <div
-              v-for="(site, ind) in businessInfo.j.links.others"
-              :key="ind"
+              v-for="(item, i) in phones"
+              :key="i"
+              class="infocard__field-value"
             >
+              <PhoneView :phone="item" />
+            </div>
+          </div>
+          <div v-if="businessInfo.j && businessInfo.j.schedule">
+            <BusinessSchedule
+              :caption-class="captionClass"
+              :week-schedule="businessInfo.j.schedule"
+              :expanded="expanded"
+              @toggleSchedule="expanded = !expanded"
+            />
+          </div>
+          <div v-if="businessInfo.j && businessInfo.j.links" class="soc">
+            <div v-if="businessInfo.j.links.instagram" class="soc__value _ig">
+              {{ businessInfo.j.links.instagram }}
+            </div>
+            <div v-if="businessInfo.j.links.vk" class="soc__value _vk">
+              {{ businessInfo.j.links.vk }}
+            </div>
+            <div v-if="businessInfo.j.links.others && businessInfo.j.links.others.length">
               <div
-                v-if="site.uri"
-                class="soc__value"
+                v-for="(site, ind) in businessInfo.j.links.others"
+                :key="ind"
               >
-                {{ site.uri }}
+                <div
+                  v-if="site.uri"
+                  class="soc__value"
+                >
+                  {{ site.uri }}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div v-if="businessInfo.j && businessInfo.j.description" class="top-bordered">
-          <div class="infocard__field-title">
-            Описание
+          <div v-if="businessInfo.j && businessInfo.j.description" class="top-bordered">
+            <div class="infocard__field-title">
+              Описание
+            </div>
+            <div class="infocard__field-value _description">
+              {{ businessInfo.j.description }}
+            </div>
           </div>
-          <div class="infocard__field-value _description">
-            {{ businessInfo.j.description }}
-          </div>
-        </div>
-      </VLayout>
+        </VLayout>
+      </div>
     </div>
-  </div>
+  </VLayout>
 </template>
 
 <script>
@@ -141,12 +143,6 @@ export default {
         return
       }
       return this.businessInfo.j.office
-    },
-    siteLink () {
-      if (!this.businessInfo.j.site) {
-        return
-      }
-      return this.prependHttpToUrl(this.businessInfo.j.site)
     },
     title () {
       if (!(this.businessInfo && this.businessInfo.j)) {
