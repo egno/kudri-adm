@@ -83,6 +83,7 @@
     &__buttons {
       display: flex;
       justify-content: space-between;
+      flex-wrap: wrap;
       margin-top: 36px;
       button {
         @extend %button

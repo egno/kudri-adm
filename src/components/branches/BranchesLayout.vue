@@ -92,6 +92,7 @@
       flex-grow: 1;
       align-content: flex-start;
       background: #f4f5f7;
+      overflow-x: scroll;
     }
 
     &__cities {
@@ -124,7 +125,7 @@
     }
 
     &__group {
-      width: 100%;
+      min-width: 100%;
       padding-left: 5px;
     }
 
@@ -142,7 +143,10 @@
     }
   }
   .add-branch {
-    margin-right: 16px;
+    position: fixed;
+    right: 0;
+    top: 96px;
+    margin-right: 14px;
     background: url('../../assets/images/svg/plus-white.svg') no-repeat center #EF4D37;
     span {
       display: none;

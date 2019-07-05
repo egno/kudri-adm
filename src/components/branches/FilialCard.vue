@@ -94,6 +94,7 @@ export default {
     &:hover {
       border-color: #5699FF;
       cursor: pointer;
+      box-shadow: 0 2px 12px rgba(137, 149, 175, 0.1);
     }
 
     &__top,
