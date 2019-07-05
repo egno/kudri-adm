@@ -20,7 +20,7 @@
         :maxlength="200"
         attach=".address .dropdown-select"
         class="businesscard-form__field dropdown-select"
-        @blur="edited = true"
+        @blur="edited = true; $emit('blur', search)"
         @input="$emit('inputAddress', (items && items[0]) || search)"
       />
     </v-flex>
@@ -85,7 +85,7 @@
       fetchValue () {
         if (typeof this.value === 'string') {
           this.address = { name: this.value }
-        } else if (typeof this.value === 'object') {
+        } else if (this.value && typeof this.value === 'object') {
           if (!this.address || (this.address.name !== this.value.name)) {
             this.address = Object.assign({}, this.value)
           }
