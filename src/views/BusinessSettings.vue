@@ -13,12 +13,6 @@
         >
           Уведомления
         </v-tab>
-        <!--<v-tab
-          :key="1"
-          ripple
-        >
-          Оператор рассылки
-        </v-tab>-->
         <v-tab
           :key="1"
           ripple
@@ -176,14 +170,7 @@
             class="infocard _edit balance"
           >
             <div class="infocard__content">
-              <v-layout align-center>
-                <v-flex class="balance__level">
-                  Остаток на счете: <span>{{ balance }}&nbsp;руб.</span>
-                </v-flex>
-                <button class="balance__update settings__update" type="button">
-                  <span>Обновить</span>
-                </button>
-              </v-layout>
+              <AccountBalance :business-id="businessId" />
               <MainButton
                 class="button businesscard-form__next balance__add"
                 type="button"
@@ -196,41 +183,7 @@
               <h2 class="payment__heading">
                 История платежей
               </h2>
-              <v-data-table
-                :headers="paymentHeaders"
-                :items="paymentItems"
-                :loading="paymentIsLoading"
-                :pagination.sync="paymentPagination"
-                :total-items="paymentTotalItems"
-                class="elevation-0"
-                sort-icon="mdi-menu-down"
-                hide-actions
-                must-sort
-              >
-                <template
-                  slot="items"
-                  slot-scope="props"
-                >
-                  <td class="payment__event">
-                    {{ props.item.name }}
-                  </td>
-                  <td class="payment__date">
-                    {{ getTime(props.item.time) }}
-                  </td>
-                  <td class="payment__total">
-                    + {{ props.item.totalPrice }} руб.
-                  </td>
-                  <td :class="['settings__status', { [`_${props.item.status.code}`]: true }]">
-                    <span>{{ props.item.status.display }}</span>
-                    <button v-if="props.item.status.code === 'error'" type="button" class="blue-link help-link" @click="openMessageWindow">
-                      Сообщить о проблеме
-                    </button>
-                  </td>
-                </template>
-              </v-data-table>
-              <div class="text-xs-right">
-                <v-pagination v-model="paymentPagination.page" :length="paymentPages" :total-visible="paymentPagination.rowsPerPage" circle color="rgba(137, 149, 175, 0.35)" />
-              </div>
+              <PaymentList :business-id="businessId" />
             </div>
           </div>
         </v-form>
@@ -247,11 +200,15 @@ import MainButton from '@/components/common/MainButton.vue'
 import AppTabs from '@/components/common/AppTabs.vue'
 import PageLayout from '@/components/common/PageLayout.vue'
 import { displayRESTDate, displayRESTTime } from '@/components/calendar/utils'
+import AccountBalance from '@/components/billing/AccountBalance.vue'
+import PaymentList from '@/components/billing/PaymentList.vue'
+import { uuidv4 } from '@/components/utils'
 
 export default {
-  components: { AppTabs, PhoneEdit, MainButton, PageLayout },
+  components: { AccountBalance, AppTabs, PhoneEdit, MainButton, PageLayout , PaymentList},
   data () {
     return {
+      amount: 0.01,
       activeTab: 0,
       businessSettings: new BusinessSettings(),
       smsHeaders: [
@@ -386,78 +343,6 @@ export default {
       smsIsLoading: false,
       smsPagination: { rowsPerPage: 3 },
       smsTotalItems: 7,
-      paymentHeaders: [
-        { text: 'Платежи', value: 'name' },
-        { text: 'Дата', value: 'time' },
-        { text: 'Сумма', value: 'totalPrice' },
-        { text: 'Статус', value: 'status->code', },
-      ],
-      paymentItems: [
-        {
-          id: "b2177622-8e5b-11e9-b72c-12312",
-          name: 'Платеж № 5678594785695',
-          time: '2019-05-06T18:00:00',
-          status: {
-            code: 'waiting',
-            display: 'Ожидает проведения'
-          },
-          totalPrice: 1212
-        },
-        {
-          id: "b2177622-8e5b-11e9-b72c-134234",
-          name: 'Платеж № 5678594785695',
-          time: '2019-05-06T18:00:00',
-          status: {
-            code: 'success',
-            display: 'Платеж проведен'
-          },
-          totalPrice: 1212
-        },
-        {
-          id: "b2177622-8e5b-11e9-b72c-34534",
-          name: 'Платеж № 5678594785695',
-          time: '2019-05-06T18:00:00',
-          status: {
-            code: 'error',
-            display: 'Ошибка. Код 02'
-          },
-          totalPrice: 1212
-        },
-        {
-          id: "b2177622-8e5b-11e9-b72c-4544",
-          name: 'Платеж № 5678594785695',
-          time: '2019-05-06T18:00:00',
-          status: {
-            code: 'waiting',
-            display: 'Ожидает проведения'
-          },
-          totalPrice: 1212
-        },
-        {
-          id: "b2177622-8e5b-11e9-b72c-246",
-          name: 'Платеж № 5678594785695',
-          time: '2019-05-06T18:00:00',
-          status: {
-            code: 'success',
-            display: 'Платеж проведен'
-          },
-          totalPrice: 1212
-        },
-        {
-          id: "b2177622-8e5b-11e9-b72c-4547",
-          name: 'Платеж № 5678594785695',
-          time: '2019-05-06T18:00:00',
-          status: {
-            code: 'error',
-            display: 'Ошибка. Код 02'
-          },
-          totalPrice: 1212
-        },
-      ],
-      paymentPagination: { rowsPerPage: 3 },
-      paymentIsLoading: false,
-      paymentTotalItems: 6,
-      balance: 1456.76
     }
   },
   computed: {
@@ -471,12 +356,6 @@ export default {
         return 0
 
       return Math.ceil(this.smsTotalItems / this.smsPagination.rowsPerPage)
-    },
-    paymentPages () {
-      if (!this.paymentPagination.rowsPerPage || !this.paymentTotalItems)
-        return 0
-
-      return Math.ceil(this.paymentTotalItems / this.paymentPagination.rowsPerPage)
     },
     settings () {
       return this.businessSettings.settings.notifications.events
@@ -505,7 +384,14 @@ export default {
       'openMessageWindow'
     ]),
     add () {
-      console.log('add ')
+      if (!this.businessId || !this.amount) {
+        return
+      }
+      const paymentNo = uuidv4()
+      const amount = this.amount
+      const url = `https://paymaster.ru/payment/init?LMI_MERCHANT_ID=6dd38e78-07f2-4f86-beae-7a520605caf0&LMI_PAYMENT_AMOUNT=${amount}&LMI_CURRENCY=643&LMI_PAYMENT_NO=${paymentNo}&LMI_PAYMENT_DESC=UNO_SALON&BUSINESS_ID=${this.businessId}`
+      console.log(url)
+      window.location = url
     },
     load () {
       if (!this.businessId) return

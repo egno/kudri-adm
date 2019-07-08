@@ -101,11 +101,13 @@ export function getRESTTime (s) {
 }
 
 export function displayRESTDate (s) {
+  if (!s) {return}
   const d = dateFromISO(s)
   return displayDate(d)
 }
 
 export function displayRESTTime (s) {
+  if (!s) {return}
   const d = dateFromISO(s)
   return formatTime(d)
 }
