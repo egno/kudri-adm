@@ -99,7 +99,8 @@ export default {
       },
       displayRESTTime (ts) {
           return displayRESTTime(ts)
-      },    getData () {
+      },    
+      getData () {
        this.paymentItems=[]
       if (!this.businessId) {
         return

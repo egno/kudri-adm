@@ -92,78 +92,7 @@
             </div>
           </div>-->
           <div v-show="activeTab === 1">
-            <v-data-table
-              :headers="smsHeaders"
-              :items="smsItems"
-              :loading="smsIsLoading"
-              :pagination.sync="smsPagination"
-              :total-items="smsTotalItems"
-              class="elevation-0 sms"
-              sort-icon="mdi-menu-down"
-              hide-actions
-              must-sort
-            >
-              <template
-                slot="items"
-                slot-scope="props"
-              >
-                <td class="sms__event-name">
-                  {{ props.item.name }}
-                </td>
-                <td class="sms__receiver">
-                  <div class="sms__receiver-phone">
-                    {{ props.item.receiver.phone | phoneFormat }}
-                  </div>
-                  <div class="sms__receiver-operator">
-                    {{ props.item.receiver.operator }}
-                  </div>
-                </td>
-                <td class="sms__total">
-                  <div class="sms__total-price">
-                    {{ props.item.totalPrice }} рублей
-                  </div>
-                  <div class="sms__length">
-                    {{ props.item.length }} SMS
-                  </div>
-                </td>
-                <td>
-                  <div>ID {{ props.item.numberId }}</div>
-                  <div class="sms__time">
-                    {{ getTime(props.item.time) }}
-                  </div>
-                </td>
-                <td>
-                  <v-tooltip
-                    v-if="props.item.status.code === 'not_delivered'"
-                    top
-                  >
-                    <template v-slot:activator="{ on }">
-                      <div class="settings__status _error" v-on="on">
-                        Не доставлено
-                      </div>
-                      <div class="sms__time">
-                        {{ getTime(props.item.status.updated) }}
-                      </div>
-                    </template>
-                    <span>{{ props.item.status.display }}</span>
-                  </v-tooltip>
-                  <template v-else>
-                    <div :class="['settings__status', { _waiting: props.item.status.code === 'sent', _success: props.item.status.code === 'delivered' }]">
-                      {{ props.item.status.display }}
-                    </div>
-                    <div class="sms__time">
-                      {{ getTime(props.item.status.updated) }}
-                    </div>
-                  </template>
-                </td>
-                <td>
-                  <div class="settings__update" @click="update(props.item.id)" />
-                </td>
-              </template>
-            </v-data-table>
-            <div class="text-xs-right">
-              <v-pagination v-model="smsPagination.page" :length="smsPages" :total-visible="smsPagination.rowsPerPage" circle color="rgba(137, 149, 175, 0.35)" />
-            </div>
+            <MessageList :business-id="businessId" />
           </div>
           <div
             v-show="activeTab === 2"
@@ -201,148 +130,18 @@ import AppTabs from '@/components/common/AppTabs.vue'
 import PageLayout from '@/components/common/PageLayout.vue'
 import { displayRESTDate, displayRESTTime } from '@/components/calendar/utils'
 import AccountBalance from '@/components/billing/AccountBalance.vue'
+import MessageList from '@/components/billing/MessageList.vue'
 import PaymentList from '@/components/billing/PaymentList.vue'
 import { uuidv4 } from '@/components/utils'
 
 export default {
-  components: { AccountBalance, AppTabs, PhoneEdit, MainButton, PageLayout , PaymentList},
+  components: { AccountBalance, AppTabs, PhoneEdit, MainButton, MessageList, PageLayout , PaymentList},
   data () {
     return {
       amount: 0.01,
       activeTab: 0,
       businessSettings: new BusinessSettings(),
-      smsHeaders: [
-        { text: 'Событие', value: 'name' },
-        { text: 'Телефон получателя', value: 'receiver->phone' },
-        { text: 'Стоимость', value: 'totalPrice' },
-        { text: 'Идентификатор', value: 'numberId', },
-        { text: 'Статус сообщения', value: 'status->code', },
-        { text: 'Обновить все', value: '', sortable: false, width: '80px', class: 'settings__update' }
-      ],
-      smsItems: [
-        {
-          id: "b2177622-8e5b-11e9-b72c-eb1d767cd701",
-          numberId: 1234567890,
-          name: 'Запрос Клиенту на подтверждение номера телефона',
-          receiver: {
-            phone: '71005001213',
-            operator: 'МТС'
-          },
-          length: 2,
-          time: '2019-05-06T18:00:00',
-          status: {
-            code: 'sent',
-            display: 'Отправлено',
-            updated: '2019-05-06T18:10:00'
-          },
-          totalPrice: 12
-        },
-        {
-          id: "b2177622-8e5b-11e9-b72c-eb1d767cd702",
-          numberId: 1234567890,
-          name: 'О новой онлайн-записи',
-          receiver: {
-            phone: '71005001213',
-            operator: 'Мегафон Сибирь'
-          },
-          length: 2,
-          time: '2019-05-06T18:00:00',
-          status: {
-            code: 'delivered',
-            display: 'Доставлено',
-            updated: '2019-05-06T18:10:00'
-          },
-          totalPrice: 12
-        },
-        {
-          id: "b2177622-8e5b-11e9-b72c-eb1d767cd703",
-          numberId: 1234567890,
-          name: 'Об отмене онлайн-записи',
-          receiver: {
-            phone: '71005001213',
-            operator: 'Мегафон Сибирь'
-          },
-          length: 2,
-          time: '2019-05-06T18:00:00',
-          status: {
-            code: 'delivered',
-            display: 'Доставлено',
-            updated: '2019-05-06T18:10:00'
-          },
-          totalPrice: 12
-        },
-        {
-          id: "b2177622-8e5b-11e9-b72c-eb1d767cd704",
-          numberId: 1234567890,
-          name: 'Напоминание о предстоящем визите',
-          receiver: {
-            phone: '71005001213',
-            operator: 'Мегафон Сибирь'
-          },
-          length: 2,
-          time: '2019-05-06T18:00:00',
-          status: {
-            code: 'delivered',
-            display: 'Доставлено',
-            updated: '2019-05-06T18:10:00'
-          },
-          totalPrice: 12
-        },
-        {
-          id: "b2177622-8e5b-11e9-b72c-eb1d767cd705",
-          numberId: 1234567890,
-          name: 'Денежные средства заканчиваются',
-          receiver: {
-            phone: '71005001213',
-            operator: 'Мегафон Сибирь'
-          },
-          length: 2,
-          time: '2019-05-06T18:00:00',
-          status: {
-            code: 'not_delivered',
-            display: 'Номер телефона абонента недоступен',
-            updated: '2019-05-06T18:10:00'
-          },
-          totalPrice: 12
-        },
-        {
-          id: "b2177622-8e5b-11e9-b72c-eb1d767cd706",
-          numberId: 1234567890,
-          name: 'Денежные средства заканчиваются',
-          receiver: {
-            phone: '71005001213',
-            operator: 'Мегафон Сибирь'
-          },
-          length: 2,
-          time: '2019-05-06T18:00:00',
-          status: {
-            code: 'not_delivered',
-            display: 'Абонент с таким номером не существует',
-            updated: '2019-05-06T18:10:00'
-          },
-          totalPrice: 12
-        },
-        {
-          id: "b2177622-8e5b-11e9-b72c-eb1d767cd707",
-          numberId: 1234567890,
-          name: 'Рекламное сообщение',
-          receiver: {
-            phone: '71005001213',
-            operator: 'Мегафон Сибирь'
-          },
-          length: 2,
-          time: '2019-05-06T18:00:00',
-          status: {
-            code: 'delivered',
-            display: 'Доставлено',
-            updated: '2019-05-06T18:10:00'
-          },
-          totalPrice: 12
-        }
-      ],
-      smsIsLoading: false,
-      smsPagination: { rowsPerPage: 3 },
-      smsTotalItems: 7,
+
     }
   },
   computed: {
