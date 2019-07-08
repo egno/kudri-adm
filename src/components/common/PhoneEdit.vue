@@ -10,7 +10,7 @@
         :error="error"
         mask="phone"
         prefix="+7"
-        :rules="[rules.counter]"
+        :rules="allRules"
         class="businesscard-form__field _phone"
         :required="!removable"
         @input="onEdit"
@@ -45,9 +45,19 @@ export default {
     return {
       newPhone: '',
       rules: {
+        required: value => !!value || 'Это поле обязательно для заполнения',
         counter: value => value.length === 10 || 'В номере должно быть 10 цифр'
       },
       focused: false
+    }
+  },
+  computed: {
+    allRules () {
+      if (this.removable) {
+        return [ this.rules.counter ]
+      } else {
+        return [ this.rules.required, this.rules.counter ]
+      }
     }
   },
   watch: { phone: 'update' },

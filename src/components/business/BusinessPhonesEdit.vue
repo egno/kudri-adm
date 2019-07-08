@@ -42,13 +42,13 @@ export default {
     phones: {
       type: Array,
       default () {
-        return []
+        return ['']
       }
     }
   },
   data () {
     return {
-      newPhones: []
+      newPhones: ['']
     }
   },
   computed: {
@@ -62,7 +62,6 @@ export default {
   watch: { phones: 'update' },
   mounted () {
     this.update()
-    this.newPhones.length === 0 ? this.newPhones.push('') : false
   },
   methods: {
     onEdit (i, payload) {
@@ -73,8 +72,11 @@ export default {
       this.newPhones.splice(index,1)
       this.$emit('onEdit', this.newPhones)
     },
-    update () {
+    update () { 
       this.newPhones = this.phones
+      if (!this.newPhones.length) {
+        this.newPhones.push('')
+      }
     }
   }
 }

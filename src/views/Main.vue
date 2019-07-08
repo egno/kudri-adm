@@ -13,7 +13,7 @@
             Оптимизируй процессы –  <br> и занимайся любимым делом
           </h2>
           <h1 class="main-page__heading">
-            Новая система учета <br class="main-page__heading-br">  для индустрии красоты <br class="main-page__heading-br"> и здоровья
+            Новая система учета <br class="main-page__heading-br">  для индустрии красоты
           </h1>
           <router-link :to="{ name: 'register' }" class="main-page__register-link">
             ПОПРОБУЙТЕ ДЕМО-ВЕРСИЮ БЕСПЛАТНО
@@ -224,48 +224,68 @@ export default {
       margin-bottom: 55px;
       background: url('../assets/images/bg_home_first.png') center/cover no-repeat;
       @media only screen and (min-height : $min-height) {
+        justify-content: flex-start;
+        padding-top: 42px;
         padding-bottom: 65px;
       }
       @media only screen and (min-width : $tablet) {
         height: calc(100vh - #{$header-height + $padding-top} - 60px);
         align-items: flex-start;
-        background-image: url('../assets/images/bg_home_first_tablet.png');
+        background: url('../assets/images/bg_home_first_tablet.png') center/100% no-repeat #EDEDED;
       }
       @media only screen and (min-width : $desktop) {
         position: relative;
         $header-height: 146px;
         $padding-top: 96px;
         height: calc(100vh - #{$header-height + $padding-top} - 42px);
-        background-image: url('../assets/images/bg_home_first_desktop.png');
+        background: url('../assets/images/bg_home_first_desktop.png') center/100% no-repeat #EDEDED;
       }
       @media only screen and (min-width : 1920px) {
         background-image: url('../assets/images/bg_home_first_wide.png');
       }
       .main-page__heading {
-        @media only screen and (min-width : $desktop) { 
+        margin-bottom: 4vh;
+        @media only screen and (min-height : $min-height) {
+          margin-bottom: 75px;
+        }
+        @media only screen and (min-width : $tablet) {
+          font-size: 37px;
           color: transparent;
           background: url('../assets/images/main_heading_desktop.png') left center/contain no-repeat;
+        }
+        @media only screen and (min-width : $desktop) {
+          font-size: 44px;
+          margin-bottom: 45px;
+        }
+      }
+      .main-page__subheading {
+        @media only screen and (min-width : $tablet) {
+          margin-bottom: 2vh;
+        }
+        @media only screen and (min-width : $desktop) {
+          margin-bottom: 3vh;
         }
       }
       .main-page__container {
         position: relative;
         @media only screen and (min-width : $tablet) {
-          padding-left: 80px;
+          padding-left: 75px;
+        }
+        @media only screen and (min-height : $min-height) and (min-width : $tablet) {
+          padding-top: 70px;
         }
         @media only screen and (min-width : $desktop) {
           display: flex;
           flex-direction: column;
           justify-content: center;
           height: 100%;
-          padding-left: 280px;
+          padding-top: 124px;
+          padding-left: 180px;
           &:before {
             @include dots;
             right: 207px;
             top: -65px;
           }
-        }
-        @media only screen and (min-width: 1440px) {
-
           &:after {
             position: absolute;
             right: 134px;
@@ -280,12 +300,6 @@ export default {
       .main-page__register-link {
         @media only screen and (min-width : $tablet) {
           margin: 0;
-        }
-      }
-      .main-page__heading {
-        margin-bottom: 4vh;
-        @media only screen and (min-height : $min-height) {
-          margin-bottom: 53px;
         }
       }
     }
@@ -321,7 +335,7 @@ export default {
       text-decoration: none;
       text-align: center;
       font-size: 16px;
-      font-weight: 400;
+      font-weight: 900;
       transition: background-color 0.6s 0s;
       @media only screen and (min-width : $tablet) {
         max-width: 447px;
@@ -371,6 +385,7 @@ export default {
     
     .target-audience {
       padding: 0 6px;
+      margin-top: 80px;
       @media only screen and (min-width : $tablet) {
         margin-top: 55px;
       }
@@ -489,7 +504,10 @@ export default {
         }
       }
       &__heading {
-        margin: 33px 0 22px;
+        margin: 70px 0 22px;
+        @media only screen and (min-width : $desktop) {
+          margin-top: 33px;
+        }
       }
       &__quote {
         width: 90%;

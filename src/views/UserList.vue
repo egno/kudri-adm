@@ -590,7 +590,7 @@ $left-panel: 240px;
     font-size: 13px;
   }
   &__filial {
-    font-weight: bold;
+    font-weight: 900;
   }
   .v-datatable__actions__select {
     display: none;

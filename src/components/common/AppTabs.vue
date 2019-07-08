@@ -52,7 +52,7 @@ export default {
       opacity: 1;
     }
     .v-tabs__item--active {
-      font-weight: bold;
+      font-weight: 900;
       color: #07101C;
     }
   }

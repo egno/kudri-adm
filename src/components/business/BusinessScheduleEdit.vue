@@ -143,7 +143,7 @@ export default {
       padding: 0;
       font-family: Lato, sans-serif;
       font-style: normal;
-      font-weight: bold;
+      font-weight: 900;
       font-size: 16px;
       line-height: normal;
       text-align: center;

@@ -63,7 +63,7 @@
     &__header {
       font-family: $lato;
       font-style: normal;
-      font-weight: bold;
+      font-weight: 900;
       font-size: 16px;
       line-height: normal;
       color: #07101C;
@@ -83,6 +83,7 @@
     &__buttons {
       display: flex;
       justify-content: space-between;
+      flex-wrap: wrap;
       margin-top: 36px;
       button {
         @extend %button

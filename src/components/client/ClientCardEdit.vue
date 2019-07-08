@@ -52,7 +52,7 @@
             placeholder=""
             :class="{ 'no-default': !client.phone && (filledPhones.length > 1) }"
             @onEdit="client.phones[i] = $event; checkPhones($event)"
-            @deletePhone="client.phones.splice(i,1)"
+            @deletePhone="deletePhone(i, phone)"
           />
           <template v-if="phone && (filledPhones.length > 1)">
             <div v-if="client.phone && (client.phone.substr(-10) === phone.substr(-10))" class="default">
@@ -285,6 +285,12 @@ export default {
           }
         }
       })
+    },
+    deletePhone (i, phone) {
+      this.client.phones.splice(i,1)
+      if (this.client.phone.substr(-10) === phone.substr(-10)) {
+        this.client.phone = ''
+      }
     },
     getClientsByPhone (newPhone) {
       if (newPhone && newPhone.length >= 10) {
