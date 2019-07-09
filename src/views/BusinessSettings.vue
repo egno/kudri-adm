@@ -67,6 +67,15 @@
                         />
                       </v-flex>
                     </div>
+                    <div v-if="typeof event.amount !== 'undefined'">
+                      <v-flex v-if="typeof event.amount !== 'undefined'" sm6 class="amount-input">
+                        <v-text-field
+                          v-model="event.amount"
+                          label="Сумма остатка"
+                          single-line mask="######" suffix="руб. "
+                        />
+                      </v-flex>
+                    </div>
                   </div>
                 </div>
               </v-layout>
@@ -339,6 +348,11 @@ export default {
       }
     }
   }
+  .amount-input  {
+      position: relative;
+      padding-left: 25px;
+    }
+  
   .phone-edit {
     margin-top: 25px;
     margin-left: 30px;

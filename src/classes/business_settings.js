@@ -35,6 +35,9 @@ class Event extends ApiObject {
     if (newVal && (newVal.phone || newVal.phone === null)) {
       this.phone = newVal && newVal.phone
     }
+    if (newVal && (newVal.amount || newVal.amount === null)) {
+      this.amount = newVal && newVal.amount
+    }
     if (newVal && (newVal.template || newVal.template === null)) {
       this.template = newVal && newVal.template
     }
@@ -43,6 +46,9 @@ class Event extends ApiObject {
     let res = super.jsonObject
     if (this._phone) {
       res.phone = this._phone
+    }
+    if (this._amount) {
+      res.amount = this._amount
     }
     return res
   }
@@ -60,12 +66,20 @@ class Event extends ApiObject {
   get phone () {
     return this._phone
   }
+
+
+  set amount (newVal) {
+    this._amount = newVal ? newVal : null
+  }
+  get amount () {
+    return this._amount
+  }
 }
 
 class Events extends ApiObject {
   set jsonObject (newVal) {
     this.balance_level = new Event({
-      ...{ title: 'SMS-уведомление по остатку на счете' },
+      ...{ title: 'SMS-уведомление по остатку на счете', amount: null },
       ...(newVal && newVal.balance_level)
     })
     this.new_visit_client = new Event({
@@ -82,8 +96,9 @@ class Events extends ApiObject {
       ...(newVal && newVal.new_visit_manager)
     })
     this.cancel_visit = new Event({
-      ...(newVal && newVal.cancel_visit),
-      ...{ title: 'Уведомлять сотрудника об отмене онлайн-записи', phone: null }
+      ...{ title: 'Уведомлять сотрудника об отмене онлайн-записи', phone: null },
+      ...(newVal && newVal.cancel_visit)
+      
     })
     this.time_visit = new Event({
       ...{ title: 'Напоминать клиенту о предстоящем визите' },
