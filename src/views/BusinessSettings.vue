@@ -80,17 +80,6 @@
               </MainButton>
             </div>
           </div>
-          <!--<div
-            v-show="activeTab === 1"
-            class="infocard _edit"
-          >
-            <div class="infocard__content">
-              <ProviderSettings
-                :provider="businessSettings && businessSettings.notifications && businessSettings.notifications.provider"
-                @change="businessSettings.notifications.provider = $event; save()"
-              />
-            </div>
-          </div>-->
           <div v-show="activeTab === 1">
             <MessageList :business-id="businessId" />
           </div>
@@ -100,6 +89,14 @@
           >
             <div class="infocard__content">
               <AccountBalance :business-id="businessId" />
+              <v-layout align-center>
+                <v-flex class="balance__level">
+                  На какую сумму пополнить счёт?
+                </v-flex>
+                <v-flex class="balance__level">
+                  <v-text-field v-model="amount" single-line mask="######" suffix="руб." />
+                </v-flex>
+              </v-layout>
               <MainButton
                 class="button businesscard-form__next balance__add"
                 type="button"
@@ -138,7 +135,7 @@ export default {
   components: { AccountBalance, AppTabs, PhoneEdit, MainButton, MessageList, PageLayout , PaymentList},
   data () {
     return {
-      amount: 0.01,
+      amount: 300,
       activeTab: 0,
       businessSettings: new BusinessSettings(),
 
