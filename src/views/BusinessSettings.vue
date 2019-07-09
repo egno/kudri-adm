@@ -185,7 +185,7 @@ export default {
       }
       const paymentNo = uuidv4()
       const amount = this.amount
-      const paymasterId = process.env.VUE_APP_PAYMASTER_ID
+      const paymasterId = (window.location.hostname === process.env.VUE_APP_PROD_HOST_NAME) ? process.env.VUE_APP_PAYMASTER_ID : process.env.VUE_APP_DEV_PAYMASTER_ID
       const returnUrl = `https://${window.location.hostname}${window.location.pathname}`
       const url = `https://paymaster.ru/payment/init?LMI_MERCHANT_ID=${paymasterId}&LMI_PAYMENT_AMOUNT=${amount}&LMI_CURRENCY=643&LMI_PAYMENT_NO=${paymentNo}&LMI_PAYMENT_DESC=UNO_SALON&BUSINESS_ID=${this.businessId}&LMI_SUCCESS_URL=${encodeURIComponent(returnUrl)}`
       // console.log(url)
