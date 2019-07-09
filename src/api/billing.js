@@ -10,6 +10,7 @@ export default () => {
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
             Accept: 'application/json',
             'Content-Type': 'application/json',
+            'Range-Unit': 'items',
             Prefer: 'count=exact',
             'X-Request-ID': requestId
         }

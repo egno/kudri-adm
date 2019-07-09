@@ -75,7 +75,9 @@ export default {
     }
   },
   computed: {
-
+    page () {
+        return this.paymentPagination.page || 1
+    },
     paymentPages () {
       if (!this.paymentPagination.rowsPerPage || !this.paymentTotalItems)
         return 0
@@ -86,7 +88,8 @@ export default {
     }
   },
   watch: {
-    businessId: 'getData'
+    businessId: 'getData',
+    page: 'getData'
   },
   mounted () {
     this.$nextTick(function () {
@@ -105,7 +108,7 @@ export default {
       if (!this.businessId) {
         return
       }
-      BillingApi().get(`business_payments/${this.businessId}?limit=${this.paymentPagination.rowsPerPage}`).then(res => {
+      BillingApi().get(`business_payments/${this.businessId}?limit=${this.paymentPagination.rowsPerPage}&offset=${(this.page - 1) * this.paymentPagination.rowsPerPage}`).then(res => {
           if (res && res.data) {
               this.paymentItems = res.data
               if (res.headers && res.headers['content-range']) {

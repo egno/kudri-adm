@@ -108,7 +108,9 @@ export default {
     }
   },
   computed: {
-
+    page () {
+        return this.smsPagination.page || 1
+    },
     smsPages () {
       if (!this.smsPagination.rowsPerPage || !this.smsTotalItems)
         return 0
@@ -119,7 +121,8 @@ export default {
     }
   },
   watch: {
-    businessId: 'getData'
+    businessId: 'getData',
+    page: 'getData'
   },
   mounted () {
     this.$nextTick(function () {
@@ -138,8 +141,8 @@ export default {
       if (!this.businessId) {
         return
       }
-      BillingApi().get(`sms_list/${this.businessId}?limit=${this.smsPagination.rowsPerPage}`).then(res => {
-          console.log(res)
+      BillingApi().get(`sms_list/${this.businessId}?limit=${this.smsPagination.rowsPerPage}&offset=${(this.page - 1) * this.smsPagination.rowsPerPage}`)
+      .then(res => {
           if (res && res.data) {
               this.smsItems = res.data
               if (res.headers && res.headers['content-range']) {
