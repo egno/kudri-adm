@@ -34,29 +34,29 @@
         <td>
           <div>ID {{ props.item.sms_id }}</div>
           <div class="sms__time">
-            {{ displayRESTDate(props.item.ts) }} {{ displayRESTTime(props.item.ts) }}
+            {{ displayRESTDate(props.item.statuses[(props.item.statuses.length)-1].ts) }} {{ displayRESTTime(props.item.statuses[(props.item.statuses.length)-1].ts) }}
           </div>
         </td>
         <td>
-          <v-tooltip v-if="props.item.status.code === 'not_delivered'" top>
+          <v-tooltip v-if="props.item.statuses[0].code === 'not_delivered'" top>
             <template v-slot:activator="{ on }">
               <div class="settings__status _error" v-on="on">
                 Не доставлено
               </div>
               <div class="sms__time">
-                {{ displayRESTTime(props.item.status.ts) }}
+                {{ displayRESTTime(props.item.statuses[0].ts) }}
               </div>
             </template>
             <span>{{ statusText(props.item.status) }}</span>
           </v-tooltip>
           <template v-else>
             <div
-              :class="['settings__status', { _waiting: props.item.status === 'SMSReserveSum', _success: props.item.status === 'SMSDelivered' }]"
+              :class="['settings__status', { _waiting: props.item.statuses[0].code === 'SMSReserveSum', _success: props.item.statuses[0].code === 'SMSDelivered' }]"
             >
-              {{ statusText(props.item.status) }}
+              {{ statusText(props.item.statuses[0].code) }}
             </div>
             <div class="sms__time">
-              {{ displayRESTTime(props.item.status.ts) }}
+              {{ displayRESTDate(props.item.statuses[0].ts) }} {{ displayRESTTime(props.item.statuses[0].ts) }}
             </div>
           </template>
         </td>
@@ -93,7 +93,7 @@ export default {
         { text: 'Телефон получателя', value: 'phone' },
         { text: 'Стоимость', value: 'amount' },
         { text: 'Идентификатор', value: 'sms_id', },
-        { text: 'Статус сообщения', value: 'status', },
+        { text: 'Статус сообщения', value: 'statuses->0->>code', },
         { text: 'Обновить все', value: '', sortable: false, width: '80px', class: 'settings__update' }
       ],
       smsItems: [
