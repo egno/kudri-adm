@@ -170,12 +170,6 @@ export default {
       return this.settings.cancel_visit.enabled && (!this.settings.cancel_visit.phone || this.settings.cancel_visit.phone.length < 10)
         || this.settings.new_visit_manager.enabled && (!this.settings.new_visit_manager.phone || this.settings.new_visit_manager.phone.length < 10)
     },
-    smsPages () {
-      if (!this.smsPagination.rowsPerPage || !this.smsTotalItems)
-        return 0
-
-      return Math.ceil(this.smsTotalItems / this.smsPagination.rowsPerPage)
-    },
     settings () {
       return this.businessSettings.settings.notifications.events
     }
@@ -185,19 +179,8 @@ export default {
   },
   mounted () {
     this.load()
-    const updateElement = this.$el.querySelector('.sms th.settings__update')
-
-    if (updateElement) {
-      updateElement.addEventListener('click', this.updateAll)
-    }
   },
-  beforeDestroy () {
-    const updateElement = this.$el.querySelector('.sms th.settings__update')
 
-    if (updateElement) {
-      updateElement.removeEventListener('click', this.updateAll)
-    }
-  },
   methods: {
     ...mapActions([
       'openMessageWindow'

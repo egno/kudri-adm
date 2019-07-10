@@ -61,7 +61,7 @@
           </template>
         </td>
         <td>
-          <div class="settings__update" @click="update(props.item.id)" />
+          &nbsp;
         </td>
       </template>
     </v-data-table>
@@ -128,6 +128,18 @@ export default {
     this.$nextTick(function () {
       this.getData()
     })
+    const updateElement = this.$el.querySelector('.sms th.settings__update')
+
+    if (updateElement) {
+      updateElement.addEventListener('click', this.getData)
+    }
+  },
+  beforeDestroy () {
+    const updateElement = this.$el.querySelector('.sms th.settings__update')
+
+    if (updateElement) {
+      updateElement.removeEventListener('click', this.updateAll)
+    }
   },
   methods: {
         displayRESTDate (ts) {
