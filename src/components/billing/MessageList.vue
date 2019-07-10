@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-layout row>
+    <v-layout row px-2>
       <v-spacer />
       <button class="balance__update settings__update" type="button" @click="getData()">
         <span>Обновить</span>
