@@ -41,25 +41,25 @@
           <div>ID {{ props.item.sms_id }}</div>
         </td>
         <td>
-          <v-tooltip v-if="props.item.statuses[0].code === 'not_delivered'" top>
+          <v-tooltip v-if="props.item.lastStatus.code === 'not_delivered'" top>
             <template v-slot:activator="{ on }">
               <div class="settings__status _error" v-on="on">
                 Не доставлено
               </div>
               <div class="sms__time">
-                {{ displayRESTTime(props.item.statuses[0].ts) }}
+                {{ displayRESTTime(props.item.lastStatus.ts) }}
               </div>
             </template>
             <span>{{ statusText(props.item.status) }}</span>
           </v-tooltip>
           <template v-else>
             <div
-              :class="['settings__status', { _waiting: props.item.statuses[0].code === 'SMSReserveSum', _success: props.item.statuses[0].code === 'SMSDelivered' }]"
+              :class="['settings__status', { _waiting: props.item.lastStatus.code === 'SMSReserveSum', _success: props.item.lastStatus.code === 'SMSDelivered' }]"
             >
-              {{ statusText(props.item.statuses[0].code) }}
+              {{ statusText(props.item.lastStatus.code) }}
             </div>
             <div class="sms__time">
-              {{ displayRESTDate(props.item.statuses[0].ts) }} {{ displayRESTTime(props.item.statuses[0].ts) }}
+              {{ displayRESTDate(props.item.lastStatus.ts) }} {{ displayRESTTime(props.item.lastStatus.ts) }}
             </div>
           </template>
         </td>
@@ -159,7 +159,10 @@ export default {
       BillingApi().get(`sms_list/${this.businessId}?limit=${this.smsPagination.rowsPerPage}&offset=${(this.page - 1) * this.smsPagination.rowsPerPage}`)
       .then(res => {
           if (res && res.data) {
-              this.smsItems = res.data
+              this.smsItems = res.data.map(i => {
+                i.lastStatus = i.statuses.find(s => s.seq===1)
+                return i
+              })
               if (res.headers && res.headers['content-range']) {
                 const r = res.headers['content-range'].match(/^\d*-\d*\/(\d*)$/)
                 if (r) {
