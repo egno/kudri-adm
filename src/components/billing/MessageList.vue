@@ -1,5 +1,11 @@
 <template>
   <div>
+    <v-layout row>
+      <v-spacer />
+      <button class="balance__update settings__update" type="button" @click="getData()">
+        <span>Обновить</span>
+      </button>
+    </v-layout>
     <v-data-table
       :headers="smsHeaders"
       :items="smsItems"
@@ -13,10 +19,7 @@
     >
       <template slot="items" slot-scope="props">
         <td class="sms__event-name">
-          {{ props.item.message }}
-          <div class="sms__time">
-            {{ displayRESTDate(props.item.ts) }} {{ displayRESTTime(props.item.ts) }}
-          </div>
+          {{ displayRESTDate(props.item.ts) }} {{ displayRESTTime(props.item.ts) }}
         </td>
         <td class="sms__receiver">
           <div class="sms__receiver-phone">
@@ -61,7 +64,7 @@
           </template>
         </td>
         <td>
-          &nbsp;
+          <div>  {{ props.item.message }}</div>
         </td>
       </template>
     </v-data-table>
@@ -89,12 +92,12 @@ export default {
   data () {
     return {
       smsHeaders: [
-        { text: 'Событие', value: 'ts' },
+        { text: 'Время отправки', value: 'ts' },
         { text: 'Телефон получателя', value: 'phone' },
         { text: 'Стоимость', value: 'amount' },
         { text: 'Идентификатор', value: 'sms_id', },
         { text: 'Статус сообщения', value: 'statuses->0->>code', },
-        { text: 'Обновить все', value: '', sortable: false, width: '80px', class: 'settings__update' }
+        { text: 'Событие', value: 'message', sortable: false}
       ],
       smsItems: [
       ],
