@@ -92,11 +92,11 @@ export default {
   data () {
     return {
       smsHeaders: [
-        { text: 'Время отправки', value: 'ts' },
-        { text: 'Телефон получателя', value: 'phone' },
-        { text: 'Стоимость', value: 'amount' },
-        { text: 'Идентификатор', value: 'sms_id', },
-        { text: 'Статус сообщения', value: 'statuses->0->>code', },
+        { text: 'Время отправки', value: 'ts' , sortable: false},
+        { text: 'Телефон получателя', value: 'phone' , sortable: false},
+        { text: 'Стоимость', value: 'amount' , sortable: false},
+        { text: 'Идентификатор', value: 'sms_id', sortable: false},
+        { text: 'Статус сообщения', value: 'statuses->0->>code', sortable: false },
         { text: 'Событие', value: 'message', sortable: false}
       ],
       smsItems: [
@@ -156,7 +156,7 @@ export default {
       if (!this.businessId) {
         return
       }
-      BillingApi().get(`sms_list/${this.businessId}?limit=${this.smsPagination.rowsPerPage}&offset=${(this.page - 1) * this.smsPagination.rowsPerPage}`)
+      BillingApi().get(`sms_list/${this.businessId}?order=ts.desc&limit=${this.smsPagination.rowsPerPage}&offset=${(this.page - 1) * this.smsPagination.rowsPerPage}`)
       .then(res => {
           if (res && res.data) {
               this.smsItems = res.data.map(i => {
