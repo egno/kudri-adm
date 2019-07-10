@@ -112,7 +112,8 @@
                   color="blue"
                 >
                   <template v-slot:label>
-                    Я согласен с &nbsp;<a href="https://docs.google.com/document/d/1Wr31zRe4-mdDyTh8ndn3O1cps0jkQe7aZkYbXTLRw10/" target="_blank">условиями предоставления услуг</a>
+                    <span>Я ознакомился со <a href="https://drive.google.com/open?id=164gkgHbMyDM-esjuOBzdJCQPZtgktIHM" target="_blank">стоимостью</a> услуг 
+                      и согласен с <a href="https://docs.google.com/document/d/1Wr31zRe4-mdDyTh8ndn3O1cps0jkQe7aZkYbXTLRw10/" target="_blank">условиями</a> их предоставления</span>
                   </template>
                   <v-checkbox />
                 </v-checkbox>
