@@ -106,8 +106,21 @@
                   <v-text-field v-model="amount" single-line mask="######" suffix="руб." />
                 </v-flex>
               </v-layout>
+              <v-layout align-center>
+                <v-checkbox
+                  v-model="oferta_agree"
+                  color="blue"
+                >
+                  <template v-slot:label>
+                    Я согласен с &nbsp;<a href="https://docs.google.com/document/d/1Wr31zRe4-mdDyTh8ndn3O1cps0jkQe7aZkYbXTLRw10/" target="_blank">условиями предоставления услуг</a>
+                  </template>
+                  <v-checkbox />
+                </v-checkbox>
+              </v-layout>
               <MainButton
                 class="button businesscard-form__next balance__add"
+                :disabled="!oferta_agree"
+                :class="{ button_disabled: !oferta_agree }"
                 type="button"
                 @click.native.prevent="add"
               >
@@ -147,7 +160,7 @@ export default {
       amount: 300,
       activeTab: 0,
       businessSettings: new BusinessSettings(),
-
+      oferta_agree: false
     }
   },
   computed: {
