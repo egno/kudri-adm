@@ -14,6 +14,9 @@
       <template slot="items" slot-scope="props">
         <td class="sms__event-name">
           {{ props.item.message }}
+          <div class="sms__time">
+            {{ displayRESTDate(props.item.ts) }} {{ displayRESTTime(props.item.ts) }}
+          </div>
         </td>
         <td class="sms__receiver">
           <div class="sms__receiver-phone">
@@ -33,9 +36,6 @@
         </td>
         <td>
           <div>ID {{ props.item.sms_id }}</div>
-          <div class="sms__time">
-            {{ displayRESTDate(props.item.statuses[(props.item.statuses.length)-1].ts) }} {{ displayRESTTime(props.item.statuses[(props.item.statuses.length)-1].ts) }}
-          </div>
         </td>
         <td>
           <v-tooltip v-if="props.item.statuses[0].code === 'not_delivered'" top>
