@@ -60,10 +60,10 @@ export default {
   data () {
     return {
       paymentHeaders: [
-        { text: 'Дата', value: 'ts' },
-        { text: 'Платежи', value: 'id' },
-        { text: 'Сумма', value: 'amount' },
-        { text: 'Статус', value: 'status' }
+        { text: 'Дата', value: 'ts', sortable: false },
+        { text: 'Платежи', value: 'id', sortable: false },
+        { text: 'Сумма', value: 'amount', sortable: false },
+        { text: 'Статус', value: 'status', sortable: false }
       ],
       paymentItems: [],
       paymentIsLoading: false,
@@ -108,7 +108,7 @@ export default {
       if (!this.businessId) {
         return
       }
-      BillingApi().get(`business_payments/${this.businessId}?limit=${this.paymentPagination.rowsPerPage}&offset=${(this.page - 1) * this.paymentPagination.rowsPerPage}`).then(res => {
+      BillingApi().get(`business_payments/${this.businessId}?order=ts.desc&limit=${this.paymentPagination.rowsPerPage}&offset=${(this.page - 1) * this.paymentPagination.rowsPerPage}`).then(res => {
           if (res && res.data) {
               this.paymentItems = res.data
               if (res.headers && res.headers['content-range']) {
