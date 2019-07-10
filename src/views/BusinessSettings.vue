@@ -364,7 +364,7 @@ export default {
   }
   .amount-input  {
       position: relative;
-      padding-left: 25px;
+      padding-left: 30px;
     }
   
   .phone-edit {

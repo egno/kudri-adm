@@ -79,7 +79,7 @@ class Event extends ApiObject {
 class Events extends ApiObject {
   set jsonObject (newVal) {
     this.balance_level = new Event({
-      ...{ title: 'SMS-уведомление по остатку на счете', amount: null },
+      ...{ title: 'SMS-уведомление по остатку на счете', amount: null, phone: null },
       ...(newVal && newVal.balance_level)
     })
     this.new_visit_client = new Event({
