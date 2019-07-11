@@ -120,8 +120,8 @@
               </v-layout>
               <MainButton
                 class="button businesscard-form__next balance__add"
-                :disabled="!oferta_agree"
-                :class="{ button_disabled: !oferta_agree }"
+                :disabled="!(oferta_agree && (+amount > 0))"
+                :class="{ button_disabled: !(oferta_agree && (+amount > 0)) }"
                 type="button"
                 @click.native.prevent="add"
               >
@@ -158,7 +158,7 @@ export default {
   components: { AccountBalance, AppTabs, PhoneEdit, MainButton, MessageList, PageLayout , PaymentList},
   data () {
     return {
-      amount: 300,
+      amount: '',
       activeTab: 0,
       businessSettings: new BusinessSettings(),
       oferta_agree: false
