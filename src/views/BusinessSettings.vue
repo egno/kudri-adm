@@ -26,7 +26,7 @@
           Баланс
         </v-tab>
       </AppTabs>
-      <div :class="['tab-content']">
+      <div :class="['tab-content', { log: activeTab === 1 }]">
         <v-form ref="form">
           <div
             v-show="activeTab === 0"
