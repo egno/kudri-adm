@@ -40,6 +40,14 @@
             {{ badge.j.category }}
           </VFlex>
         </VLayout>
+        <v-btn
+          v-if="loggedIn && userRole !== 'manager' && userRole !== 'admin'"
+          flat 
+          :class="['home-header__button ', { active: !isFirstSectionInView || $route.name === 'faq' || $route.name === 'news'}]"
+          @click="goToBusiness"
+        >
+          <div class="home-header__icon " />
+        </v-btn>
         <v-btn 
           v-else-if="!loggedIn"
           flat 
@@ -289,4 +297,15 @@
       }
     }
   }
+
+  .home-header__button {
+      width: 66px;
+      height: 100%;
+      outline: none;
+      background: url('../../assets/images/svg/home_blue.svg') center/24px no-repeat;
+      border-left: 1px solid rgba(137, 149, 175, 0.1);
+      &.active {
+        background-color: rgba(137, 149, 175, 0.2);
+      }
+    }
 </style>
