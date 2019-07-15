@@ -43,7 +43,7 @@
         <v-btn
           v-if="loggedIn && userRole !== 'manager' && userRole !== 'admin'"
           flat 
-          :class="['home-header__button ', { active: !isFirstSectionInView || $route.name === 'faq' || $route.name === 'news'}]"
+          :class="['main-header__button ', { active: !isFirstSectionInView || $route.name === 'faq' || $route.name === 'news'}]"
           @click="goToBusiness"
         >
           <div class="home-header__icon " />
@@ -298,7 +298,7 @@
     }
   }
 
-  .home-header__button {
+  .main-header__button {
       width: 66px;
       height: 100%;
       outline: none;
