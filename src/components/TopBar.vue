@@ -1,5 +1,5 @@
 <template>
-  <HomeHeader v-if="$route.name === 'home' || $route.name === 'faq' || $route.name === 'news'" /><!--todo make a slot inside HomeHeader for authenticated user -->
+  <HomeHeader v-if="!$route.name || $route.name === 'home' || $route.name === 'faq' || $route.name === 'news'" /><!--todo make a slot inside HomeHeader for authenticated user -->
   <VToolbar
     v-else
     class="topbar"

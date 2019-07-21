@@ -19,17 +19,17 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: () => import('./views/Main.vue')
+      component: () => import('./views/public/Main.vue')
     },
     {
       path: '/faq',
       name: 'faq',
-      component: () => import('./views/Main.vue')
+      component: () => import('./views/public/Faq.vue')
     },
     {
       path: '/news',
       name: 'news',
-      component: () => import('./views/Main.vue')
+      component: () => import('./views/public/News.vue')
     },
     {
       path: '/account/changeemail',
