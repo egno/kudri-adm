@@ -68,7 +68,7 @@
         />
       </div>
       <div
-        v-if="role===roles[1]"
+        v-if="role===roles[1] || role===roles[2]"
         class="businesscard-form__field"
       >
         <v-select
@@ -183,7 +183,7 @@ export default {
     checkRole () {
       return (
         (this.roles.length > 1 &&
-          this.role === this.roles[1] &&
+          (this.role === this.roles[1] || this.role === this.roles[2]) &&
           this.filials.length > 0) ||
         (this.roles.length <= 1 && !this.role) ||
         this.role === this.roles[0]
@@ -193,6 +193,7 @@ export default {
       let roles = ['Администратор компании']
       if (this.businessFilialCount) {
         roles.push('Менеджер филиала')
+        roles.push('Сотрудник салона')
       }
       return roles
     }
@@ -315,11 +316,12 @@ export default {
         let userInfo = {
           user_id: this.foundedUser && this.foundedUser.id,
           company_id: this.businessId,
-          business: this.role === 'Менеджер филиала' ? this.filials : [],
+          business: this.role === 'Администратор компании' ? [] : this.filials.filter(b => b.id !== this.companyId),
           j: {
             name: name,
             surname: surname,
-            notes: this.notes
+            notes: this.notes,
+            role: this.role === 'Сотрудник салона' ? 'busman' : ''
           },
           phone: this.phone
         }

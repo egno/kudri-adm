@@ -51,7 +51,15 @@ class User extends ApiObject {
   }
 
   get role () {
-    return this.id && ((this.business.some(x => x.id === this.company_id)) ? 'Администратор компании' : 'Менеджер филиала')
+    return this.j.role === 'busman' ? 'Сотрудник cалона' : this.id && ((this.business.some(x => x.id === this.company_id)) ? 'Администратор компании' : 'Менеджер филиала')
+  }
+
+  set role (newVal) {
+    if (newVal === 'Сотрудник cалона') {
+      this.j = { ...this.j, ...{ role: 'busman' } }
+    } else {
+      delete this.j.role
+    }
   }
 
   get filialCount () {
