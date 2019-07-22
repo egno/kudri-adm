@@ -3,6 +3,12 @@ import Api from '@/api/backend'
 import store from '@/store'
 import { makeAlert } from '@/api/utils'
 
+const roles = [
+  'Администратор компании',
+  'Менеджер филиала',
+  'Сотрудник Салона'
+]
+
 class User extends ApiObject {
 
   // Main object
@@ -51,11 +57,11 @@ class User extends ApiObject {
   }
 
   get role () {
-    return this.j.role === 'busman' ? 'Сотрудник cалона' : this.id && ((this.business.some(x => x.id === this.company_id)) ? 'Администратор компании' : 'Менеджер филиала')
+    return this.j.role === 'busman' ? roles[2] : this.id && ((this.business.some(x => x.id === this.company_id)) ? roles[0] : roles[1])
   }
 
   set role (newVal) {
-    if (newVal === 'Сотрудник cалона') {
+    if (newVal === roles[2]) {
       this.j = { ...this.j, ...{ role: 'busman' } }
     } else {
       delete this.j.role
@@ -106,3 +112,4 @@ class User extends ApiObject {
 }
 
 export default User
+export {roles}

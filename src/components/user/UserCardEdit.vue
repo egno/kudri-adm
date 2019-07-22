@@ -68,7 +68,7 @@
         />
       </div>
       <div
-        v-if="role===roles[1] || role===roles[2]"
+        v-if="roles.length > 1 && (role===roles[1] || role===roles[2])"
         class="businesscard-form__field"
       >
         <v-select
@@ -112,6 +112,7 @@ import MainButton from '@/components/common/MainButton.vue'
 import PhoneEdit from '@/components/common/PhoneEdit.vue'
 import Api from '@/api/backend'
 import User from '@/classes/user'
+import {roles} from '@/classes/user'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -190,12 +191,7 @@ export default {
       )
     },
     roles () {
-      let roles = ['Администратор компании']
-      if (this.businessFilialCount) {
-        roles.push('Менеджер филиала')
-        roles.push('Сотрудник салона')
-      }
-      return roles
+      return roles.filter(x => x === roles[0] || this.businessFilialCount )
     }
   },
   watch: {
@@ -316,12 +312,12 @@ export default {
         let userInfo = {
           user_id: this.foundedUser && this.foundedUser.id,
           company_id: this.businessId,
-          business: this.role === 'Администратор компании' ? [] : this.filials.filter(b => b.id !== this.companyId),
+          business: this.role === roles[0] ? [] : this.filials.filter(b => b.id !== this.companyId),
           j: {
             name: name,
             surname: surname,
             notes: this.notes,
-            role: this.role === 'Сотрудник салона' ? 'busman' : ''
+            role: this.role === roles[2] ? 'busman' : ''
           },
           phone: this.phone
         }
