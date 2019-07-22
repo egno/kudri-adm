@@ -164,6 +164,7 @@ import { formatDate } from '@/components/calendar/utils'
 import { filials} from "../components/business/mixins"
 import { conjugateFilial } from '@/components/utils'
 import Users from '@/mixins/users'
+import {roles} from '@/classes/user'
 
 export default {
   params: {
@@ -289,11 +290,11 @@ export default {
     },
     filterUserFilials (res) {
       const userBusinessList = this.user.business.map(b => b.id)
-      if (this.user.role === 'Менеджер филиала') {
+      if (this.user.role === roles[1] || this.user.role === roles[2]) {
         this.branchesList = res.filter(resultFilial => userBusinessList.includes(resultFilial.id))
       } else if (this.userRole === 'manager' ||
         this.userRole === 'admin' ||
-        this.user.role === 'Администратор компании') {
+        this.user.role === roles[0]) {
         this.branchesList = res
       }
 
