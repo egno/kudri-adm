@@ -74,7 +74,7 @@ export default {
       return this.appTitle
     },
     isMenuVisible () {
-      if (!this.$route) {
+      if (!this.$route || !this.$route.name) {
         return false
       }
       return this.$route.name !== 'home' && this.$route.name !== 'login' && this.$route.name !== 'restorePassword'
@@ -156,13 +156,15 @@ export default {
 <style lang="scss">
 @import '~lato-font/scss/_public-api.scss';
 $lato-font-path: '~lato-font/fonts';
+@include lato-include-font('light');
 @include lato-include-font('normal');
 @include lato-include-font('bold');
+@include lato-include-font('heavy');
 
 @import './assets/styles/common';
 
 #amoforms_action_btn {
-  display: none !important; 
+  display: none !important;
 }
 #amoforms_overlay {
   position: fixed !important;
@@ -669,5 +671,8 @@ $lato-font-path: '~lato-font/fonts';
 }
 .v-select .v-chip {
   background: rgba(137, 149, 175, 0.1);
+}
+.v-content {
+  z-index: 1;
 }
 </style>

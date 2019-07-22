@@ -9,17 +9,17 @@
     <router-link :to="{ name: 'home' }" class="home-header__logo" />
     <VToolbarItems>
       <div class="home-header__desktop-menu">
-        <a 
-          v-if="$route.name === 'home'" 
-          v-smooth-scroll 
+        <a
+          v-if="$route.name === 'home'"
+          v-smooth-scroll
           href="/#about"
           :class="{ current: $route.hash && $route.hash === '#about' }"
         >О ПРОЕКТЕ</a>
         <router-link v-else :to="{ name: 'home', hash: '#about' }" :class="{ current: $route.hash && $route.hash === '#about' }">
-          О ПРОЕКТЕ
+          ПРОДУКТ
         </router-link>
         <router-link :to="{ name: 'faq' }" :class="{ current: $route.name === 'faq' }">
-          ПРОДУКТ
+          СЕРВИСЫ
         </router-link>
         <router-link :to="{ name: 'news' }" :class="{ current: $route.name === 'news' }">
           НОВОСТИ
@@ -42,15 +42,15 @@
         </VLayout>
         <v-btn
           v-if="loggedIn && userRole !== 'manager' && userRole !== 'admin'"
-          flat 
+          flat
           :class="['main-header__button ', { active: !isFirstSectionInView || $route.name === 'faq' || $route.name === 'news'}]"
           @click="goToBusiness"
         >
           <div class="home-header__icon " />
         </v-btn>
-        <v-btn 
+        <v-btn
           v-else-if="!loggedIn"
-          flat 
+          flat
           :class="['home-header__button _register', { active: !isFirstSectionInView || $route.name === 'faq' || $route.name === 'news'}]"
           @click="$router.push({ name: 'register' })"
         >
@@ -141,7 +141,7 @@
       },
       isOutOfViewport (elem) {
         if (!elem) {
-          return 
+          return
         }
         let bounding = elem.getBoundingClientRect()
 
@@ -157,7 +157,7 @@
   .home-header {
     background-color: #fff !important;
 
-    @media only screen and (min-width : $tablet) { 
+    @media only screen and (min-width : $tablet) {
       padding-top: 5px;
     }
     @media only screen and (min-width : $desktop) {
@@ -278,7 +278,7 @@
     a {
       text-decoration: none;
       font-weight: 900;
-      font-size: 16px;   
+      font-size: 16px;
       color: #07101C;
     }
     .company-badge {
