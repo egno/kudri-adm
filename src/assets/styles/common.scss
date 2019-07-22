@@ -3,9 +3,24 @@
 $tablet: 768px;
 $desktop: 1360px;
 $large: 1552px;
+$wide: 1905px;
 
 $roboto: Roboto Slab, Times New Roman, Times, serif;
 $lato: Lato, sans-serif;
+
+/*
+$lato-variants: (
+	'hairline' : 100,
+	'thin'     : 200,
+	'light'    : 300,
+	'normal'   : 400,
+	'medium'   : 400,
+	'semibold' : 500,
+	'bold'     : 600,
+	'heavy'    : 800,
+	'black'    : 900
+) !default;
+*/
 
 %vertical-align {
   display: flex;

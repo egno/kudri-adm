@@ -4,7 +4,7 @@
     app
     flat
     fixed
-    :height="isDesktop? 146 : 91"
+    :height="isDesktop? 146 : 80"
   >
     <router-link :to="{ name: 'home' }" class="home-header__logo" />
     <VToolbarItems>
@@ -12,10 +12,10 @@
         <a
           v-if="$route.name === 'home'"
           v-smooth-scroll
-          href="/#about"
-          :class="{ current: $route.hash && $route.hash === '#about' }"
-        >О ПРОЕКТЕ</a>
-        <router-link v-else :to="{ name: 'home', hash: '#about' }" :class="{ current: $route.hash && $route.hash === '#about' }">
+          href="/#product"
+          :class="{ current: $route.hash && $route.hash === '#product' }"
+        >ПРОДУКТ</a>
+        <router-link v-else :to="{ name: 'home', hash: '#product' }" :class="{ current: $route.hash && $route.hash === '#product' }">
           ПРОДУКТ
         </router-link>
         <router-link :to="{ name: 'faq' }" :class="{ current: $route.name === 'faq' }">

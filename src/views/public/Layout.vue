@@ -1,14 +1,12 @@
 <template>
   <div class="main-page">
     <div class="main-page-sections">
-      <MobileMenu />
-
       <slot />
 
       <section class="easier type-4">
         <div class="overlay" />
         <div class="content">
-          <div class="header">
+          <div class="main-page__heading">
             ЛЮБИМОЕ ДЕЛО<br>СТАНЕТ ПРОЩЕ
           </div>
           <router-link :to="{ name: 'register' }" class="btn">
@@ -100,11 +98,8 @@
 </template>
 
 <script>
-import MobileMenu from "../../components/home/MobileMenu"
-
 export default {
   components: {
-    MobileMenu,
   },
   methods: {
   }
@@ -112,9 +107,8 @@ export default {
 </script>
 
 <style lang="scss">
-  @import '../../assets/styles/common';
   @import '../../assets/styles/public-sections';
-  // $saloons: beauty spa cosmetic massage barbershop manicure lash solarium tattoo epilation;
+
   .main-page-sections {
     background: #f3f4f7;
 

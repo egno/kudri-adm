@@ -1,4 +1,6 @@
-  .main-page-sections {
+@import './common';
+
+.main-page-sections {
     section {
       position: relative;
 
@@ -107,13 +109,19 @@
 
       &.type-1 { // серый фон, белая подложка
         .content-wrapper {
-          margin: 0 0 0 137px;
           background: #fff;
-          box-shadow: 0px 1px 30px rgba(0, 0, 0, 0.05);
+          box-shadow: 0 1px 30px rgba(0, 0, 0, 0.05);
           height: 100%;
+          @media only screen and (min-width : $desktop) {
+            margin: 0 0 0 137px;
+          }
         }
         .content {
-          padding: 149px 0 126px;
+          padding: 64px 0 126px;
+          @media only screen and (min-width : $desktop) {
+            padding: 149px 0 126px;
+          }
+
           .text-wrapper {
             width: 578px;
           }

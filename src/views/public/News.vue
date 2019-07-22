@@ -4,7 +4,7 @@
       <div class="overlay" />
       <div class="content">
         <div class="text-wrapper">
-          <div class="header">
+          <div class="main-page__heading">
             ПОСЛЕДНИЕ<br>ОБНОВЛЕНИЯ
           </div>
           <div class="subheader">
@@ -26,7 +26,7 @@
       <div class="overlay layer-1" />
       <div class="content layer-0">
         <div class="text-wrapper">
-          <div class="header">
+          <div class="main-page__heading">
             АДАПТИРОВАНА<br>ПОД ВСЕ УСТРОЙСТВА
           </div>
           <div class="subheader">
@@ -53,7 +53,7 @@
       <div class="content">
         <div class="overlay layer-0" />
         <div class="text-wrapper layer-1">
-          <div class="header">
+          <div class="main-page__heading">
             БУДЬТЕ НА СВЯЗИ<br>С КЛИЕНТАМИ!
           </div>
           <div class="subheader">
