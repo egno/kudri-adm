@@ -78,6 +78,8 @@ import { isBusinessRoute } from '@/utils'
 import { formatDate } from '@/components/calendar/utils'
 import Users from '@/mixins/users'
 import { filials } from './business/mixins'
+import {roles} from '@/classes/user'
+
 export default {
   components: { AddMenu, NavPoweredItem, VCalendar },
   mixins: [Users, filials],
@@ -166,8 +168,8 @@ export default {
             this.loggedIn &&
             (this.userRole === 'manager' ||
               this.userRole === 'admin' ||
-              this.user.role === 'Администратор компании' ||
-              (this.user.role === 'Менеджер филиала' &&
+              this.user.role === roles[0] ||
+              (this.user.role === roles[1] &&
                 this.businessIsFilial)) &&
             !this.isManagerMenu
         },
@@ -211,7 +213,7 @@ export default {
             !this.isManagerMenu &&
             (this.userRole === 'manager' ||
               this.userRole === 'admin' ||
-              this.user.role === 'Администратор компании')
+              this.user.role === roles[0])
         },
         {
           title: 'Услуги',
@@ -220,7 +222,11 @@ export default {
             name: 'services',
             params: { id: this.businessId }
           },
-          show: this.hasSalonLevelAccess && this.hasName && !this.isManagerMenu ,
+          show: 
+            this.hasSalonLevelAccess && 
+            this.hasName &&
+            this.user.role !== roles[2] &&
+            !this.isManagerMenu ,
           action: {
             label: 'Добавить услугу',
             action: 'newService',
@@ -237,6 +243,7 @@ export default {
           show:
             this.hasSalonLevelAccess &&
             this.hasName &&
+            this.user.role !== roles[2] &&
             !this.isManagerMenu,
           action: {
             label: 'Добавить сотрудника',
@@ -264,7 +271,11 @@ export default {
             name: 'businessClientsTable',
             params: { id: this.businessId }
           },
-          show: this.hasSalonLevelAccess && this.hasName && this.isEditorUser,
+          show: 
+            this.hasSalonLevelAccess && 
+            this.hasName && 
+            this.user.role !== roles[2] &&
+            this.isEditorUser,
           action: {
             label: 'Добавить клиента',
             action: 'newClient',
