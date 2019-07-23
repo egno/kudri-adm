@@ -80,11 +80,9 @@
         </ul>
       </div>
     </section>
-
     <section class="pricing type-1">
       <div class="content-wrapper">
         <div class="content">
-          <div class="overlay layer-0" />
           <div class="text-wrapper layer-1">
             <div class="main-page__heading">
               ПОЛЬЗУЙТЕСЬ<br>БЕСПЛАТНО!
@@ -102,10 +100,11 @@
                 <li>Храните историю записей клиентов</li>
                 <li>Контролируйте рабочие процессы из любой точки мира</li>
               </ul>
-              Все это и другие полезные инструменты уже ждут вас в базовой версии UNO.CRM. А если вам не хватит стандартного функционала, просто добавьте действительно нужные вам платные модули и не платите за подписки и каждого мастера отдельно.
+              <div class="desktop">
+                Все это и другие полезные инструменты уже ждут вас в базовой версии UNO.CRM.
+                А если вам не хватит стандартного функционала, просто добавьте действительно нужные вам платные модули и не платите за подписки и каждого мастера отдельно.
+              </div>
             </div>
-          </div>
-          <div>
             <router-link :to="{ name: 'home' }" class="inner-link layer-1">
               ПОЛУЧИТЕ ДОСТУП К СИСТЕМЕ УЖЕ СЕЙЧАС
             </router-link>
@@ -116,7 +115,6 @@
 
     <section class="integration type-2">
       <div class="content">
-        <div class="overlay layer-0" />
         <div class="text-wrapper layer-1">
           <div class="main-page__heading">
             ВНЕДРЕНИЕ<br>ВСЕГО ЗА 2 ЧАСА
@@ -125,12 +123,12 @@
             Экономия времени и сил.
           </div>
           <p class="text">
-            Мы создали систему максимально простой и удобной,<br>
-            чтобы ваши сотрудники смогли легко освоить ее,<br>
+            Мы создали систему максимально простой и удобной,
+            чтобы ваши сотрудники смогли легко освоить ее,
             даже если до этого они никогда не работали в CRM.
             <br><br>
-            А если вам понадобится помощь, просто напишите<br>
-            в поддержку. Наш менеджер свяжется с вами<br>
+            А если вам понадобится помощь, просто напишите
+            в поддержку. Наш менеджер свяжется с вами
             и поможет разобраться со всеми вопросами.
           </p>
         </div>
@@ -139,19 +137,17 @@
 
     <section class="clients type-3">
       <div class="content">
-        <div class="overlay layer-0" />
         <div class="text-wrapper layer-1">
           <div class="main-page__heading">
             О КЛИЕНТАХ<br>В ПЕРВУЮ ОЧЕРЕДЬ
           </div>
           <div class="subheader">
-            Они скажут вам «Спасибо!» за заботу.
+            Они скажут вам&nbsp;«Спасибо!» за&nbsp;заботу.
           </div>
-          <p class="text">
-            В нашем мире невозможно все держать в голове. Поэтому мы разработали несколько инструментов, которые помогут вам держать свою базу клиентов в актуальном состоянии, расширять ее и удерживать.
-          </p>
-        </div>
-        <div>
+          <div class="text">
+            В нашем мире невозможно все держать в голове. Поэтому мы разработали несколько инструментов,
+            которые помогут вам держать свою базу клиентов в актуальном состоянии, расширять ее и удерживать.
+          </div>
           <router-link :to="{ name: 'home' }" class="inner-link layer-1">
             ПОДРОБНЕЕ О РАБОТЕ С КЛИЕНТАМИ БИЗНЕСА
           </router-link>
@@ -183,33 +179,60 @@ export default {
   .main-page-sections {
     section {
       &.pricing {
-        height: 1000px;
-        .overlay {
-          top: 70px;
-          background: url('../../assets/images/home/bg_pricing.png') right top/contain no-repeat;
-          @media only screen and (min-width : $desktop) {
-            background: url('../../assets/images/home/bg_pricing.png') right top/contain no-repeat;
-          }
+        height: 770px;
+        @media only screen and (min-width : $tablet) {
+          height: 728px;
+          padding-left: 40px;
         }
-      }
+        @media only screen and (min-width : $desktop) {
+          height: 978px;
+        }
+        @media only screen and (min-width : $wide) {
+          height: 1000px;
+        }
 
-      &.integration {
-        height: 835px;
-        .overlay {
-          left: 0;
-          background: url('../../assets/images/home/bg_integration.png') left top/contain no-repeat;
+        .content-wrapper {
+          background: url('../../assets/images/home/bg_pricing.png') right bottom/auto 50% no-repeat #fff;
+          @media only screen and (min-width : $tablet) {
+            background: url('../../assets/images/home/bg_pricing.png') 90% 100px/65% no-repeat #fff;
+          }
+          @media only screen and (min-width : $desktop) {
+            background-size: 60%;
+          }
+          @media only screen and (min-width : $wide) {
+            background-size: 50% auto;
+            background-position: right 80px;
+          }
+
         }
       }
 
       &.clients {
-        height: 755px;
-        background: #fff;
-        .overlay {
-          background: url('../../assets/images/home/bg_clients.png') right top/contain no-repeat;
+        height: 500px;
+        background: url('../../assets/images/home/bg_clients.png') 100px bottom/contain no-repeat #fff;
+        @media screen and (min-width: $tablet) {
+          background-position: right bottom;
         }
+        @media screen and (min-width: $desktop) {
+          height: 755px;
+        }
+        .subheader {
+          max-width: 80%;
+          @media screen and (min-width: $tablet) {
+            max-width: none;
+          }
+        }
+        .text {
+          max-width: 60%;
+          @media screen and (min-width: $tablet) {
+            max-width: none;
+          }
+        }
+
       }
     }
   }
+
   .main-page__first {
     height: calc(100vh - #{$header-height});
     display: flex;
@@ -401,16 +424,6 @@ export default {
     font-size: 16px;
     color: #07101C !important;
     text-decoration: none !important;
-  }
-  .main-page__heading {
-    font-size: 24px;
-    font-weight: 800;
-    @media only screen and (min-width : $tablet) {
-      font-size: 40px;
-    }
-    @media only screen and (min-width : $desktop) {
-      font-size: 60px;
-    }
   }
   .main-page__links {
     display: flex;
