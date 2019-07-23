@@ -477,11 +477,13 @@ export default {
       this.$emit('formChange')
     },
     onAvatarSave (img) {
-      this.saveImage(img, this.data.id).then(() => {
-        this.data.save().then(() => {
-          this.setBusinessInfo(this.data)
+      this.data.j.avatar = ''
+      this.saveImage(img, this.data.id)
+        .then(() => {
+          this.data.save().then(() => {
+            this.setBusinessInfo(this.data)
+          })
         })
-      })
     },
     phonesEdit (payload) {
       this.$set(this.data, 'j', {...this.data.j, ...{phones: payload}})
