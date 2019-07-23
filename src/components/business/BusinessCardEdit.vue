@@ -251,6 +251,8 @@ import MainButton from '@/components/common/MainButton.vue'
 import Business from '@/classes/business'
 import BusinessSchedule from '@/classes/businessSchedule'
 import { debounce } from 'lodash'
+import { uuidv4 } from '@/components/utils'
+
 
 export default {
   components: {
@@ -477,8 +479,9 @@ export default {
       this.$emit('formChange')
     },
     onAvatarSave (img) {
-      this.data.j.avatar = ''
-      this.saveImage(img, this.data.id)
+      this.$set(this.data, 'j', {...this.data.j, ...{avatar: ''}})
+      const id = uuidv4()
+      this.saveImage(img, id)
         .then(() => {
           this.data.save().then(() => {
             this.setBusinessInfo(this.data)
