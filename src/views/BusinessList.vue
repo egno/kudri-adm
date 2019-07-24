@@ -73,7 +73,7 @@
           </div>
         </td>
         <td>
-          <VLayout column>
+          <VLayout v-if="props.item.user" column>
             <VFlex><span>{{ props.item.user.name }} {{ props.item.user.surname }}</span></VFlex>
             <VFlex><PhoneView :phone="props.item.user.phone" /></VFlex>
           </VLayout>
