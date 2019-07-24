@@ -93,20 +93,6 @@
         </td>
         <td><span v-if="props.item.lastLogin">{{ props.item.lastLogin }}</span></td>
         <td>-</td>
-        <td class="justify-center layout px-0">
-          <a
-            v-if="props.item.access"
-            :to="{name: 'businessCard', params: {id: props.item.id}}"
-            target="_blank"
-          >
-            <VIcon
-              small
-              class="mr-2"
-            >
-              edit
-            </VIcon>
-          </a>
-        </td>
       </template>
       <template
         slot="pageText"
@@ -148,9 +134,8 @@ export default {
         { text: 'Адрес', value: 'j->>address' },
         { text: 'Телефон', value: '', sortable: false },
         { text: 'Менеджер', value: 'j->manager->>email' },
-        { text: 'Последний вход', value: '' },
-        { text: 'Статус', value: '' },
-        { text: 'Действия', value: '' }
+        { text: 'Последний вход', value: '', sortable: false },
+        { text: 'Статус', value: '' }
       ],
       data: [],
       pagination: { rowsPerPage: 10 },
@@ -160,7 +145,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['loggedIn', 'searchString']),
+    ...mapGetters(['loggedIn', 'searchString', 'userRole']),
     allowChangeManager () {
       return this.managers && this.managers.length && this.userRole==='admin'
     },
@@ -186,7 +171,8 @@ export default {
       deep: true
     },
     table: 'fetchData',
-    searchString: 'fetchData'
+    searchString: 'fetchData',
+    userRole: 'loadManagers'
   },
   mounted () {
     this.loadManagers()
@@ -197,7 +183,7 @@ export default {
     this.setActions([])
   },
   methods: {
-    ...mapActions(['alert', 'setActions', 'userRole']),
+    ...mapActions(['alert', 'setActions']),
     editItem (item) {
       router.push({ name: 'businessCard', params: { id: item.id } })
     },
