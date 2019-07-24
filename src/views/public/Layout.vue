@@ -124,14 +124,23 @@ export default {
     section {
       &.easier {
         height: 276px;
-        background: linear-gradient(64.96deg, #C1240F 0%, #EE5742 100%), url('../../assets/images/home/bg_easier.png') left center/cover no-repeat;
+        background: linear-gradient(64.96deg, #C1240F 0%, #EE5742 100%);
         color: #fff;
+        @media only screen and (min-width : $tablet) {
+          background: url('../../assets/images/home/bg_easier.png') right center/contain no-repeat, linear-gradient(64.96deg, #C1240F 0%, #EE5742 100%);
+        }
         @media screen and (min-width: $desktop) {
           height: 500px;
         }
 
         .content {
           flex-wrap: wrap;
+        }
+        .text-wrapper {
+          max-width: 100%;
+          @media only screen and (min-width : $tablet) {
+            padding: 0;
+          }
         }
         .main-page__heading {
           margin-bottom: 40px;

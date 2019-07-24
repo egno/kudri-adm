@@ -1,4 +1,6 @@
 <template>
+  <!--for animation of header on mobiles
+    :class="{ 'mobile-transparent' : $route.name === 'faq' || $route.name === 'news' }"-->
   <VToolbar
     class="home-header"
     app
@@ -274,7 +276,6 @@
         margin-left: 102px;
       }
     }
-
     a {
       text-decoration: none;
       font-weight: 900;
@@ -294,6 +295,12 @@
       border-left: 2px solid #07101C;
       @media only screen and (min-width : $desktop) {
         width: 136px;
+      }
+    }
+    &.mobile-transparent {
+      background-color: transparent !important;
+      @media only screen and (min-width : $tablet) {
+        background-color: #fff !important;
       }
     }
   }

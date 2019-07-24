@@ -2,82 +2,90 @@
   <Layout>
     <section class="main-page__first">
       <div class="main-page__first-top">
-        <div class="main-page__container">
-          <h2 class="main-page__subheading">
-            Оптимизируйте процессы –  <br> и занимайтесь любимым делом
-          </h2>
-          <h1 class="main-page__heading">
-            НОВАЯ СИСТЕМА УЧЕТА <br> ДЛЯ ИНДУСТРИИ КРАСОТЫ
-          </h1>
-          <router-link :to="{ name: 'register' }" class="main-page__register-link">
-            ПОЛЬЗУЙТЕСЬ БЕСПЛАТНО
-          </router-link>
-          <a
-            v-smooth-scroll
-            href="/#product"
-            class="main-page__scroll"
-          >
-            <span>УЗНАЙТЕ БОЛЬШЕ</span>
-          </a>
+        <div class="content">
+          <div class="text-wrapper">
+            <h2 class="main-page__subheading">
+              Оптимизируйте процессы –  <br> и занимайтесь любимым делом
+            </h2>
+            <h1 class="main-page__heading">
+              НОВАЯ СИСТЕМА УЧЕТА <br> ДЛЯ ИНДУСТРИИ КРАСОТЫ
+            </h1>
+            <router-link :to="{ name: 'register' }" class="main-page__register-link">
+              ПОЛЬЗУЙТЕСЬ БЕСПЛАТНО
+            </router-link>
+            <a
+              v-smooth-scroll
+              href="/#product"
+              class="main-page__scroll"
+            >
+              <span>УЗНАЙТЕ БОЛЬШЕ</span>
+            </a>
+          </div>
         </div>
       </div>
       <div class="main-page__first-bottom">
-        <ul class="main-page__links">
-          <li class="main-page__link">
-            <a target="_blank" href="https://vk.com/unocrm" class="vk" />
-          </li>
-          <li class="main-page__link">
-            <a target="_blank" href="https://www.instagram.com/crm_uno/" class="fb" />
-          </li>
-          <li class="main-page__link">
-            <a target="_blank" href="https://www.facebook.com/unocrm" class="ig" />
-          </li>
-        </ul>
+        <div class="content">
+          <div class="text-wrapper">
+            <ul class="main-page__links">
+              <li class="main-page__link">
+                <a target="_blank" href="https://vk.com/unocrm" class="vk" />
+              </li>
+              <li class="main-page__link">
+                <a target="_blank" href="https://www.instagram.com/crm_uno/" class="fb" />
+              </li>
+              <li class="main-page__link">
+                <a target="_blank" href="https://www.facebook.com/unocrm" class="ig" />
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
     <section id="product" class="fits">
-      <div class="target-audience">
-        <h2 class="main-page__heading">
-          КОМУ ПОДОЙДЕТ <br> СИСТЕМА UNO.CRM?
-        </h2>
-        <ul class="target-audience__list">
-          <li class="target-audience__item beauty">
-            <div>САЛОНЫ КРАСОТЫ</div>
-          </li>
-          <li class="target-audience__item spa _one-line">
-            <div>SPA-ЦЕНТРЫ</div>
-          </li>
-          <li class="target-audience__item cosmetic">
-            <div>КЛИНИКИ КОСМЕТОЛОГИИ</div>
-          </li>
-          <li class="target-audience__item hairdressers _one-line">
-            <div>ПАРИКМАХЕРСКИЕ</div>
-          </li>
-          <li class="target-audience__item barbershop _one-line">
-            <div>БАРБЕРШОПЫ</div>
-          </li>
-          <li class="target-audience__item massage">
-            <div>КАБИНЕТЫ МАССАЖА</div>
-          </li>
-          <li class="target-audience__item tattoo _one-line">
-            <div>ТАТУ-САЛОНЫ</div>
-          </li>
-          <li class="target-audience__item lash">
-            <div>LASH- И <br> BROW-КАБИНЕТЫ</div>
-          </li>
-          <li class="target-audience__item manicure">
-            <div>МАНИКЮРНЫЕ САЛОНЫ</div>
-          </li>
-          <li class="target-audience__item epilation">
-            <div>КАБИНЕТЫ ЭПИЛЯЦИИ</div>
-          </li>
-          <li class="target-audience__item individual">
-            <div>ЧАСТНЫЕ МАСТЕРА</div>
-          </li>
-          <li class="target-audience__item solarium">
-            <div>СТУДИИ ЗАГАРА </div>
-          </li>
-        </ul>
+      <div class="content">
+        <div class="target-audience">
+          <h2 class="main-page__heading">
+            КОМУ ПОДОЙДЕТ <br> СИСТЕМА UNO.CRM?
+          </h2>
+          <ul class="target-audience__list">
+            <li class="target-audience__item beauty">
+              <div>САЛОНЫ КРАСОТЫ</div>
+            </li>
+            <li class="target-audience__item spa _one-line">
+              <div>SPA-ЦЕНТРЫ</div>
+            </li>
+            <li class="target-audience__item cosmetic">
+              <div>КЛИНИКИ КОСМЕТОЛОГИИ</div>
+            </li>
+            <li class="target-audience__item hairdressers _one-line">
+              <div>ПАРИКМАХЕРСКИЕ</div>
+            </li>
+            <li class="target-audience__item barbershop _one-line">
+              <div>БАРБЕРШОПЫ</div>
+            </li>
+            <li class="target-audience__item massage">
+              <div>КАБИНЕТЫ МАССАЖА</div>
+            </li>
+            <li class="target-audience__item tattoo _one-line">
+              <div>ТАТУ-САЛОНЫ</div>
+            </li>
+            <li class="target-audience__item lash">
+              <div>LASH- И BROW-КАБИНЕТЫ</div>
+            </li>
+            <li class="target-audience__item manicure">
+              <div>МАНИКЮРНЫЕ САЛОНЫ</div>
+            </li>
+            <li class="target-audience__item epilation">
+              <div>КАБИНЕТЫ ЭПИЛЯЦИИ</div>
+            </li>
+            <li class="target-audience__item individual">
+              <div>ЧАСТНЫЕ МАСТЕРА</div>
+            </li>
+            <li class="target-audience__item solarium">
+              <div>СТУДИИ ЗАГАРА </div>
+            </li>
+          </ul>
+        </div>
       </div>
     </section>
     <section class="pricing type-1">
@@ -149,7 +157,7 @@
             которые помогут вам держать свою базу клиентов в актуальном состоянии, расширять ее и удерживать.
           </div>
           <router-link :to="{ name: 'home' }" class="inner-link layer-1">
-            ПОДРОБНЕЕ О РАБОТЕ С КЛИЕНТАМИ БИЗНЕСА
+            ПОДРОБНЕЕ О РАБОТЕ С&nbsp;КЛИЕНТАМИ БИЗНЕСА
           </router-link>
         </div>
       </div>
@@ -178,11 +186,16 @@ export default {
 
   .main-page-sections {
     section {
+      &.fits {
+        .content {
+          overflow: visible;
+        }
+      }
+
       &.pricing {
         height: 770px;
         @media only screen and (min-width : $tablet) {
           height: 728px;
-          padding-left: 40px;
         }
         @media only screen and (min-width : $desktop) {
           height: 978px;
@@ -203,7 +216,15 @@ export default {
             background-size: 50% auto;
             background-position: right 80px;
           }
+        }
+      }
 
+      &.integration {
+        .content {
+          background: url('../../assets/images/home/time.png') left top/contain no-repeat;
+          @media screen and (min-width: $tablet) {
+            background: url('../../assets/images/home/bg_integration.png') left top/contain no-repeat;
+          }
         }
       }
 
@@ -243,7 +264,6 @@ export default {
     background-origin: content-box;
     @media only screen and (min-width : $tablet) {
       padding-bottom: 60px;
-      align-items: flex-start;
       background: url('../../assets/images/bg_home_first_tablet.png') center/100% no-repeat #fff;
     }
     @media only screen and (min-width : $desktop) {
@@ -255,33 +275,41 @@ export default {
     @media only screen and (min-width : $wide) {
       background: url('../../assets/images/bg_home_first_wide.png') center top/cover no-repeat #fff;
     }
+    .content {
+      justify-content: center;
+    }
+    .text-wrapper {
+      max-width: 100%;
+      @media only screen and (min-width : $tablet) {
+        padding: 0;
+      }
+    }
+
     .main-page__first-top {
       flex-grow: 1;
+      width: 100%;
       display: flex;
       align-items: center;
+      .content {
+        width: 100%;
+        @media only screen and (min-width : $tablet) {
+          justify-content: flex-start;
+        }
+      }
     }
     .main-page__first-bottom {
-      @media only screen and (min-width : $tablet) {
-        padding-left: 109px;
-      }
-      @media only screen and (min-width : $desktop) {
-        padding-left: 172px;
-      }
-      @media only screen and (min-width : $wide) {
-        padding-left: 363px;
+      width: 100%;
+      .content {
+        @media only screen and (min-width : $tablet) {
+          justify-content: flex-start;
+        }
       }
     }
     .main-page__container {
       position: relative;
       padding-left: 48px;
       @media only screen and (min-width : $tablet) {
-        padding-left: 109px;
-      }
-      @media only screen and (min-width : $desktop) {
-        padding-left: 172px;
-      }
-      @media only screen and (min-width : $wide) {
-        padding-left: 363px;
+        padding-left: 0;
       }
     }
     .main-page__heading {
@@ -303,15 +331,82 @@ export default {
         font-size: 24px;
       }
     }
+
     .main-page__register-link {
       display: inline-flex;
+      width: 100%;
+      max-width: 280px;
+      height: 68px;
       margin: 0;
+      padding: 0 25px;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(90deg, #C9A15D 0%, #BA9462 100%) #b69768;
+      color: #FFFFFF;
+      text-decoration: none;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+      transition: background-color 0.6s 0s;
+      &:hover {
+        background-color: #07101C;
+        background-image: none;
+        text-decoration: none !important;
+      }
+    }
+    .main-page__scroll {
+      display: inline-flex;
+      justify-content: center;
+      width: 100%;
+      max-width: 280px;
+      margin-top: 45px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 16px;
+      color: #07101C !important;
+      text-decoration: none !important;
+    }
+    .main-page__links {
+      display: flex;
+      width: 207px;
+      padding: 26px 0;
+      align-items: center;
+      justify-content: space-between;
+      list-style: none;
+      @media only screen and (min-width : $tablet) {
+        width: 214px;
+      }
+    }
+    .main-page__link {
+      a {
+        display: inline-flex;
+        &.vk {
+          width: 28px;
+          height: 16px;
+          background: url('../../assets/images/svg/vk.svg') center/contain no-repeat;
+        }
+        &.fb {
+          width: 16px;
+          height: 29px;
+          background: url('../../assets/images/svg/fb.svg') center/contain no-repeat;
+        }
+        &.ig {
+          width: 27px;
+          height: 27px;
+          background: url('../../assets/images/ig.png') center/contain no-repeat;
+        }
+      }
     }
   }
   .target-audience {
+    $item-margin: 11px;
+    $item-margin-desktop: 3%;
+    $item-margin-wide: 19px;
     padding: 100px 6px 0;
+
     @media only screen and (min-width : $tablet) {
       margin-top: 55px;
+      padding: 100px 0 0;
     }
     @media only screen and (min-width : $desktop) {
       margin-bottom: 30px;
@@ -323,23 +418,30 @@ export default {
       flex-wrap: wrap;
       margin: 0 auto 42px;
       padding: 0;
-      justify-content: center;
+      justify-content: space-between;
       list-style: none;
+      @media only screen and (min-width : $tablet) {
+        margin: 0 (-$item-margin);
+      }
+      @media only screen and (min-width : $desktop) {
+        margin: 0 (-$item-margin-desktop * 2);
+      }
+      @media only screen and (min-width : $wide) {
+        margin: 0 (-$item-margin-wide);
+      }
     }
     &__item {
       width: 158px;
-      margin: 0 11px 57px;
+      margin: 0 $item-margin 57px;
       font-weight: 600;
       font-size: 16px;
       text-align: center;
-      @media only screen and (min-width : $tablet) {
-        margin: 0 22px 57px;
-      }
       @media only screen and (min-width : $desktop) {
-        margin: 0 38px 57px;
+        width: 10%;
+        margin: 0 $item-margin-desktop 57px;
       }
       @media only screen and (min-width : $wide) {
-        margin: 0 19px 57px;
+        margin: 0 $item-margin-wide 57px;
       }
       &:before {
         display: inline-block;
@@ -378,82 +480,12 @@ export default {
       text-align: left;
       @media only screen and (min-width : $tablet) {
         margin-bottom: 95px;
-        padding-left: 103px;
-      }
-      @media only screen and (min-width : $desktop) {
-        padding-left: 166px;
-      }
-      @media only screen and (min-width : $wide) {
-        padding-left: 357px;
+        padding-left: 0;
       }
     }
     .main-page__register-link {
       margin: 0 auto;
     }
   }
-  .main-page__register-link {
-    display: flex;
-    width: 86%;
-    max-width: 280px;
-    height: 68px;
-    margin: auto;
-    padding: 0 30px;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(90deg, #C9A15D 0%, #BA9462 100%) #b69768;
-    color: #FFFFFF;
-    text-decoration: none;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 600;
-    transition: background-color 0.6s 0s;
-    &:hover {
-      background-color: #07101C;
-      background-image: none;
-      text-decoration: none !important;
-    }
-  }
-  .main-page__scroll {
-    display: inline-flex;
-    justify-content: center;
-    width: 86%;
-    max-width: 280px;
-    margin-top: 45px;
-    text-align: center;
-    font-weight: 600;
-    font-size: 16px;
-    color: #07101C !important;
-    text-decoration: none !important;
-  }
-  .main-page__links {
-    display: flex;
-    width: 207px;
-    padding: 26px 0;
-    align-items: center;
-    justify-content: space-between;
-    list-style: none;
-    @media only screen and (min-width : $tablet) {
-      width: 214px;
-    }
-  }
-  .main-page__link {
-    a {
-      display: inline-flex;
-      &.vk {
-        width: 28px;
-        height: 16px;
-        background: url('../../assets/images/svg/vk.svg') center/contain no-repeat;
-      }
-      &.fb {
-        width: 16px;
-        height: 29px;
-        background: url('../../assets/images/svg/fb.svg') center/contain no-repeat;
-      }
-      &.ig {
-        width: 27px;
-        height: 27px;
-        background: url('../../assets/images/ig.png') center/contain no-repeat;
-      }
-    }
-  }
+
 </style>

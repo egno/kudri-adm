@@ -1,140 +1,48 @@
 @import './common';
+$max-container-desktop-width: 1096px;
+$max-container-wide-width: 1194px;
 
 .main-page-sections {
     section {
       position: relative;
-
-      a {
-        text-decoration: none;
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-
-      .overlay {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 100%;
-        min-height: 100%;
-      }
-
-      .content {
-        position: relative;
-        max-width: 900px;
-        margin: 0 auto;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        @media screen and (min-width: $desktop) {
-          max-width: 1150px;
-          overflow: hidden;
-          justify-content: space-between;
-        }
-      }
-
-      .subheader {
-        font-size: 16px;
-        font-weight: 300;
-        @media screen and (min-width: $tablet) {
-          font-size: 24px;
-        }
-        @media screen and (min-width: $desktop) {
-          font-size: 34px;
-        }
-      }
-
-      .text {
-        display: block;
-        font-size: 12px;
-        @media screen and (min-width: $tablet) {
-          font-size: 14px;
-        }
-        @media screen and (min-width: $desktop) {
-          font-size: 18px;
-        }
-      }
-
-      .inner-link {
-        display: block;
-        margin-top: 25px;
-        font-size: 16px;
-        font-weight: 600;
-        color: #5699FF;
-        text-transform: uppercase;
-        &:after {
-          display: inline-block;
-          content: '';
-          height: 7px;
-          width: 7px;
-          border: 2px solid #5699FF;
-          transform: rotate(45deg) translate(-2px, -1px);
-          border-left: none;
-          border-bottom: none;
-        }
-        @media screen and (min-width: $tablet) {
-          margin-top: 35px;
-        }
-        @media screen and (min-width: $desktop) {
-          margin-top: 55px;
-        }
-      }
-
-      .text-wrapper {
-        padding: 0 48px;
-
-        @media screen and (min-width: $tablet) {
-          max-width: 60%;
-        }
-
-        .subheader {
-          margin-bottom: 16px;
-          @media only screen and (min-width : $desktop) {
-            margin-bottom: 62px;
-          }
-        }
-        ul {
-          list-style: none;
-          margin: 30px 0;
-          li {
-            margin-bottom: 10px;
-            font-weight: 600;
-          }
-        }
-      }
-
-      .layer-0 {
-        z-index: 1;
-      }
-
-      .layer-1 {
-        z-index: 2;
-      }
-
-      .layer-2 {
-        z-index: 3;
-      }
-
       &.type-1 { // серый фон, белая подложка
         .content-wrapper {
           box-shadow: 0 1px 30px rgba(0, 0, 0, 0.05);
           height: 100%;
-          @media only screen and (min-width : $desktop) {
-            margin: 0 0 0 97px;
+          @media only screen and (min-width : $tablet) {
+            width: 92%;
+            max-width: $max-container-desktop-width;
+            margin: 0 auto;
+          }
+          @media screen and (min-width: $wide) {
+            max-width: $max-container-wide-width;
           }
         }
         .content {
           align-items: flex-start;
           padding-top: 64px;
-          @media only screen and (min-width : $desktop) {
+          @media only screen and (min-width : $tablet) {
             padding-top: 101px;
+            max-width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 7fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            grid-gap: 2%;
+            &:before {
+              /*fallback for not supporting grid template browsers*/
+              display: none;
+              display: inline-grid;
+              content: '';
+            }
           }
           @media only screen and (min-width : $desktop) {
             flex-direction: row;
           }
         }
         .text-wrapper {
+          @media screen and (min-width: $tablet) {
+            max-width: 100%;
+            padding-right: 0;
+          }
           @media only screen and (min-width : $desktop) {
             width: 578px;
           }
@@ -157,31 +65,23 @@
           }
         }
         .text-wrapper {
-          max-width: 85%;
+          max-width: 86%;
           @media screen and (min-width: $tablet) {
             max-width: 60%;
-            padding-left: 0;
           }
         }
       }
 
       &.type-3 { // изображение внутри контейнера
-          @media screen and (min-width: $desktop) {
-            flex-direction: row;
-          }
+        @media screen and (min-width: $desktop) {
+          flex-direction: row;
+        }
 
         .text-wrapper {
+          max-width: 90%;
           @media screen and (min-width: $desktop) {
             width: 650px;
-          }
-        }
-      }
-
-      &.integration {
-        .content {
-          background: url('../../assets/images/home/time.png') left top/contain no-repeat;
-          @media screen and (min-width: $tablet) {
-            background: url('../../assets/images/home/bg_integration.png') left top/contain no-repeat;
+            padding-right: 0;
           }
         }
       }
@@ -240,25 +140,153 @@
       }
 
       &.connection {
-        height: 900px;
-        .overlay {
-          top: 70px;
-          background: url('../../assets/images/faq/bg_connection.png') right top/contain no-repeat;
+        height: 560px;
+        @media screen and (min-width: $tablet) {
+          height: 680px;
+        }
+        @media screen and (min-width: $desktop) {
+          height: 900px;
+        }
+        .content-wrapper {
+          background: url('../../assets/images/faq/bg_connection.png') 100px bottom/contain no-repeat #fff;
+          @media screen and (min-width: $tablet) {
+            background: url('../../assets/images/faq/bg_connection.png') right bottom/70% no-repeat #fff;
+          }
         }
         .content {
-          .text-wrapper {
-            @media screen and (min-width: $desktop) {
-              width: 700px;
-            }
+          margin-left: 0;
+        }
+        .text-wrapper {
+          @media screen and (min-width: $desktop) {
+            width: 700px;
           }
         }
       }
+    }
 
-      .desktop {
-        display: none;
-        @media screen and (min-width: $desktop) {
-          display: block;
+    a {
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100%;
+      min-height: 100%;
+    }
+
+    .content {
+      position: relative;
+      max-width: 900px;
+      margin: 0 auto;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      @media screen and (min-width: $tablet) {
+        max-width: 582px;
+      }
+      @media screen and (min-width: $desktop) {
+        max-width: $max-container-desktop-width;
+        overflow: hidden;
+        justify-content: space-between;
+      }
+      @media screen and (min-width: $wide) {
+        max-width: $max-container-wide-width;
+      }
+    }
+
+    .subheader {
+      font-size: 16px;
+      font-weight: 300;
+      @media screen and (min-width: $tablet) {
+        font-size: 24px;
+      }
+      @media screen and (min-width: $desktop) {
+        font-size: 34px;
+      }
+    }
+
+    .text {
+      display: block;
+      font-size: 12px;
+      @media screen and (min-width: $tablet) {
+        font-size: 14px;
+      }
+      @media screen and (min-width: $desktop) {
+        font-size: 18px;
+      }
+    }
+
+    .inner-link {
+      display: block;
+      margin-top: 25px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #5699FF;
+      text-transform: uppercase;
+      &:after {
+        display: inline-block;
+        content: '';
+        height: 7px;
+        width: 7px;
+        border: 2px solid #5699FF;
+        transform: rotate(45deg) translate(-2px, -1px);
+        border-left: none;
+        border-bottom: none;
+      }
+      @media screen and (min-width: $tablet) {
+        margin-top: 35px;
+      }
+      @media screen and (min-width: $desktop) {
+        margin-top: 55px;
+      }
+    }
+
+    .text-wrapper {
+      padding: 0 48px;
+
+      @media screen and (min-width: $tablet) {
+        max-width: 60%;
+        padding-left: 0;
+      }
+
+      .subheader {
+        margin-bottom: 16px;
+        @media only screen and (min-width : $desktop) {
+          margin-bottom: 62px;
         }
+      }
+      ul {
+        list-style: none;
+        margin: 30px 0;
+        li {
+          margin-bottom: 10px;
+          font-weight: 600;
+        }
+      }
+    }
+
+    .layer-0 {
+      z-index: 1;
+    }
+
+    .layer-1 {
+      z-index: 2;
+    }
+
+    .layer-2 {
+      z-index: 3;
+    }
+
+    .desktop {
+      display: none;
+      @media screen and (min-width: $desktop) {
+        display: block;
       }
     }
 

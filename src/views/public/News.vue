@@ -1,16 +1,15 @@
 <template>
   <Layout>
-    <section class="update type-3">
-      <div class="overlay" />
+    <section class="update">
       <div class="content">
         <div class="text-wrapper">
           <div class="main-page__heading">
             ПОСЛЕДНИЕ<br>ОБНОВЛЕНИЯ
           </div>
           <div class="subheader">
-            Мы всегда идем в ногу с бизнесом,<br>
-            и благодаря вашей обратной связи<br>
-            регулярно создаем актуальные и<br>
+            Мы всегда идем в ногу с бизнесом,
+            и благодаря вашей обратной связи
+            регулярно создаем актуальные и
             полезные обновления.
           </div>
           <router-link :to="{ name: 'home' }" class="inner-link">
@@ -20,7 +19,7 @@
       </div>
     </section>
 
-    <section class="adaptive">
+    <section class="adaptive type-3">
       <div class="overlay layer-1" />
       <div class="content layer-0">
         <div class="text-wrapper">
@@ -46,27 +45,28 @@
     </section>
 
     <section class="connection type-1">
-      <div class="content">
-        <div class="overlay layer-0" />
-        <div class="text-wrapper layer-1">
-          <div class="main-page__heading">
-            БУДЬТЕ НА СВЯЗИ<br>С КЛИЕНТАМИ!
+      <div class="content-wrapper">
+        <div class="content">
+          <div class="text-wrapper layer-1">
+            <div class="main-page__heading">
+              БУДЬТЕ НА СВЯЗИ<br>С КЛИЕНТАМИ!
+            </div>
+            <div class="subheader">
+              Простой сервис отправки sms-уведомлений
+              клиентам и сотрудникам.
+            </div>
+            <p class="text">
+              Напоминайте о записи, поздравляйте с праздниками,
+              подтверждайте записи клиентов без затрат времени.<br><br>
+              Вам не потребуется заключение дополнительных договоров
+              с операторами связи и проблем с подключением API. Все эти
+              вопросы мы уже решили за вас. Вам нужно лишь ознакомиться
+              с договором оферты и настроить события отправки сообщений.
+            </p>
+            <router-link :to="{ name: 'home' }" class="inner-link layer-1">
+              ПОЛУЧИТЕ ДОСТУП К СИСТЕМЕ УЖЕ СЕЙЧАС
+            </router-link>
           </div>
-          <div class="subheader">
-            Простой сервис отправки sms-уведомлений<br>
-            клиентам и сотрудникам.
-          </div>
-          <p class="text">
-            Напоминайте о записи, поздравляйте с праздниками,<br>
-            подтверждайте записи клиентов без затрат времени.<br><br>
-            Вам не потребуется заключение дополнительных договоров<br>
-            с операторами связи и проблем с подключением API. Все эти<br>
-            вопросы мы уже решили за вас. Вам нужно лишь ознакомиться<br>
-            с договором оферты и настроить события отправки сообщений.
-          </p>
-          <router-link :to="{ name: 'home' }" class="inner-link layer-1">
-            ПОЛУЧИТЕ ДОСТУП К СИСТЕМЕ УЖЕ СЕЙЧАС
-          </router-link>
         </div>
       </div>
     </section>
@@ -85,13 +85,34 @@ export default {
 </script>
 
 <style lang="scss">
+  @import '../../assets/styles/common';
 .main-page-sections {
   section {
     &.update {
-      background: #f3f4f7;
-      .overlay {
-        width: 50%;
-        background: url('../../assets/images/news/bg_update.png') left/contain no-repeat;
+      height: calc(100vh - 80px);
+      /* for animation of header on mobiles
+      height: 100vh;
+      margin-top: -80px;
+      */
+      background: url('../../assets/images/news/bg_update.png') 30px 30px/130% no-repeat  #f3f4f7;
+      /* for animation of header on mobiles
+      @media only screen and (min-width : $tablet) {
+        height: calc(100vh - 80px);
+        margin-top: 0;
+      }*/
+      @media screen and (min-width: $desktop) {
+        height: calc(100vh - 146px);
+        background: url('../../assets/images/news/bg_update.png') right center/54% no-repeat  #f3f4f7;
+      }
+      .content {
+        align-items: flex-end;
+        padding-bottom: 13%;
+        @media screen and (min-height: 1024px) {
+          padding-bottom: 20%;
+        }
+      }
+      .main-page__heading {
+        margin-bottom: 24px;
       }
     }
   }
