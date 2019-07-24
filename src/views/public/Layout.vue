@@ -1,19 +1,21 @@
 <template>
   <div class="main-page">
     <div class="main-page-sections">
-      <MobileMenu />
-
       <slot />
 
-      <section class="easier type-4">
-        <div class="overlay" />
+      <section class="easier">
         <div class="content">
-          <div class="header">
-            ЛЮБИМОЕ ДЕЛО<br>СТАНЕТ ПРОЩЕ
+          <div class="text-wrapper">
+            <div class="main-page__heading">
+              ЛЮБИМОЕ ДЕЛО<br>СТАНЕТ ПРОЩЕ
+            </div>
+            <router-link :to="{ name: 'register' }" class="btn mobile">
+              ПОПРОБУЙТЕ БЕСПЛАТНО
+            </router-link>
+            <router-link :to="{ name: 'register' }" class="btn tablet">
+              ПОПРОБУЙТЕ UNO.CRM БЕСПЛАТНО
+            </router-link>
           </div>
-          <router-link :to="{ name: 'register' }" class="btn">
-            ПОПРОБУЙТЕ UNO.CRM БЕСПЛАТНО
-          </router-link>
         </div>
       </section>
     </div>
@@ -100,11 +102,8 @@
 </template>
 
 <script>
-import MobileMenu from "../../components/home/MobileMenu"
-
 export default {
   components: {
-    MobileMenu,
   },
   methods: {
   }
@@ -112,9 +111,8 @@ export default {
 </script>
 
 <style lang="scss">
-  @import '../../assets/styles/common';
   @import '../../assets/styles/public-sections';
-  // $saloons: beauty spa cosmetic massage barbershop manicure lash solarium tattoo epilation;
+
   .main-page-sections {
     background: #f3f4f7;
 
@@ -125,13 +123,59 @@ export default {
 
     section {
       &.easier {
-        padding: 118px 0 90px;
-        height: 500px;
+        height: 276px;
         background: linear-gradient(64.96deg, #C1240F 0%, #EE5742 100%);
         color: #fff;
-        .overlay {
-          width: 50%;
-          background: url('../../assets/images/home/bg_easier.png') left center/cover no-repeat;
+        @media only screen and (min-width : $tablet) {
+          background: url('../../assets/images/home/bg_easier.png') right center/contain no-repeat, linear-gradient(64.96deg, #C1240F 0%, #EE5742 100%);
+        }
+        @media screen and (min-width: $desktop) {
+          height: 500px;
+        }
+
+        .content {
+          flex-wrap: wrap;
+        }
+        .text-wrapper {
+          max-width: 100%;
+          @media only screen and (min-width : $tablet) {
+            padding: 0;
+          }
+        }
+        .main-page__heading {
+          margin-bottom: 40px;
+        }
+        .btn {
+          display: flex;
+          min-width: 280px;
+          height: 68px;
+          align-items: center;
+          justify-content: space-around;
+          background: #fff;
+          color: #07101C;
+          text-decoration: none;
+          text-align: center;
+          font-size: 18px;
+          font-weight: 900;
+          transition: background-color 0.6s 0s, color 0.6s 0s;
+          &:hover {
+            color: #fff;
+            background: #07101C;
+          }
+          @media screen and (min-width: $desktop) {
+            width: 426px;
+          }
+          &.mobile {
+            @media only screen and (min-width : $tablet) {
+              display: none;
+            }
+          }
+          &.tablet {
+            display: none;
+            @media only screen and (min-width : $tablet) {
+              display: flex;
+            }
+          }
         }
       }
 
@@ -142,8 +186,11 @@ export default {
           display: flex;
           justify-content: flex-start;
           align-items: flex-start;
-          flex-direction: row;
           flex-wrap: wrap;
+          flex-direction: column;
+          @media screen and (min-width: $desktop) {
+            flex-direction: row;
+          }
           .col {
             display: block;
             width: 33.3%;
@@ -200,5 +247,16 @@ export default {
         }
       }
     }
+    .main-page__heading {
+      font-size: 24px;
+      font-weight: 800;
+      @media only screen and (min-width : $tablet) {
+        font-size: 40px;
+      }
+      @media only screen and (min-width : $desktop) {
+        font-size: 60px;
+      }
+    }
+
   }
 </style>

@@ -1,10 +1,12 @@
 <template>
+  <!--for animation of header on mobiles
+    :class="{ 'mobile-transparent' : $route.name === 'faq' || $route.name === 'news' }"-->
   <VToolbar
     class="home-header"
     app
     flat
     fixed
-    :height="isDesktop? 146 : 91"
+    :height="isDesktop? 146 : 80"
   >
     <router-link :to="{ name: 'home' }" class="home-header__logo" />
     <VToolbarItems>
@@ -12,10 +14,10 @@
         <a
           v-if="$route.name === 'home'"
           v-smooth-scroll
-          href="/#about"
-          :class="{ current: $route.hash && $route.hash === '#about' }"
-        >О ПРОЕКТЕ</a>
-        <router-link v-else :to="{ name: 'home', hash: '#about' }" :class="{ current: $route.hash && $route.hash === '#about' }">
+          href="/#product"
+          :class="{ current: $route.hash && $route.hash === '#product' }"
+        >ПРОДУКТ</a>
+        <router-link v-else :to="{ name: 'home', hash: '#product' }" :class="{ current: $route.hash && $route.hash === '#product' }">
           ПРОДУКТ
         </router-link>
         <router-link :to="{ name: 'faq' }" :class="{ current: $route.name === 'faq' }">
@@ -274,7 +276,6 @@
         margin-left: 102px;
       }
     }
-
     a {
       text-decoration: none;
       font-weight: 900;
@@ -294,6 +295,12 @@
       border-left: 2px solid #07101C;
       @media only screen and (min-width : $desktop) {
         width: 136px;
+      }
+    }
+    &.mobile-transparent {
+      background-color: transparent !important;
+      @media only screen and (min-width : $tablet) {
+        background-color: #fff !important;
       }
     }
   }
