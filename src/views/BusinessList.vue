@@ -89,7 +89,8 @@
               @change="itemSave(props.item)"
             /></span>
           <span v-else>
-            {{ props.item.j && props.item.j.manager && props.item.j.manager.email }}
+            <span v-if="props.item.j && props.item.j.manager && props.item.j.manager.email">{{ props.item.j && props.item.j.manager && props.item.j.manager.email }}</span>
+            <span v-else class="red--text">менеджер не назначен</span>
           </span>
         </td>
         <td><span v-if="props.item.lastLogin">{{ props.item.lastLogin }}</span></td>
