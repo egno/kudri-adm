@@ -72,7 +72,12 @@
             </RouterLink>
           </div>
         </td>
-        <td><PhoneView :phone="props.item.phone" /></td>
+        <td>
+          <VLayout column>
+            <VFlex><span>{{ props.item.user.name }} {{ props.item.user.surname }}</span></VFlex>
+            <VFlex><PhoneView :phone="props.item.user.phone" /></VFlex>
+          </VLayout>
+        </td>
         <td>{{ props.item.j && props.item.j.manager && props.item.j.manager.email }}</td>
         <td>-</td>
         <td>-</td>
@@ -208,7 +213,7 @@ export default {
         })
         .then(res => {
           this.data = res.filter(x => x.j).map(x => {
-            x.phone = this.phone(x)
+            x.user = this.user(x)
             return x
           })
           this.progressQuery = false
@@ -217,16 +222,15 @@ export default {
           this.progressQuery = false
         })
     },
-    phone (business) {
-      const phones = this.phones(business)
-      return phones && phones[0]
+    user (business) {
+      const users = this.users(business)
+      return users && users[0]
     },
-    phones (business) {
+    users (business) {
       return business && business.users && 
         business.users.length && 
         business.users
           .sort(x => x.id === business.id ? -1 : 1)
-          .map(x => x.phone)
     }
   }
 }
