@@ -72,7 +72,7 @@
             </RouterLink>
           </div>
         </td>
-        <td>{{ props.item.j && props.item.j.email }}</td>
+        <td>{{ phone(props.item) }}</td>
         <td>{{ props.item.j && props.item.j.manager && props.item.j.manager.email }}</td>
         <td>-</td>
         <td>-</td>
@@ -124,7 +124,7 @@ export default {
         { text: 'Тип', value: 'j->>category' },
         { text: 'ИНН', value: 'j->>inn' },
         { text: 'Адрес', value: 'j->>address' },
-        { text: 'Email', value: 'j->>email' },
+        { text: 'Телефон', value: '', sortable: false },
         { text: 'Менеджер', value: 'j->manager->>email' },
         { text: 'Дата', value: '' },
         { text: 'Статус', value: '' },
@@ -212,6 +212,17 @@ export default {
         .catch(() => {
           this.progressQuery = false
         })
+    },
+    phone (business) {
+      const phones = this.phones(business)
+      return phones && phones[0]
+    },
+    phones (business) {
+      return business && business.users && 
+        business.users.length && 
+        business.users
+          .sort(x => x.id === business.id ? -1 : 1)
+          .map(x => x.phone)
     }
   }
 }
