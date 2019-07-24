@@ -91,7 +91,7 @@
           </span>
           <span v-else>{{ props.item.j && props.item.j.manager && props.item.j.manager.email }}</span>
         </td>
-        <td>-</td>
+        <td><span v-if="props.item.lastLogin">{{ props.item.lastLogin }}</span></td>
         <td>-</td>
         <td class="justify-center layout px-0">
           <a
@@ -125,6 +125,9 @@ import Avatar from '@/components/avatar/Avatar.vue'
 import PhoneView from '@/components/common/PhoneView.vue'
 import { mapActions, mapGetters } from 'vuex'
 import { makeAlert } from '@/api/utils'
+import {
+  displayRESTDate
+} from '@/components/calendar/utils'
 
 export default {
   components: { Avatar, PhoneView },
@@ -145,7 +148,7 @@ export default {
         { text: 'Адрес', value: 'j->>address' },
         { text: 'Телефон', value: '', sortable: false },
         { text: 'Менеджер', value: 'j->manager->>email' },
-        { text: 'Дата', value: '' },
+        { text: 'Последний вход', value: '' },
         { text: 'Статус', value: '' },
         { text: 'Действия', value: '' }
       ],
@@ -159,7 +162,7 @@ export default {
   computed: {
     ...mapGetters(['loggedIn', 'searchString']),
     allowChangeManager () {
-      return this.managers && this.managers.length
+      return this.managers && this.managers.length && this.userRole==='admin'
     },
     table () {
       return this.$route.name == 'businessList' ? 'business' : 'my_business'
@@ -194,7 +197,7 @@ export default {
     this.setActions([])
   },
   methods: {
-    ...mapActions(['alert', 'setActions']),
+    ...mapActions(['alert', 'setActions', 'userRole']),
     editItem (item) {
       router.push({ name: 'businessCard', params: { id: item.id } })
     },
@@ -232,6 +235,7 @@ export default {
         .then(res => {
           this.data = res.filter(x => x.j).map(x => {
             x.user = this.user(x)
+            x.lastLogin = displayRESTDate(this.lastLogin(x))
             return x
           })
           this.progressQuery = false
@@ -253,6 +257,13 @@ export default {
             this.alert(makeAlert(err))
         })
     },
+    lastLogin (business) {
+      return business && business.users && 
+        business.users.length && 
+        business.users
+          .map(x => x['last_login'])
+          .sort((a,b) => a > b ? -1 : 1)[0]
+    },
     user (business) {
       const users = this.users(business)
       return users && users[0]
@@ -264,6 +275,7 @@ export default {
           .sort(x => x.id === business.id ? -1 : 1)
     },
     loadManagers () {
+      if (this.userRole !== 'admin') return
       Api().get('managers')
         .then(res => {
           this.managers = res.data.map(x=> {
