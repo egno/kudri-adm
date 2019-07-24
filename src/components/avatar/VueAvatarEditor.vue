@@ -135,7 +135,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   @import '../../assets/styles/button';
 
   .avatar-editor {
@@ -163,9 +163,9 @@ export default {
     }
 
     & button {
-      width: 280px;
-      height: 56px;
-      border-radius: 0;
+      width: 280px !important;
+      height: 56px !important;
+      border-radius: 4px !important;
     }
 
     #avatarEditorCanvas {
