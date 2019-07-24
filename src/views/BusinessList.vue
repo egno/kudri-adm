@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div @click="edit=undefined">
     <VDataTable
       :headers="headers"
       :items="data"
@@ -78,9 +78,8 @@
             <VFlex><PhoneView :phone="props.item.user.phone" /></VFlex>
           </VLayout>
         </td>
-        <td @click="edit=props.item">
-          <span v-if="edit !== props.item">{{ props.item.j && props.item.j.manager && props.item.j.manager.email }}</span>
-          <span v-else>
+        <td @click.stop="edit= allowChangeManager ? props.item : undefined">
+          <span v-if="allowChangeManager && edit === props.item">
             <v-select 
               v-model="props.item.j.manager"
               :items="managers"
@@ -88,7 +87,9 @@
               return-object
               clearable
               @change="itemSave(props.item)"
-            />
+            /></span>
+          <span v-else>
+            {{ props.item.j && props.item.j.manager && props.item.j.manager.email }}
           </span>
         </td>
         <td><span v-if="props.item.lastLogin">{{ props.item.lastLogin }}</span></td>
