@@ -78,7 +78,19 @@
             <VFlex><PhoneView :phone="props.item.user.phone" /></VFlex>
           </VLayout>
         </td>
-        <td>{{ props.item.j && props.item.j.manager && props.item.j.manager.email }}</td>
+        <td>
+          <span v-if="allowChangeManager">
+            <v-select 
+              v-model="props.item.j.manager"
+              :items="managers"
+              item-text="email"
+              return-object
+              clearable
+              @change="itemSave(props.item)"
+            />
+          </span>
+          <span v-else>{{ props.item.j && props.item.j.manager && props.item.j.manager.email }}</span>
+        </td>
         <td>-</td>
         <td>-</td>
         <td class="justify-center layout px-0">
@@ -112,6 +124,7 @@ import router from '@/router'
 import Avatar from '@/components/avatar/Avatar.vue'
 import PhoneView from '@/components/common/PhoneView.vue'
 import { mapActions, mapGetters } from 'vuex'
+import { makeAlert } from '@/api/utils'
 
 export default {
   components: { Avatar, PhoneView },
@@ -139,11 +152,15 @@ export default {
       data: [],
       pagination: { rowsPerPage: 10 },
       progressQuery: false,
-      totalItems: 0
+      totalItems: 0,
+      managers: []
     }
   },
   computed: {
     ...mapGetters(['loggedIn', 'searchString']),
+    allowChangeManager () {
+      return this.managers && this.managers.length
+    },
     table () {
       return this.$route.name == 'businessList' ? 'business' : 'my_business'
     },
@@ -169,6 +186,7 @@ export default {
     searchString: 'fetchData'
   },
   mounted () {
+    this.loadManagers()
     this.fetchData()
     this.setActions(this.formActions)
   },
@@ -176,7 +194,7 @@ export default {
     this.setActions([])
   },
   methods: {
-    ...mapActions(['setActions']),
+    ...mapActions(['alert', 'setActions']),
     editItem (item) {
       router.push({ name: 'businessCard', params: { id: item.id } })
     },
@@ -222,6 +240,19 @@ export default {
           this.progressQuery = false
         })
     },
+    itemSave (item) {
+      const data = {
+        j: item.j
+      }
+      Api()
+        .patch(`business?id=eq.${item.id}`, data)
+        .then(()=>{
+          this.alert(makeAlert('Сохранено'))
+        })
+        .catch(err => {
+            this.alert(makeAlert(err))
+        })
+    },
     user (business) {
       const users = this.users(business)
       return users && users[0]
@@ -231,6 +262,14 @@ export default {
         business.users.length && 
         business.users
           .sort(x => x.id === business.id ? -1 : 1)
+    },
+    loadManagers () {
+      Api().get('managers')
+        .then(res => {
+          this.managers = res.data.map(x=> {
+            return {id: x.id, email: x.email}
+          })
+        }) 
     }
   }
 }
