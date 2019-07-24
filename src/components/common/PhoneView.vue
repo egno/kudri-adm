@@ -30,6 +30,7 @@
     align-items: center;
     padding-left: 24px;
     background: url('../../assets/images/svg/ru.svg') left 4px no-repeat;
+    min-width: 13em;
   }
 
   a {

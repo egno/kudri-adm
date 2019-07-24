@@ -72,7 +72,7 @@
             </RouterLink>
           </div>
         </td>
-        <td>{{ phone(props.item) }}</td>
+        <td><PhoneView :phone="props.item.phone" /></td>
         <td>{{ props.item.j && props.item.j.manager && props.item.j.manager.email }}</td>
         <td>-</td>
         <td>-</td>
@@ -105,10 +105,11 @@
 import Api from '@/api/backend'
 import router from '@/router'
 import Avatar from '@/components/avatar/Avatar.vue'
+import PhoneView from '@/components/common/PhoneView.vue'
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  components: { Avatar },
+  components: { Avatar, PhoneView },
   data () {
     return {
       formActions: [
@@ -206,7 +207,10 @@ export default {
           return res.data
         })
         .then(res => {
-          this.data = res.filter(x => x.j)
+          this.data = res.filter(x => x.j).map(x => {
+            x.phone = this.phone(x)
+            return x
+          })
           this.progressQuery = false
         })
         .catch(() => {
