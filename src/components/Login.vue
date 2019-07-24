@@ -17,7 +17,7 @@
       </VCardTitle>
     </VCard>
     <div v-if="!isLoading && loaded && loggedIn===false">
-      <VForm class="businesscard-form _login">
+      <VForm class="businesscard-form _login" autocomplete="on">
         <VTextField
           v-model="flogin"
           name="username"

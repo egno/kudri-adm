@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div @click="edit=undefined">
     <VDataTable
       :headers="headers"
       :items="data"
@@ -72,24 +72,29 @@
             </RouterLink>
           </div>
         </td>
-        <td>{{ props.item.j && props.item.j.email }}</td>
-        <td>{{ props.item.j && props.item.j.manager && props.item.j.manager.email }}</td>
-        <td>-</td>
-        <td>-</td>
-        <td class="justify-center layout px-0">
-          <a
-            v-if="props.item.access"
-            :to="{name: 'businessCard', params: {id: props.item.id}}"
-            target="_blank"
-          >
-            <VIcon
-              small
-              class="mr-2"
-            >
-              edit
-            </VIcon>
-          </a>
+        <td>
+          <VLayout v-if="props.item.user" column>
+            <VFlex><span>{{ props.item.user.name }} {{ props.item.user.surname }}</span></VFlex>
+            <VFlex><PhoneView :phone="props.item.user.phone" /></VFlex>
+          </VLayout>
         </td>
+        <td @click.stop="edit= allowChangeManager ? props.item : undefined">
+          <span v-if="allowChangeManager && edit === props.item">
+            <v-select 
+              v-model="props.item.j.manager"
+              :items="managers"
+              item-text="email"
+              return-object
+              clearable
+              @change="itemSave(props.item)"
+            /></span>
+          <span v-else>
+            <span v-if="props.item.j && props.item.j.manager && props.item.j.manager.email">{{ props.item.j && props.item.j.manager && props.item.j.manager.email }}</span>
+            <span v-else class="red--text">менеджер не назначен</span>
+          </span>
+        </td>
+        <td><span v-if="props.item.lastLogin">{{ props.item.lastLogin }}</span></td>
+        <td>-</td>
       </template>
       <template
         slot="pageText"
@@ -105,10 +110,15 @@
 import Api from '@/api/backend'
 import router from '@/router'
 import Avatar from '@/components/avatar/Avatar.vue'
+import PhoneView from '@/components/common/PhoneView.vue'
 import { mapActions, mapGetters } from 'vuex'
+import { makeAlert } from '@/api/utils'
+import {
+  displayRESTDate
+} from '@/components/calendar/utils'
 
 export default {
-  components: { Avatar },
+  components: { Avatar, PhoneView },
   data () {
     return {
       formActions: [
@@ -124,20 +134,24 @@ export default {
         { text: 'Тип', value: 'j->>category' },
         { text: 'ИНН', value: 'j->>inn' },
         { text: 'Адрес', value: 'j->>address' },
-        { text: 'Email', value: 'j->>email' },
+        { text: 'Телефон', value: '', sortable: false },
         { text: 'Менеджер', value: 'j->manager->>email' },
-        { text: 'Дата', value: '' },
-        { text: 'Статус', value: '' },
-        { text: 'Действия', value: '' }
+        { text: 'Последний вход', value: '', sortable: false },
+        { text: 'Статус', value: '' }
       ],
       data: [],
       pagination: { rowsPerPage: 10 },
       progressQuery: false,
-      totalItems: 0
+      totalItems: 0,
+      managers: [],
+      edit: undefined
     }
   },
   computed: {
-    ...mapGetters(['loggedIn', 'searchString']),
+    ...mapGetters(['loggedIn', 'searchString', 'userRole']),
+    allowChangeManager () {
+      return this.managers && this.managers.length && this.userRole==='admin'
+    },
     table () {
       return this.$route.name == 'businessList' ? 'business' : 'my_business'
     },
@@ -160,9 +174,11 @@ export default {
       deep: true
     },
     table: 'fetchData',
-    searchString: 'fetchData'
+    searchString: 'fetchData',
+    userRole: 'loadManagers'
   },
   mounted () {
+    this.loadManagers()
     this.fetchData()
     this.setActions(this.formActions)
   },
@@ -170,7 +186,7 @@ export default {
     this.setActions([])
   },
   methods: {
-    ...mapActions(['setActions']),
+    ...mapActions(['alert', 'setActions']),
     editItem (item) {
       router.push({ name: 'businessCard', params: { id: item.id } })
     },
@@ -206,12 +222,57 @@ export default {
           return res.data
         })
         .then(res => {
-          this.data = res.filter(x => x.j)
+          this.data = res.filter(x => x.j).map(x => {
+            x.user = this.user(x)
+            x.lastLogin = displayRESTDate(this.lastLogin(x))
+            return x
+          })
           this.progressQuery = false
         })
         .catch(() => {
           this.progressQuery = false
         })
+    },
+    itemSave (item) {
+      this.edit=undefined
+      const data = {
+        j: item.j
+      }
+      Api()
+        .patch(`business?id=eq.${item.id}`, data)
+        .then(()=>{
+          
+          this.alert(makeAlert('Сохранено'))
+        })
+        .catch(err => {
+          this.alert(makeAlert(err))
+        })
+    },
+    lastLogin (business) {
+      return business && business.users && 
+        business.users.length && 
+        business.users
+          .map(x => x['last_login'])
+          .sort((a,b) => a > b ? -1 : 1)[0]
+    },
+    user (business) {
+      const users = this.users(business)
+      return users && users[0]
+    },
+    users (business) {
+      return business && business.users && 
+        business.users.length && 
+        business.users
+          .sort(x => x.id === business.id ? -1 : 1)
+    },
+    loadManagers () {
+      if (this.userRole !== 'admin') return
+      Api().get('managers')
+        .then(res => {
+          this.managers = res.data.map(x=> {
+            return {id: x.id, email: x.email}
+          })
+        }) 
     }
   }
 }

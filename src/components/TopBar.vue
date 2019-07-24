@@ -17,7 +17,7 @@
       align-center
       justify-start
     >
-      <VFlex v-show="$route.name === 'services' || $route.name === 'employeeList' || $route.name === 'businessClientsTable'">
+      <VFlex v-show="showSearchInput">
         <VTextField
           key="mainSearch"
           v-model="searchString"
@@ -118,6 +118,13 @@ export default {
     isBusinessCard () {
       return isBusinessRoute(this.$route.name)
     },
+    showSearchInput () {
+      const routes = [
+        'businessList',
+        'myBusinessList'
+        ]
+      return routes.includes(this.$route.name)
+    },
     target () {
       if (this.defaultAction) {
         return this.defaultAction.target
@@ -152,7 +159,7 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
   .company-badge {
     display: none;
     max-width: 324px;
@@ -193,5 +200,8 @@ export default {
         background-color: rgba(137, 149, 175, 0.2);
       }
     }
+  }
+  .topsearch {
+    display: block !important
   }
 </style>
