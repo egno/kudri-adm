@@ -78,8 +78,9 @@
             <VFlex><PhoneView :phone="props.item.user.phone" /></VFlex>
           </VLayout>
         </td>
-        <td>
-          <span v-if="allowChangeManager">
+        <td @click="edit=props.item">
+          <span v-if="edit !== props.item">{{ props.item.j && props.item.j.manager && props.item.j.manager.email }}</span>
+          <span v-else>
             <v-select 
               v-model="props.item.j.manager"
               :items="managers"
@@ -89,7 +90,6 @@
               @change="itemSave(props.item)"
             />
           </span>
-          <span v-else>{{ props.item.j && props.item.j.manager && props.item.j.manager.email }}</span>
         </td>
         <td><span v-if="props.item.lastLogin">{{ props.item.lastLogin }}</span></td>
         <td>-</td>
@@ -141,7 +141,8 @@ export default {
       pagination: { rowsPerPage: 10 },
       progressQuery: false,
       totalItems: 0,
-      managers: []
+      managers: [],
+      edit: undefined
     }
   },
   computed: {
@@ -231,16 +232,18 @@ export default {
         })
     },
     itemSave (item) {
+      this.edit=undefined
       const data = {
         j: item.j
       }
       Api()
         .patch(`business?id=eq.${item.id}`, data)
         .then(()=>{
+          
           this.alert(makeAlert('Сохранено'))
         })
         .catch(err => {
-            this.alert(makeAlert(err))
+          this.alert(makeAlert(err))
         })
     },
     lastLogin (business) {
