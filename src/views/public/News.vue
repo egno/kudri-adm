@@ -74,7 +74,8 @@
 </template>
 
 <script>
-import Layout from '@/views/public/Layout.vue'
+import Layout from '@/components/home/Layout.vue'
+
 
 export default {
   name: 'News',

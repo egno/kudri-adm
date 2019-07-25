@@ -20,7 +20,7 @@ $max-container-wide-width: 1194px;
         }
         .content {
           align-items: flex-start;
-          padding-top: 64px;
+          padding-top: 84px;
           @media only screen and (min-width : $tablet) {
             padding-top: 101px;
             max-width: 100%;
@@ -50,7 +50,7 @@ $max-container-wide-width: 1194px;
       }
 
       &.type-2 { // текст справа
-        height: 370px;
+        height: 400px;
         @media screen and (min-width: $tablet) {
           height: 550px;
         }
@@ -157,6 +157,7 @@ $max-container-wide-width: 1194px;
           margin-left: 0;
         }
         .text-wrapper {
+          width: 325px;
           @media screen and (min-width: $desktop) {
             width: 700px;
           }

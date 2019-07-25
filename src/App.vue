@@ -78,7 +78,7 @@ export default {
         return false
       }
       return this.$route.name !== 'home' && this.$route.name !== 'login' && this.$route.name !== 'restorePassword'
-        && this.$route.name !== 'register' && this.$route.name !== 'faq' && this.$route.name !== 'news'
+        && this.$route.name !== 'register' && this.$route.name !== 'features' && this.$route.name !== 'news'
     }
   },
   watch: {

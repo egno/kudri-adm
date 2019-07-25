@@ -18,7 +18,7 @@
       </div>
     </section>
 
-    <section class="adaptive type-3">
+    <section id="adaptive" class="adaptive type-3">
       <div class="overlay layer-1" />
       <div class="content layer-0">
         <div class="text-wrapper">
@@ -43,7 +43,7 @@
       </div>
     </section>
 
-    <section class="online type-2">
+    <section id="social-networks-integrated" class="online type-2">
       <div class="content">
         <div class="text-wrapper layer-1">
           <div class="main-page__heading">
@@ -63,7 +63,7 @@
       </div>
     </section>
 
-    <section class="connection type-1">
+    <section id="sms-notifications" class="connection type-1">
       <div class="content-wrapper">
         <div class="content">
           <div class="text-wrapper layer-1">
@@ -90,7 +90,7 @@
       </div>
     </section>
 
-    <section class="phone type-3 layer-0">
+    <section id="phone-integration" class="phone type-3 layer-0">
       <div class="content">
         <div class="text-wrapper">
           <div class="main-page__heading">
@@ -111,7 +111,7 @@
       </div>
     </section>
 
-    <section class="express type-2 layer-1">
+    <section id="express" class="express type-2 layer-1">
       <div class="content">
         <div class="text-wrapper layer-1">
           <div class="main-page__heading">
@@ -132,7 +132,7 @@
       </div>
     </section>
 
-    <section class="aggregation type-3">
+    <section id="aggregation" class="aggregation type-3">
       <div class="content">
         <div class="text-wrapper">
           <div class="main-page__heading">
@@ -162,7 +162,7 @@
 </template>
 
 <script>
-import Layout from '@/views/public/Layout.vue'
+import Layout from '@/components/home/Layout.vue'
 
 export default {
   components: {
