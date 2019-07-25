@@ -5,9 +5,10 @@ $max-container-wide-width: 1194px;
 .main-page-sections {
     section {
       position: relative;
-      &.type-1 { // серый фон, белая подложка
+      &.type-1 { // белая подложка
+        box-shadow: 0 1px 30px rgba(0, 0, 0, 0.05);
+        background-color: #fff;
         .content-wrapper {
-          box-shadow: 0 1px 30px rgba(0, 0, 0, 0.05);
           height: 100%;
           @media only screen and (min-width : $tablet) {
             width: 92%;
@@ -249,7 +250,10 @@ $max-container-wide-width: 1194px;
     }
 
     .text-wrapper {
-      padding: 0 48px;
+      padding: 0 40px;
+      @media screen and (max-width: 374px) {
+        padding: 0 8%;
+      }
 
       @media screen and (min-width: $tablet) {
         max-width: 60%;

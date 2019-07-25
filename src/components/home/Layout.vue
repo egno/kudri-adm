@@ -65,6 +65,9 @@ export default {
 
         .content {
           flex-wrap: wrap;
+          @media only screen and (max-width : 677px) {
+            justify-content: center;
+          }
         }
         .text-wrapper {
           max-width: 100%;
@@ -74,10 +77,13 @@ export default {
         }
         .main-page__heading {
           margin-bottom: 40px;
+          @media only screen and (max-width : 677px) {
+            text-align: center;
+          }
         }
         .btn {
           display: flex;
-          min-width: 280px;
+          min-width: 270px;
           height: 68px;
           align-items: center;
           justify-content: space-around;
@@ -125,6 +131,7 @@ export default {
         .additional {
           width: 100%;
           padding: 0;
+          overflow: hidden;
           .block {
             display: flex;
             justify-content: flex-start;

@@ -8,7 +8,7 @@
               Оптимизируйте процессы –  <br> и занимайтесь любимым делом
             </h2>
             <h1 class="main-page__heading">
-              НОВАЯ СИСТЕМА УЧЕТА <br> ДЛЯ ИНДУСТРИИ КРАСОТЫ
+              НОВАЯ СИСТЕМА УЧЕТА ДЛЯ&nbsp;ИНДУСТРИИ КРАСОТЫ
             </h1>
             <router-link :to="{ name: 'register' }" class="main-page__register-link">
               ПОЛЬЗУЙТЕСЬ БЕСПЛАТНО
@@ -104,7 +104,7 @@
               </div>
             </div>
             <router-link :to="{ name: 'home' }" class="inner-link layer-1">
-              ПОЛУЧИТЕ ДОСТУП К СИСТЕМЕ УЖЕ СЕЙЧАС
+              ПОЛУЧИТЕ ДОСТУП УЖЕ СЕЙЧАС
             </router-link>
           </div>
         </div>
@@ -185,7 +185,7 @@ export default {
       }
 
       &.pricing {
-        height: 770px;
+        height: 820px;
         @media only screen and (min-width : $tablet) {
           height: 728px;
         }
@@ -199,7 +199,7 @@ export default {
         .content-wrapper {
           background: url('../../assets/images/home/bg_pricing.png') right bottom/auto 50% no-repeat #fff;
           @media only screen and (min-width : $tablet) {
-            background: url('../../assets/images/home/bg_pricing.png') 90% 100px/65% no-repeat #fff;
+            background: url('../../assets/images/home/bg_pricing.png') 100% bottom/65% no-repeat #fff;
           }
           @media only screen and (min-width : $desktop) {
             background-size: 60%;
@@ -272,8 +272,10 @@ export default {
     }
     .text-wrapper {
       max-width: 100%;
+      text-align: center;
       @media only screen and (min-width : $tablet) {
         padding: 0;
+        text-align: left;
       }
     }
 
@@ -347,6 +349,7 @@ export default {
     }
     .main-page__scroll {
       display: inline-flex;
+      align-items: baseline;
       justify-content: center;
       width: 100%;
       max-width: 280px;
@@ -356,11 +359,23 @@ export default {
       font-size: 16px;
       color: #07101C !important;
       text-decoration: none !important;
+      &:after {
+        display: block;
+        content: '';
+        height: 7px;
+        width: 7px;
+        margin-left: 5px;
+        border: 2px solid #07101C;
+        transform: rotate(45deg) translate(-2px, -1px);
+        border-left: none;
+        border-bottom: none;
+      }
     }
     .main-page__links {
       padding: 26px 0;
     }
   }
+
   .target-audience {
     $item-margin: 11px;
     $item-margin-desktop: 3%;

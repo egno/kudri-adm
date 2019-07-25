@@ -6,7 +6,7 @@
       @click="menuActive = !menuActive"
     />
 
-    <v-dialog v-model="menuActive" content-class="content" fullscreen hide-overlay :internal-activator="true" attach=".home-menu" origin="top right" transition="slide-y-transition">
+    <v-dialog v-model="menuActive" content-class="content" fullscreen hide-overlay :internal-activator="true" attach=".home-menu .v-dialog__container" origin="top right" transition="slide-y-transition">
       <Links @click="menuActive = false" />
     </v-dialog>
   </div>
