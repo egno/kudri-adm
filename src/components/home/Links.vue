@@ -2,17 +2,17 @@
   <div class="list">
     <div class="column">
       <div>
-        <router-link :to="{ name: 'news' }" class="link page-link">
+        <router-link :to="{ name: 'news' }" class="link page-link" @click.native="$emit('click')">
           ПОСЛЕДНИЕ ОБНОВЛЕНИЯ
         </router-link>
       </div>
       <div>
-        <router-link :to="{ name: 'home', hash: '#product' }" class="link page-link">
+        <router-link :to="{ name: 'home', hash: '#product' }" class="link page-link" @click.native="$emit('click')">
           ПРОДУКТ
         </router-link>
       </div>
       <div>
-        <router-link :to="{ name: 'home', hash: '#fits' }" class="link page-link">
+        <router-link :to="{ name: 'home', hash: '#fits' }" class="link page-link" @click.native="$emit('click')">
           КОМУ ПОДОЙДЕТ СИСТЕМА
         </router-link>
       </div>
@@ -20,37 +20,37 @@
 
     <div class="column">
       <div>
-        <router-link :to="{ name: 'features' }" class="link page-link">
+        <router-link :to="{ name: 'features' }" class="link page-link" @click.native="$emit('click')">
           СЕРВИСЫ
         </router-link>
       </div>
       <div>
-        <router-link :to="{ name: 'features', hash: '#adaptive' }" class="link tablet">
+        <router-link :to="{ name: 'features', hash: '#adaptive' }" class="link tablet" @click.native="$emit('click')">
           Мобильная версия
         </router-link>
       </div>
       <div>
-        <router-link :to="{ name: 'features', hash: '#social-networks-integrated' }" class="link tablet">
+        <router-link :to="{ name: 'features', hash: '#social-networks-integrated' }" class="link tablet" @click.native="$emit('click')">
           Интеграция с соцсетями
         </router-link>
       </div>
       <div>
-        <router-link :to="{ name: 'features', hash: '#sms-notifications' }" class="link tablet">
+        <router-link :to="{ name: 'features', hash: '#sms-notifications' }" class="link tablet" @click.native="$emit('click')">
           Рассылка SMS
         </router-link>
       </div>
       <div>
-        <router-link :to="{ name: 'features', hash: '#phone-integration' }" class="link tablet">
+        <router-link :to="{ name: 'features', hash: '#phone-integration' }" class="link tablet" @click.native="$emit('click')">
           API телефония
         </router-link>
       </div>
       <div>
-        <router-link :to="{ name: 'features', hash: '#express' }" class="link tablet">
+        <router-link :to="{ name: 'features', hash: '#express' }" class="link tablet" @click.native="$emit('click')">
           Экспресс-запись
         </router-link>
       </div>
       <div>
-        <router-link :to="{ name: 'features', hash: '#aggregation' }" class="link tablet">
+        <router-link :to="{ name: 'features', hash: '#aggregation' }" class="link tablet" @click.native="$emit('click')">
           Агрегатор
         </router-link>
       </div>
@@ -58,31 +58,32 @@
 
     <div class="column">
       <div class="block contacts">
-        <div class="link page-link">
+        <div class="link page-link no-hover">
           КОНТАКТЫ
         </div>
-        <div><a href="tel:+73832131415" class="link">+ 7 (383) 213-14-15</a></div>
-        <div class="link">
-          info@uno.salon
+        <div><a href="tel:+73832131415" class="link" @click.native="$emit('click')">+ 7 (383) 213-14-15</a></div>
+        <div>
+          <a href="mailto:info@uno.salon" class="link" target="_blank" @click.native="$emit('click')">info@uno.salon</a>
         </div>
       </div>
       <div class="block">
-        <div class="page-link">
+        <div class="page-link no-hover">
           МЫ В СОЦСЕТЯХ
         </div>
-        <Socials />
+        <Socials @click="$emit('click')" />
       </div>
     </div>
+
     <div class="column additional">
       <div class="block">
         <div>
-          <a href="https://drive.google.com/open?id=1Ioe9v58FGXfI7o1ExWPGR9aMkeYyU6LCJenMniPSsl4" target="_blank" rel="nofollow">Договор оферты</a>
+          <a href="https://drive.google.com/open?id=1Ioe9v58FGXfI7o1ExWPGR9aMkeYyU6LCJenMniPSsl4" target="_blank" rel="nofollow" @click.native="$emit('click')">Договор оферты</a>
         </div>
         <div>
-          <a href="https://drive.google.com/open?id=1JWxq7uHt7H9CKhqyJLIozc-JeAT9aNXUszZ1m2Dd4Os" target="_blank" rel="nofollow">Политика конфиденциальности</a>
+          <a href="https://drive.google.com/open?id=1JWxq7uHt7H9CKhqyJLIozc-JeAT9aNXUszZ1m2Dd4Os" target="_blank" rel="nofollow" @click.native="$emit('click')">Политика конфиденциальности</a>
         </div>
         <div>
-          <a href="https://drive.google.com/file/d/16Lm-dS-9qN1dgbKp5gJQHiHqgOz6dz4U/view?usp=sharing" target="_blank" rel="nofollow">Реквизиты компани</a>
+          <a href="https://drive.google.com/file/d/16Lm-dS-9qN1dgbKp5gJQHiHqgOz6dz4U/view?usp=sharing" target="_blank" rel="nofollow" @click.native="$emit('click')">Реквизиты компани</a>
         </div>
       </div>
     </div>
@@ -124,12 +125,22 @@
       color: #07101C;
       text-decoration: none;
       font-weight: 400;
+      &:hover {
+        text-decoration: underline;
+      }
     }
 
     .page-link {
       margin-top: 28px;
       font-weight: 600;
       font-size: 18px;
+      &:hover {
+        color: #C9A15D;
+        text-decoration: none;
+      }
+      &.no-hover:hover {
+        color: #07101c;
+      }
     }
 
     .tablet {

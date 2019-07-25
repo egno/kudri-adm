@@ -6,8 +6,8 @@
       @click="menuActive = !menuActive"
     />
 
-    <v-dialog v-model="menuActive" content-class="content" fullscreen hide-overlay internal-activator attach=".home-menu">
-      <Links />
+    <v-dialog v-model="menuActive" content-class="content" fullscreen hide-overlay :internal-activator="true" attach=".home-menu" origin="top right" transition="slide-y-transition">
+      <Links @click="menuActive = false" />
     </v-dialog>
   </div>
 </template>
@@ -44,9 +44,6 @@
     }
 
     .content {
-      /*position: fixed;
-      left: 0;
-      right: 0;*/
       top: 80px;
       height: calc(100vh - 80px);
       background-color: rgba(255,255,255,0.9);

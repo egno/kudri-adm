@@ -1,13 +1,13 @@
 <template>
   <ul class="main-page__links">
     <li class="main-page__link">
-      <a target="_blank" href="https://vk.com/unocrm" class="vk" />
+      <a target="_blank" href="https://vk.com/unocrm" class="vk" @click="$emit('click')" />
     </li>
     <li class="main-page__link">
-      <a target="_blank" href="https://www.instagram.com/crm_uno/" class="fb" />
+      <a target="_blank" href="https://www.instagram.com/crm_uno/" class="fb" @click="$emit('click')" />
     </li>
     <li class="main-page__link">
-      <a target="_blank" href="https://www.facebook.com/unocrm" class="ig" />
+      <a target="_blank" href="https://www.facebook.com/unocrm" class="ig" @click="$emit('click')" />
     </li>
   </ul>
 </template>
