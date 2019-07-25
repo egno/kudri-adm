@@ -26,22 +26,12 @@
       <div class="main-page__first-bottom">
         <div class="content">
           <div class="text-wrapper">
-            <ul class="main-page__links">
-              <li class="main-page__link">
-                <a target="_blank" href="https://vk.com/unocrm" class="vk" />
-              </li>
-              <li class="main-page__link">
-                <a target="_blank" href="https://www.instagram.com/crm_uno/" class="fb" />
-              </li>
-              <li class="main-page__link">
-                <a target="_blank" href="https://www.facebook.com/unocrm" class="ig" />
-              </li>
-            </ul>
+            <Socials />
           </div>
         </div>
       </div>
     </section>
-    <section id="product" class="fits">
+    <section id="fits" class="">
       <div class="content">
         <div class="target-audience">
           <h2 class="main-page__heading">
@@ -88,7 +78,7 @@
         </div>
       </div>
     </section>
-    <section class="pricing type-1">
+    <section id="product" class="pricing type-1">
       <div class="content-wrapper">
         <div class="content">
           <div class="text-wrapper layer-1">
@@ -121,7 +111,7 @@
       </div>
     </section>
 
-    <section class="integration type-2">
+    <section class="integration-time type-2">
       <div class="content">
         <div class="text-wrapper layer-1">
           <div class="main-page__heading">
@@ -166,11 +156,13 @@
 </template>
 
 <script>
-import Layout from '@/views/public/Layout.vue'
+import Layout from '@/components/home/Layout.vue'
+import Socials from '@/components/home/Socials.vue'
 
 export default {
   components: {
     Layout,
+    Socials
   },
 }
 </script>
@@ -219,7 +211,7 @@ export default {
         }
       }
 
-      &.integration {
+      &.integration-time {
         .content {
           background: url('../../assets/images/home/time.png') left top/contain no-repeat;
           @media screen and (min-width: $tablet) {
@@ -331,7 +323,6 @@ export default {
         font-size: 24px;
       }
     }
-
     .main-page__register-link {
       display: inline-flex;
       width: 100%;
@@ -367,35 +358,7 @@ export default {
       text-decoration: none !important;
     }
     .main-page__links {
-      display: flex;
-      width: 207px;
       padding: 26px 0;
-      align-items: center;
-      justify-content: space-between;
-      list-style: none;
-      @media only screen and (min-width : $tablet) {
-        width: 214px;
-      }
-    }
-    .main-page__link {
-      a {
-        display: inline-flex;
-        &.vk {
-          width: 28px;
-          height: 16px;
-          background: url('../../assets/images/svg/vk.svg') center/contain no-repeat;
-        }
-        &.fb {
-          width: 16px;
-          height: 29px;
-          background: url('../../assets/images/svg/fb.svg') center/contain no-repeat;
-        }
-        &.ig {
-          width: 27px;
-          height: 27px;
-          background: url('../../assets/images/ig.png') center/contain no-repeat;
-        }
-      }
     }
   }
   .target-audience {

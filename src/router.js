@@ -22,9 +22,9 @@ export default new Router({
       component: () => import('./views/public/Main.vue')
     },
     {
-      path: '/faq',
-      name: 'faq',
-      component: () => import('./views/public/Faq.vue')
+      path: '/features',
+      name: 'features',
+      component: () => import('./views/public/Features.vue')
     },
     {
       path: '/news',

@@ -1,6 +1,6 @@
 <template>
   <!--for animation of header on mobiles
-    :class="{ 'mobile-transparent' : $route.name === 'faq' || $route.name === 'news' }"-->
+    :class="{ 'mobile-transparent' : $route.name === 'features' || $route.name === 'news' }"-->
   <VToolbar
     class="home-header"
     app
@@ -20,13 +20,14 @@
         <router-link v-else :to="{ name: 'home', hash: '#product' }" :class="{ current: $route.hash && $route.hash === '#product' }">
           ПРОДУКТ
         </router-link>
-        <router-link :to="{ name: 'faq' }" :class="{ current: $route.name === 'faq' }">
+        <router-link :to="{ name: 'features' }" :class="{ current: $route.name === 'features' }">
           СЕРВИСЫ
         </router-link>
         <router-link :to="{ name: 'news' }" :class="{ current: $route.name === 'news' }">
           НОВОСТИ
         </router-link>
       </div>
+      <HomeMenu />
       <div class="home-header__right">
         <VLayout
           v-if="loggedIn && userRole !== 'manager' && userRole !== 'admin'"
@@ -45,7 +46,7 @@
         <v-btn
           v-if="loggedIn && userRole !== 'manager' && userRole !== 'admin'"
           flat
-          :class="['main-header__button ', { active: !isFirstSectionInView || $route.name === 'faq' || $route.name === 'news'}]"
+          :class="['main-header__button ', { active: !isFirstSectionInView || $route.name === 'features' || $route.name === 'news'}]"
           @click="goToBusiness"
         >
           <div class="home-header__icon " />
@@ -53,7 +54,7 @@
         <v-btn
           v-else-if="!loggedIn"
           flat
-          :class="['home-header__button _register', { active: !isFirstSectionInView || $route.name === 'faq' || $route.name === 'news'}]"
+          :class="['home-header__button _register', { active: !isFirstSectionInView || $route.name === 'features' || $route.name === 'news'}]"
           @click="$router.push({ name: 'register' })"
         >
           <div class="home-header__icon _register" />
@@ -74,12 +75,14 @@
 </template>
 
 <script>
+  import HomeMenu from '@/components/home/HomeMenu.vue'
   import ProfileMenu from '@/components/ProfileMenu.vue'
   import { mapGetters } from 'vuex'
 
   export default {
     name: 'HomeHeader',
     components: {
+      HomeMenu,
       ProfileMenu,
     },
     data () {
@@ -199,7 +202,10 @@
     }
     &__right {
       height: 100%;
-      display: flex;
+      display: none;
+      @media only screen and (min-width : $tablet) {
+        display: flex;
+      }
     }
     &__tablet-text {
       display: none;
