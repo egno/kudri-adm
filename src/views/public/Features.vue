@@ -47,7 +47,7 @@
       <div class="content">
         <div class="text-wrapper layer-1">
           <div class="main-page__heading">
-            ЗАПИСЬ НА САЙТЕ<br>И В СОЦСЕТЯХ
+            ЗАПИСЬ НА&nbsp;САЙТЕ И&nbsp;В&nbsp;СОЦСЕТЯХ
           </div>
           <div class="subheader">
             Чтобы клиенты могли записаться в&nbsp;любое время.
@@ -63,29 +63,27 @@
       </div>
     </section>
 
-    <section id="sms-notifications" class="connection type-1">
-      <div class="content-wrapper">
-        <div class="content">
-          <div class="text-wrapper layer-1">
-            <div class="main-page__heading">
-              БУДЬТЕ НА СВЯЗИ<br>С КЛИЕНТАМИ!
-            </div>
-            <div class="subheader">
-              Простой сервис отправки sms-уведомлений
-              клиентам и сотрудникам.
-            </div>
-            <p class="text">
-              Напоминайте о записи, поздравляйте с праздниками,
-              подтверждайте записи клиентов без затрат времени.<br><br>
-              Вам не потребуется заключение дополнительных договоров
-              с операторами связи и проблем с подключением API. Все эти
-              вопросы мы уже решили за вас. Вам нужно лишь ознакомиться
-              с договором оферты и настроить события отправки сообщений.
-            </p>
-            <router-link :to="{ name: 'home' }" class="inner-link layer-1">
-              ПОЛУЧИТЕ ДОСТУП УЖЕ СЕЙЧАС
-            </router-link>
+    <section id="sms-notifications" class="connection type-3">
+      <div class="content">
+        <div class="text-wrapper layer-1">
+          <div class="main-page__heading">
+            БУДЬТЕ НА СВЯЗИ<br>С КЛИЕНТАМИ!
           </div>
+          <div class="subheader">
+            Простой сервис отправки sms-уведомлений
+            клиентам и сотрудникам.
+          </div>
+          <p class="text">
+            Напоминайте о записи, поздравляйте с праздниками,
+            подтверждайте записи клиентов без затрат времени.<br><br>
+            Вам не потребуется заключение дополнительных договоров
+            с операторами связи и проблем с подключением API. Все эти
+            вопросы мы уже решили за вас. Вам нужно лишь ознакомиться
+            с договором оферты и настроить события отправки сообщений.
+          </p>
+          <router-link :to="{ name: 'home' }" class="inner-link layer-1">
+            ПОЛУЧИТЕ ДОСТУП УЖЕ СЕЙЧАС
+          </router-link>
         </div>
       </div>
     </section>
@@ -112,10 +110,11 @@
     </section>
 
     <section id="express" class="express type-2 layer-1">
+      <div class="overlay layer-0" />
       <div class="content">
         <div class="text-wrapper layer-1">
           <div class="main-page__heading">
-            ЭКСПРЕСС-ЗАПИСЬ<br>ЗА 30 СЕКУНД
+            ЭКСПРЕСС&#8209;ЗАПИСЬ<br>ЗА 30 СЕКУНД
           </div>
           <div class="subheader">
             Только для супер-шпионов!
@@ -136,7 +135,7 @@
       <div class="content">
         <div class="text-wrapper">
           <div class="main-page__heading">
-            ПРОДВИЖЕНИЕ ЧЕРЕЗ АГРЕГАТОР
+            ПРОДВИЖЕНИЕ ЧЕРЕЗ&nbsp;АГРЕГАТОР
           </div>
           <div class="subheader">
             С нашей системой вы сможете не&nbsp;только
@@ -176,18 +175,30 @@ export default {
   $desktop: 1360px;
   $large: 1552px;
   $wide: 1905px;
-  $white-fill: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5));
+  $white-fill: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7));
 
   .main-page-sections {
     section {
       &.pocket {
         height: calc(100vh - 80px);
-        background: $white-fill, url('../../assets/images/faq/bg_pocket.png') 170px center/auto 100% no-repeat;
+        background:  url('../../assets/images/faq/pocket_mobile.png') right center/auto 100% no-repeat;
         @media only screen and (min-width : $tablet) {
-          background: url('../../assets/images/faq/bg_pocket.png') right center/auto 100% no-repeat;
+          background: url('../../assets/images/faq/pocket_tablet.png') right center/auto 100% no-repeat;
+        }
+        @media only screen and (min-width : 1200px) {
+          height: 800px;
+          background: url('../../assets/images/faq/bg_pocket.png') right top/auto 137% no-repeat;
+        }
+        @media only screen and (min-width : $wide) {
+          background-position: right 40%;
+          background-size: auto 180%;
         }
         .text-wrapper {
+          max-width: 100%;
+          text-align: center;
           @media only screen and (min-width : $tablet) {
+            max-width: 90%;
+            text-align: left;
             padding-right: 0;
           }
           @media only screen and (min-width : $desktop) {
@@ -201,64 +212,109 @@ export default {
 
       &.online {
         .content {
-          background: url('../../assets/images/faq/bg_online.png') left bottom/62% no-repeat;
+          background: url('../../assets/images/faq/bg_online.png') left bottom/61% no-repeat;
           @media screen and (min-width: $desktop) {
             background-size: 55%;
           }
           .text-wrapper {
+            max-width: 87%;
+            @media screen and (min-width: $tablet) {
+              display: inline-flex;
+              flex-wrap: wrap;
+              justify-content: flex-end;
+            }
             @media screen and (min-width: $desktop) {
               max-width: 67%;
               padding-right: 0;
+            }
+          }
+          .subheader,
+          .text {
+            @media screen and (min-width: $tablet) {
+              max-width: 71%;
             }
           }
         }
       }
 
       &.phone {
+        position: static;
         height: 400px;
-        background: $white-fill, url('../../assets/images/faq/bg_phone.png') center top/cover no-repeat;
+        background: $white-fill, url('../../assets/images/faq/bg_phone.png') 70% top/cover no-repeat;
         @media screen and (min-width: $tablet) {
           height: 500px;
-          background: url('../../assets/images/faq/bg_phone.png') center top/cover no-repeat;
+          background: $white-fill, url('../../assets/images/faq/bg_phone.png') right top/89% 100% no-repeat;
         }
         @media screen and (min-width: $desktop) {
+          background: url('../../assets/images/faq/bg_phone.png') right top/87% 100% no-repeat;
           height: 826px;
+        }
+        @media screen and (min-width: $wide) {
+          background: url('../../assets/images/faq/bg_phone_wide.png') right top/auto 100% no-repeat;
+        }
+        .text-wrapper {
+          @media screen and (min-width: $tablet) {
+            max-width: 70%;
+          }
+          @media screen and (min-width: $desktop) {
+            width: 470px;
+          }
         }
       }
 
       &.express {
         background: #fff;
+        .overlay {
+          background: url('../../assets/images/faq/bg_express.png') -80px bottom/290px auto no-repeat;
+          @media screen and (min-width: $tablet) {
+            top: -70px;
+            left: -40px;
+            bottom: 0;
+            background-position: left top;
+            background-size: 540px auto;
+          }
+          @media screen and (min-width: $desktop) {
+            left: 0;
+            width: 1600px;
+            background-position: left bottom;
+            background-size: auto 100%;
+          }
+          @media screen and (min-width: $wide) {
+            left: 11%;
+          }
+        }
         .content {
           overflow: visible;
-          background: url('../../assets/images/faq/bg_express.png') -80px top/contain no-repeat;
+        }
+        .text-wrapper {
+          width: 89%;
+          max-width: 485px;
           @media screen and (min-width: $tablet) {
-            background-position: left top;
+            max-width: 430px;
           }
-          .text-wrapper {
-            @media screen and (min-width: $desktop) {
-              width: 600px;
-            }
+          @media screen and (min-width: $desktop) {
+            width: 630px;
+            max-width: none;
           }
         }
       }
 
       &.aggregation {
         height: 825px;
+        background: url('../../assets/images/faq/bg_aggregation.png') 180px 420px/70% no-repeat;
         @media screen and (min-width: $tablet) {
           height: 855px;
+          background: url('../../assets/images/faq/bg_aggregation.png') right 280px/380px auto no-repeat;
         }
         @media screen and (min-width: $desktop) {
           height: 950px;
+          background: url('../../assets/images/faq/bg_aggregation.png') 80% bottom/auto 70% no-repeat;
         }
         .content {
           align-items: flex-start;
           padding-top: 64px;
-          background: url('../../assets/images/faq/bg_aggregation.png') 200px 410px/70% no-repeat;
           @media screen and (min-width: $tablet) {
-            background: url('../../assets/images/faq/bg_aggregation.png') 450px 280px/50% no-repeat;
-          }
-          @media screen and (min-width: $desktop) {
-            background: url('../../assets/images/faq/bg_aggregation.png') right bottom /auto 80% no-repeat;
+            align-items: center;
           }
         }
         .subheader,

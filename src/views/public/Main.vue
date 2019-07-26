@@ -79,34 +79,32 @@
       </div>
     </section>
     <section id="product" class="pricing type-1">
-      <div class="content-wrapper">
-        <div class="content">
-          <div class="text-wrapper layer-1">
-            <div class="main-page__heading">
-              ПОЛЬЗУЙТЕСЬ<br>БЕСПЛАТНО!
-            </div>
-            <div class="subheader">
-              Мы любим своих клиентов.<br>
-              Никакого навязанного сервиса.
-            </div>
-            <div class="text">
-              Пройдите простую регистрацию и получите возможности развития и оптимизации ваших бизнес-процессов.<br>
-              <ul>
-                <li>Управляйте сотрудниками онлайн</li>
-                <li>Ведите запись в онлайн-журнале</li>
-                <li>Уведомляйте клиентов о новой записи</li>
-                <li>Храните историю записей клиентов</li>
-                <li>Контролируйте рабочие процессы из любой точки мира</li>
-              </ul>
-              <div class="desktop">
-                Все это и другие полезные инструменты уже ждут вас в базовой версии UNO.CRM.
-                А если вам не хватит стандартного функционала, просто добавьте действительно нужные вам платные модули и не платите за подписки и каждого мастера отдельно.
-              </div>
-            </div>
-            <router-link :to="{ name: 'home' }" class="inner-link layer-1">
-              ПОЛУЧИТЕ ДОСТУП УЖЕ СЕЙЧАС
-            </router-link>
+      <div class="content">
+        <div class="text-wrapper layer-1">
+          <div class="main-page__heading">
+            ПОЛЬЗУЙТЕСЬ<br>БЕСПЛАТНО!
           </div>
+          <div class="subheader">
+            Мы любим своих клиентов.<br>
+            Никакого навязанного сервиса.
+          </div>
+          <div class="text">
+            Пройдите простую регистрацию и получите возможности развития и оптимизации ваших бизнес-процессов.<br>
+            <ul>
+              <li>Управляйте сотрудниками онлайн</li>
+              <li>Ведите запись в онлайн-журнале</li>
+              <li>Уведомляйте клиентов о новой записи</li>
+              <li>Храните историю записей клиентов</li>
+              <li>Контролируйте рабочие процессы из любой точки мира</li>
+            </ul>
+            <div class="desktop">
+              Все это и другие полезные инструменты уже ждут вас в базовой версии UNO.CRM.
+              А если вам не хватит стандартного функционала, просто добавьте действительно нужные вам платные модули и не платите за подписки и каждого мастера отдельно.
+            </div>
+          </div>
+          <router-link :to="{ name: 'home' }" class="inner-link layer-1">
+            ПОЛУЧИТЕ ДОСТУП УЖЕ СЕЙЧАС
+          </router-link>
         </div>
       </div>
     </section>
@@ -186,53 +184,62 @@ export default {
 
       &.pricing {
         height: 820px;
+        background: url('../../assets/images/home/bg_pricing.png') right bottom/auto 50% no-repeat #fff;
         @media only screen and (min-width : $tablet) {
           height: 728px;
+          background: url('../../assets/images/home/bg_pricing.png') 95% bottom/auto 600px no-repeat #fff;
         }
         @media only screen and (min-width : $desktop) {
           height: 978px;
+          background-size: auto 90%;
+          background-position: 90% bottom;
         }
         @media only screen and (min-width : $wide) {
           height: 1000px;
-        }
-
-        .content-wrapper {
-          background: url('../../assets/images/home/bg_pricing.png') right bottom/auto 50% no-repeat #fff;
-          @media only screen and (min-width : $tablet) {
-            background: url('../../assets/images/home/bg_pricing.png') 100% bottom/65% no-repeat #fff;
-          }
-          @media only screen and (min-width : $desktop) {
-            background-size: 60%;
-          }
-          @media only screen and (min-width : $wide) {
-            background-size: 50% auto;
-            background-position: right 80px;
-          }
+          background-size: 750px auto;
+          background-position: 80% bottom;
         }
       }
 
       &.integration-time {
-        .content {
-          background: url('../../assets/images/home/time.png') left top/contain no-repeat;
-          @media screen and (min-width: $tablet) {
-            background: url('../../assets/images/home/bg_integration.png') left top/contain no-repeat;
-          }
+        background: url('../../assets/images/home/time.png') -20px top/contain no-repeat;
+        @media screen and (min-width: $tablet) {
+          height: 550px;
+          background: url('../../assets/images/home/bg_integration.png') left top/contain no-repeat;
+        }
+        @media screen and (min-width: $desktop) {
+          background-position: 10% top;
+        }
+        @media screen and (min-width: $wide) {
+          background-position: 20% top;
         }
       }
 
       &.clients {
         height: 500px;
-        background: url('../../assets/images/home/bg_clients.png') 100px bottom/contain no-repeat #fff;
+        background: url('../../assets/images/home/bg_clients.png') 180px bottom/78% no-repeat #fff;
         @media screen and (min-width: $tablet) {
+          height: 550px;
           background-position: right bottom;
+          background-size: 45%;
         }
         @media screen and (min-width: $desktop) {
           height: 755px;
+          background-size: 43%;
+        }
+        @media screen and (min-width: $wide) {
+          background-position: 80% bottom;
+          background-size: contain;
         }
         .subheader {
           max-width: 80%;
           @media screen and (min-width: $tablet) {
             max-width: none;
+          }
+        }
+        .text-wrapper {
+          @media screen and (min-width: $tablet) {
+            max-width: 77%;
           }
         }
         .text {

@@ -9,11 +9,8 @@
             <div class="main-page__heading">
               ЛЮБИМОЕ ДЕЛО<br>СТАНЕТ ПРОЩЕ
             </div>
-            <router-link :to="{ name: 'register' }" class="btn mobile">
+            <router-link :to="{ name: 'register' }" class="btn">
               ПОПРОБУЙТЕ БЕСПЛАТНО
-            </router-link>
-            <router-link :to="{ name: 'register' }" class="btn tablet">
-              ПОПРОБУЙТЕ UNO.CRM БЕСПЛАТНО
             </router-link>
           </div>
         </div>
@@ -57,15 +54,17 @@ export default {
         background: linear-gradient(64.96deg, #C1240F 0%, #EE5742 100%);
         color: #fff;
         @media only screen and (min-width : $tablet) {
-          background: url('../../assets/images/home/bg_easier.png') right center/contain no-repeat, linear-gradient(64.96deg, #C1240F 0%, #EE5742 100%);
+          height: 400px;
+          background: url('../../assets/images/home/bg_easier_tablet.png') right center/contain no-repeat, linear-gradient(64.96deg, #C1240F 0%, #EE5742 100%);
         }
         @media screen and (min-width: $desktop) {
-          height: 500px;
+          height: 600px;
+          background: url('../../assets/images/home/bg_easier.png') right center/contain no-repeat, linear-gradient(64.96deg, #C1240F 0%, #EE5742 100%);
         }
 
         .content {
           flex-wrap: wrap;
-          @media only screen and (max-width : 677px) {
+          @media only screen and (max-width : 1199px) {
             justify-content: center;
           }
         }
@@ -77,7 +76,7 @@ export default {
         }
         .main-page__heading {
           margin-bottom: 40px;
-          @media only screen and (max-width : 677px) {
+          @media only screen and (max-width : 1199px) {
             text-align: center;
           }
         }
@@ -100,17 +99,6 @@ export default {
           }
           @media screen and (min-width: $desktop) {
             width: 426px;
-          }
-          &.mobile {
-            @media only screen and (min-width : $tablet) {
-              display: none;
-            }
-          }
-          &.tablet {
-            display: none;
-            @media only screen and (min-width : $tablet) {
-              display: flex;
-            }
           }
         }
       }

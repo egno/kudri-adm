@@ -44,29 +44,27 @@
       </div>
     </section>
 
-    <section class="connection type-1">
-      <div class="content-wrapper">
-        <div class="content">
-          <div class="text-wrapper layer-1">
-            <div class="main-page__heading">
-              БУДЬТЕ НА СВЯЗИ<br>С КЛИЕНТАМИ!
-            </div>
-            <div class="subheader">
-              Простой сервис отправки sms-уведомлений
-              клиентам и сотрудникам.
-            </div>
-            <p class="text">
-              Напоминайте о записи, поздравляйте с праздниками,
-              подтверждайте записи клиентов без затрат времени.<br><br>
-              Вам не потребуется заключение дополнительных договоров
-              с операторами связи и проблем с подключением API. Все эти
-              вопросы мы уже решили за вас. Вам нужно лишь ознакомиться
-              с договором оферты и настроить события отправки сообщений.
-            </p>
-            <router-link :to="{ name: 'home' }" class="inner-link layer-1">
-              ПОЛУЧИТЕ ДОСТУП УЖЕ СЕЙЧАС
-            </router-link>
+    <section class="connection type-3">
+      <div class="content">
+        <div class="text-wrapper layer-1">
+          <div class="main-page__heading">
+            БУДЬТЕ НА СВЯЗИ<br>С КЛИЕНТАМИ!
           </div>
+          <div class="subheader">
+            Простой сервис отправки sms-уведомлений
+            клиентам и сотрудникам.
+          </div>
+          <p class="text">
+            Напоминайте о записи, поздравляйте с праздниками,
+            подтверждайте записи клиентов без затрат времени.<br><br>
+            Вам не потребуется заключение дополнительных договоров
+            с операторами связи и проблем с подключением API. Все эти
+            вопросы мы уже решили за вас. Вам нужно лишь ознакомиться
+            с договором оферты и настроить события отправки сообщений.
+          </p>
+          <router-link :to="{ name: 'home' }" class="inner-link layer-1">
+            ПОЛУЧИТЕ ДОСТУП УЖЕ СЕЙЧАС
+          </router-link>
         </div>
       </div>
     </section>
@@ -95,21 +93,36 @@ export default {
       height: 100vh;
       margin-top: -80px;
       */
-      background: url('../../assets/images/news/bg_update.png') 30px 30px/130% no-repeat  #f3f4f7;
+      background: url('../../assets/images/news/bg_update.png') right 10%/100% no-repeat  #f3f4f7;
       /* for animation of header on mobiles
       @media only screen and (min-width : $tablet) {
         height: calc(100vh - 80px);
         margin-top: 0;
       }*/
+      @media screen and (min-width: $tablet) {
+        background-size: auto 40%;
+      }
       @media screen and (min-width: $desktop) {
         height: calc(100vh - 146px);
         background: url('../../assets/images/news/bg_update.png') right center/54% no-repeat  #f3f4f7;
       }
+      @media screen and (min-width: $wide) {
+        background: url('../../assets/images/news/bg_update.png') 90% center/950px auto no-repeat  #f3f4f7;
+      }
       .content {
         align-items: flex-end;
         padding-bottom: 13%;
-        @media screen and (min-height: 1024px) {
+        @media screen and (min-height: 667px) {
           padding-bottom: 20%;
+        }
+        @media screen and (min-width: $desktop) {
+          align-items: center;
+          padding-bottom: 0;
+        }
+      }
+      .text-wrapper {
+        @media screen and (min-width: $wide) {
+          max-width: 50%;
         }
       }
       .main-page__heading {
