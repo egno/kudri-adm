@@ -93,7 +93,7 @@
             <span v-else class="red--text">менеджер не назначен</span>
           </span>
         </td>
-        <td><span v-if="props.item.lastLogin">{{ props.item.lastLogin }}</span></td>
+        <td><span v-if="props.item.last_login">{{ props.item.last_login | date }}</span></td>
         <td>-</td>
       </template>
       <template
@@ -119,6 +119,11 @@ import {
 
 export default {
   components: { Avatar, PhoneView },
+  filters : {
+    date (val) {
+      return val ? displayRESTDate(val) : ''
+    }
+  },
   data () {
     return {
       formActions: [
@@ -136,7 +141,7 @@ export default {
         { text: 'Адрес', value: 'j->>address' },
         { text: 'Телефон', value: '', sortable: false },
         { text: 'Менеджер', value: 'j->manager->>email' },
-        { text: 'Последний вход', value: '', sortable: false },
+        { text: 'Последний вход', value: 'last_login' },
         { text: 'Статус', value: '' }
       ],
       data: [],
@@ -224,7 +229,6 @@ export default {
         .then(res => {
           this.data = res.filter(x => x.j).map(x => {
             x.user = this.user(x)
-            x.lastLogin = displayRESTDate(this.lastLogin(x))
             return x
           })
           this.progressQuery = false
@@ -247,13 +251,6 @@ export default {
         .catch(err => {
           this.alert(makeAlert(err))
         })
-    },
-    lastLogin (business) {
-      return business && business.users && 
-        business.users.length && 
-        business.users
-          .map(x => x['last_login'])
-          .sort((a,b) => a > b ? -1 : 1)[0]
     },
     user (business) {
       const users = this.users(business)
