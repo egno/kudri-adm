@@ -93,8 +93,12 @@
             <span v-else class="red--text">менеджер не назначен</span>
           </span>
         </td>
-        <td><span v-if="props.item.last_login">{{ props.item.last_login | date }}</span></td>
-        <td>-</td>
+        <td v-if="($route.name == 'myBusinessList')">
+          <span v-if="props.item.last_login">{{ props.item.last_login | date }}</span>
+        </td>
+        <td v-if="($route.name == 'myBusinessList')">
+          -
+        </td>
       </template>
       <template
         slot="pageText"
@@ -134,16 +138,6 @@ export default {
           default: true
         }
       ],
-      headers: [
-        { text: 'Название', value: 'j->>name' },
-        { text: 'Тип', value: 'j->>category' },
-        { text: 'ИНН', value: 'j->>inn' },
-        { text: 'Адрес', value: 'j->>address' },
-        { text: 'Телефон', value: '', sortable: false },
-        { text: 'Менеджер', value: 'j->manager->>email' },
-        { text: 'Последний вход', value: 'last_login' },
-        { text: 'Статус', value: '' }
-      ],
       data: [],
       pagination: { rowsPerPage: 10 },
       progressQuery: false,
@@ -156,6 +150,21 @@ export default {
     ...mapGetters(['loggedIn', 'searchString', 'userRole']),
     allowChangeManager () {
       return this.managers && this.managers.length && this.userRole==='admin'
+    },
+    headers () {
+      let headers = [
+        { text: 'Название', value: 'j->>name' },
+        { text: 'Тип', value: 'j->>category' },
+        { text: 'ИНН', value: 'j->>inn' },
+        { text: 'Адрес', value: 'j->>address' },
+        { text: 'Телефон', value: '', sortable: false },
+        { text: 'Менеджер', value: 'j->manager->>email' }
+      ]
+      if (this.$route.name == 'myBusinessList') {
+        headers.push({ text: 'Последний вход', value: 'last_login' })
+        headers.push({ text: 'Статус', value: '' })
+      }
+      return headers
     },
     table () {
       return this.$route.name == 'businessList' ? 'business' : 'my_business'
@@ -178,7 +187,7 @@ export default {
       },
       deep: true
     },
-    table: 'fetchData',
+    table: 'changeTable',
     searchString: 'fetchData',
     userRole: 'loadManagers'
   },
@@ -192,6 +201,10 @@ export default {
   },
   methods: {
     ...mapActions(['alert', 'setActions']),
+    changeTable () {
+      this.pagination.sortBy = undefined
+      this.fetchData()
+    },
     editItem (item) {
       router.push({ name: 'businessCard', params: { id: item.id } })
     },
