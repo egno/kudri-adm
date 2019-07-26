@@ -10,7 +10,7 @@
     "
   >
     <template slot="content">
-      <div class="employees-list">
+      <div v-if="businessEmployees && businessEmployees.length" class="employees-list">
         <div class="filters">
           <div
             v-for="category in employeesCategories"
@@ -67,6 +67,15 @@
             </template>
           </div>
         </div>
+      </div>
+      <div v-else>
+        <VLayout align-center justify-center column fill-height>
+          <VFlex pa-5>
+            <div class="font-weight-bold">
+              Создайте своего первого сотрудника
+            </div>
+          </VFlex>
+        </VLayout>
       </div>
       <Modal
         :visible="deleteModalVisible"
