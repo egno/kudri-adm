@@ -129,7 +129,8 @@ export default {
         this.loggedIn &&
         (this.userRole === 'manager' || this.userRole === 'admin') &&
         (this.$route.name === 'businessList' ||
-          this.$route.name === 'myBusinessList')
+          this.$route.name === 'myBusinessList' ||
+          this.$route.name === 'adminUserList')
       )
     },
     hasCompanyLevelAccess () {
@@ -184,6 +185,12 @@ export default {
           icon: 'business',
           route: { name: 'businessList' },
           show: this.isManagerMenu
+        },
+        {
+          title: 'Менеджеры',
+          icon: 'business',
+          route: { name: 'adminUserList' },
+          show: this.isManagerMenu && this.userRole === 'admin'
         },
         {
           title: 'Филиалы',

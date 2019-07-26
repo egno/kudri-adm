@@ -82,6 +82,11 @@ export default new Router({
       component: () => import('./views/BusinessList.vue')
     },
     {
+      path: '/adminUserList',
+      name: 'adminUserList',
+      component: () => import('./views/AdminUserList.vue')
+    },
+    {
       path: '/businessCard/:id/i',
       name: 'businessCard',
       component: () => import('./views/BusinessInfo.vue')
