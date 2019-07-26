@@ -23,6 +23,9 @@ export function makeAlert (err) {
     return
   }
   if (err.response.status === 403) {
+    if (err.response.data && err.response.data.code==="42501") {
+      return alert('Недостаточно прав для выполнения операции', err.response)
+    }
     return alert('Неправильный логин или пароль', err.response)
   }
   if (err.response.status === 400) {
