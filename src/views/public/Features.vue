@@ -11,7 +11,7 @@
             для работы с клиентами своего бизнеса
             с помощью ряда специальных сервисов.
           </div>
-          <router-link :to="{ name: 'home' }" class="inner-link">
+          <router-link :to="{ name: 'home', hash: '#product' }" class="inner-link">
             ПОДРОБНЕЕ О ПРОДУКТЕ
           </router-link>
         </div>
@@ -36,7 +36,7 @@
             к системе, чтобы в ваше отсутствие рабочие процессы
             не останавливались.
           </p>
-          <router-link :to="{ name: 'home' }" class="inner-link">
+          <router-link :to="{ name: 'register' }" class="inner-link">
             ПОЛУЧИТЕ ДОСТУП УЖЕ СЕЙЧАС
           </router-link>
         </div>
@@ -79,9 +79,10 @@
             Вам не потребуется заключение дополнительных договоров
             с операторами связи и проблем с подключением API. Все эти
             вопросы мы уже решили за вас. Вам нужно лишь ознакомиться
-            с договором оферты и настроить события отправки сообщений.
+            с <a href="https://drive.google.com/open?id=1Ioe9v58FGXfI7o1ExWPGR9aMkeYyU6LCJenMniPSsl4" target="_blank" rel="nofollow" @click.native="$emit('click')">договором оферты</a>
+            и настроить события отправки сообщений.
           </p>
-          <router-link :to="{ name: 'home' }" class="inner-link layer-1">
+          <router-link :to="{ name: 'register' }" class="inner-link layer-1">
             ПОЛУЧИТЕ ДОСТУП УЖЕ СЕЙЧАС
           </router-link>
         </div>
@@ -124,7 +125,7 @@
             создана специально для тех, кто спешит на сверхсекретную миссию!
             Или забежал «просто подровнять кончики».
           </p>
-          <router-link :to="{ name: 'home' }" class="inner-link layer-1">
+          <router-link :to="{ name: 'register' }" class="inner-link layer-1">
             ПОЛУЧИТЕ ДОСТУП УЖЕ СЕЙЧАС
           </router-link>
         </div>
@@ -171,11 +172,7 @@ export default {
 </script>
 
 <style lang="scss">
-  $tablet: 768px;
-  $desktop: 1360px;
-  $large: 1552px;
-  $wide: 1905px;
-  $white-fill: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7));
+  @import '../../assets/styles/common';
 
   .main-page-sections {
     section {

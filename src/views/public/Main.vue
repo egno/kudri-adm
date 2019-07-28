@@ -102,7 +102,7 @@
               А если вам не хватит стандартного функционала, просто добавьте действительно нужные вам платные модули и не платите за подписки и каждого мастера отдельно.
             </div>
           </div>
-          <router-link :to="{ name: 'home' }" class="inner-link layer-1">
+          <router-link :to="{ name: 'register' }" class="inner-link layer-1">
             ПОЛУЧИТЕ ДОСТУП УЖЕ СЕЙЧАС
           </router-link>
         </div>
@@ -144,7 +144,7 @@
             В нашем мире невозможно все держать в голове. Поэтому мы разработали несколько инструментов,
             которые помогут вам держать свою базу клиентов в актуальном состоянии, расширять ее и удерживать.
           </div>
-          <router-link :to="{ name: 'home' }" class="inner-link layer-1">
+          <router-link :to="{ name: 'features', hash: '#sms-notifications' }" class="inner-link layer-1">
             ПОДРОБНЕЕ О РАБОТЕ С&nbsp;КЛИЕНТАМИ БИЗНЕСА
           </router-link>
         </div>
@@ -170,7 +170,7 @@ export default {
 
   $header-height: 80px;
   $padding-top: 53px;
-  $min-height: 660px;
+  $min-height: 667px;
 
   $saloons: beauty spa cosmetic hairdressers barbershop massage tattoo lash manicure epilation individual solarium;
 
@@ -259,23 +259,25 @@ export default {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    background: url('../../assets/images/bg_home_first.png') center 100%/100% auto no-repeat #fff;
-    background-origin: content-box;
+    background: $white-fill, url('../../assets/images/bg_intro.png') center bottom/230%auto no-repeat #fff;
     @media only screen and (min-width : $tablet) {
-      padding-bottom: 60px;
-      background: url('../../assets/images/bg_home_first_tablet.png') center/100% no-repeat #fff;
+      background: $white-fill, url('../../assets/images/bg_home_first_tablet.png') center/100% no-repeat #fff;
     }
-    @media only screen and (min-width : $desktop) {
+    @media only screen and (min-width : $desktop) and (min-height: $min-height) {
       $header-height: 146px;
       height: calc(100vh - #{$header-height});
       position: relative;
-      background: url('../../assets/images/bg_home_first_desktop.png') center bottom/100% auto no-repeat #fff;
+      background: url('../../assets/images/bg_home_first_wide.png') 70% bottom/auto 100% no-repeat #fff;
     }
-    @media only screen and (min-width : $wide) {
-      background: url('../../assets/images/bg_home_first_wide.png') center top/cover no-repeat #fff;
+    @media only screen and (min-width : $wide) and (min-height: $min-height) {
+      background: url('../../assets/images/bg_home_first_wide.png') center bottom/auto 100% no-repeat #fff;
+    }
+    @media screen and (min-height: 1023px) {
+      padding-bottom: 2vh;
     }
     .content {
       justify-content: center;
+      overflow: visible;
     }
     .text-wrapper {
       max-width: 100%;
@@ -318,7 +320,7 @@ export default {
       @media only screen and (min-width : $tablet) {
         max-width: 570px;
       }
-      @media only screen and (min-width : $desktop) {
+      @media only screen and (min-width : $desktop) and (min-height: $min-height) {
         max-width: none;
         margin-bottom: 45px;
       }
@@ -326,8 +328,8 @@ export default {
     .main-page__subheading {
       font-size: 16px;
       font-weight: 300;
-      margin-bottom: 16px;
-      @media only screen and (min-width : $tablet) {
+      margin-bottom: 2vh;
+      @media only screen and (min-width : $tablet) and (min-height: $min-height) {
         margin-bottom: 50px;
         font-size: 24px;
       }
@@ -355,12 +357,12 @@ export default {
       }
     }
     .main-page__scroll {
-      display: inline-flex;
+      display: none;
       align-items: baseline;
       justify-content: center;
       width: 100%;
       max-width: 280px;
-      margin-top: 45px;
+      margin-top: 6vh;
       text-align: center;
       font-weight: 600;
       font-size: 16px;
@@ -377,9 +379,17 @@ export default {
         border-left: none;
         border-bottom: none;
       }
+      @media screen and (min-height: 568px) {
+        display: inline-flex;
+      }
     }
     .main-page__links {
-      padding: 26px 0;
+      display: none;
+      margin: 4vh 0 !important;
+      padding: 4vh 0;
+      @media screen and (min-height: $min-height) {
+        display: flex;
+      }
     }
   }
 
@@ -403,10 +413,11 @@ export default {
       flex-wrap: wrap;
       margin: 0 auto 42px;
       padding: 0;
-      justify-content: space-between;
+      justify-content: space-around;
       list-style: none;
       @media only screen and (min-width : $tablet) {
-        margin: 0 (-$item-margin);
+        margin: 0 (-$item-margin * 4);
+        justify-content: center;
       }
       @media only screen and (min-width : $desktop) {
         margin: 0 (-$item-margin-desktop * 2);

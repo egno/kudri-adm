@@ -70,9 +70,7 @@ export default {
         }
         .text-wrapper {
           max-width: 100%;
-          @media only screen and (min-width : $tablet) {
-            padding: 0;
-          }
+          padding: 0;
         }
         .main-page__heading {
           margin-bottom: 40px;

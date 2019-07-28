@@ -12,14 +12,14 @@
             регулярно создаем актуальные и
             полезные обновления.
           </div>
-          <router-link :to="{ name: 'home' }" class="inner-link">
+          <router-link :to="{ name: 'news', hash: '#news-adaptive' }" class="inner-link">
             ПОДРОБНОЕ ОПИСАНИЕ ОБНОВЛЕНИЙ
           </router-link>
         </div>
       </div>
     </section>
 
-    <section class="adaptive type-3">
+    <section id="news-adaptive" class="adaptive type-3">
       <div class="overlay layer-1" />
       <div class="content layer-0">
         <div class="text-wrapper">
@@ -37,7 +37,7 @@
             к системе, чтобы в ваше отсутствие рабочие процессы<br>
             не останавливались.
           </p>
-          <router-link :to="{ name: 'home' }" class="inner-link">
+          <router-link :to="{ name: 'register' }" class="inner-link">
             ПОЛУЧИТЕ ДОСТУП УЖЕ СЕЙЧАС
           </router-link>
         </div>
@@ -60,9 +60,10 @@
             Вам не потребуется заключение дополнительных договоров
             с операторами связи и проблем с подключением API. Все эти
             вопросы мы уже решили за вас. Вам нужно лишь ознакомиться
-            с договором оферты и настроить события отправки сообщений.
+            с <a href="https://drive.google.com/open?id=1Ioe9v58FGXfI7o1ExWPGR9aMkeYyU6LCJenMniPSsl4" target="_blank" rel="nofollow" @click.native="$emit('click')">договором оферты</a>
+            и настроить события отправки сообщений.
           </p>
-          <router-link :to="{ name: 'home' }" class="inner-link layer-1">
+          <router-link :to="{ name: 'register' }" class="inner-link layer-1">
             ПОЛУЧИТЕ ДОСТУП УЖЕ СЕЙЧАС
           </router-link>
         </div>
@@ -93,13 +94,14 @@ export default {
       height: 100vh;
       margin-top: -80px;
       */
-      background: url('../../assets/images/news/bg_update.png') right 10%/100% no-repeat  #f3f4f7;
+      background: url('../../assets/images/news/bg_update.png') right 8%/100% no-repeat  #f3f4f7;
       /* for animation of header on mobiles
       @media only screen and (min-width : $tablet) {
         height: calc(100vh - 80px);
         margin-top: 0;
       }*/
       @media screen and (min-width: $tablet) {
+        background-position: right 10%;
         background-size: auto 40%;
       }
       @media screen and (min-width: $desktop) {
@@ -111,7 +113,7 @@ export default {
       }
       .content {
         align-items: flex-end;
-        padding-bottom: 13%;
+        padding-bottom: 17%;
         @media screen and (min-height: 667px) {
           padding-bottom: 20%;
         }
