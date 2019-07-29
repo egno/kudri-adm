@@ -85,10 +85,16 @@ export default {
 
 <style lang="scss">
   @import '../../assets/styles/common';
+
+  $header-height: 80px;
+  $header-desktop-height: 146px;
+  $padding-top: 53px;
+  $min-height: 667px;
+
 .main-page-sections {
   section {
     &.update {
-      height: calc(100vh - 80px);
+      height: calc(100vh - #{$header-height});
       /* for animation of header on mobiles
       height: 100vh;
       margin-top: -80px;
@@ -103,8 +109,10 @@ export default {
         background-position: right 10%;
         background-size: auto 40%;
       }
+      @media only screen  and (min-height: $min-height) {
+        height: calc(100vh - #{$header-desktop-height});
+      }
       @media screen and (min-width: $desktop) {
-        height: calc(100vh - 146px);
         background: url('../../assets/images/news/bg_update.png') right center/54% no-repeat  #f3f4f7;
       }
       @media screen and (min-width: $wide) {

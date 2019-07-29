@@ -98,7 +98,7 @@
         'userRole'
       ]),
       isDesktop () {
-        return window && window.innerWidth > 1159
+        return window && window.innerHeight > 950
       },
       badge () {
         if (!this.myBusinessList.length) {

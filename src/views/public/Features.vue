@@ -173,10 +173,15 @@ export default {
 <style lang="scss">
   @import '../../assets/styles/common';
 
+  $header-height: 80px;
+  $header-desktop-height: 146px;
+  $padding-top: 53px;
+  $min-height: 667px;
+
   .main-page-sections {
     section {
       &.pocket {
-        height: calc(100vh - 80px);
+        height: calc(100vh - #{$header-height});
         background:  url('../../assets/images/faq/pocket_mobile.png') right center/auto 100% no-repeat;
         @media only screen and (min-width : $tablet) {
           background: url('../../assets/images/faq/pocket_tablet.png') right center/auto 100% no-repeat;

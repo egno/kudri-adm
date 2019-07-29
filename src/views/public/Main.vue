@@ -186,13 +186,16 @@ export default {
         justify-content: space-between;
         align-items: center;
         background: $white-fill, url('../../assets/images/bg_intro.png') center bottom/230%auto no-repeat #fff;
-        @media only screen and (min-aspect-ratio: 768/1024) {
+        @media only screen and (min-aspect-ratio: 768/1024) and (min-width: $tablet) {
           background: $white-fill, url('../../assets/images/bg_home_first_wide.png') right bottom/230% auto no-repeat #fff;
         }
-        @media only screen and (min-aspect-ratio: 1024/768) {
-          background: $white-fill, url('../../assets/images/bg_home_first_wide.png') right bottom/120% auto no-repeat #fff;
+        @media only screen and (min-aspect-ratio: 1024/768) and (min-width: $tablet) {
+          background: $white-fill, url('../../assets/images/bg_home_first_wide.png') 60% bottom/160% auto no-repeat #fff;
         }
-        @media only screen and (min-width : $desktop) {
+        @media only screen and (min-aspect-ratio: 1366/666) and (min-width: $desktop) {
+          background: $white-fill, url('../../assets/images/bg_home_first_wide.png') 60% bottom/100% auto no-repeat #fff;
+        }
+        @media only screen  and (min-height: $min-height) {
           height: calc(100vh - #{$header-desktop-height});
         }
         @media only screen and (min-width : $desktop) and (min-height: $min-height) {
