@@ -59,7 +59,7 @@
         >
           <div class="home-header__icon _register" />
           <div class="home-header__tablet-text">
-            ПОПРОБУЙТЕ БЕСПЛАТНО
+            ПОЛЬЗУЙТЕСЬ БЕСПЛАТНО
           </div>
         </v-btn>
         <ProfileMenu v-if="loggedIn" />
@@ -158,6 +158,7 @@
 
 <style lang="scss">
   @import '../../assets/styles/common';
+  @import '../../assets/styles/company-badge';
 
   .home-header {
     background-color: #fff !important;

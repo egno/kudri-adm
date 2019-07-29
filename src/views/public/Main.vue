@@ -31,7 +31,8 @@
         </div>
       </div>
     </section>
-    <section id="fits" class="">
+
+    <section id="fits" class="fits">
       <div class="content">
         <div class="target-audience">
           <h2 class="main-page__heading">
@@ -78,6 +79,7 @@
         </div>
       </div>
     </section>
+
     <section id="product" class="pricing type-1">
       <div class="content">
         <div class="text-wrapper layer-1">
@@ -169,6 +171,7 @@ export default {
   @import '../../assets/styles/common';
 
   $header-height: 80px;
+  $header-desktop-height: 146px;
   $padding-top: 53px;
   $min-height: 667px;
 
@@ -176,6 +179,148 @@ export default {
 
   .main-page-sections {
     section {
+      &.main-page__first {
+        height: calc(100vh - #{$header-height});
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        background: $white-fill, url('../../assets/images/bg_intro.png') center bottom/230%auto no-repeat #fff;
+        @media only screen and (min-width : $tablet) {
+          background: $white-fill, url('../../assets/images/bg_home_first_tablet.png') center/100% no-repeat #fff;
+        }
+        @media only screen and (min-width : $desktop) {
+          height: calc(100vh - #{$header-desktop-height});
+        }
+        @media only screen and (min-width : $desktop) and (min-height: $min-height) {
+          position: relative;
+          background: url('../../assets/images/bg_home_first_wide.png') 70% bottom/auto 100% no-repeat #fff;
+        }
+        @media only screen and (min-width : $wide) and (min-height: $min-height) {
+          background: url('../../assets/images/bg_home_first_wide.png') center bottom/auto 100% no-repeat #fff;
+        }
+        @media screen and (min-height: 1023px) {
+          padding-bottom: 2vh;
+        }
+        .content {
+          justify-content: center;
+          overflow: visible;
+        }
+        .text-wrapper {
+          max-width: 100%;
+          text-align: center;
+          @media only screen and (min-width : $tablet) {
+            padding: 0;
+            text-align: left;
+          }
+        }
+
+        .main-page__first-top {
+          display: flex;
+          flex-grow: 1;
+          width: 100%;
+          align-items: center;
+
+          .content {
+            width: 100%;
+            @media only screen and (min-width : $tablet) {
+              justify-content: flex-start;
+            }
+          }
+        }
+        .main-page__first-bottom {
+          width: 100%;
+          .content {
+            @media only screen and (min-width : $tablet) {
+              justify-content: flex-start;
+            }
+          }
+        }
+        .main-page__container {
+          position: relative;
+          padding-left: 48px;
+          @media only screen and (min-width : $tablet) {
+            padding-left: 0;
+          }
+        }
+        .main-page__heading {
+          margin-bottom: 5vh;
+          @media only screen and (min-width : $tablet) and (min-height: $min-height) {
+            max-width: 570px;
+          }
+          @media only screen and (min-width : $desktop) and (min-height: $min-height) {
+            max-width: none;
+            margin-bottom: 45px;
+          }
+        }
+        .main-page__subheading {
+          font-size: 16px;
+          font-weight: 300;
+          margin-bottom: 2vh;
+          @media only screen and (min-width : $tablet) and (min-height: $min-height) {
+            margin-bottom: 50px;
+            font-size: 24px;
+          }
+        }
+        .main-page__register-link {
+          display: inline-flex;
+          width: 100%;
+          max-width: 280px;
+          height: 68px;
+          margin: 0;
+          padding: 0 25px;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(90deg, #C9A15D 0%, #BA9462 100%) #b69768;
+          color: #FFFFFF;
+          text-decoration: none;
+          text-align: center;
+          font-size: 16px;
+          font-weight: 600;
+          transition: background-color 0.6s 0s;
+          &:hover {
+            background-color: #07101C;
+            background-image: none;
+            text-decoration: none !important;
+          }
+        }
+        .main-page__scroll {
+          display: none;
+          align-items: baseline;
+          justify-content: center;
+          width: 100%;
+          max-width: 280px;
+          margin-top: 6vh;
+          text-align: center;
+          font-weight: 600;
+          font-size: 16px;
+          color: #07101C !important;
+          text-decoration: none !important;
+          &:after {
+            display: block;
+            content: '';
+            height: 7px;
+            width: 7px;
+            margin-left: 5px;
+            border: 2px solid #07101C;
+            transform: rotate(45deg) translate(-2px, -1px);
+            border-left: none;
+            border-bottom: none;
+          }
+          @media screen and (min-height: 568px) {
+            display: inline-flex;
+          }
+        }
+        .main-page__links {
+          display: none;
+          margin: 4vh 0 !important;
+          padding: 4vh 0;
+          @media screen and (min-height: $min-height) {
+            display: flex;
+          }
+        }
+      }
+
       &.fits {
         .content {
           overflow: visible;
@@ -249,146 +394,6 @@ export default {
           }
         }
 
-      }
-    }
-  }
-
-  .main-page__first {
-    height: calc(100vh - #{$header-height});
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    background: $white-fill, url('../../assets/images/bg_intro.png') center bottom/230%auto no-repeat #fff;
-    @media only screen and (min-width : $tablet) {
-      background: $white-fill, url('../../assets/images/bg_home_first_tablet.png') center/100% no-repeat #fff;
-    }
-    @media only screen and (min-width : $desktop) and (min-height: $min-height) {
-      $header-height: 146px;
-      height: calc(100vh - #{$header-height});
-      position: relative;
-      background: url('../../assets/images/bg_home_first_wide.png') 70% bottom/auto 100% no-repeat #fff;
-    }
-    @media only screen and (min-width : $wide) and (min-height: $min-height) {
-      background: url('../../assets/images/bg_home_first_wide.png') center bottom/auto 100% no-repeat #fff;
-    }
-    @media screen and (min-height: 1023px) {
-      padding-bottom: 2vh;
-    }
-    .content {
-      justify-content: center;
-      overflow: visible;
-    }
-    .text-wrapper {
-      max-width: 100%;
-      text-align: center;
-      @media only screen and (min-width : $tablet) {
-        padding: 0;
-        text-align: left;
-      }
-    }
-
-    .main-page__first-top {
-      flex-grow: 1;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      .content {
-        width: 100%;
-        @media only screen and (min-width : $tablet) {
-          justify-content: flex-start;
-        }
-      }
-    }
-    .main-page__first-bottom {
-      width: 100%;
-      .content {
-        @media only screen and (min-width : $tablet) {
-          justify-content: flex-start;
-        }
-      }
-    }
-    .main-page__container {
-      position: relative;
-      padding-left: 48px;
-      @media only screen and (min-width : $tablet) {
-        padding-left: 0;
-      }
-    }
-    .main-page__heading {
-      margin-bottom: 5vh;
-      @media only screen and (min-width : $tablet) {
-        max-width: 570px;
-      }
-      @media only screen and (min-width : $desktop) and (min-height: $min-height) {
-        max-width: none;
-        margin-bottom: 45px;
-      }
-    }
-    .main-page__subheading {
-      font-size: 16px;
-      font-weight: 300;
-      margin-bottom: 2vh;
-      @media only screen and (min-width : $tablet) and (min-height: $min-height) {
-        margin-bottom: 50px;
-        font-size: 24px;
-      }
-    }
-    .main-page__register-link {
-      display: inline-flex;
-      width: 100%;
-      max-width: 280px;
-      height: 68px;
-      margin: 0;
-      padding: 0 25px;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(90deg, #C9A15D 0%, #BA9462 100%) #b69768;
-      color: #FFFFFF;
-      text-decoration: none;
-      text-align: center;
-      font-size: 16px;
-      font-weight: 600;
-      transition: background-color 0.6s 0s;
-      &:hover {
-        background-color: #07101C;
-        background-image: none;
-        text-decoration: none !important;
-      }
-    }
-    .main-page__scroll {
-      display: none;
-      align-items: baseline;
-      justify-content: center;
-      width: 100%;
-      max-width: 280px;
-      margin-top: 6vh;
-      text-align: center;
-      font-weight: 600;
-      font-size: 16px;
-      color: #07101C !important;
-      text-decoration: none !important;
-      &:after {
-        display: block;
-        content: '';
-        height: 7px;
-        width: 7px;
-        margin-left: 5px;
-        border: 2px solid #07101C;
-        transform: rotate(45deg) translate(-2px, -1px);
-        border-left: none;
-        border-bottom: none;
-      }
-      @media screen and (min-height: 568px) {
-        display: inline-flex;
-      }
-    }
-    .main-page__links {
-      display: none;
-      margin: 4vh 0 !important;
-      padding: 4vh 0;
-      @media screen and (min-height: $min-height) {
-        display: flex;
       }
     }
   }
