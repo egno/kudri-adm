@@ -187,20 +187,20 @@ export default {
         align-items: center;
         background: $white-fill, url('../../assets/images/bg_intro.png') center bottom/230%auto no-repeat #fff;
         @media only screen and (min-aspect-ratio: 768/1024) and (min-width: $tablet) {
-          background: $white-fill, url('../../assets/images/bg_home_first_wide.png') right bottom/230% auto no-repeat #fff;
+          background: $white-fill, url('../../assets/images/bg_home_first_tablet.png') right bottom/230% auto no-repeat #fff;
         }
         @media only screen and (min-aspect-ratio: 1024/768) and (min-width: $tablet) {
-          background: $white-fill, url('../../assets/images/bg_home_first_wide.png') 60% bottom/160% auto no-repeat #fff;
+          background: $white-fill, url('../../assets/images/bg_home_first_tablet.png') 60% bottom/160% auto no-repeat #fff;
         }
         @media only screen and (min-aspect-ratio: 1366/666) and (min-width: $desktop) {
-          background: $white-fill, url('../../assets/images/bg_home_first_wide.png') 60% bottom/100% auto no-repeat #fff;
+          background: $white-fill, url('../../assets/images/bg_home_first_desktop.png') 60% bottom/100% auto no-repeat #fff;
         }
         @media only screen  and (min-height: $min-height) {
           height: calc(100vh - #{$header-desktop-height});
         }
         @media only screen and (min-width : $desktop) and (min-height: $min-height) {
           position: relative;
-          background: url('../../assets/images/bg_home_first_wide.png') 70% bottom/auto 100% no-repeat #fff;
+          background: url('../../assets/images/bg_home_first_desktop.png') 70% bottom/auto 100% no-repeat #fff;
         }
         @media only screen and (min-width : $wide) and (min-height: $min-height) {
           background: url('../../assets/images/bg_home_first_wide.png') center bottom/auto 100% no-repeat #fff;
@@ -335,7 +335,7 @@ export default {
 
       &.pricing {
         height: 820px;
-        background: url('../../assets/images/home/bg_pricing.png') right bottom/auto 50% no-repeat #fff;
+        background: url('../../assets/images/home/bg_pricing_mobile.png') right bottom/auto 50% no-repeat #fff;
         @media only screen and (min-width : $tablet) {
           height: 728px;
           background: url('../../assets/images/home/bg_pricing.png') 95% bottom/auto 600px no-repeat #fff;
@@ -368,7 +368,7 @@ export default {
 
       &.clients {
         height: 500px;
-        background: url('../../assets/images/home/bg_clients.png') 180px bottom/78% no-repeat #fff;
+        background: url('../../assets/images/home/bg_clients_mobile.png') 180px bottom/78% no-repeat #fff;
         @media screen and (min-width: $tablet) {
           height: 550px;
           background-position: right bottom;
@@ -376,11 +376,10 @@ export default {
         }
         @media screen and (min-width: $desktop) {
           height: 755px;
-          background-size: 43%;
+          background: url('../../assets/images/home/bg_clients.png') 180px bottom/43% no-repeat #fff;
         }
         @media screen and (min-width: $wide) {
-          background-position: 80% bottom;
-          background-size: contain;
+          background: url('../../assets/images/home/bg_clients_wide.png') 80% bottom/contain no-repeat #fff;
         }
         .subheader {
           max-width: 80%;

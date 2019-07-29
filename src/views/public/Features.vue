@@ -241,10 +241,10 @@ export default {
       &.phone {
         position: static;
         height: 400px;
-        background: $white-fill, url('../../assets/images/faq/bg_phone.png') 70% top/cover no-repeat;
+        background: $white-fill, url('../../assets/images/faq/bg_phone_mobile.png') 70% top/cover no-repeat;
         @media screen and (min-width: $tablet) {
           height: 500px;
-          background: $white-fill, url('../../assets/images/faq/bg_phone.png') right top/89% 100% no-repeat;
+          background: $white-fill, url('../../assets/images/faq/bg_phone_mobile.png') right top/89% 100% no-repeat;
         }
         @media screen and (min-width: $desktop) {
           background: url('../../assets/images/faq/bg_phone.png') right top/87% 100% no-repeat;
@@ -266,7 +266,7 @@ export default {
       &.express {
         background: #fff;
         .overlay {
-          background: url('../../assets/images/faq/bg_express.png') -80px bottom/290px auto no-repeat;
+          background: url('../../assets/images/faq/bg_express_mobile.png') -80px bottom/290px auto no-repeat;
           @media screen and (min-width: $tablet) {
             top: -70px;
             left: -40px;
@@ -277,8 +277,7 @@ export default {
           @media screen and (min-width: $desktop) {
             left: 0;
             width: 1600px;
-            background-position: left bottom;
-            background-size: auto 100%;
+            background: url('../../assets/images/faq/bg_express.png')  left bottom/auto 100% no-repeat;
           }
           @media screen and (min-width: $wide) {
             left: 11%;
