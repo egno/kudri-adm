@@ -301,7 +301,7 @@
         this.price = price || ''
         this.duration = duration || 15
         this.description = description || ''
-        this.selectedEmployees = this.employees.filter(e => employees.includes(e.id))
+        this.selectedEmployees = (employees && this.employees.filter(e => employees.includes(e.id))) || []
       },
       getCompanyServices () {
         if (!this.businessInfo.parent) {
