@@ -46,12 +46,16 @@
     .content {
       top: 80px;
       height: calc(100vh - 80px);
-      background-color: rgba(255,255,255,0.9);
+      background-color: rgba(255,255,255,0.97);
       box-shadow: none;
       @media only screen and (min-width : $desktop) {
         top: 146px;
         height: calc(100vh - 146px);
       }
+    }
+
+    .v-dialog--fullscreen {
+      overflow-y: scroll;
     }
   }
 

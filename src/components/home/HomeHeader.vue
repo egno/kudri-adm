@@ -46,7 +46,7 @@
         <v-btn
           v-if="loggedIn && userRole !== 'manager' && userRole !== 'admin'"
           flat
-          :class="['main-header__button ', { active: !isFirstSectionInView || $route.name === 'features' || $route.name === 'news'}]"
+          class="main-header__button"
           @click="goToBusiness"
         >
           <div class="home-header__icon " />

@@ -110,6 +110,15 @@ export default {
           @media only screen and (min-width : $tablet) {
             max-width: 100%;
           }
+          @media only screen and (min-width : $desktop) {
+            max-width: $max-container-desktop-width;
+            .list {
+              margin: 0 -40px;
+            }
+          }
+          @media only screen and (min-width : $desktop) {
+            max-width: $max-container-wide-width;
+          }
         }
         .list {
           width: 100%;
