@@ -167,7 +167,7 @@ export default {
       width: 66px;
       height: 100%;
       outline: none;
-      background: url('../assets/images/svg/home_blue.svg') center/24px no-repeat;
+      background: url('../assets/images/svg/menu.svg') center/24px no-repeat;
       border-left: 1px solid rgba(137, 149, 175, 0.1);
       &.active {
         background-color: rgba(137, 149, 175, 0.2);
