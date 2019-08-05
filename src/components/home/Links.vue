@@ -83,7 +83,7 @@
           <a href="https://drive.google.com/open?id=1JWxq7uHt7H9CKhqyJLIozc-JeAT9aNXUszZ1m2Dd4Os" target="_blank" rel="nofollow" @click.native="$emit('click')">Политика конфиденциальности</a>
         </div>
         <div>
-          <a href="https://drive.google.com/file/d/16Lm-dS-9qN1dgbKp5gJQHiHqgOz6dz4U/view?usp=sharing" target="_blank" rel="nofollow" @click.native="$emit('click')">Реквизиты компани</a>
+          <a href="https://drive.google.com/file/d/1nFp-fbvBCY-rX7TkJ1M0CKJsArkB9su1/view" target="_blank" rel="nofollow" @click.native="$emit('click')">Реквизиты компани</a>
         </div>
       </div>
     </div>
